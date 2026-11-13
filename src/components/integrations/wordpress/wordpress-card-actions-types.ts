@@ -28,8 +28,11 @@ export type ConnectionAction = {
     key: string;
     label: string;
     icon: React.ReactNode;
+    /** Right-column result; always a string (`—` until run). */
+    result: string;
     onClick: () => void;
     disabled: boolean;
+    busy?: boolean;
     className?: string;
     title?: string;
   };

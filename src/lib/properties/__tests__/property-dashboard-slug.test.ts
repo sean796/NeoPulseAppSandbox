@@ -3,64 +3,67 @@ import {
   findSiteByDashboardSlug,
   propertyDashboardPath,
   propertyDashboardSlug,
-  propertyDashboardSlugFromHostname,
+  propertyDashboardSlugFromName,
   propertySlugFromDashboardPath,
 } from "@/lib/properties/property-dashboard-slug";
 
-describe("propertyDashboardSlugFromHostname", () => {
-  it("strips www and TLD", () => {
-    expect(propertyDashboardSlugFromHostname("www.intheshadeflorida.com")).toBe(
-      "intheshadeflorida",
+describe("propertyDashboardSlugFromName", () => {
+  it("hyphenates spaces and strips punctuation", () => {
+    expect(propertyDashboardSlugFromName("Advance Blinds")).toBe("advance-blinds");
+    expect(propertyDashboardSlugFromName("Blinds West")).toBe("blinds-west");
+    expect(propertyDashboardSlugFromName("Custom Shades of London")).toBe(
+      "custom-shades-of-london",
     );
-    expect(propertyDashboardSlugFromHostname("intheshadeflorida.com")).toBe("intheshadeflorida");
-    expect(propertyDashboardSlugFromHostname("neodigital.ca")).toBe("neodigital");
-  });
-
-  it("joins multi-label hosts without TLD using hyphens", () => {
-    expect(propertyDashboardSlugFromHostname("blog.example.com")).toBe("blog-example");
+    expect(propertyDashboardSlugFromName("Elite Shutters & Shadings")).toBe(
+      "elite-shutters-shadings",
+    );
+    expect(propertyDashboardSlugFromName("You Junk It... I Dump It")).toBe(
+      "you-junk-it-i-dump-it",
+    );
   });
 });
 
 describe("propertyDashboardSlug", () => {
-  it("reads hostname from siteUrl", () => {
-    expect(propertyDashboardSlug({ siteUrl: "https://www.superiorblinds.com/" })).toBe(
-      "superiorblinds",
+  it("prefers display name over hostname", () => {
+    expect(
+      propertyDashboardSlug({
+        name: "In the Shade",
+        siteUrl: "https://intheshadeflorida.com",
+      }),
+    ).toBe("in-the-shade");
+  });
+
+  it("falls back to hostname when name is empty", () => {
+    expect(propertyDashboardSlug({ name: "", siteUrl: "https://www.neodigital.ca/" })).toBe(
+      "neodigital",
     );
   });
 });
 
 describe("propertyDashboardPath", () => {
-  it("uses bare /dashboard for the first client home", () => {
+  it("always includes the slug including for the first client", () => {
     expect(
-      propertyDashboardPath({ siteUrl: "https://intheshadeflorida.com" }, true),
-    ).toBe("/dashboard");
-  });
-
-  it("uses /dashboard/slug for other clients", () => {
-    expect(
-      propertyDashboardPath({ siteUrl: "https://intheshadeflorida.com" }, false),
-    ).toBe("/dashboard/intheshadeflorida");
+      propertyDashboardPath({ name: "Advance Blinds", siteUrl: "https://example.com" }),
+    ).toBe("/dashboard/advance-blinds");
   });
 });
 
 describe("propertySlugFromDashboardPath", () => {
   it("returns null on home and slug on named paths", () => {
     expect(propertySlugFromDashboardPath("/dashboard")).toBeNull();
-    expect(propertySlugFromDashboardPath("/dashboard/")).toBeNull();
-    expect(propertySlugFromDashboardPath("/dashboard/intheshadeflorida")).toBe(
-      "intheshadeflorida",
-    );
+    expect(propertySlugFromDashboardPath("/dashboard/blinds-west")).toBe("blinds-west");
   });
 });
 
 describe("findSiteByDashboardSlug", () => {
   const sites = [
-    { id: "1", siteUrl: "https://advanceblindsanddrapery.com" },
-    { id: "2", siteUrl: "https://intheshadeflorida.com" },
+    { id: "1", name: "Advance Blinds", siteUrl: "https://advanceblindsanddrapery.com" },
+    { id: "2", name: "Blinds West", siteUrl: "https://blindswest.ca" },
   ];
 
-  it("finds by slug", () => {
-    expect(findSiteByDashboardSlug(sites, "intheshadeflorida")?.id).toBe("2");
+  it("finds by hyphenated name slug", () => {
+    expect(findSiteByDashboardSlug(sites, "blinds-west")?.id).toBe("2");
+    expect(findSiteByDashboardSlug(sites, "advance-blinds")?.id).toBe("1");
   });
 
   it("returns undefined when unknown", () => {

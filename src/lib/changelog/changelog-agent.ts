@@ -39,7 +39,9 @@ const changelogInputSchema = z.object({
 
 export type ChangelogAgentInput = z.infer<typeof changelogInputSchema>;
 
-const SYSTEM = `You write one changelog entry for the Neo Pulse web app, for the agency owner.
+export const CHANGELOG_WRITER_MODEL = "deepseek/deepseek-v4.1-flash";
+
+export const CHANGELOG_WRITER_SYSTEM = `You write one changelog entry for the Neo Pulse web app, for the agency owner.
 
 Grounding rules (non-negotiable):
 - The commit pack in the user message is the ONLY source of facts. Never name a feature, fix, file, screen, or improvement that is not supported by a commit subject, body, or file list in the pack.
@@ -74,6 +76,10 @@ ${lines.join("\n")}
 Write the changelog entry JSON now.`;
 }
 
+export function buildChangelogWriterUserPrompt(input: ChangelogAgentInput): string {
+  return buildUserPrompt(input);
+}
+
 export const appChangelogWriterAgent = createPulseAgent<ChangelogAgentInput, ChangelogDraft>({
   id: "reporting.changelog.app-update-log",
   label: "App Changelog Writer",
@@ -85,7 +91,7 @@ export const appChangelogWriterAgent = createPulseAgent<ChangelogAgentInput, Cha
   outputSchema: changelogDraftSchema,
   temperature: 0.3,
   maxTokens: 8192,
-  buildSystemPrompt: () => SYSTEM,
+  buildSystemPrompt: () => CHANGELOG_WRITER_SYSTEM,
   buildUserPrompt: (input) => buildUserPrompt(input),
   parseOutput: (rawContent) => {
     const start = rawContent.indexOf("{");

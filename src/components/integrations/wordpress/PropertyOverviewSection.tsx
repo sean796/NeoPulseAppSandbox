@@ -119,31 +119,52 @@ function siteHostname(site: WordPressSite): string {
   }
 }
 
+/** Fade text/controls only (edit toggle + client select). Pill chrome stays put. */
+function FadeText({
+  fadeKey,
+  className,
+  children,
+}: {
+  fadeKey: string;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div key={fadeKey} className={cn("properties-overview-edit-fade min-w-0", className)}>
+      {children}
+    </div>
+  );
+}
+
 function KpiTile({
+  fadeKey,
   label,
   value,
   title,
 }: {
+  fadeKey: string;
   label: string;
   value: string;
   title?: string;
 }) {
   return (
     <div className={PROPERTIES_OVERVIEW_KPI_TILE_CLASS} title={title}>
-      <div className={PROPERTIES_OVERVIEW_PILL_ROW_CLASS}>
+      <div className={cn(PROPERTIES_OVERVIEW_PILL_ROW_CLASS, "min-h-11")}>
         <span
           className={PROPERTIES_OVERVIEW_KPI_LABEL_CLASS}
           style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
         >
           {label}
         </span>
-        <span
-          className={PROPERTIES_OVERVIEW_KPI_VALUE_CLASS}
-          title={value}
-          style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
-        >
-          {value}
-        </span>
+        <FadeText fadeKey={fadeKey} className="flex min-w-0 flex-1 items-center">
+          <span
+            className={PROPERTIES_OVERVIEW_KPI_VALUE_CLASS}
+            title={value}
+            style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
+          >
+            {value}
+          </span>
+        </FadeText>
       </div>
     </div>
   );
@@ -164,16 +185,18 @@ function gbpDisplayId(raw: string): string {
   return digits?.[0] ?? value;
 }
 
-/** Value column stays right-aligned in view and edit (type boxes fill the right slot). */
+/** Inline edit controls after the label; fixed height so pills do not shift. */
 const VALUE_EDIT_WRAP_CLASS =
-  "flex h-8 w-full min-w-0 items-center justify-end gap-1.5 [&_input]:text-right [&_button]:justify-end [&_button>span]:text-right";
+  "flex h-8 min-w-0 flex-1 items-center justify-start gap-1.5 overflow-hidden [&_input]:min-w-0 [&_input]:flex-1 [&_input]:bg-black [&_input]:text-left [&_input]:text-white [&_button]:shrink-0 [&_[data-slot=select-trigger]]:min-w-0 [&_[data-slot=select-trigger]]:flex-1";
 
 function IntegrationRow({
+  fadeKey,
   label,
   value,
   title,
   children,
 }: {
+  fadeKey: string;
   label: string;
   value?: string;
   title?: string;
@@ -181,7 +204,12 @@ function IntegrationRow({
 }) {
   const empty = !children && !value;
   return (
-    <div className={cn(PROPERTIES_OVERVIEW_DL_ROW_CLASS, "h-11 max-h-11 items-center overflow-hidden py-1")}>
+    <div
+      className={cn(
+        PROPERTIES_OVERVIEW_DL_ROW_CLASS,
+        "h-11 max-h-11 min-h-11 w-full items-center overflow-hidden py-1",
+      )}
+    >
       <dt
         className={PROPERTIES_OVERVIEW_DL_LABEL_CLASS}
         style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
@@ -190,17 +218,19 @@ function IntegrationRow({
       </dt>
       <dd
         className={cn(
-          "flex h-8 min-w-0 flex-1 items-center justify-end overflow-hidden",
+          "flex h-8 min-w-0 flex-1 items-center justify-start overflow-hidden",
           empty ? PROPERTIES_OVERVIEW_PROFILE_EMPTY_CLASS : PROPERTIES_OVERVIEW_DL_VALUE_CLASS,
         )}
         title={empty || children ? undefined : title || value}
         style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
       >
-        {children ? (
-          <div className={VALUE_EDIT_WRAP_CLASS}>{children}</div>
-        ) : (
-          <span className="truncate text-right">{empty ? "Not set" : value}</span>
-        )}
+        <FadeText fadeKey={fadeKey} className="flex h-8 min-w-0 flex-1 items-center">
+          {children ? (
+            <div className={VALUE_EDIT_WRAP_CLASS}>{children}</div>
+          ) : (
+            <span className="truncate text-left">{empty ? "Not set" : value}</span>
+          )}
+        </FadeText>
       </dd>
     </div>
   );
@@ -250,7 +280,6 @@ export function PropertyOverviewSection({
     site.sitemaps?.type === "index"
       ? (site.sitemaps.childSitemaps ?? [])
       : (site.sitemaps?.urls ?? []);
-  const sitemapKey = sitemapUrls.join("\n");
   const semrushKey: "semrushSiteAuditProjectId" | "semrushPositionTrackingProjectId" =
     site.semrushSiteAuditProjectId?.trim() || !site.semrushPositionTrackingProjectId?.trim()
       ? "semrushSiteAuditProjectId"
@@ -275,11 +304,14 @@ export function PropertyOverviewSection({
   const [semrushDraft, setSemrushDraft] = useState(semrush);
   const [sitemapPick, setSitemapPick] = useState(sitemapUrls[0] ?? "");
   const wasEditingRef = useRef(false);
-
-  useEffect(() => {
-    const urls = sitemapKey ? sitemapKey.split("\n") : [];
-    setSitemapPick((current) => (urls.includes(current) ? current : urls[0] ?? ""));
-  }, [site.id, sitemapKey]);
+  /** Sync pick without an empty frame (avoids SelectField flicker on client switch). */
+  const sitemapValue =
+    sitemapUrls.length > 0 && sitemapUrls.includes(sitemapPick)
+      ? sitemapPick
+      : (sitemapUrls[0] ?? "");
+  if (sitemapPick !== sitemapValue) {
+    setSitemapPick(sitemapValue);
+  }
 
   const patch = (next: Partial<WordPressSite>) => {
     onPatchSite?.(site.id, next);
@@ -361,40 +393,50 @@ export function PropertyOverviewSection({
   }, [editing]);
 
   const workspacePanel = "h-full min-h-0";
+  const contentFadeKey = `${site.id}-${editing ? "edit" : "view"}`;
 
   return (
     <div className={PROPERTIES_OVERVIEW_STACK_CLASS}>
-      <section className={cn(PROPERTIES_OVERVIEW_IDENTITY_CLASS, "h-[6.75rem] max-h-[6.75rem] overflow-hidden")} aria-label="Property">
-        <div className="flex h-14 shrink-0 items-center gap-1.5">
+      <section className={cn(PROPERTIES_OVERVIEW_IDENTITY_CLASS, "overflow-hidden")} aria-label="Property">
+        <div className="flex h-[4.25rem] min-w-0 flex-1 items-stretch gap-1">
           <div
             className={cn(
-              "flex h-14 w-36 shrink-0 items-center justify-center overflow-hidden rounded-none border border-white/15",
+              "flex h-[4.25rem] w-36 shrink-0 items-center justify-center overflow-hidden rounded-none border border-white/15",
               logoTheme === "white" ? "bg-white" : "bg-black",
             )}
             aria-label={logoTheme === "white" ? "Logo box white" : "Logo box black"}
           >
-            {logoUrl ? (
-              <img src={logoUrl} alt="" className="max-h-12 max-w-[8rem] object-contain" />
-            ) : (
-              <span
-                className={cn(
-                  "px-2 text-center text-base font-medium",
-                  logoTheme === "white" ? "text-black/50" : "text-white/40",
-                )}
-              >
-                No logo
-              </span>
-            )}
+            <FadeText
+              fadeKey={contentFadeKey}
+              className="flex h-full w-full items-center justify-center"
+            >
+              {logoUrl ? (
+                <img
+                  src={logoUrl}
+                  alt=""
+                  className="pointer-events-none h-full w-full object-contain object-center p-1"
+                />
+              ) : (
+                <span
+                  className={cn(
+                    "px-2 text-center text-base font-medium",
+                    logoTheme === "white" ? "text-black/50" : "text-white/40",
+                  )}
+                >
+                  No logo
+                </span>
+              )}
+            </FadeText>
           </div>
           <div
-            className="flex h-14 w-5 shrink-0 flex-col justify-center gap-1"
+            className="flex h-[4.25rem] w-5 shrink-0 flex-col gap-1"
             role="group"
             aria-label="Logo box theme"
           >
             <button
               type="button"
               className={cn(
-                "h-5 w-5 shrink-0 rounded-none border border-white/20 bg-black shadow-none",
+                "min-h-0 w-5 flex-1 rounded-none border border-white/20 bg-black shadow-none",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 logoTheme === "black" ? "opacity-100 ring-1 ring-white/40" : "opacity-40 hover:opacity-70",
               )}
@@ -410,7 +452,7 @@ export function PropertyOverviewSection({
             <button
               type="button"
               className={cn(
-                "h-5 w-5 shrink-0 rounded-none border border-white/20 bg-white shadow-none",
+                "min-h-0 w-5 flex-1 rounded-none border border-white/20 bg-white shadow-none",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 logoTheme === "white" ? "opacity-100 ring-1 ring-white/40" : "opacity-40 hover:opacity-70",
               )}
@@ -424,49 +466,65 @@ export function PropertyOverviewSection({
               }}
             />
           </div>
-        </div>
-        <div className="flex h-16 min-w-0 flex-1 basis-[12rem] flex-col justify-center gap-0">
-          <div className="flex h-8 items-center overflow-hidden">
-            {editing ? (
-              <Field
-                value={nameDraft}
-                onChange={(e) => setNameDraft(e.target.value)}
-                onBlur={(e) => {
-                  const name = e.target.value.trim();
-                  if (name) patch({ name });
-                }}
-                placeholder="Site name"
-                aria-label="Site name"
-              />
-            ) : (
-              <div className={PROPERTIES_OVERVIEW_IDENTITY_NAME_CLASS}>{site.name}</div>
-            )}
-          </div>
-          <div className="flex h-8 items-center overflow-hidden">
-            {editing ? (
-              <Field
-                value={logoDraft}
-                onChange={(e) => setLogoDraft(e.target.value)}
-                onBlur={(e) => {
-                  const next = e.target.value.trim();
-                  patch({
-                    clientLogoUrl: next || undefined,
-                    clientLogoSource: next ? "manual" : undefined,
-                    clientLogoFetchedAt: next ? Date.now() : undefined,
-                  });
-                }}
-                placeholder="Logo URL"
-                aria-label="Logo URL"
-              />
-            ) : (
-              <div
-                className={PROPERTIES_OVERVIEW_IDENTITY_URL_CLASS}
-                title={site.siteUrl}
-                style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
-              >
-                {siteHostname(site)}
-              </div>
-            )}
+          <div className="flex h-full min-w-0 flex-1 flex-col gap-1">
+            <div
+              className={cn(
+                PROPERTIES_OVERVIEW_PILL_ROW_CLASS,
+                "h-8 max-h-8 w-full gap-0 border-0 bg-black px-2",
+                editing && "[&_input]:bg-black [&_input]:text-white",
+              )}
+            >
+              <FadeText fadeKey={contentFadeKey} className="flex h-8 min-w-0 flex-1 items-center">
+                {editing ? (
+                  <Field
+                    value={nameDraft}
+                    onChange={(e) => setNameDraft(e.target.value)}
+                    onBlur={(e) => {
+                      const name = e.target.value.trim();
+                      if (name) patch({ name });
+                    }}
+                    placeholder="Site name"
+                    aria-label="Site name"
+                  />
+                ) : (
+                  <div className={cn(PROPERTIES_OVERVIEW_IDENTITY_NAME_CLASS, "truncate")}>{site.name}</div>
+                )}
+              </FadeText>
+            </div>
+            <div
+              className={cn(
+                PROPERTIES_OVERVIEW_PILL_ROW_CLASS,
+                "h-8 max-h-8 w-full gap-0 border-0 bg-black px-2",
+                editing && "[&_input]:bg-black [&_input]:text-white",
+              )}
+            >
+              <FadeText fadeKey={contentFadeKey} className="flex h-8 min-w-0 flex-1 items-center">
+                {editing ? (
+                  <Field
+                    value={logoDraft}
+                    onChange={(e) => setLogoDraft(e.target.value)}
+                    onBlur={(e) => {
+                      const next = e.target.value.trim();
+                      patch({
+                        clientLogoUrl: next || undefined,
+                        clientLogoSource: next ? "manual" : undefined,
+                        clientLogoFetchedAt: next ? Date.now() : undefined,
+                      });
+                    }}
+                    placeholder="Logo URL"
+                    aria-label="Logo URL"
+                  />
+                ) : (
+                  <div
+                    className={cn(PROPERTIES_OVERVIEW_IDENTITY_URL_CLASS, "truncate")}
+                    title={site.siteUrl}
+                    style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
+                  >
+                    {siteHostname(site)}
+                  </div>
+                )}
+              </FadeText>
+            </div>
           </div>
         </div>
         <div className={PROPERTIES_OVERVIEW_IDENTITY_PILLS_CLASS}>
@@ -579,12 +637,15 @@ export function PropertyOverviewSection({
       </Dialog>
 
       <section className="grid shrink-0 grid-cols-2 gap-3" aria-label="Platform">
-        <KpiTile
+        <KpiTile fadeKey={contentFadeKey}
           label="WordPress"
           value={propertyHostingLabel(site)}
           title={wpEngineAccountId || undefined}
         />
-        <KpiTile label="Scheduled" value={scheduled ? String(scheduled.count) : "0"} />
+        <KpiTile fadeKey={contentFadeKey}
+          label="Scheduled"
+          value={scheduled ? String(scheduled.count) : "0"}
+        />
       </section>
 
       <div className="grid w-full grid-cols-2 items-stretch gap-3">
@@ -593,75 +654,102 @@ export function PropertyOverviewSection({
           <dl className={PROPERTIES_OVERVIEW_DL_CLASS}>
             {editing ? (
               <>
-                {keywordRows.map((row, idx) => (
-                  <IntegrationRow key={row.id} label={idx === 0 ? "Keyword" : `Keyword ${idx + 1}`}>
-                    <Field
-                      value={row.keyword}
-                      onChange={(e) => {
-                        const next = keywordRows.map((k, i) =>
-                          i === idx ? { ...k, keyword: e.target.value } : k,
-                        );
-                        setKeywordRows(next);
-                      }}
-                      onBlur={(e) => {
-                        commitKeywordRows(
-                          keywordRows.map((k, i) =>
-                            i === idx ? { ...k, keyword: e.target.value } : k,
-                          ),
-                        );
-                      }}
-                      placeholder="Keyword"
-                      aria-label={idx === 0 ? "Keyword" : `Keyword ${idx + 1}`}
-                    />
-                    <SelectField
-                      placeholder="Assign location"
-                      width="sm"
-                      value={row.locationId ?? "__unassigned__"}
-                      options={[
-                        { value: "__unassigned__", label: "Unassigned" },
-                        ...siteLocations.map((loc) => ({
-                          value: loc.id,
-                          label: locationOptionLabel(loc),
-                        })),
-                      ]}
-                      onValueChange={(next) => {
-                        const locationId = next === "__unassigned__" ? undefined : next;
-                        commitKeywordRows(
-                          keywordRows.map((k, i) => (i === idx ? { ...k, locationId } : k)),
-                        );
-                      }}
-                    />
+                {keywordRows.length === 0 ? (
+                  <IntegrationRow fadeKey={contentFadeKey} label="Keyword">
                     <Button
                       type="button"
                       variant="tool"
                       size="icon"
-                      icon={Trash2}
+                      icon={Plus}
                       className="h-8 w-8 shrink-0"
-                      aria-label={`Remove keyword ${idx + 1}`}
-                      onClick={() => commitKeywordRows(keywordRows.filter((_, i) => i !== idx))}
+                      aria-label="Add keyword"
+                      onClick={() =>
+                        commitKeywordRows([
+                          {
+                            id: `kw-${site.id}-${Date.now()}`,
+                            keyword: "",
+                          },
+                        ])
+                      }
                     />
                   </IntegrationRow>
-                ))}
-                <div className="flex h-11 max-h-11 items-center justify-end">
-                  <Button
-                    type="button"
-                    variant="tool"
-                    icon={Plus}
-                    className="h-8"
-                    onClick={() =>
-                      commitKeywordRows([
-                        ...keywordRows,
-                        {
-                          id: `kw-${site.id}-${Date.now()}`,
-                          keyword: "",
-                        },
-                      ])
-                    }
-                  >
-                    Add keyword
-                  </Button>
-                </div>
-                <IntegrationRow label="City">
+                ) : null}
+                {keywordRows.map((row, idx) => {
+                  const isLastKeyword = idx === keywordRows.length - 1;
+                  return (
+                    <IntegrationRow
+                      fadeKey={contentFadeKey}
+                      key={row.id}
+                      label={idx === 0 ? "Keyword" : `Keyword ${idx + 1}`}
+                    >
+                      <Field
+                        value={row.keyword}
+                        onChange={(e) => {
+                          const next = keywordRows.map((k, i) =>
+                            i === idx ? { ...k, keyword: e.target.value } : k,
+                          );
+                          setKeywordRows(next);
+                        }}
+                        onBlur={(e) => {
+                          commitKeywordRows(
+                            keywordRows.map((k, i) =>
+                              i === idx ? { ...k, keyword: e.target.value } : k,
+                            ),
+                          );
+                        }}
+                        placeholder="Keyword"
+                        aria-label={idx === 0 ? "Keyword" : `Keyword ${idx + 1}`}
+                      />
+                      <SelectField
+                        placeholder="Assign location"
+                        width="sm"
+                        value={row.locationId ?? "__unassigned__"}
+                        options={[
+                          { value: "__unassigned__", label: "Unassigned" },
+                          ...siteLocations.map((loc) => ({
+                            value: loc.id,
+                            label: locationOptionLabel(loc),
+                          })),
+                        ]}
+                        onValueChange={(next) => {
+                          const locationId = next === "__unassigned__" ? undefined : next;
+                          commitKeywordRows(
+                            keywordRows.map((k, i) => (i === idx ? { ...k, locationId } : k)),
+                          );
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        variant="tool"
+                        size="icon"
+                        icon={Trash2}
+                        className="h-8 w-8 shrink-0"
+                        aria-label={`Remove keyword ${idx + 1}`}
+                        onClick={() => commitKeywordRows(keywordRows.filter((_, i) => i !== idx))}
+                      />
+                      {isLastKeyword ? (
+                        <Button
+                          type="button"
+                          variant="tool"
+                          size="icon"
+                          icon={Plus}
+                          className="h-8 w-8 shrink-0"
+                          aria-label="Add keyword"
+                          onClick={() =>
+                            commitKeywordRows([
+                              ...keywordRows,
+                              {
+                                id: `kw-${site.id}-${Date.now()}`,
+                                keyword: "",
+                              },
+                            ])
+                          }
+                        />
+                      ) : null}
+                    </IntegrationRow>
+                  );
+                })}
+                <IntegrationRow fadeKey={contentFadeKey} label="City">
                   <Field
                     value={cityDraft}
                     onChange={(e) => setCityDraft(e.target.value)}
@@ -669,8 +757,29 @@ export function PropertyOverviewSection({
                     placeholder="City"
                     aria-label="City"
                   />
+                  {extraLocationRows.length === 0 ? (
+                    <Button
+                      type="button"
+                      variant="tool"
+                      size="icon"
+                      icon={Plus}
+                      className="h-8 w-8 shrink-0"
+                      aria-label="Add location"
+                      onClick={() => {
+                        const country = isServiceCountry(serviceCountry) ? serviceCountry : "Canada";
+                        commitExtraLocations([
+                          {
+                            id: `loc-${site.id}-extra-${Date.now()}`,
+                            city: "",
+                            state: nextStateForCountry(stateDraft, country),
+                            country,
+                          },
+                        ]);
+                      }}
+                    />
+                  ) : null}
                 </IntegrationRow>
-                <IntegrationRow label={regionPlaceholder(serviceCountry)}>
+                <IntegrationRow fadeKey={contentFadeKey} label={regionPlaceholder(serviceCountry)}>
                   <ProfileLocationSelect
                     placeholder={regionPlaceholder(serviceCountry)}
                     value={stateDraft}
@@ -687,8 +796,9 @@ export function PropertyOverviewSection({
                     (row.country && isServiceCountry(row.country) ? row.country : "") ||
                     serviceCountry ||
                     inferServiceCountry(row.state, "");
+                  const isLastExtra = idx === extraLocationRows.length - 1;
                   return (
-                    <IntegrationRow key={row.id} label={`City ${idx + 2}`}>
+                    <IntegrationRow fadeKey={contentFadeKey} key={row.id} label={`City ${idx + 2}`}>
                       <Field
                         value={row.city}
                         onChange={(e) => {
@@ -731,35 +841,37 @@ export function PropertyOverviewSection({
                           commitExtraLocations(extraLocationRows.filter((_, i) => i !== idx))
                         }
                       />
+                      {isLastExtra ? (
+                        <Button
+                          type="button"
+                          variant="tool"
+                          size="icon"
+                          icon={Plus}
+                          className="h-8 w-8 shrink-0"
+                          aria-label="Add location"
+                          onClick={() => {
+                            const nextCountry =
+                              (row.country && isServiceCountry(row.country) ? row.country : "") ||
+                              (isServiceCountry(serviceCountry) ? serviceCountry : "Canada");
+                            commitExtraLocations([
+                              ...extraLocationRows,
+                              {
+                                id: `loc-${site.id}-extra-${Date.now()}`,
+                                city: "",
+                                state: nextStateForCountry(row.state, nextCountry),
+                                country: nextCountry,
+                              },
+                            ]);
+                          }}
+                        />
+                      ) : null}
                     </IntegrationRow>
                   );
                 })}
-                <div className="flex h-11 max-h-11 items-center justify-end">
-                  <Button
-                    type="button"
-                    variant="tool"
-                    icon={Plus}
-                    className="h-8"
-                    onClick={() => {
-                      const country = isServiceCountry(serviceCountry) ? serviceCountry : "Canada";
-                      commitExtraLocations([
-                        ...extraLocationRows,
-                        {
-                          id: `loc-${site.id}-extra-${Date.now()}`,
-                          city: "",
-                          state: nextStateForCountry(stateDraft, country),
-                          country,
-                        },
-                      ]);
-                    }}
-                  >
-                    Add location
-                  </Button>
-                </div>
               </>
             ) : (
               <>
-                <IntegrationRow
+                <IntegrationRow fadeKey={contentFadeKey}
                   label="Keyword"
                   value={
                     localKeywords[0]?.keyword || primaryKeyword
@@ -769,7 +881,7 @@ export function PropertyOverviewSection({
                       : ""
                   }
                 />
-                <IntegrationRow
+                <IntegrationRow fadeKey={contentFadeKey}
                   label="City"
                   value={
                     readSiteServiceCity(site)
@@ -781,7 +893,7 @@ export function PropertyOverviewSection({
                       : ""
                   }
                 />
-                <IntegrationRow
+                <IntegrationRow fadeKey={contentFadeKey}
                   label={regionPlaceholder(serviceCountry)}
                   value={readSiteServiceState(site)}
                 />
@@ -790,10 +902,13 @@ export function PropertyOverviewSection({
           </dl>
         </section>
 
-        <section className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)} aria-label="Integrations">
+        <section
+          className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)}
+          aria-label="Integrations"
+        >
           <PanelHeading title="Integrations" />
           <dl className={PROPERTIES_OVERVIEW_DL_CLASS}>
-            <IntegrationRow label="GA4" value={editing ? undefined : ga4}>
+            <IntegrationRow fadeKey={contentFadeKey} label="GA4" value={editing ? undefined : ga4}>
               {editing ? (
                 <Field
                   value={ga4Draft}
@@ -804,7 +919,7 @@ export function PropertyOverviewSection({
                 />
               ) : null}
             </IntegrationRow>
-            <IntegrationRow label="Google Ads" value={editing ? undefined : ads}>
+            <IntegrationRow fadeKey={contentFadeKey} label="Google Ads" value={editing ? undefined : ads}>
               {editing ? (
                 <Field
                   value={adsDraft}
@@ -815,7 +930,7 @@ export function PropertyOverviewSection({
                 />
               ) : null}
             </IntegrationRow>
-            <IntegrationRow label="GBP" value={editing ? undefined : gbp} title={gbpRaw || undefined}>
+            <IntegrationRow fadeKey={contentFadeKey} label="GBP" value={editing ? undefined : gbp} title={gbpRaw || undefined}>
               {editing ? (
                 <Field
                   value={gbpDraft}
@@ -826,7 +941,7 @@ export function PropertyOverviewSection({
                 />
               ) : null}
             </IntegrationRow>
-            <IntegrationRow label="Semrush" value={editing ? undefined : semrush}>
+            <IntegrationRow fadeKey={contentFadeKey} label="Semrush" value={editing ? undefined : semrush}>
               {editing ? (
                 <Field
                   value={semrushDraft}
@@ -840,10 +955,13 @@ export function PropertyOverviewSection({
           </dl>
         </section>
 
-        <section className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)} aria-label="Settings">
+        <section
+          className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)}
+          aria-label="Settings"
+        >
           <PanelHeading title="Settings" />
           <dl className={PROPERTIES_OVERVIEW_DL_CLASS}>
-            <IntegrationRow label="Site URL" value={editing ? undefined : site.siteUrl?.trim() ?? ""}>
+            <IntegrationRow fadeKey={contentFadeKey} label="Site URL" value={editing ? undefined : site.siteUrl?.trim() ?? ""}>
               {editing ? (
                 <Field
                   defaultValue={site.siteUrl ?? ""}
@@ -853,7 +971,7 @@ export function PropertyOverviewSection({
                 />
               ) : null}
             </IntegrationRow>
-            <IntegrationRow label="Username" value={editing ? undefined : site.username?.trim() ?? ""}>
+            <IntegrationRow fadeKey={contentFadeKey} label="Username" value={editing ? undefined : site.username?.trim() ?? ""}>
               {editing ? (
                 <Field
                   defaultValue={site.username ?? ""}
@@ -863,7 +981,7 @@ export function PropertyOverviewSection({
                 />
               ) : null}
             </IntegrationRow>
-            <IntegrationRow label="Password" value={editing ? undefined : site.appPassword?.trim() ? "Set" : ""}>
+            <IntegrationRow fadeKey={contentFadeKey} label="Password" value={editing ? undefined : site.appPassword?.trim() ? "Set" : ""}>
               {editing ? (
                 <Field
                   type="password"
@@ -874,8 +992,8 @@ export function PropertyOverviewSection({
                 />
               ) : null}
             </IntegrationRow>
-            <IntegrationRow label="Editorial" value={editorialTier ?? ""} />
-            <IntegrationRow label="Benchmark" value={editing ? undefined : site.benchmarkCustomTag?.trim() ?? ""}>
+            <IntegrationRow fadeKey={contentFadeKey} label="Editorial" value={editorialTier ?? ""} />
+            <IntegrationRow fadeKey={contentFadeKey} label="Benchmark" value={editing ? undefined : site.benchmarkCustomTag?.trim() ?? ""}>
               {editing ? (
                 <Field
                   defaultValue={site.benchmarkCustomTag ?? ""}
@@ -901,23 +1019,25 @@ export function PropertyOverviewSection({
               disabled={site.enabled === false}
               layout="dropdown"
               editing={editing}
+              fadeKey={contentFadeKey}
             />
           </section>
           <section className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, "h-auto shrink-0")} aria-label="Sitemaps">
             <PanelHeading title="Sitemaps" />
             <div className="flex h-8 shrink-0 items-center overflow-hidden">
-              {sitemapUrls.length > 0 ? (
-                <SelectField
-                  placeholder="Sitemap"
-                  tone="data"
-                  width="full"
-                  value={sitemapPick || sitemapUrls[0]}
-                  options={sitemapUrls.map((url) => ({ value: url, label: sitemapOptionLabel(url) }))}
-                  onValueChange={setSitemapPick}
-                />
-              ) : (
-                <span className="truncate text-base text-white">Not set</span>
-              )}
+              <SelectField
+                key="property-overview-sitemap"
+                placeholder="Sitemap"
+                tone="data"
+                width="full"
+                value={sitemapValue}
+                options={sitemapUrls.map((url) => ({
+                  value: url,
+                  label: sitemapOptionLabel(url),
+                }))}
+                onValueChange={setSitemapPick}
+                disabled={sitemapUrls.length === 0}
+              />
             </div>
           </section>
         </div>

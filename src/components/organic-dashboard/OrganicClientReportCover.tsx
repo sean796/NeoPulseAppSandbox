@@ -11,6 +11,11 @@ import {
   CLIENT_REPORT_ACCORDION_COPY,
   toExportTitleCase,
 } from "@/lib/organic-dashboard/organic-client-report-copy";
+import {
+  clientLogoBoxFallbackText,
+  clientLogoBoxFill,
+  clientLogoBoxStroke,
+} from "@/lib/properties/client-logo-box-theme";
 
 export type OrganicClientReportCoverProps = {
   siteName: string;
@@ -119,9 +124,10 @@ export function OrganicClientReportCover({
   const name = siteName?.trim() || "Client";
   const url = siteUrl?.trim() || "";
   const summaryText = stripNonExistentOmissionClauses(executiveSummary.trim());
-  const isWhiteBox = clientLogoBoxTheme === "white";
-  const boxFill = isWhiteBox ? "#ffffff" : "#02050a";
-  const fallbackTextColor = isWhiteBox ? "#02050a" : "#ffffff";
+  const logoBoxTheme = clientLogoBoxTheme === "white" ? "white" : "black";
+  const boxFill = clientLogoBoxFill(logoBoxTheme);
+  const fallbackTextColor = clientLogoBoxFallbackText(logoBoxTheme);
+  const boxStroke = clientLogoBoxStroke(logoBoxTheme);
 
   return (
     <div className={cn("organic-client-report-export__cover-wrapper", className)}>
@@ -207,7 +213,7 @@ export function OrganicClientReportCover({
               </g>
             )}
 
-            {/* Square Box Outer Stroke - perpendicular to sides with crisp 90-degree corners (rx=0) */}
+            {/* Square Box Outer Stroke - same black/white frame language as Properties */}
             <rect
               x={365}
               y={79.5}
@@ -215,8 +221,8 @@ export function OrganicClientReportCover({
               height={105}
               rx={0}
               fill="none"
-              stroke="#02050a"
-              strokeWidth={4}
+              stroke={boxStroke}
+              strokeWidth={logoBoxTheme === "white" ? 4 : 2}
             />
           </g>
         </svg>

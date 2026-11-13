@@ -1,42 +1,77 @@
 import { describe, expect, it } from "vitest";
 import {
   CHANGELOG_NEWSLETTER_FULL_URL,
+  CHANGELOG_NEWSLETTER_INDUSTRY_SYSTEM,
   CHANGELOG_NEWSLETTER_INTRO_SYSTEM,
-  CHANGELOG_NEWSLETTER_NEWS_PICK_SYSTEM,
+  CHANGELOG_NEWSLETTER_PULSE_WIRE_SEEDS,
   CHANGELOG_NEWSLETTER_READING_SYSTEM,
   CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS,
   CHANGELOG_NEWSLETTER_WEB_MODEL,
   assembleChangelogNewsletter,
   assertNewsletterArticleSourcesReachable,
+  buildChangelogNewsletterIndustryUserPrompt,
   buildChangelogNewsletterReadingUserPrompt,
+  parseChangelogNewsletterIndustryDraft,
   parseChangelogNewsletterIntroDraft,
   parseChangelogNewsletterReadingDraft,
   stripBannedChangelogTopics,
+  type ChangelogNewsletterIndustryDraft,
   type ChangelogNewsletterIntroDraft,
   type ChangelogNewsletterReadingDraft,
 } from "@/lib/changelog/changelog-newsletter-agent";
 import {
+  CHANGELOG_NEWSLETTER_INDUSTRY_NEWS_EXPLAINER,
   CHANGELOG_NEWSLETTER_MORE_YOU_KNOW_EXPLAINER,
   NEO_PULSE_BRAND_ACCENT,
+  NEO_PULSE_NEWSLETTER_MAX_WIDTH,
   NEO_PULSE_NEWSLETTER_TEXT,
   buildChangelogNewsletterEmail,
   buildChangelogNewsletterSubject,
 } from "@/lib/changelog/changelog-newsletter-email";
 
 const INTRO: ChangelogNewsletterIntroDraft = {
-  hook: "AgentMail ships the changelog.",
-  body: "Pulse now ships a tighter AgentMail newsletter and a cleaner Integrations add-client dock, so the weekly update actually feels readable and onboarding a client takes fewer detours.",
+  hook: "Client reports look finished.",
+  body: "Weekly client reports now show the full story without missing sections, and adding a new client takes fewer clicks. The update is about clearer client work, not quieter engineering chores.",
   highlights: [
-    "AgentMail now ships the changelog newsletter on a clean, intentional send path.",
-    "Email trims to Highlights and why-we-shipped reads. Skim first, deep-dive later.",
-    "Integrations gets an add-client dock that does not make you dig for the 'new client' button.",
-    "AI import client wiring lands in the WordPress feature for faster property setup.",
-    "Settings studio flatten keeps live, origin, and app-sandbox on the same page.",
-    "Property dashboard cleanup so client properties feel less like a scavenger hunt.",
+    "Client PDFs finally show every section expanded so nothing looks half-built.",
+    "Local map scans land as a clean circle of pins you can actually brief a client on.",
+    "The changelog screen now has a real home for what shipped this week.",
+    "Weekly update email ships through a cleaner send path you can trust.",
+    "Deep links open the right screen instead of dumping you on Dashboard.",
+    "Organic reports keep going even when one data source hiccups.",
   ],
 };
 
 const READING: ChangelogNewsletterReadingDraft = {
+  articles: [
+    {
+      title: "Why agencies are rebuilding client reporting packs",
+      summary:
+        "Fresh coverage of how marketing teams are tightening report trust so clients stop asking what is missing from the deck.",
+      date: "Nov 11, 2026",
+      sourceUrl: "https://example.com/agency-client-reporting-trust",
+      whyItHelps: "This is the exact pain Pulse just cleaned up in client report PDFs.",
+    },
+    {
+      title: "Local SEO grids still decide who wins the map pack",
+      summary:
+        "New analysis on why dense local scans matter when clients ask how visible they are around town.",
+      date: "Nov 10, 2026",
+      sourceUrl: "https://example.com/local-seo-grid-visibility",
+      whyItHelps: "Ties straight to the denser local scan Pulse just shipped.",
+    },
+    {
+      title: "Internal changelogs are becoming a client trust tool",
+      summary:
+        "Operators are publishing clearer ship notes so leadership can see progress without reading tickets.",
+      date: "Nov 9, 2026",
+      sourceUrl: "https://example.com/internal-changelog-trust",
+      whyItHelps: "Same reason Pulse now has a dedicated changelog home.",
+    },
+  ],
+};
+
+const INDUSTRY: ChangelogNewsletterIndustryDraft = {
   articles: [
     {
       title: "Nvidia earnings spotlight the next wave of AI infrastructure spend",
@@ -88,7 +123,7 @@ const ENTRY = {
 };
 
 describe("changelog newsletter drafts", () => {
-  it("parses editorial hook/body/highlights and reading articles", () => {
+  it("parses editorial hook/body/highlights and both article drafts", () => {
     const intro = parseChangelogNewsletterIntroDraft(JSON.stringify(INTRO));
     expect(intro.hook.length).toBeLessThanOrEqual(48);
     expect(intro.hook.split(/\s+/).length).toBeLessThanOrEqual(8);
@@ -96,6 +131,8 @@ describe("changelog newsletter drafts", () => {
     const draft = parseChangelogNewsletterReadingDraft(JSON.stringify(READING));
     expect(draft.articles).toHaveLength(3);
     expect(draft.articles[0]?.sourceUrl.startsWith("https://")).toBe(true);
+    const industry = parseChangelogNewsletterIndustryDraft(JSON.stringify(INDUSTRY));
+    expect(industry.articles).toHaveLength(3);
   });
 
   it("rejects http article URLs", () => {
@@ -117,42 +154,44 @@ describe("changelog newsletter drafts", () => {
     expect(cleaned.sections?.[0]?.items.some((i) => /rank math/i.test(i))).toBe(false);
   });
 
-  it("locks prompts to lean layout and confident Morning Brew voice", () => {
+  it("locks prompts to plain-English body and two news sections", () => {
     expect(CHANGELOG_NEWSLETTER_WEB_MODEL).toMatch(/:online|sonar/i);
+    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("does NOT write code");
+    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("PULSE's point of view");
+    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("client-owned");
+    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("Banned jargon");
+    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("Never list technical changes");
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("Morning Brew");
-    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("hook");
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("Max 8 words");
-    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("email-safe");
-    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("COMPETENT and INTENTIONAL");
-    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("mystery delivery");
-    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("No more mystery delivery route");
-    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("Never write Languages");
-    expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("1 to 2 sentence");
-    expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("CURRENT industry news");
-    expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("last 14 days");
-    expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("Importance of");
-    expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("NVIDIA");
-    expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("mystery delivery");
-    expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("Never clueless");
-    expect(CHANGELOG_NEWSLETTER_NEWS_PICK_SYSTEM).toContain("web search NOW");
+    expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("WHY this Pulse ship matters");
+    expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("required https URLs");
+    expect(CHANGELOG_NEWSLETTER_INDUSTRY_SYSTEM).toContain("Industry News");
+    expect(CHANGELOG_NEWSLETTER_INDUSTRY_SYSTEM).toContain("fun");
     expect(CHANGELOG_NEWSLETTER_FULL_URL).toContain("/changelog");
-    const grounded = buildChangelogNewsletterReadingUserPrompt(ENTRY, [
-      {
-        title: "NVIDIA Announces CEO Transition",
-        url: "https://nvidianews.nvidia.com/news/nvidia-announces-ceo-transition",
-        date: "Nov 12, 2026",
-      },
-    ]);
-    expect(grounded).toContain("Required live stories");
-    expect(grounded).toContain("nvidianews.nvidia.com");
+    const pulsePrompt = buildChangelogNewsletterReadingUserPrompt(
+      ENTRY,
+      CHANGELOG_NEWSLETTER_PULSE_WIRE_SEEDS,
+    );
+    expect(pulsePrompt).toContain("Required live More you know");
+    expect(pulsePrompt).toContain("seo-report-client-wrong");
+    const industryPrompt = buildChangelogNewsletterIndustryUserPrompt(
+      CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS,
+    );
+    expect(industryPrompt).toContain("Required live Industry News");
+    expect(industryPrompt).toContain("nvidianews.nvidia.com");
   });
 
-  it("locks More you know to three verified wire-seed https URLs", () => {
+  it("locks More you know and Industry News to verified wire-seed https URLs", () => {
+    expect(CHANGELOG_NEWSLETTER_PULSE_WIRE_SEEDS).toHaveLength(3);
     expect(CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS).toHaveLength(3);
-    for (const seed of CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS) {
+    for (const seed of [
+      ...CHANGELOG_NEWSLETTER_PULSE_WIRE_SEEDS,
+      ...CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS,
+    ]) {
       expect(seed.url.startsWith("https://")).toBe(true);
       expect(seed.title.length).toBeGreaterThan(0);
     }
+    expect(CHANGELOG_NEWSLETTER_PULSE_WIRE_SEEDS[0]?.url).toContain("seo-report-client-wrong");
     expect(CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS[0]?.url).toContain("nvidianews.nvidia.com");
     expect(CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS[1]?.url).toContain("techcrunch.com");
     expect(CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS[2]?.url).toContain("searchengineland.com");
@@ -170,7 +209,7 @@ describe("changelog newsletter drafts", () => {
         assertNewsletterArticleSourcesReachable([
           { title: "Agency hosting access control trends", sourceUrl: "https://example.com/parked" },
         ]),
-      ).rejects.toThrow(/not a live matching article/i);
+      ).rejects.toThrow(/not a live matching/i);
     } finally {
       globalThis.fetch = originalFetch;
     }
@@ -191,19 +230,20 @@ describe("changelog newsletter drafts", () => {
             sourceUrl: "https://www.forbes.com/sites/fake/2026/11/01/invented-story/",
           },
         ]),
-      ).rejects.toThrow(/404|hallucinated|not a live matching article/i);
+      ).rejects.toThrow(/404|hallucinated|not a live matching/i);
     } finally {
       globalThis.fetch = originalFetch;
     }
   });
 
-  it("assembles hook, body, rewritten highlights, and changelog url", () => {
-    const payload = assembleChangelogNewsletter(ENTRY, INTRO, READING);
+  it("assembles hook, body, Pulse articles, and industry articles", () => {
+    const payload = assembleChangelogNewsletter(ENTRY, INTRO, READING, INDUSTRY);
     expect(payload.hook).toBe(INTRO.hook);
-    expect(payload.body).toContain("AgentMail");
-    expect(payload.highlights[0]).toContain("AgentMail");
+    expect(payload.body).toContain("client");
+    expect(payload.highlights[0]).toContain("PDFs");
     expect(payload.changelogUrl).toBe(CHANGELOG_NEWSLETTER_FULL_URL);
-    expect(payload.articles[0]?.whyItHelps).toContain("AI budgets");
+    expect(payload.articles[0]?.whyItHelps).toContain("Pulse");
+    expect(payload.industryArticles[0]?.whyItHelps).toContain("AI budgets");
   });
 });
 
@@ -213,11 +253,11 @@ describe("changelog newsletter email", () => {
       ENTRY,
       {
         ...INTRO,
-        hook: "AgentMail ships changelog", // short enough for schema; subject helper still word-safe
+        hook: "Client reports look finished",
       },
       READING,
+      INDUSTRY,
     );
-    // Force a long hook past schema by mutating after assemble.
     const long = {
       ...payload,
       hook: "Changelog newsletter now ships through AgentMail and Integrations gets a new dock",
@@ -229,16 +269,20 @@ describe("changelog newsletter email", () => {
     expect(subject.startsWith("Neo Pulse: ")).toBe(true);
   });
 
-  it("renders lean three-block layout with More you know separation", () => {
-    const payload = assembleChangelogNewsletter(ENTRY, INTRO, READING);
+  it("renders full-width framed sections with white/green only", () => {
+    const payload = assembleChangelogNewsletter(ENTRY, INTRO, READING, INDUSTRY);
     const email = buildChangelogNewsletterEmail(payload);
 
-    expect(email.subject).toBe("Neo Pulse: AgentMail ships the changelog.");
+    expect(email.subject).toBe("Neo Pulse: Client reports look finished.");
     expect(email.subject.length).toBeLessThanOrEqual(60);
-    expect(email.subject).not.toMatch(/\ba new d\b/i);
-    expect(email.preheader).toContain("AgentMail");
+    expect(email.preheader).toContain("client");
     expect(email.html).toContain(NEO_PULSE_BRAND_ACCENT);
     expect(email.html).toContain(NEO_PULSE_NEWSLETTER_TEXT);
+    expect(email.html).toContain(`max-width:${NEO_PULSE_NEWSLETTER_MAX_WIDTH}px`);
+    expect(email.html).toContain(`width="${NEO_PULSE_NEWSLETTER_MAX_WIDTH}"`);
+    expect(email.html).not.toContain("width:600px");
+    expect(email.html).not.toContain('width="600"');
+    expect(email.html).toContain("width:4px;background-color:#84bd00");
     expect(email.html).toContain(INTRO.hook);
     expect(email.html).toContain(INTRO.body);
     expect(email.html).toContain("Full changelog →");
@@ -246,31 +290,27 @@ describe("changelog newsletter email", () => {
     expect(email.html).toContain("Highlights");
     expect(email.html).toContain("More you know");
     expect(email.html).toContain(CHANGELOG_NEWSLETTER_MORE_YOU_KNOW_EXPLAINER);
-    expect(email.html).not.toMatch(/agentic|dynamically curated|AI-powered recommendations/i);
-    expect(email.html).toContain("padding:40px 0 12px 0");
+    expect(email.html).toContain("Industry News");
+    expect(email.html).toContain(CHANGELOG_NEWSLETTER_INDUSTRY_NEWS_EXPLAINER);
     expect(email.html).toContain("Read →");
     expect(email.html).not.toContain("Do this week");
     expect(email.html).not.toContain("Languages");
     expect(email.html).not.toContain("<img");
     expect(email.html).not.toContain("\u2014");
-    // White body + green accents only: no grey-on-dark muted copy.
     expect(email.html).not.toContain("#a1a1aa");
     expect(email.html).not.toContain("#d4d4d8");
     expect(email.html).not.toContain("#71717a");
     expect(email.html).not.toContain("#f4f4f5");
     expect(email.html).not.toContain("#fafafa");
 
-    const fullIdx = email.html.indexOf("Full changelog →");
-    const highlightsIdx = email.html.indexOf("Highlights");
     const moreIdx = email.html.indexOf("More you know");
-    expect(fullIdx).toBeGreaterThan(-1);
-    expect(highlightsIdx).toBeGreaterThan(fullIdx);
-    expect(moreIdx).toBeGreaterThan(highlightsIdx);
+    const industryIdx = email.html.indexOf("Industry News");
+    expect(moreIdx).toBeGreaterThan(-1);
+    expect(industryIdx).toBeGreaterThan(moreIdx);
 
-    expect(email.text).toContain("Full changelog →");
-    expect(email.text).toContain(CHANGELOG_NEWSLETTER_FULL_URL);
     expect(email.text).toContain("MORE YOU KNOW");
-    expect(email.text).toContain(CHANGELOG_NEWSLETTER_MORE_YOU_KNOW_EXPLAINER);
+    expect(email.text).toContain("INDUSTRY NEWS");
+    expect(email.text).toContain(CHANGELOG_NEWSLETTER_INDUSTRY_NEWS_EXPLAINER);
     expect(email.text).not.toContain("DO THIS WEEK");
     expect(email.text).not.toContain("LANGUAGES");
   });

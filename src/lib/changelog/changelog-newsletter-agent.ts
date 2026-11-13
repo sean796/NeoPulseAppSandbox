@@ -1,8 +1,7 @@
 /**
  * Changelog newsletter draft: Morning Brew / TLDR voice.
- * Lean layout only: summary (hook + body) + Highlights + More you know.
- * Editorial pass (hook + body + highlights) + web More you know articles.
- * Never Languages, hero image, or Do this week.
+ * Layout: summary (hook + body) + Highlights + More you know (Pulse-relative)
+ * + Industry News (fun stories). Never Languages, hero, or Do this week.
  */
 
 import { z } from "zod";
@@ -14,7 +13,7 @@ export const CHANGELOG_NEWSLETTER_INTRO_MODEL = "deepseek/deepseek-v4.1-flash";
 /** @deprecated alias */
 export const CHANGELOG_NEWSLETTER_EDITORIAL_MODEL = CHANGELOG_NEWSLETTER_INTRO_MODEL;
 
-/** Web search model for More you know articles. */
+/** Web search model for article cards. */
 export const CHANGELOG_NEWSLETTER_WEB_MODEL = "openai/gpt-4o:online";
 
 /** Live app changelog page. */
@@ -52,13 +51,21 @@ export const changelogNewsletterIntroDraftSchema = z.object({
   highlights: z.array(z.string().min(1)).min(5).max(8),
 });
 
-/** Web-search pass: CEO supporting reading list. */
+/** Pulse-relative More you know. */
 export const changelogNewsletterReadingDraftSchema = z.object({
+  articles: z.array(newsletterArticleSchema).length(3),
+});
+
+/** Fun Industry News stories. */
+export const changelogNewsletterIndustryDraftSchema = z.object({
   articles: z.array(newsletterArticleSchema).length(3),
 });
 
 export type ChangelogNewsletterIntroDraft = z.infer<typeof changelogNewsletterIntroDraftSchema>;
 export type ChangelogNewsletterReadingDraft = z.infer<typeof changelogNewsletterReadingDraftSchema>;
+export type ChangelogNewsletterIndustryDraft = z.infer<
+  typeof changelogNewsletterIndustryDraftSchema
+>;
 
 /** @deprecated */
 export type ChangelogNewsletterEditorialDraft = ChangelogNewsletterIntroDraft;
@@ -83,12 +90,10 @@ export type ChangelogNewsletterPayload = ChangelogNewsletterHighlights & {
   hook: string;
   body: string;
   changelogUrl: string;
+  /** Pulse-relative supporting articles (More you know). */
   articles: z.infer<typeof newsletterArticleSchema>[];
-};
-
-/** @deprecated use hook + body */
-export type ChangelogNewsletterPayloadLegacyIntro = {
-  introParagraphs: string[];
+  /** Fun industry stories (Industry News). */
+  industryArticles: z.infer<typeof newsletterArticleSchema>[];
 };
 
 /** @deprecated */
@@ -143,17 +148,33 @@ Commit subjects:
 ${commitBlock}`;
 }
 
-export const CHANGELOG_NEWSLETTER_INTRO_SYSTEM = `You write the Neo Pulse product newsletter in a Morning Brew / TLDR voice.
+export const CHANGELOG_NEWSLETTER_INTRO_SYSTEM = `You write the Neo Pulse product newsletter in a Morning Brew / TLDR voice for a CEO / agency owner who does NOT write code.
 
-Layout this copy feeds (locked, lean):
-- Summary block only (hook + body), then Highlights, then More you know elsewhere.
+Perspective (non-negotiable):
+- Write from PULSE's point of view. Neo Pulse is the product that shipped. The reader uses Pulse to run their agency.
+- Never sound like a client-owned changelog or a client marketing brief.
+- Do not lead with "client-facing stuff got the most love" energy.
+- Good: "Pulse now expands every section in report PDFs so the pack reads finished."
+- Bad: "This week the client-facing stuff got the most love."
+- You may mention client work as the outcome of a Pulse capability, but Pulse is the subject of every sentence that can take one.
+
+Audience:
+- Reader has never opened the codebase. They do not know commits, modules, CI, schemas, APIs, or file paths.
+- Explain outcomes in plain English: what Pulse made easier, faster, clearer, or more trustworthy.
+- Never list technical changes. Never dump jargon. Translate every ship into product meaning.
+
+Banned jargon (never use these words or close cousins in hook, body, or highlights):
+commit, commits, module, refactor, flatten, schema, API, endpoint, payload, hydrate, deploy, pipeline, worker, JSON, TypeScript, PHP, CI, gate, PR, merge, soft-reset, sandbox, origin, repo, OpenRouter, AgentMail (ok only if explained as "the email Pulse sends you"), hash, UUID, CLS, DOM, Tailwind.
+
+Layout this copy feeds:
+- Summary block (hook + body), then Highlights. More you know and Industry News are written elsewhere.
 - Never write Languages, hero image, Do this week, or extra sections into the copy.
 
 Voice:
 - Punchy, conversational, slightly witty, self-aware.
-- Fun to skim over morning coffee. Millennial tech-newsletter energy without cringe, without emoji spam, without trying too hard.
-- Short sentences. Zero corporate changelog speak. Zero "synergy" energy.
-- Humor must sound COMPETENT and INTENTIONAL. Upgrade energy, not apology energy. Neo Pulse always knew what it was doing.
+- Fun to skim over morning coffee. Millennial tech-newsletter energy without cringe, without emoji spam.
+- Short sentences. Zero corporate changelog speak.
+- Humor must sound COMPETENT and INTENTIONAL. Upgrade energy, not apology energy.
 
 Grounding:
 - The user pack is the ONLY source of facts.
@@ -161,15 +182,14 @@ Grounding:
 - Never use the em dash character.
 
 Write:
-1) hook: a SHORT email-safe headline. Max 8 words and max 48 characters. Complete thought. Never end mid-phrase ("a new d…"). This becomes the Gmail subject, so keep it tight (examples: "AgentMail ships the changelog.", "Integrations gets an add-client dock.").
-2) body: one short paragraph that explains what shipped and why it matters, newsletter style. Not a feature dump. Put the longer detail here, not in the hook.
-3) highlights: 5 to 8 bullets with personality. Same facts as the pack, rewritten so they feel alive. Still specific and true.
+1) hook: SHORT email-safe headline. Max 8 words and max 48 characters. Complete thought. Never end mid-phrase. Gmail subject from Pulse's POV (examples: "Pulse reports look finished.", "Pulse makes adding a site simpler.").
+2) body: one short plain-English paragraph about what Pulse shipped and why it matters. Not a feature dump. Pulse is the actor.
+3) highlights: 5 to 8 bullets with personality. Same facts as the pack, rewritten as Pulse outcomes. Lead with what Pulse did.
 
 Banned tone:
-- Dry release-note speak ("Significant improvements to…", "extensive refactoring", academic filler).
-- Confidence killers that imply Neo Pulse was confused or improvising: "mystery delivery", "no idea what we were doing", "finally figured out", "we were lost", "oops", "chaos inbox", "no more mystery", or any punchline that sounds like we lacked a plan.
-- Good: "Changelog newsletter now ships through AgentMail on a clean, intentional send path."
-- Bad: "No more mystery delivery route."
+- Dry release-note speak ("Significant improvements to…", "extensive refactoring").
+- Confidence killers: "mystery delivery", "no idea what we were doing", "finally figured out", "we were lost", "oops", "chaos inbox".
+- Client-owned framing: "the client-facing stuff…", treating the newsletter like a client deliverable instead of a Pulse product update.
 
 Output JSON only:
 {
@@ -178,28 +198,58 @@ Output JSON only:
   "highlights": ["...", "..."]
 }`;
 
-export const CHANGELOG_NEWSLETTER_READING_SYSTEM = `You curate the "More you know" block for a Neo Pulse newsletter (Morning Brew / TLDR voice).
+/** More you know pick: find live Pulse-relative article URLs only. */
+export const CHANGELOG_NEWSLETTER_PULSE_PICK_SYSTEM = `You find 3 CURRENT, real https news URLs that help a non-technical CEO understand WHY this Neo Pulse ship matters.
 
-Job: pick the 3 most important, engaging CURRENT industry news stories worth reading with coffee. Think top-of-feed tech / AI / marketing / agency news right now (examples of the vibe: major NVIDIA or OpenAI developments, big platform policy shifts, notable AI-in-ads or CMS stories). Not evergreen explainers. Not a rewrite of the Pulse changelog.
+Themes must come from the user pack (client reporting trust, local SEO / map visibility, internal changelog / ops clarity, client onboarding, search ranking shifts, AI tools for agencies). This is NOT fun Industry News. Do not pick random NVIDIA/OpenAI headlines unless they clearly explain a theme from THIS ship.
 
-The user pack is context for optional witty kickers only. Do NOT force every story to be about a Pulse feature. Prefer real headline news first.
+Hard rules:
+- Use web search NOW. Return only live https article URLs you actually opened.
+- Prefer roughly the last 14 days (stretch to 30 only if needed).
+- Recognizable publishers only (Digiday, AdExchanger, Search Engine Land, Search Engine Journal, The Verge, TechCrunch, Wired, Reuters, Bloomberg, CNBC, FT, WSJ, etc.).
+- Never invent URLs or domains. Never marketingland.com filler. Never parked domains.
+- Banned evergreen: "Importance of…", "Crucial for…", "What You Need to Know", "Future of…", vague listicles with no news hook.
+- Never WordPress / GA4 / Semrush / GSC install how-tos.
+- Never use the em dash character.
+
+Output JSON only:
+{
+  "stories": [{ "title": "...", "url": "https://...", "date": "Nov 12, 2026" }]
+}`;
+
+/** More you know cards: write against required Pulse-relative seed URLs. */
+export const CHANGELOG_NEWSLETTER_READING_SYSTEM = `You write punchy "More you know" cards for a Neo Pulse newsletter.
+
+Job: explain 3 required live articles that help a non-technical CEO understand WHY this Pulse ship matters. Use ONLY the required https URLs in the user message. sourceUrl must match exactly.
+
+Voice:
+- Punchy. 1 to 2 sentence summaries max. No engineering jargon.
+- whyItHelps: one short kicker that ties the article to what Pulse just shipped. Plain English. Never "This is why Pulse shipped…" formula. Never clueless / mystery-delivery energy.
+
+Hard rules:
+- Never invent or swap URLs.
+- Never use the em dash character.
+- Never mention Rank Math or EMCP.
+
+Output JSON only:
+{
+  "articles": [{ "title": "...", "summary": "...", "date": "Nov 12, 2026", "sourceUrl": "https://...", "whyItHelps": "..." }]
+}`;
+
+/** Industry News: fun / engaging top stories (separate section). */
+export const CHANGELOG_NEWSLETTER_INDUSTRY_SYSTEM = `You write punchy cards for the "Industry News" block in a Neo Pulse newsletter.
+
+Job: make 3 fun, engaging CURRENT industry stories feel worth a coffee skim. Tech / AI / marketing / agency / search vibes. Not a rewrite of the Pulse changelog. Not "why we shipped" pieces.
 
 Voice:
 - Punchy. 1 to 2 sentence summaries max.
-- whyItHelps: one short kicker. Prefer a light tie to how agencies / Pulse operators should read the story this week. If a natural tie to a ship item exists, use it. If not, say why the story matters for people running marketing/SEO stacks. Never the stiff "This is why Pulse shipped…" formula.
-- Competent wit only. Never clueless or "mystery delivery" energy.
+- whyItHelps: one short witty kicker for agency folks. Light and human. Not stiff.
+- Competent wit only. Never clueless or mystery-delivery energy.
 
 Hard rules:
-- Use web search NOW. Every item needs a real https sourceUrl from a live article page you found.
-- Prefer stories from roughly the last 14 days (stretch to 30 only if that is what is actually breaking).
-- Recognizable publishers (Reuters, Bloomberg, WSJ, FT, The Verge, TechCrunch, Wired, Digiday, AdExchanger, Search Engine Land, CNBC, etc.).
-- Never invent URLs, titles, dates, or publisher domains. Page title must match articles.title.
-- Return exactly 3 articles: the week's top stories, ranked by importance/engagement, not by keyword match to the pack.
-- Banned: WordPress / GA4 / Semrush / GSC install how-tos, language intros, vendor 101 docs, changelogs, docs hubs, parked domains.
-- Banned filler / evergreen: "Importance of…", "Crucial for…", "Still a Powerful…", "Transforming…", "What You Need to Know", "Future of Email Marketing", vague listicles with no news hook.
-- Banned confidence killers: mystery delivery, no idea, finally figured out, we were lost, oops, chaos inbox.
-- Never mention Rank Math or EMCP.
+- Use ONLY the required live https URLs provided in the user message. sourceUrl must match exactly. Never invent replacements.
 - Never use the em dash character.
+- Never mention Rank Math or EMCP.
 
 Output JSON only:
 {
@@ -209,12 +259,27 @@ Output JSON only:
 /** @deprecated */
 export const CHANGELOG_NEWSLETTER_SYSTEM = CHANGELOG_NEWSLETTER_READING_SYSTEM;
 
+export const CHANGELOG_NEWSLETTER_NEWS_PICK_SYSTEM = `You pick the 3 most important, engaging CURRENT industry news stories for a Neo Pulse newsletter (tech / AI / marketing / agency / search).
+
+Hard rules:
+- Use web search NOW. Return only live https article URLs you actually found.
+- Prefer roughly the last 14 days.
+- Recognizable publishers only.
+- Never invent URLs. Never evergreen "Importance of…" pieces.
+- Never use the em dash character.
+
+Output JSON only:
+{
+  "stories": [{ "title": "...", "url": "https://...", "date": "Nov 12, 2026" }]
+}`;
+
 export function buildChangelogNewsletterIntroUserPrompt(
   entry: ChangelogNewsletterHighlights,
 ): string {
   return `${packBlock(entry)}
 
-Write the Morning Brew style hook, body, and highlights for this ship. Return the editorial JSON.`;
+Write the Morning Brew style hook, body, and highlights for this ship.
+Audience reminder: CEO / agency owner who does not know the code. Plain English outcomes only. Return the editorial JSON.`;
 }
 
 export type ChangelogNewsletterNewsSeed = {
@@ -224,9 +289,30 @@ export type ChangelogNewsletterNewsSeed = {
 };
 
 /**
- * Code-owned live wire seeds for More you know. Titles must overlap each page's
- * document title so assertNewsletterArticleSourcesReachable can verify them.
- * Do not invent replacements in prompts; send path uses these exact URLs.
+ * Code-owned live wire seeds for Pulse-relative More you know.
+ * Themes match this ship: client reporting trust, local maps, organic report honesty.
+ */
+export const CHANGELOG_NEWSLETTER_PULSE_WIRE_SEEDS: ChangelogNewsletterNewsSeed[] = [
+  {
+    title: "Don't wait for the SEO report to tell clients something's wrong",
+    url: "https://searchengineland.com/seo-report-client-wrong-500715",
+    date: "Nov 5, 2026",
+  },
+  {
+    title: "Inside Google Maps: 72 ranking signals and the architecture behind local search",
+    url: "https://searchengineland.com/inside-google-maps-72-ranking-signals-and-the-architecture-behind-local-search-486906",
+    date: "Oct 15, 2026",
+  },
+  {
+    title: "Google Search Console performance report data bug Nov 9 -11",
+    url: "https://searchengineland.com/google-search-console-performance-report-data-bug-nov-9-11-501899",
+    date: "Nov 12, 2026",
+  },
+];
+
+/**
+ * Code-owned live wire seeds for Industry News fun stories.
+ * Titles must overlap each page's document title for live URL assert.
  */
 export const CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS: ChangelogNewsletterNewsSeed[] = [
   {
@@ -260,38 +346,46 @@ export const changelogNewsletterNewsSeedsSchema = z.object({
 
 export type ChangelogNewsletterNewsSeeds = z.infer<typeof changelogNewsletterNewsSeedsSchema>;
 
-export const CHANGELOG_NEWSLETTER_NEWS_PICK_SYSTEM = `You pick the 3 most important, engaging CURRENT industry news stories for a Neo Pulse newsletter (tech / AI / marketing / agency / search).
-
-Hard rules:
-- Use web search NOW. Return only live https article URLs you actually found.
-- Prefer roughly the last 14 days.
-- Recognizable publishers only.
-- Never invent URLs. Never evergreen "Importance of…" pieces.
-- Never use the em dash character.
-
-Output JSON only:
-{
-  "stories": [{ "title": "...", "url": "https://...", "date": "Nov 12, 2026" }]
-}`;
-
 export function buildChangelogNewsletterNewsPickUserPrompt(): string {
   const today = new Date().toISOString().slice(0, 10);
   return `Today is ${today}. Web-search and return exactly 3 top current industry news stories as JSON.`;
 }
 
+export function buildChangelogNewsletterPulsePickUserPrompt(
+  entry: ChangelogNewsletterHighlights,
+): string {
+  const today = new Date().toISOString().slice(0, 10);
+  return `${packBlock(entry)}
+
+Today is ${today}. Web-search and return exactly 3 live Pulse-relative supporting stories as JSON.
+Real https news URLs only. No evergreen filler. No invented domains.`;
+}
+
 export function buildChangelogNewsletterReadingUserPrompt(
   entry: ChangelogNewsletterHighlights,
-  seeds?: ChangelogNewsletterNewsSeed[],
+  seeds: ChangelogNewsletterNewsSeed[],
 ): string {
-  const seedBlock =
-    seeds && seeds.length > 0
-      ? `\n\nRequired live stories (use THESE exact https URLs; do not invent replacements):\n${seeds
-          .map((s, i) => `${i + 1}. ${s.title}${s.date ? ` (${s.date})` : ""}\n   ${s.url}`)
-          .join("\n")}`
-      : "";
-  return `${packBlock(entry)}${seedBlock}
+  const seedBlock = seeds
+    .map((s, i) => `${i + 1}. ${s.title}${s.date ? ` (${s.date})` : ""}\n   ${s.url}`)
+    .join("\n");
+  return `${packBlock(entry)}
 
-Write punchy More you know cards for the three required live stories above. Return the reading-list JSON (articles only). sourceUrl must match the required URLs exactly.`;
+Required live More you know stories (use THESE exact https URLs; do not invent replacements):
+${seedBlock}
+
+Write punchy More you know cards for these three Pulse-relative stories. Return the reading-list JSON (articles only). sourceUrl must match exactly.`;
+}
+
+export function buildChangelogNewsletterIndustryUserPrompt(
+  seeds: ChangelogNewsletterNewsSeed[],
+): string {
+  const seedBlock = seeds
+    .map((s, i) => `${i + 1}. ${s.title}${s.date ? ` (${s.date})` : ""}\n   ${s.url}`)
+    .join("\n");
+  return `Required live Industry News stories (use THESE exact https URLs; do not invent replacements):
+${seedBlock}
+
+Write punchy Industry News cards for these three fun stories. Return the industry JSON (articles only). sourceUrl must match exactly.`;
 }
 
 export function parseChangelogNewsletterNewsSeeds(raw: string): ChangelogNewsletterNewsSeeds {
@@ -311,6 +405,16 @@ export function parseChangelogNewsletterIntroDraft(raw: string): ChangelogNewsle
 
 export function parseChangelogNewsletterReadingDraft(raw: string): ChangelogNewsletterReadingDraft {
   return parseModelJson(raw, changelogNewsletterReadingDraftSchema, "changelog newsletter reading draft");
+}
+
+export function parseChangelogNewsletterIndustryDraft(
+  raw: string,
+): ChangelogNewsletterIndustryDraft {
+  return parseModelJson(
+    raw,
+    changelogNewsletterIndustryDraftSchema,
+    "changelog newsletter industry draft",
+  );
 }
 
 /** @deprecated */
@@ -402,7 +506,7 @@ export async function assertNewsletterArticleSourcesReachable(
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
       throw new Error(
-        `More you know source is not a live matching article: "${article.title}" → ${article.sourceUrl} (${detail}). Re-run so web search returns real publisher URLs.`,
+        `Article source is not a live matching page: "${article.title}" → ${article.sourceUrl} (${detail}). Re-run so web search returns real publisher URLs.`,
       );
     }
   }
@@ -412,6 +516,7 @@ export function assembleChangelogNewsletter(
   entry: ChangelogNewsletterHighlights,
   intro: ChangelogNewsletterIntroDraft,
   reading: ChangelogNewsletterReadingDraft,
+  industry: ChangelogNewsletterIndustryDraft,
   changelogUrl: string = CHANGELOG_NEWSLETTER_FULL_URL,
 ): ChangelogNewsletterPayload {
   const cleaned = stripBannedChangelogTopics(entry);
@@ -442,5 +547,6 @@ export function assembleChangelogNewsletter(
     body,
     changelogUrl: changelogUrl.trim(),
     articles: reading.articles,
+    industryArticles: industry.articles,
   };
 }

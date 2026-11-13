@@ -1,13 +1,27 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Button, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui";
-import { BULK_HEADER_SELECT_TRIGGER } from "@/components/keyword-research/bulk/bulk-workspace-header-styles";
+import {
+  Button,
+  Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/ui";
+import {
+  BULK_HEADER_FIELD,
+  BULK_HEADER_SELECT_TRIGGER,
+} from "@/components/keyword-research/bulk/bulk-workspace-header-styles";
 import { SEO_WORKSPACE_TYPO_CLASS } from "@/components/seo/seo-workspace-layout";
 import {
   fetchChangelogArchive,
   fetchUncoveredCommits,
   saveChangelogEntry,
+  saveChangelogSchedule,
   type ChangelogArchivePayload,
   type ChangelogEntry,
+  type ChangelogNewsletterSchedule,
+  type ChangelogWeekday,
 } from "@/lib/changelog/changelog-api";
 import {
   appChangelogWriterAgent,
@@ -17,6 +31,24 @@ import { loadApiKey } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 const DUE_AFTER_DAYS = 7;
+
+const WEEKDAYS: { value: ChangelogWeekday; label: string }[] = [
+  { value: "monday", label: "Monday" },
+  { value: "tuesday", label: "Tuesday" },
+  { value: "wednesday", label: "Wednesday" },
+  { value: "thursday", label: "Thursday" },
+  { value: "friday", label: "Friday" },
+  { value: "saturday", label: "Saturday" },
+  { value: "sunday", label: "Sunday" },
+];
+
+const DEFAULT_SCHEDULE: ChangelogNewsletterSchedule = {
+  enabled: true,
+  weekday: "friday",
+  time: "06:00",
+  timezone: "America/Edmonton",
+  to: "sean@neodigital.ca",
+};
 
 function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
@@ -57,12 +89,19 @@ export function ChangelogTabContent(): React.ReactElement {
   const [monthFilter, setMonthFilter] = useState<string>("all");
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [savingSchedule, setSavingSchedule] = useState(false);
+  const [scheduleDraft, setScheduleDraft] = useState<ChangelogNewsletterSchedule>(DEFAULT_SCHEDULE);
+  const [nextRun, setNextRun] = useState<string>("");
 
   const loadArchive = useCallback(async () => {
     setLoading(true);
     try {
       const payload = await fetchChangelogArchive();
       setArchive(payload);
+      if (payload.schedule) {
+        setScheduleDraft(payload.schedule);
+      }
+      setNextRun(payload.nextRun ?? "");
       const newestId = [...payload.entries].sort(byNewest)[0]?.id ?? null;
       setSelectedId((prev) => prev ?? newestId);
     } catch {
@@ -118,11 +157,35 @@ export function ChangelogTabContent(): React.ReactElement {
     }
   }, []);
 
+  const handleSaveSchedule = useCallback(async () => {
+    setSavingSchedule(true);
+    try {
+      const result = await saveChangelogSchedule({
+        enabled: scheduleDraft.enabled,
+        weekday: scheduleDraft.weekday,
+        time: scheduleDraft.time,
+        to: scheduleDraft.to,
+      });
+      setScheduleDraft(result.schedule);
+      setNextRun(result.nextRun ?? "");
+      setArchive((prev) =>
+        prev
+          ? { ...prev, schedule: result.schedule, nextRun: result.nextRun }
+          : prev,
+      );
+    } catch {
+      /* ignore */
+    } finally {
+      setSavingSchedule(false);
+    }
+  }, [scheduleDraft]);
+
   const shownEntry = selectedEntry;
   const sourceStatus = archive?.source ?? null;
   const sourceLine = sourceStatus
     ? `${sourceStatus.uncoveredCount} commit${sourceStatus.uncoveredCount === 1 ? "" : "s"} waiting`
     : "Loading archive...";
+  const scheduleStatus = nextRun || (scheduleDraft.enabled ? "Schedule loaded" : "Auto-send off");
 
   return (
     <div
@@ -194,16 +257,92 @@ export function ChangelogTabContent(): React.ReactElement {
                   {sourceLine}
                 </span>
               </div>
+              <div className="inline-flex h-8 min-w-[14rem] max-w-sm shrink-0 items-center rounded-none bg-zinc-900 px-2.5 text-foreground">
+                <span className="min-w-0 flex-1 truncate text-left text-base tabular-nums text-muted-foreground">
+                  {scheduleStatus}
+                </span>
+              </div>
             </div>
-            <div className="flex h-10 min-h-10 w-full min-w-0 shrink-0 items-center justify-between border-b border-white/10 bg-ui-field/95 px-3">
-              <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
+            <div className="flex h-11 min-h-11 w-full min-w-0 shrink-0 items-center gap-2 overflow-x-auto border-b border-white/10 bg-ui-field/95 px-3">
+              <Select
+                value={scheduleDraft.enabled ? "on" : "off"}
+                onValueChange={(v) =>
+                  setScheduleDraft((prev) => ({ ...prev, enabled: v === "on" }))
+                }
+              >
+                <SelectTrigger
+                  aria-label="Auto-send enabled"
+                  className={cn(BULK_HEADER_SELECT_TRIGGER, "w-[8.5rem] shrink-0")}
+                >
+                  <SelectValue placeholder="Auto-send" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="on">Auto-send on</SelectItem>
+                  <SelectItem value="off">Auto-send off</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select
+                value={scheduleDraft.weekday}
+                onValueChange={(v) =>
+                  setScheduleDraft((prev) => ({
+                    ...prev,
+                    weekday: v as ChangelogWeekday,
+                  }))
+                }
+              >
+                <SelectTrigger
+                  aria-label="Send weekday"
+                  className={cn(BULK_HEADER_SELECT_TRIGGER, "w-[9rem] shrink-0")}
+                >
+                  <SelectValue placeholder="Weekday" />
+                </SelectTrigger>
+                <SelectContent>
+                  {WEEKDAYS.map((day) => (
+                    <SelectItem key={day.value} value={day.value}>
+                      {day.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Input
+                type="time"
+                aria-label="Send time America/Edmonton"
+                value={scheduleDraft.time}
+                onChange={(e) =>
+                  setScheduleDraft((prev) => ({ ...prev, time: e.target.value }))
+                }
+                className={cn(BULK_HEADER_FIELD, "w-[7.5rem] shrink-0")}
+              />
+              <Input
+                type="email"
+                aria-label="Send to email"
+                placeholder="Send to"
+                value={scheduleDraft.to}
+                onChange={(e) =>
+                  setScheduleDraft((prev) => ({ ...prev, to: e.target.value }))
+                }
+                className={cn(BULK_HEADER_FIELD, "w-[14rem] shrink-0")}
+              />
+              <div className="ml-auto flex shrink-0 items-center gap-1.5">
                 {due ? (
                   <span className="shrink-0 bg-amber-400/15 px-2.5 py-1 text-base text-amber-300">
                     New entry due
                   </span>
-                ) : null}
-              </div>
-              <div className="flex shrink-0 items-center gap-1.5">
+                ) : (
+                  <span className="invisible shrink-0 bg-amber-400/15 px-2.5 py-1 text-base">
+                    New entry due
+                  </span>
+                )}
+                <Button
+                  variant="secondary"
+                  type="button"
+                  onClick={() => void handleSaveSchedule()}
+                  disabled={savingSchedule || loading}
+                >
+                  <span className="inline-block w-[4.5rem] text-center">
+                    {savingSchedule ? "Saving" : "Save"}
+                  </span>
+                </Button>
                 <Button
                   variant="run"
                   type="button"

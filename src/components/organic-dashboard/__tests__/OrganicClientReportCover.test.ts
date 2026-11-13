@@ -32,7 +32,7 @@ describe("OrganicClientReportCover client logo box", () => {
 
   it("defaults to a black box and shows the site name only when there is no logo", () => {
     const html = renderCover({ ...base, clientLogoUrl: "" });
-    expect(html).toContain('fill="#02050a"');
+    expect(html).toContain('fill="#000000"');
     expect(html).not.toContain('data-report-cover-logo="client"');
     expect(html).toContain(">In the Shade</text>");
   });

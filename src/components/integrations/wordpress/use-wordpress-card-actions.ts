@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { KB_FILES_STORAGE_KEY, type StoredFile, type WordPressSite } from "../types";
 import { notify, notifyHeaderError } from "@/lib/app-notifications";
 import { NOTIFY_ADD_GA4_PROPERTY_ID_FOR_THIS_SITE_CLICK_, NOTIFY_ENTITY_POST_CREATED_DATE_MODIFIER, NOTIFY_GMB_STATS_ADDED_TO_KNOWLEDGE_BASE, NOTIFY_NO_GMB_PERFORMANCE_DATA_RETURNED, NOTIFY_POST_CREATED_NO_DATE_MODIFIER, notifyAcfRestFailedX, notifyEntityPostFailedX, notifyGmbStatsSavedButApiReportedXUseL } from "@/lib/notify-messages";
@@ -19,6 +19,17 @@ export function useWordPressCardActions(site: WordPressSite) {
   const [isPullingGMBStats, setIsPullingGMBStats] = useState(false);
   const pullGMBInProgressRef = useRef(false);
   const [neoFieldsTestResult, setNeoFieldsTestResult] = useState<NeoFieldsTestResult & { dateModifierSet?: boolean; postId?: number; postUrl?: string } | null>(null);
+  /** Last result text for two-column rows (never empty: use "—"). */
+  const [gmbResult, setGmbResult] = useState("—");
+  const [gaResult, setGaResult] = useState("—");
+  const [gmbStatsResult, setGmbStatsResult] = useState("—");
+
+  useEffect(() => {
+    setGmbResult("—");
+    setGaResult("—");
+    setGmbStatsResult("—");
+    setNeoFieldsTestResult(null);
+  }, [site.id]);
 
   const handlePullGMBStats = async () => {
     if (pullGMBInProgressRef.current) return;
@@ -38,10 +49,12 @@ export function useWordPressCardActions(site: WordPressSite) {
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
+        setGmbStatsResult("Failed");
         notify.error(data?.error ?? response.statusText ?? "Failed to pull GMB stats");
         return;
       }
       if (!data.success || !data.currentPeriod) {
+        setGmbStatsResult("Failed");
         notify.error(NOTIFY_NO_GMB_PERFORMANCE_DATA_RETURNED);
         return;
       }
@@ -83,9 +96,11 @@ ${footnote}`;
       const files: StoredFile[] = JSON.parse(stored);
       localStorage.setItem(KB_FILES_STORAGE_KEY, JSON.stringify([...files, newFile]));
       window.dispatchEvent(new CustomEvent("kb-files-updated", { detail: { files: [...files, newFile] } }));
+      setGmbStatsResult(apiWarning ? "Saved with warning" : "Saved to KB");
       if (apiWarning) notify.warning(notifyGmbStatsSavedButApiReportedXUseL(apiWarning));
       else notify.success(NOTIFY_GMB_STATS_ADDED_TO_KNOWLEDGE_BASE);
     } catch (err) {
+      setGmbStatsResult("Failed");
       notifyHeaderError("GMB stats pull failed", err);
     } finally {
       pullGMBInProgressRef.current = false;
@@ -103,11 +118,14 @@ ${footnote}`;
       });
       const data = await response.json().catch(() => ({}));
       if (response.ok && data.success) {
+        setGmbResult("OK");
         notify.success(data.message || "Google Business Profile connection OK");
       } else {
+        setGmbResult("Failed");
         notify.error(data.error || response.statusText || "GMB test failed");
       }
     } catch (err) {
+      setGmbResult("Failed");
       notifyHeaderError("GMB test failed", err);
     } finally {
       setIsTestingGMB(false);
@@ -120,10 +138,12 @@ ${footnote}`;
       const raw = resolveGa4PropertyIdForReporting(site);
       propertyId = raw ? normalizeGa4PropertyIdForApi(raw) : "";
     } catch (err) {
+      setGaResult("Failed");
       notify.error(err instanceof Error ? err.message : "Invalid GA4 Property ID.");
       return;
     }
     if (!propertyId) {
+      setGaResult("Failed");
       notify.error(NOTIFY_ADD_GA4_PROPERTY_ID_FOR_THIS_SITE_CLICK_);
       return;
     }
@@ -136,11 +156,14 @@ ${footnote}`;
       });
       const data = await response.json().catch(() => ({}));
       if (response.ok && data.success) {
+        setGaResult("OK");
         notify.success(data.message || "Google Analytics connection OK");
       } else {
+        setGaResult("Failed");
         notify.error(data.error || response.statusText || "Google Analytics test failed");
       }
     } catch (err) {
+      setGaResult("Failed");
       notifyHeaderError("Google Analytics test failed", err);
     } finally {
       setIsTestingGA(false);
@@ -310,6 +333,9 @@ ${footnote}`;
     isTestingGMB,
     isPullingGMBStats,
     neoFieldsTestResult,
+    gmbResult,
+    gaResult,
+    gmbStatsResult,
     handlePullGMBStats,
     handleTestGMB,
     handleTestGA,

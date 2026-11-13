@@ -793,6 +793,11 @@ All colors MUST be HSL.
   animation: dock-count-fade-in 1.15s ease-in-out both !important;
 }
 
+/** Properties overview view ↔ edit mode (same fade language as dock counts). */
+.properties-overview-edit-fade {
+  animation: dock-count-fade-in 1.15s ease-in-out both;
+}
+
 /** Flat muted loader bars (splash-style), subtle pulse. */
 @keyframes dock-count-pulse {
   0%,

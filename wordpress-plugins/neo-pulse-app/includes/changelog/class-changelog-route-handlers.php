@@ -62,17 +62,41 @@ class Neo_Pulse_App_Changelog_Route_Handlers {
 			return;
 		}
 
+		if ( $subpath === 'schedule' && $method === 'GET' ) {
+			$state = self::read_state();
+			Neo_Pulse_App_Api_Dispatcher::send_json(
+				array(
+					'ok'       => true,
+					'schedule' => $state['schedule'],
+					'nextRun'  => Neo_Pulse_App_Changelog_Schedule::next_run_label( $state['schedule'] ),
+				)
+			);
+			return;
+		}
+
+		if ( $subpath === 'schedule' && $method === 'POST' ) {
+			self::save_schedule( $body );
+			return;
+		}
+
+		if ( $subpath === 'run-newsletter' && $method === 'POST' ) {
+			$result = Neo_Pulse_App_Changelog_Newsletter_Runner::run( array( 'force' => ! empty( $body['force'] ) ) );
+			Neo_Pulse_App_Api_Dispatcher::send_json( $result, ! empty( $result['ok'] ) ? 200 : 500 );
+			return;
+		}
+
 		Neo_Pulse_App_Api_Dispatcher::send_json( array( 'ok' => false, 'error' => 'Not found' ), 404 );
 	}
 
 	/**
 	 * @param mixed $raw Decoded changelog.json contents, if readable.
-	 * @return array{entries: array<int,array<string,mixed>>, commits: array<int,array<string,mixed>>}
+	 * @return array{entries: array<int,array<string,mixed>>, commits: array<int,array<string,mixed>>, schedule: array<string,mixed>}
 	 */
-	private static function normalize_state( $raw ): array {
+	public static function normalize_state( $raw ): array {
 		$state = array(
-			'entries' => array(),
-			'commits' => array(),
+			'entries'  => array(),
+			'commits'  => array(),
+			'schedule' => Neo_Pulse_App_Changelog_Schedule::defaults(),
 		);
 		if ( ! is_array( $raw ) ) {
 			return $state;
@@ -92,13 +116,14 @@ class Neo_Pulse_App_Changelog_Route_Handlers {
 				}
 			}
 		}
+		$state['schedule'] = Neo_Pulse_App_Changelog_Schedule::normalize( $raw['schedule'] ?? null );
 		return $state;
 	}
 
 	/**
-	 * @return array{entries: array<int,array<string,mixed>>, commits: array<int,array<string,mixed>>}
+	 * @return array{entries: array<int,array<string,mixed>>, commits: array<int,array<string,mixed>>, schedule: array<string,mixed>}
 	 */
-	private static function read_state(): array {
+	public static function read_state(): array {
 		return self::normalize_state(
 			Neo_Pulse_App_Json_File_Store::read( Neo_Pulse_App_Data_Paths::changelog_path() )
 		);
@@ -110,15 +135,16 @@ class Neo_Pulse_App_Changelog_Route_Handlers {
 	 *
 	 * @param callable $mutator fn(array &$state): void
 	 */
-	private static function mutate_state( callable $mutator ): bool {
+	public static function mutate_state( callable $mutator ): bool {
 		return Neo_Pulse_App_Json_File_Store::update(
 			Neo_Pulse_App_Data_Paths::changelog_path(),
 			static function ( $current ) use ( $mutator ) {
 				$state = self::normalize_state( $current );
 				$mutator( $state );
 				return array(
-					'entries' => $state['entries'],
-					'commits' => $state['commits'],
+					'entries'  => $state['entries'],
+					'commits'  => $state['commits'],
+					'schedule' => Neo_Pulse_App_Changelog_Schedule::normalize( $state['schedule'] ?? null ),
 				);
 			}
 		);
@@ -279,9 +305,51 @@ class Neo_Pulse_App_Changelog_Route_Handlers {
 			}
 		);
 		return array(
-			'ok'      => true,
-			'entries' => $entries,
-			'source'  => self::source_summary( $state ),
+			'ok'       => true,
+			'entries'  => $entries,
+			'source'   => self::source_summary( $state ),
+			'schedule' => $state['schedule'],
+			'nextRun'  => Neo_Pulse_App_Changelog_Schedule::next_run_label( $state['schedule'] ),
+		);
+	}
+
+	/**
+	 * @param array<string,mixed> $body JSON body.
+	 */
+	private static function save_schedule( array $body ): void {
+		$incoming = isset( $body['schedule'] ) && is_array( $body['schedule'] ) ? $body['schedule'] : $body;
+		$clean    = Neo_Pulse_App_Changelog_Schedule::normalize( $incoming );
+		// Preserve last-run fields unless explicitly sent.
+		$state = self::read_state();
+		$prev  = $state['schedule'];
+		if ( ! array_key_exists( 'lastRunKey', $incoming ) ) {
+			$clean['lastRunKey'] = $prev['lastRunKey'];
+		}
+		if ( ! array_key_exists( 'lastRunAt', $incoming ) ) {
+			$clean['lastRunAt'] = $prev['lastRunAt'];
+		}
+		if ( ! array_key_exists( 'lastRunError', $incoming ) ) {
+			$clean['lastRunError'] = $prev['lastRunError'];
+		}
+		if ( ! array_key_exists( 'lastRunOk', $incoming ) ) {
+			$clean['lastRunOk'] = $prev['lastRunOk'];
+		}
+		$saved = self::mutate_state(
+			static function ( array &$state ) use ( $clean ): void {
+				$state['schedule'] = $clean;
+			}
+		);
+		if ( ! $saved ) {
+			Neo_Pulse_App_Api_Dispatcher::send_json( array( 'ok' => false, 'error' => 'Changelog schedule save failed' ), 500 );
+			return;
+		}
+		$state = self::read_state();
+		Neo_Pulse_App_Api_Dispatcher::send_json(
+			array(
+				'ok'       => true,
+				'schedule' => $state['schedule'],
+				'nextRun'  => Neo_Pulse_App_Changelog_Schedule::next_run_label( $state['schedule'] ),
+			)
 		);
 	}
 

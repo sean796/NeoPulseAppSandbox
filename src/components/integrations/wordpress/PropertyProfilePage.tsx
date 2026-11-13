@@ -81,7 +81,7 @@ export function PropertyProfilePage({
   onToggleEditing,
 }: PropertyProfilePageProps): React.ReactElement {
   return (
-    <div className="flex min-h-0 w-full flex-1 flex-col overflow-hidden px-3 pt-3 font-sans text-base md:px-5 md:pt-4">
+    <div className="flex min-h-0 w-full flex-1 flex-col overflow-hidden bg-black font-sans text-base">
       <PropertyOverviewSection
         site={site}
         isTesting={isTesting}

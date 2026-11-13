@@ -27,6 +27,7 @@ class Neo_Pulse_App_Loader {
 		Neo_Pulse_App_Task_Schedule_Cron::init();
 		Neo_Pulse_App_Workflow_Trigger_Cron::init();
 		Neo_Pulse_App_Agent_Run_Worker_Cron::init();
+		Neo_Pulse_App_Changelog_Newsletter_Cron::init();
 		if ( class_exists( 'Neo_Pulse_App_Agent_Run_Worker_Cron' ) ) {
 			Neo_Pulse_App_Agent_Run_Worker_Cron::activate();
 		}
@@ -59,6 +60,7 @@ class Neo_Pulse_App_Loader {
 		Neo_Pulse_App_Task_Schedule_Cron::activate();
 		Neo_Pulse_App_Workflow_Trigger_Cron::activate();
 		Neo_Pulse_App_Agent_Run_Worker_Cron::activate();
+		Neo_Pulse_App_Changelog_Newsletter_Cron::activate();
 		flush_rewrite_rules();
 	}
 
@@ -67,6 +69,7 @@ class Neo_Pulse_App_Loader {
 		Neo_Pulse_App_Task_Schedule_Cron::deactivate();
 		Neo_Pulse_App_Workflow_Trigger_Cron::deactivate();
 		Neo_Pulse_App_Agent_Run_Worker_Cron::deactivate();
+		Neo_Pulse_App_Changelog_Newsletter_Cron::deactivate();
 		flush_rewrite_rules();
 	}
 
@@ -321,6 +324,9 @@ class Neo_Pulse_App_Loader {
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/seo/class-seo-http.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/seo/class-seo-route-handlers.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/agent-library/class-agent-library-route-handlers.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/changelog/class-changelog-schedule.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/changelog/class-changelog-newsletter-runner.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/changelog/class-changelog-newsletter-cron.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/changelog/class-changelog-route-handlers.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/careers/class-careers-route-handlers.php';
 

@@ -291,8 +291,7 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
         tierFilteredSites.find((s) => s.id === siteId) ?? sites.find((s) => s.id === siteId);
       if (!site) return;
       openProfile(siteId);
-      const isHomeFirst = tierFilteredSites[0]?.id === siteId;
-      const path = propertyDashboardPath(site, isHomeFirst);
+      const path = propertyDashboardPath(site);
       if (location.pathname !== path) {
         navigate(path);
       }
@@ -306,12 +305,13 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
 
   /**
    * URL ↔ profile sync:
-   * - /dashboard → first dock client only (home)
-   * - /dashboard/{slug} → matching client; unknown slug → home
+   * - /dashboard → redirect to first dock client's named slug
+   * - /dashboard/{slug} → matching client; unknown slug → first client slug
    */
   useEffect(() => {
     if (tierFilteredSites.length === 0) return;
     const first = tierFilteredSites[0];
+    const firstPath = propertyDashboardPath(first);
 
     if (propertySlug) {
       const match =
@@ -319,19 +319,17 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
         findSiteByDashboardSlug(sites, propertySlug);
       if (!match) {
         if (profileSiteId !== first.id) openProfile(first.id);
-        if (location.pathname !== "/dashboard") navigate("/dashboard", { replace: true });
-        return;
-      }
-      if (match.id === first.id) {
-        if (profileSiteId !== first.id) openProfile(first.id);
-        if (location.pathname !== "/dashboard") navigate("/dashboard", { replace: true });
+        if (location.pathname !== firstPath) navigate(firstPath, { replace: true });
         return;
       }
       if (profileSiteId !== match.id) openProfile(match.id);
+      const matchPath = propertyDashboardPath(match);
+      if (location.pathname !== matchPath) navigate(matchPath, { replace: true });
       return;
     }
 
     if (profileSiteId !== first.id) openProfile(first.id);
+    if (location.pathname !== firstPath) navigate(firstPath, { replace: true });
   }, [
     propertySlug,
     tierFilteredSites,
@@ -429,7 +427,7 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
             onAddSite={handleAddSite}
           />
         </aside>
-        <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-zinc-950">
+        <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-black">
           {displaySite ? (
             <PropertyProfilePage
               site={displaySite}

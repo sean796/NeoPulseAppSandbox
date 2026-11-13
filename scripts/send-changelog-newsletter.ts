@@ -1,7 +1,8 @@
 /**
  * Send one Neo Pulse changelog newsletter via AgentMail.
  *
- * Lean email lock: summary (hook + body) + Highlights + More you know only.
+ * Email lock: summary (plain-English hook + body) + Highlights
+ * + More you know (Pulse-relative) + Industry News (fun stories).
  * Confident Morning Brew voice (never "mystery delivery" / clueless humor).
  *
  * Always generates a FRESH changelog entry from git commits after the last
@@ -26,15 +27,19 @@ import { fileURLToPath } from "node:url";
 import { z } from "zod";
 import {
   CHANGELOG_NEWSLETTER_FULL_URL,
+  CHANGELOG_NEWSLETTER_INDUSTRY_SYSTEM,
   CHANGELOG_NEWSLETTER_INTRO_MODEL,
   CHANGELOG_NEWSLETTER_INTRO_SYSTEM,
+  CHANGELOG_NEWSLETTER_PULSE_WIRE_SEEDS,
   CHANGELOG_NEWSLETTER_READING_SYSTEM,
   CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS,
   CHANGELOG_NEWSLETTER_WEB_MODEL,
   assembleChangelogNewsletter,
   assertNewsletterArticleSourcesReachable,
+  buildChangelogNewsletterIndustryUserPrompt,
   buildChangelogNewsletterIntroUserPrompt,
   buildChangelogNewsletterReadingUserPrompt,
+  parseChangelogNewsletterIndustryDraft,
   parseChangelogNewsletterIntroDraft,
   parseChangelogNewsletterReadingDraft,
   stripBannedChangelogTopics,
@@ -423,16 +428,16 @@ async function main(): Promise<void> {
   }
   const intro = parseChangelogNewsletterIntroDraft(introContent);
 
-  // Code-owned live wire seeds only. Never ask the model to invent article URLs.
-  const seeds: ChangelogNewsletterNewsSeed[] = CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS.map((s) => ({
-    ...s,
-  }));
-  console.log("Verifying More you know wire-seed URLs are live (fail on 404)…");
+  // Code-owned Pulse-relative seeds only. Model invents dead evergreen URLs; do not ask it for URLs.
+  const pulseSeeds: ChangelogNewsletterNewsSeed[] = CHANGELOG_NEWSLETTER_PULSE_WIRE_SEEDS.map(
+    (s) => ({ ...s }),
+  );
+  console.log("Verifying More you know Pulse-theme URLs are live (fail on 404)…");
   await assertNewsletterArticleSourcesReachable(
-    seeds.map((s) => ({ title: s.title, sourceUrl: s.url })),
+    pulseSeeds.map((s) => ({ title: s.title, sourceUrl: s.url })),
   );
 
-  console.log(`Writing More you know cards with ${CHANGELOG_NEWSLETTER_WEB_MODEL}…`);
+  console.log(`Writing Pulse-relative More you know cards with ${CHANGELOG_NEWSLETTER_WEB_MODEL}…`);
   const readingRaw = await hubApi("openrouter/chat-completion", {
     method: "POST",
     headers: authHeaders,
@@ -442,16 +447,16 @@ async function main(): Promise<void> {
       maxTokens: 4096,
       responseFormat: { type: "json_object" },
       system: CHANGELOG_NEWSLETTER_READING_SYSTEM,
-      user: buildChangelogNewsletterReadingUserPrompt(highlights, seeds),
+      user: buildChangelogNewsletterReadingUserPrompt(highlights, pulseSeeds),
     }),
   });
   const readingContent = extractChatContent(readingRaw);
   if (!readingContent.trim()) {
-    throw new Error("OpenRouter reading draft returned empty content.");
+    throw new Error("OpenRouter More you know draft returned empty content.");
   }
   const reading = parseChangelogNewsletterReadingDraft(readingContent);
-  for (let i = 0; i < seeds.length; i++) {
-    const want = seeds[i]!.url;
+  for (let i = 0; i < pulseSeeds.length; i++) {
+    const want = pulseSeeds[i]!.url;
     const got = reading.articles[i]?.sourceUrl;
     if (got !== want) {
       throw new Error(
@@ -459,10 +464,46 @@ async function main(): Promise<void> {
       );
     }
   }
+
+  const industrySeeds: ChangelogNewsletterNewsSeed[] =
+    CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS.map((s) => ({ ...s }));
+  console.log("Verifying Industry News wire-seed URLs are live (fail on 404)…");
+  await assertNewsletterArticleSourcesReachable(
+    industrySeeds.map((s) => ({ title: s.title, sourceUrl: s.url })),
+  );
+  console.log(`Writing Industry News cards with ${CHANGELOG_NEWSLETTER_WEB_MODEL}…`);
+  const industryRaw = await hubApi("openrouter/chat-completion", {
+    method: "POST",
+    headers: authHeaders,
+    body: JSON.stringify({
+      model: CHANGELOG_NEWSLETTER_WEB_MODEL,
+      temperature: 0.35,
+      maxTokens: 4096,
+      responseFormat: { type: "json_object" },
+      system: CHANGELOG_NEWSLETTER_INDUSTRY_SYSTEM,
+      user: buildChangelogNewsletterIndustryUserPrompt(industrySeeds),
+    }),
+  });
+  const industryContent = extractChatContent(industryRaw);
+  if (!industryContent.trim()) {
+    throw new Error("OpenRouter Industry News draft returned empty content.");
+  }
+  const industry = parseChangelogNewsletterIndustryDraft(industryContent);
+  for (let i = 0; i < industrySeeds.length; i++) {
+    const want = industrySeeds[i]!.url;
+    const got = industry.articles[i]?.sourceUrl;
+    if (got !== want) {
+      throw new Error(
+        `Industry News article ${i + 1} URL drifted from seed. Expected ${want}, got ${got ?? "(missing)"}.`,
+      );
+    }
+  }
+
   const payload = assembleChangelogNewsletter(
     highlights,
     intro,
     reading,
+    industry,
     CHANGELOG_NEWSLETTER_FULL_URL,
   );
 

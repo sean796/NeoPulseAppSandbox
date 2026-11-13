@@ -27,10 +27,33 @@ export interface ChangelogSourceStatus {
   latestCommitDate: string | null;
 }
 
+export type ChangelogWeekday =
+  | "monday"
+  | "tuesday"
+  | "wednesday"
+  | "thursday"
+  | "friday"
+  | "saturday"
+  | "sunday";
+
+export interface ChangelogNewsletterSchedule {
+  enabled: boolean;
+  weekday: ChangelogWeekday;
+  time: string;
+  timezone: string;
+  to: string;
+  lastRunKey?: string;
+  lastRunAt?: string;
+  lastRunError?: string;
+  lastRunOk?: boolean | null;
+}
+
 export interface ChangelogArchivePayload {
   ok: boolean;
   entries: ChangelogEntry[];
   source: ChangelogSourceStatus;
+  schedule?: ChangelogNewsletterSchedule;
+  nextRun?: string;
   error?: string;
 }
 
@@ -81,4 +104,25 @@ export async function saveChangelogEntry(
     throw new Error(data.error ?? `Save failed (${res.status})`);
   }
   return data;
+}
+
+export async function saveChangelogSchedule(
+  schedule: Pick<ChangelogNewsletterSchedule, "enabled" | "weekday" | "time" | "to">,
+): Promise<{ ok: boolean; schedule: ChangelogNewsletterSchedule; nextRun?: string }> {
+  const res = await fetch(backendApiUrl("/changelog/schedule"), {
+    method: "POST",
+    credentials: "include",
+    headers: neoPulseApiHeaders({ "Content-Type": "application/json" }),
+    body: JSON.stringify({ schedule }),
+  });
+  const data = (await res.json()) as {
+    ok: boolean;
+    schedule?: ChangelogNewsletterSchedule;
+    nextRun?: string;
+    error?: string;
+  };
+  if (!res.ok || !data.ok || !data.schedule) {
+    throw new Error(data.error ?? `Schedule save failed (${res.status})`);
+  }
+  return { ok: true, schedule: data.schedule, nextRun: data.nextRun };
 }

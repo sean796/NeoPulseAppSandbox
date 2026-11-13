@@ -91,17 +91,19 @@ export const PROPERTIES_OVERVIEW_WELL_CLASS = cn(
   "flex w-full min-w-0 flex-col rounded-none border-0 bg-zinc-900 shadow-none",
 );
 
+/** Profile pane: black gutter (padding) around tiles; not flush to edges. */
 export const PROPERTIES_OVERVIEW_STACK_CLASS =
   "properties-overview flex h-full min-h-0 w-full flex-col gap-3 overflow-y-auto bg-black p-3 text-white";
 
-/** Identity strip: name + URL + soft status pills. */
+/** Identity strip: zinc well (not full-bleed black); logo + name/url sit inside. */
 export const PROPERTIES_OVERVIEW_IDENTITY_CLASS = cn(
   PROPERTIES_OVERVIEW_WELL_CLASS,
-  "min-h-14 shrink-0 flex-row flex-wrap items-center gap-3 px-4 py-3",
+  "min-h-14 shrink-0 flex-row flex-wrap items-center gap-3 px-3 py-3",
 );
 
+/** Same type size as Field inputs so view ↔ edit does not jump. */
 export const PROPERTIES_OVERVIEW_IDENTITY_NAME_CLASS =
-  "text-xl font-semibold tracking-tight !text-white break-words";
+  "truncate text-base font-medium !text-white";
 
 export const PROPERTIES_OVERVIEW_IDENTITY_URL_CLASS =
   "min-w-0 truncate text-base font-medium !text-white";
@@ -160,19 +162,19 @@ export const PROPERTIES_OVERVIEW_CHIP_DOT_WARN_CLASS = "h-1.5 w-1.5 shrink-0 rou
 export const PROPERTIES_OVERVIEW_CHIP_DOT_MUTED_CLASS = "h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-400";
 export const PROPERTIES_OVERVIEW_CHIP_DOT_LITE_CLASS = "h-1.5 w-1.5 shrink-0 rounded-full bg-sky-400";
 
-/** Shared key-value pill row (darker well inside muted section frame). */
+/** Shared key-value pill row (darker well inside muted section frame). Inline + compact. */
 export const PROPERTIES_OVERVIEW_PILL_ROW_CLASS = cn(
-  "flex h-11 w-full min-w-0 items-center justify-between gap-3 rounded-none border-0 bg-black px-3",
+  "flex h-11 w-full min-w-0 items-center justify-start gap-2 rounded-none border-0 bg-black px-3",
 );
 
 export const PROPERTIES_OVERVIEW_PILL_LABEL_CLASS =
   "shrink-0 pt-0.5 text-xs font-semibold uppercase tracking-wider text-white";
 
 export const PROPERTIES_OVERVIEW_PILL_VALUE_CLASS =
-  "min-w-0 whitespace-pre-line break-words text-right text-xs font-medium text-white";
+  "min-w-0 flex-1 truncate whitespace-nowrap text-left text-xs font-medium text-white";
 
 export const PROPERTIES_OVERVIEW_PILL_EMPTY_CLASS =
-  "min-w-0 whitespace-normal break-words text-right text-xs font-medium text-white";
+  "min-w-0 flex-1 truncate whitespace-nowrap text-left text-xs font-medium text-white";
 
 export const PROPERTIES_OVERVIEW_PILL_NOTE_CLASS =
   "inline-flex shrink-0 items-center gap-1.5 whitespace-normal break-words rounded-none border border-white/5 bg-white/5 px-2 py-0.5 text-xs font-medium text-white";
@@ -183,13 +185,13 @@ export const PROPERTIES_OVERVIEW_KPI_ROW_CLASS =
 
 export const PROPERTIES_OVERVIEW_KPI_TILE_CLASS = cn(
   PROPERTIES_OVERVIEW_WELL_CLASS,
-  "min-h-0 justify-center gap-2 overflow-visible p-3",
+  "min-h-0 justify-center gap-2 overflow-hidden p-3",
 );
 
 export const PROPERTIES_OVERVIEW_KPI_LABEL_CLASS = PROPERTIES_OVERVIEW_PILL_LABEL_CLASS;
 
 export const PROPERTIES_OVERVIEW_KPI_VALUE_CLASS =
-  "min-w-0 whitespace-normal break-words text-right text-xl font-semibold tracking-tight text-white";
+  "min-w-0 flex-1 truncate whitespace-nowrap text-left text-xl font-semibold tracking-tight text-white";
 
 export const PROPERTIES_OVERVIEW_KPI_NOTE_CLASS =
   "flex min-w-0 max-w-full flex-wrap items-center justify-end gap-1.5 text-xs font-medium text-white";
@@ -236,11 +238,12 @@ export const PROPERTIES_DIAGNOSTICS_SECTION_CLASS = cn(
   "shrink-0 gap-2 overflow-hidden p-3",
 );
 
+/** Black pill actions (same language as overview field pills). */
 export const PROPERTIES_DIAGNOSTICS_TOOL_CLASS = cn(
-  "!rounded-none inline-flex h-11 w-full min-w-0 items-center gap-2 border-0 bg-zinc-900 px-3 text-left text-base font-medium text-white shadow-none",
+  "!rounded-none inline-flex h-11 w-full min-w-0 items-center gap-2 border-0 bg-black px-3 text-left text-base font-medium text-white shadow-none",
   "hover:bg-white/10 hover:text-white",
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-[#12141a]",
-  "disabled:cursor-not-allowed disabled:!opacity-100 disabled:text-white disabled:hover:bg-white/5",
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900",
+  "disabled:cursor-not-allowed disabled:!opacity-100 disabled:text-white disabled:hover:bg-black",
 );
 
 export const PROPERTIES_DIAGNOSTICS_ICON_CLASS =

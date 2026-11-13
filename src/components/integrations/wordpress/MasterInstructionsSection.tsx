@@ -61,6 +61,8 @@ interface MasterInstructionsSectionProps {
   layout?: "page" | "dropdown";
   /** When layout is dropdown, pencil turns on add/remove. */
   editing?: boolean;
+  /** Fade file names only (not drop box chrome). */
+  fadeKey?: string;
 }
 
 export const MasterInstructionsSection: React.FC<MasterInstructionsSectionProps> = ({
@@ -70,6 +72,7 @@ export const MasterInstructionsSection: React.FC<MasterInstructionsSectionProps>
   disabled = false,
   layout = "page",
   editing = false,
+  fadeKey,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const dragDepthRef = useRef(0);
@@ -297,7 +300,6 @@ export const MasterInstructionsSection: React.FC<MasterInstructionsSectionProps>
   const selectedSource = sources[safeIndex];
 
   if (layout === "dropdown") {
-    const fileText = selectedSource?.content?.trim() ?? "";
     return (
       <div
         className={`flex min-h-0 w-full flex-1 flex-col gap-1.5 ${COPY}`}
@@ -314,72 +316,28 @@ export const MasterInstructionsSection: React.FC<MasterInstructionsSectionProps>
           disabled={disabled || busy}
           tabIndex={-1}
         />
-        {sources.length > 1 ? (
-          <div className="flex shrink-0 items-center gap-2">
-            <div className="min-w-0 flex-1">
-              <SelectField
-                placeholder="File"
-                width="full"
-                disabled={disabled}
-                value={String(safeIndex)}
-                options={sources.map((source, index) => ({ value: String(index), label: source.name }))}
-                onValueChange={(value) => setSelectedIndex(Number(value))}
-              />
-            </div>
-            {editing ? (
-              <Button
-                type="button"
-                variant="quiet"
-                disabled={disabled || busy}
-                aria-label="Remove file"
-                onClick={() => removeAt(safeIndex)}
-              >
-                <Trash2 className="h-4 w-4" aria-hidden />
-              </Button>
-            ) : null}
-          </div>
-        ) : selectedSource ? (
-          <div className="flex shrink-0 items-center justify-between gap-2">
-            <span className="min-w-0 truncate text-base text-white">{selectedSource.name}</span>
-            {editing ? (
-              <Button
-                type="button"
-                variant="quiet"
-                disabled={disabled || busy}
-                aria-label="Remove file"
-                onClick={() => removeAt(safeIndex)}
-              >
-                <Trash2 className="h-4 w-4" aria-hidden />
-              </Button>
-            ) : null}
-          </div>
-        ) : null}
         <div
           role="button"
           tabIndex={disabled || busy ? -1 : 0}
           aria-label="Drop master rule files here or press Enter to browse"
           onClick={() => {
-            if (!fileText) onPickFiles();
+            if (!disabled && !busy) onPickFiles();
           }}
           onKeyDown={(e) => {
-            if (fileText || disabled || busy) return;
+            if (disabled || busy) return;
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
               onPickFiles();
             }
           }}
-          className={`flex min-h-0 flex-1 flex-col overflow-hidden border border-dashed border-white/25 bg-ui-field p-2 ${
+          className={`flex h-16 shrink-0 cursor-pointer flex-col items-center justify-center gap-1 border border-dashed border-white/25 bg-ui-field p-2 ${
             isDragging ? "ring-2 ring-primary" : ""
-          } ${fileText ? "" : "cursor-pointer items-center justify-center"}`}
+          }`}
         >
           {busy ? (
             <span className="master-rules-drop-hint text-base">
               {summarizingPhase ? "Extracting nested triples…" : "Reading file…"}
             </span>
-          ) : fileText ? (
-            <pre className={`min-h-0 flex-1 overflow-auto whitespace-pre-wrap break-words leading-snug ${COPY}`}>
-              {selectedSource?.content}
-            </pre>
           ) : (
             <>
               <Upload className="master-rules-drop-hint h-5 w-5" aria-hidden />
@@ -387,6 +345,34 @@ export const MasterInstructionsSection: React.FC<MasterInstructionsSectionProps>
             </>
           )}
         </div>
+        {sources.length > 0 ? (
+          <ul className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto" aria-label="Master rule files">
+            {sources.map((source, index) => (
+              <li
+                key={`${source.name}-${index}`}
+                className="flex h-8 shrink-0 items-center justify-between gap-2 bg-black px-2"
+              >
+                <span
+                  key={fadeKey ? `${fadeKey}-${source.name}` : source.name}
+                  className={`min-w-0 truncate text-base text-white${fadeKey ? " properties-overview-edit-fade" : ""}`}
+                >
+                  {source.name}
+                </span>
+                {editing ? (
+                  <Button
+                    type="button"
+                    variant="quiet"
+                    disabled={disabled || busy}
+                    aria-label={`Remove ${source.name}`}
+                    onClick={() => removeAt(index)}
+                  >
+                    <Trash2 className="h-4 w-4" aria-hidden />
+                  </Button>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </div>
     );
   }
