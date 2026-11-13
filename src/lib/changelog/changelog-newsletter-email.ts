@@ -1,13 +1,24 @@
 /**
- * Multipart changelog newsletter: Highlights bullets and More you know articles.
- * No Languages. No hero image. No Do this week.
+ * Multipart changelog newsletter (Morning Brew / TLDR skim layout).
+ * Lean lock: summary (hook + body + Full changelog) → Highlights → More you know.
+ * AgentMail-safe table HTML. No Languages. No hero. No Do this week.
  */
 
 import type { ChangelogNewsletterPayload } from "./changelog-newsletter-agent";
+import { CHANGELOG_NEWSLETTER_FULL_URL } from "./changelog-newsletter-agent";
 
 export const NEO_PULSE_BRAND_ACCENT = "#84bd00";
 export const NEO_PULSE_BRAND_BG = "#02050a";
 export const NEO_PULSE_BRAND_PANEL = "#0c0f14";
+/** Body copy on dark: white only. Green is reserved for accents/links. */
+export const NEO_PULSE_NEWSLETTER_TEXT = "#ffffff";
+export const NEO_PULSE_NEWSLETTER_HEADING = "#ffffff";
+
+/** Fixed explainer under More you know. Code-owned, not LLM. */
+export const CHANGELOG_NEWSLETTER_MORE_YOU_KNOW_EXPLAINER =
+  "Why these reads: three important industry stories worth knowing this week. Real news, not evergreen filler, so you stay sharp on what is moving AI, platforms, and agency work right now.";
+
+export { CHANGELOG_NEWSLETTER_FULL_URL };
 
 export type ChangelogNewsletterEmailParts = {
   subject: string;
@@ -35,28 +46,59 @@ function formatDisplayDate(iso: string): string {
   });
 }
 
+/** Gmail-safe subject: short, never mid-word truncated. */
 export function buildChangelogNewsletterSubject(payload: ChangelogNewsletterPayload): string {
-  return `Neo Pulse Update: ${payload.title}`;
+  const hook = payload.hook?.trim().replace(/\s+/g, " ") ?? "";
+  if (hook) {
+    const prefix = "Neo Pulse: ";
+    const maxLen = 60;
+    const full = `${prefix}${hook}`;
+    if (full.length <= maxLen) return full;
+    const budget = maxLen - prefix.length;
+    if (hook.length <= budget) return full;
+    const cut = hook.slice(0, budget);
+    const lastSpace = cut.lastIndexOf(" ");
+    const safe = (lastSpace > 12 ? cut.slice(0, lastSpace) : cut).trim().replace(/[.,;:]+$/, "");
+    return `${prefix}${safe}`;
+  }
+  return "Neo Pulse Update";
 }
 
 export function buildChangelogNewsletterPreheader(payload: ChangelogNewsletterPayload): string {
+  const body = payload.body?.trim();
+  if (body) return body.slice(0, 140);
   const first = payload.highlights[0]?.trim();
   if (first) return first.slice(0, 140);
   return `${payload.commitCount} commits · ${formatDisplayDate(payload.date)}`;
 }
 
-function sectionHeading(label: string): string {
-  return `<tr><td style="padding:28px 0 12px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:700;color:#f4f4f5;letter-spacing:0.04em;text-transform:uppercase;">${escapeHtml(label)}</td></tr>`;
+function sectionHeading(label: string, topPaddingPx = 28): string {
+  return `<tr><td style="padding:${topPaddingPx}px 0 12px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:700;color:${NEO_PULSE_NEWSLETTER_HEADING};letter-spacing:0.06em;text-transform:uppercase;">${escapeHtml(label)}</td></tr>`;
 }
 
 function bulletList(items: string[]): string {
   const lis = items
     .map(
       (item) =>
-        `<li style="margin:0 0 10px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.5;color:#d4d4d8;">${escapeHtml(item)}</li>`,
+        `<li style="margin:0 0 12px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.5;color:${NEO_PULSE_NEWSLETTER_TEXT};">${escapeHtml(item)}</li>`,
     )
     .join("");
   return `<tr><td style="padding:0;"><ul style="margin:0;padding:0 0 0 20px;">${lis}</ul></td></tr>`;
+}
+
+function hookAndBodyHtml(hook: string, body: string): string {
+  return `<tr><td style="padding:0 0 10px 0;font-family:Arial,Helvetica,sans-serif;font-size:20px;font-weight:700;line-height:1.35;color:${NEO_PULSE_NEWSLETTER_HEADING};">${escapeHtml(hook)}</td></tr>
+<tr><td style="padding:0 0 14px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.6;color:${NEO_PULSE_NEWSLETTER_TEXT};">${escapeHtml(body)}</td></tr>`;
+}
+
+function fullChangelogLinkHtml(url: string): string {
+  return `<tr><td style="padding:4px 0 8px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.5;">
+<a href="${escapeHtml(url)}" style="color:${NEO_PULSE_BRAND_ACCENT};text-decoration:underline;font-weight:700;">Full changelog →</a>
+</td></tr>`;
+}
+
+function moreYouKnowExplainerHtml(): string {
+  return `<tr><td style="padding:0 0 18px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.6;color:${NEO_PULSE_NEWSLETTER_TEXT};">${escapeHtml(CHANGELOG_NEWSLETTER_MORE_YOU_KNOW_EXPLAINER)}</td></tr>`;
 }
 
 function articleCard(args: {
@@ -67,17 +109,17 @@ function articleCard(args: {
   sourceUrl: string;
 }): string {
   const meta = args.meta
-    ? `<div style="margin:0 0 4px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:#a1a1aa;">${escapeHtml(args.meta)}</div>`
+    ? `<div style="margin:0 0 4px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:${NEO_PULSE_NEWSLETTER_TEXT};">${escapeHtml(args.meta)}</div>`
     : "";
   const why = args.whyItHelps
     ? `<div style="margin:8px 0 6px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.5;color:${NEO_PULSE_BRAND_ACCENT};">${escapeHtml(args.whyItHelps)}</div>`
     : "";
   return `<tr><td style="padding:0 0 20px 0;">
 ${meta}
-<div style="font-family:Arial,Helvetica,sans-serif;font-size:18px;font-weight:700;color:#fafafa;margin:0 0 8px 0;">${escapeHtml(args.title)}</div>
-<div style="font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.55;color:#d4d4d8;margin:0 0 6px 0;">${escapeHtml(args.summary)}</div>
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:18px;font-weight:700;color:${NEO_PULSE_NEWSLETTER_HEADING};margin:0 0 8px 0;">${escapeHtml(args.title)}</div>
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.55;color:${NEO_PULSE_NEWSLETTER_TEXT};margin:0 0 6px 0;">${escapeHtml(args.summary)}</div>
 ${why}
-<a href="${escapeHtml(args.sourceUrl)}" style="font-family:Arial,Helvetica,sans-serif;font-size:16px;color:${NEO_PULSE_BRAND_ACCENT};text-decoration:underline;">Read article</a>
+<a href="${escapeHtml(args.sourceUrl)}" style="font-family:Arial,Helvetica,sans-serif;font-size:16px;color:${NEO_PULSE_BRAND_ACCENT};text-decoration:underline;">Read →</a>
 </td></tr>`;
 }
 
@@ -89,11 +131,12 @@ export function buildChangelogNewsletterHtml(payload: ChangelogNewsletterPayload
   const subject = buildChangelogNewsletterSubject(payload);
   const preheader = buildChangelogNewsletterPreheader(payload);
   const dateLabel = formatDisplayDate(payload.date);
+  const changelogUrl = payload.changelogUrl || CHANGELOG_NEWSLETTER_FULL_URL;
 
   const highlightRows =
     payload.highlights.length > 0
       ? bulletList(payload.highlights)
-      : `<tr><td style="padding:0;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:#a1a1aa;">No highlights on this entry.</td></tr>`;
+      : `<tr><td style="padding:0;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:${NEO_PULSE_NEWSLETTER_TEXT};">No highlights on this entry.</td></tr>`;
 
   const articleRows = payload.articles
     .map((a) =>
@@ -120,17 +163,19 @@ export function buildChangelogNewsletterHtml(payload: ChangelogNewsletterPayload
 <tr><td align="center" style="padding:24px 12px;">
 <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="width:600px;max-width:600px;background-color:${NEO_PULSE_BRAND_PANEL};">
 <tr><td style="padding:28px 28px 12px 28px;">${brandLockupHtml()}</td></tr>
-<tr><td style="padding:0 28px 8px 28px;font-family:Arial,Helvetica,sans-serif;font-size:24px;font-weight:700;line-height:1.3;color:#fafafa;">${escapeHtml(payload.title)}</td></tr>
-<tr><td style="padding:0 28px 20px 28px;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:#a1a1aa;">${escapeHtml(dateLabel)} · ${payload.commitCount} commits</td></tr>
+<tr><td style="padding:0 28px 8px 28px;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:${NEO_PULSE_NEWSLETTER_TEXT};">${escapeHtml(dateLabel)} · ${payload.commitCount} commits</td></tr>
 <tr><td style="padding:0 28px 28px 28px;">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
-${sectionHeading("Highlights")}
+${hookAndBodyHtml(payload.hook, payload.body)}
+${fullChangelogLinkHtml(changelogUrl)}
+${sectionHeading("Highlights", 28)}
 ${highlightRows}
-${sectionHeading("More you know")}
+${sectionHeading("More you know", 40)}
+${moreYouKnowExplainerHtml()}
 ${articleRows}
 </table>
 </td></tr>
-<tr><td style="padding:0 28px 28px 28px;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:#71717a;">Sent by Neo Pulse. Reply to this email to reach sean@neodigital.ca.</td></tr>
+<tr><td style="padding:0 28px 28px 28px;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:${NEO_PULSE_NEWSLETTER_TEXT};">Sent by Neo Pulse. Reply to this email to reach sean@neodigital.ca.</td></tr>
 </table>
 </td></tr>
 </table>
@@ -140,10 +185,16 @@ ${articleRows}
 
 export function buildChangelogNewsletterText(payload: ChangelogNewsletterPayload): string {
   const dateLabel = formatDisplayDate(payload.date);
+  const changelogUrl = payload.changelogUrl || CHANGELOG_NEWSLETTER_FULL_URL;
   const lines: string[] = [
     "neopulse",
-    payload.title,
     `${dateLabel} · ${payload.commitCount} commits`,
+    "",
+    payload.hook,
+    "",
+    payload.body,
+    "",
+    `Full changelog → ${changelogUrl}`,
     "",
     "HIGHLIGHTS",
   ];
@@ -152,7 +203,7 @@ export function buildChangelogNewsletterText(payload: ChangelogNewsletterPayload
   } else {
     for (const h of payload.highlights) lines.push(`- ${h}`);
   }
-  lines.push("", "MORE YOU KNOW");
+  lines.push("", "MORE YOU KNOW", CHANGELOG_NEWSLETTER_MORE_YOU_KNOW_EXPLAINER, "");
   for (const a of payload.articles) {
     lines.push(`- ${a.title} (${a.date})`);
     lines.push(`  ${a.summary}`);

@@ -277,8 +277,14 @@ class Neo_Pulse_App_Auth_Route_Handlers {
 		$count = (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . Neo_Pulse_App_Teams_Store::users_table_sql() );
 		$setup_key = isset( $body['setupKey'] ) ? (string) $body['setupKey'] : '';
 		$allowed   = $count === 0;
+		$configured_setup_key = '';
 		if ( defined( 'NEO_PULSE_APP_SETUP_KEY' ) && NEO_PULSE_APP_SETUP_KEY !== '' ) {
-			$allowed = $allowed || hash_equals( (string) NEO_PULSE_APP_SETUP_KEY, $setup_key );
+			$configured_setup_key = (string) NEO_PULSE_APP_SETUP_KEY;
+		} elseif ( getenv( 'NEO_PULSE_APP_SETUP_KEY' ) ) {
+			$configured_setup_key = trim( (string) getenv( 'NEO_PULSE_APP_SETUP_KEY' ) );
+		}
+		if ( $configured_setup_key !== '' && $setup_key !== '' ) {
+			$allowed = $allowed || hash_equals( $configured_setup_key, $setup_key );
 		}
 
 		if ( ! $allowed ) {
