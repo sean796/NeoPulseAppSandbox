@@ -85,6 +85,8 @@ interface WordPressSiteListProps {
   layout?: "full" | "dock";
   /** Site currently shown in the right pane (dock highlight). */
   activeSiteId?: string;
+  /** Next zebra index after real rows + empty fillers (Add Site footer). */
+  onDockStripeTailIndexChange?: (index: number) => void;
 }
 
 export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
@@ -132,6 +134,7 @@ export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
   propertyRowDisplay = "compact",
   layout = "full",
   activeSiteId,
+  onDockStripeTailIndexChange,
 }) => {
   const isDock = layout === "dock";
   const [canonicalRenameSite, setCanonicalRenameSite] = useState<WordPressSite | null>(null);
@@ -142,6 +145,7 @@ export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
   useLayoutEffect(() => {
     if (!isDock) {
       setDockFillerCount(0);
+      onDockStripeTailIndexChange?.(filteredSites.length);
       return;
     }
     const scrollEl = dockScrollRef.current;
@@ -158,13 +162,20 @@ export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
       const available = scrollEl.clientHeight;
       const next = Math.max(0, Math.floor((available - realHeight) / rowHeight));
       setDockFillerCount((prev) => (prev === next ? prev : next));
+      onDockStripeTailIndexChange?.(realCount + next);
     };
 
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(scrollEl);
     return () => ro.disconnect();
-  }, [isDock, filteredSites.length, siteSearchQuery, editorialPackageFilter]);
+  }, [
+    isDock,
+    filteredSites.length,
+    siteSearchQuery,
+    editorialPackageFilter,
+    onDockStripeTailIndexChange,
+  ]);
 
   const renderPropertyRowTrailingControls = (site: WordPressSite, dockActive = false) => {
     const stop = (e: React.SyntheticEvent) => e.stopPropagation();
@@ -222,7 +233,7 @@ export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
 
   if (sites.length === 0) {
     return (
-      <div className="mt-0 flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+      <div className="mt-0 flex min-h-0 flex-1 flex-col overflow-hidden">
         <div className={PROPERTIES_EMPTY}>
           <p className="text-lg text-foreground">No WordPress sites connected</p>
           <p className="mt-2 text-base text-foreground">
@@ -234,7 +245,7 @@ export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
   }
 
   return (
-    <div className="mt-0 flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+    <div className="mt-0 flex min-h-0 flex-1 flex-col overflow-hidden">
       <SiteDisplayNameDialog
         variant="canonical"
         open={Boolean(canonicalRenameSite)}

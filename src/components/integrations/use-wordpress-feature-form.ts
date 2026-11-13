@@ -34,8 +34,11 @@ export function useWordPressFeatureForm({
   handleDeleteSitesBulk: WordPressSitesApi["handleDeleteSitesBulk"];
   reloadSitesFromStorage: WordPressSitesApi["reloadSitesFromStorage"];
 }) {
-  // Dialog state
+  // Dialog state (edit-existing only). New clients use the left dock panel.
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [addClientPanelOpen, setAddClientPanelOpen] = useState(false);
+  const [addClientStatus, setAddClientStatus] = useState("");
+  const [addClientImporting, setAddClientImporting] = useState(false);
   const [editingSite, setEditingSite] = useState<WordPressSite | null>(null);
 
   // Form state
@@ -218,29 +221,81 @@ export function useWordPressFeatureForm({
     setFormProductionSiteUrl(formData.productionSiteUrl ?? "");
     setFormUsername(formData.username);
     setFormAppPassword(formData.appPassword);
-      setFormGa4PropertyId(formData.ga4PropertyId ?? "");
-      setFormGoogleAdsCustomerId(formData.googleAdsCustomerId ?? "");
-      setFormGbpLocationId(formData.gbpLocationId ?? "");
-      setFormSemrushSiteAuditProjectId(formData.semrushSiteAuditProjectId ?? "");
-      setFormSemrushPositionTrackingProjectId(formData.semrushPositionTrackingProjectId ?? "");
-      setFormSemrushPositionTrackingCampaignId(formData.semrushPositionTrackingCampaignId ?? "");
-      setFormEditorialCountsPeriodStartYmd(formData.editorialCountsPeriodStartYmd ?? "");
-      setFormOptimizationPackage("");
-      setFormEditorialContentPackage("");
-      setFormEditorialPublishTimeLocal("");
-      setFormBenchmarkCustomTag(formData.benchmarkCustomTag ?? "");
-      setFormPrimaryLocalKeyword(formData.primaryLocalKeyword ?? "");
-      setFormClientLogoUrl("");
-      setFormClientLogoBoxTheme("black");
-      setFormProfileTags(formData.profileTags ?? []);
-      setFormServiceCity("");
+    setFormGa4PropertyId(formData.ga4PropertyId ?? "");
+    setFormGoogleAdsCustomerId(formData.googleAdsCustomerId ?? "");
+    setFormGbpLocationId(formData.gbpLocationId ?? "");
+    setFormSemrushSiteAuditProjectId(formData.semrushSiteAuditProjectId ?? "");
+    setFormSemrushPositionTrackingProjectId(formData.semrushPositionTrackingProjectId ?? "");
+    setFormSemrushPositionTrackingCampaignId(formData.semrushPositionTrackingCampaignId ?? "");
+    setFormEditorialCountsPeriodStartYmd(formData.editorialCountsPeriodStartYmd ?? "");
+    setFormOptimizationPackage("");
+    setFormEditorialContentPackage("");
+    setFormEditorialPublishTimeLocal("");
+    setFormBenchmarkCustomTag(formData.benchmarkCustomTag ?? "");
+    setFormPrimaryLocalKeyword(formData.primaryLocalKeyword ?? "");
+    setFormClientLogoUrl("");
+    setFormClientLogoBoxTheme("black");
+    setFormProfileTags(formData.profileTags ?? []);
+    setFormServiceCity("");
     setFormServiceState("");
     setFormServiceCountry("");
-    setIsDialogOpen(true);
+    setAddClientStatus("");
+    setAddClientImporting(false);
+    setIsDialogOpen(false);
+    setAddClientPanelOpen(true);
   }, [handleAddSiteInit]);
+
+  const handleCancelAddClient = useCallback(() => {
+    if (addClientImporting) return;
+    setAddClientPanelOpen(false);
+    setAddClientStatus("");
+    setEditingSite(null);
+  }, [addClientImporting]);
+
+  const handleAiImportClient = useCallback(async () => {
+    const siteUrl = formSiteUrl.trim();
+    const username = formUsername.trim();
+    const appPassword = formAppPassword.trim();
+    if (!siteUrl || !username || !appPassword) {
+      setAddClientStatus("Site URL, username, and application password are required");
+      return;
+    }
+    if (addClientImporting) return;
+    setAddClientImporting(true);
+    setAddClientStatus("Importing via Neo MCP…");
+    try {
+      const { aiImportClient } = await import("@/lib/wordpress-api/ai-import-client");
+      const result = await aiImportClient({ siteUrl, username, appPassword });
+      if (result.success === false) {
+        setAddClientStatus(result.error);
+        return;
+      }
+      if (result.name?.trim()) setFormName(result.name.trim());
+      if (result.siteUrl?.trim()) setFormSiteUrl(result.siteUrl.trim());
+      if (result.primaryLocalKeyword?.trim()) {
+        setFormPrimaryLocalKeyword(result.primaryLocalKeyword.trim());
+      }
+      if (result.clientLogoUrl?.trim()) setFormClientLogoUrl(result.clientLogoUrl.trim());
+      if (result.serviceCity?.trim()) setFormServiceCity(result.serviceCity.trim());
+      if (result.serviceState?.trim()) setFormServiceState(result.serviceState.trim());
+      if (result.serviceCountry?.trim()) setFormServiceCountry(result.serviceCountry.trim());
+      setAddClientStatus("Review fields, then Save");
+    } catch (err) {
+      setAddClientStatus(err instanceof Error ? err.message : "Import failed");
+    } finally {
+      setAddClientImporting(false);
+    }
+  }, [
+    formSiteUrl,
+    formUsername,
+    formAppPassword,
+    addClientImporting,
+  ]);
 
   const handleEditSite = useCallback(
     (site: WordPressSite) => {
+      setAddClientPanelOpen(false);
+      setAddClientStatus("");
       populateFormFromSite(site);
       setIsDialogOpen(true);
     },
@@ -290,6 +345,8 @@ export function useWordPressFeatureForm({
     );
     if (saved) {
       setIsDialogOpen(false);
+      setAddClientPanelOpen(false);
+      setAddClientStatus("");
       setProfileSiteId(saved.id);
       setEditingSite(saved);
       const gbp = saved.gbpLocationId?.trim() ?? gbpForSave;
@@ -341,6 +398,7 @@ export function useWordPressFeatureForm({
   ]);
   return {
     isDialogOpen, setIsDialogOpen, editingSite,
+    addClientPanelOpen, addClientStatus, addClientImporting,
     formName, formSiteUrl, formProductionSiteUrl, formUsername, formAppPassword,
     formGa4PropertyId, formGoogleAdsCustomerId, formGbpLocationId, formSemrushSiteAuditProjectId, formSemrushPositionTrackingProjectId,
     formSemrushPositionTrackingCampaignId, formEditorialCountsPeriodStartYmd, formOptimizationPackage, formEditorialContentPackage, formEditorialPublishTimeLocal,
@@ -354,6 +412,7 @@ export function useWordPressFeatureForm({
     profileSite, profileSiteId, profileSectionId,
     setProfileSectionId, settingsSubSectionId, setSettingsSubSectionId,
     selectedSiteIds, filteredSites, tierFilteredSites, handleSelectAll, handleDeleteSelected,
-    handleSiteSelectedChange, openProfile, closeProfile, handleAddSite, handleEditSite, handleSaveSiteClick,
+    handleSiteSelectedChange, openProfile, closeProfile, handleAddSite, handleCancelAddClient,
+    handleAiImportClient, handleEditSite, handleSaveSiteClick,
   };
 }

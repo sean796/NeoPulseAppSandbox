@@ -28,6 +28,14 @@ function daysBetween(fromIso: string, toIso: string): number {
   return Math.floor(ms / 86_400_000);
 }
 
+function byNewest(a: ChangelogEntry, b: ChangelogEntry): number {
+  if (a.date !== b.date) return a.date < b.date ? 1 : -1;
+  const aCreated = a.createdAt ?? "";
+  const bCreated = b.createdAt ?? "";
+  if (aCreated === bCreated) return 0;
+  return aCreated < bCreated ? 1 : -1;
+}
+
 function monthLabel(monthKey: string): string {
   const date = new Date(`${monthKey}-01T00:00:00Z`);
   return date.toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
@@ -56,7 +64,8 @@ export function ChangelogTabContent(): React.ReactElement {
     try {
       const payload = await fetchChangelogArchive();
       setArchive(payload);
-      setSelectedId((prev) => prev ?? payload.entries[0]?.id ?? null);
+      const newestId = [...payload.entries].sort(byNewest)[0]?.id ?? null;
+      setSelectedId((prev) => prev ?? newestId);
     } catch {
       /* ignore */
     } finally {
@@ -68,7 +77,7 @@ export function ChangelogTabContent(): React.ReactElement {
     void loadArchive();
   }, [loadArchive]);
 
-  const entries = useMemo(() => archive?.entries ?? [], [archive]);
+  const entries = useMemo(() => [...(archive?.entries ?? [])].sort(byNewest), [archive]);
   const newestEntryDate = entries[0]?.date ?? null;
   const due = newestEntryDate === null || daysBetween(newestEntryDate, todayIso()) >= DUE_AFTER_DAYS;
 

@@ -22,6 +22,7 @@ import {
   PropertiesWorkspaceToolbar,
 } from "@/components/manager/dashboard/PropertiesWorkspaceToolbar";
 import { PropertiesStudioHeader } from "./wordpress/PropertiesStudioHeader";
+import { AddClientDockPanel } from "./wordpress/AddClientDockPanel";
 import { PROPERTIES_DOCK_CLASS, PROPERTIES_EMPTY } from "./wordpress/wordpress-properties-surfaces";
 import { useWordPressFeatureForm } from "./use-wordpress-feature-form";
 import { useWordPressFeatureActions } from "./use-wordpress-feature-actions";
@@ -169,6 +170,7 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
 
   const {
     isDialogOpen, setIsDialogOpen, editingSite,
+    addClientPanelOpen, addClientStatus, addClientImporting,
     formName, formSiteUrl, formProductionSiteUrl, formUsername, formAppPassword,
     formGa4PropertyId, formGoogleAdsCustomerId, formGbpLocationId, formSemrushSiteAuditProjectId, formSemrushPositionTrackingProjectId,
     formSemrushPositionTrackingCampaignId, formEditorialCountsPeriodStartYmd, formOptimizationPackage, formEditorialContentPackage, formEditorialPublishTimeLocal,
@@ -181,7 +183,8 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
     setFormProfileTags, setFormServiceCity, setFormServiceState, setFormServiceCountry,
     profileSite, profileSiteId, profileSectionId,
     setProfileSectionId, settingsSubSectionId, setSettingsSubSectionId,
-    filteredSites, tierFilteredSites, openProfile, handleAddSite, handleEditSite, handleSaveSiteClick,
+    filteredSites, tierFilteredSites, openProfile, handleAddSite, handleCancelAddClient,
+    handleAiImportClient, handleEditSite, handleSaveSiteClick,
   } = useWordPressFeatureForm({
     sites,
     editorialPackageFilter,
@@ -351,6 +354,22 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
             propertyRowDisplay="compact"
             layout="dock"
             activeSiteId={displaySite?.id}
+          />
+          <AddClientDockPanel
+            open={addClientPanelOpen}
+            name={formName}
+            siteUrl={formSiteUrl}
+            username={formUsername}
+            appPassword={formAppPassword}
+            statusText={addClientStatus}
+            isImporting={addClientImporting}
+            onNameChange={setFormName}
+            onSiteUrlChange={setFormSiteUrl}
+            onUsernameChange={setFormUsername}
+            onAppPasswordChange={setFormAppPassword}
+            onAiImport={() => void handleAiImportClient()}
+            onSave={handleSaveSiteClick}
+            onCancel={handleCancelAddClient}
           />
           <PropertiesDockFooterActions
             sitesCount={sites.length}

@@ -29,93 +29,17 @@ const DOCK_COUNTS_SLOT_CLASS =
   "inline-flex h-6 min-h-6 max-h-6 w-[6rem] min-w-[6rem] max-w-[6rem] shrink-0 items-center justify-start overflow-hidden";
 
 /**
- * Square zinc two-bar SVG loader. Dock forces opacity:1, so breathe + gloss use transform.
- * Slot stays h-6 × 6rem.
+ * Flat muted two-bar mark (BulkSplashVisual language). Soft rounded bars, subtle pulse.
+ * Slot stays h-6 × 6rem. No gloss / no vertical gradient.
  */
 function DockRowCountMark() {
-  const uid = React.useId().replace(/:/g, "");
-  const fillId = `dockCountBarFill-${uid}`;
-  const glossId = `dockCountBarGloss-${uid}`;
-  const clipTopId = `dockCountBarClipTop-${uid}`;
-  const clipBotId = `dockCountBarClipBot-${uid}`;
-
   return (
     <span
-      className="inline-flex h-6 max-h-6 w-[6rem] max-w-[6rem] items-center justify-start overflow-hidden"
+      className="dock-count-fade inline-flex h-6 max-h-6 w-[6rem] max-w-[6rem] flex-col justify-center gap-1.5 overflow-hidden"
       aria-hidden
     >
-      <style>{`
-        @keyframes dock-count-bar-breathe {
-          0%, 100% { transform: scaleY(0.55); }
-          50% { transform: scaleY(1); }
-        }
-        @keyframes dock-count-bar-flash {
-          0% { transform: translateX(-120%); }
-          100% { transform: translateX(220%); }
-        }
-      `}</style>
-      <svg
-        viewBox="0 0 96 24"
-        width="96"
-        height="24"
-        className="block h-6 w-[6rem] shrink-0 overflow-visible"
-        role="presentation"
-      >
-        <defs>
-          <linearGradient id={fillId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#71717a" />
-            <stop offset="45%" stopColor="#3f3f46" />
-            <stop offset="100%" stopColor="#27272a" />
-          </linearGradient>
-          <linearGradient id={glossId} x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-            <stop offset="50%" stopColor="rgba(255,255,255,0.28)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-          </linearGradient>
-          <clipPath id={clipTopId}>
-            <rect x="0" y="3" width="58" height="7" rx="0" ry="0" />
-          </clipPath>
-          <clipPath id={clipBotId}>
-            <rect x="0" y="14" width="96" height="7" rx="0" ry="0" />
-          </clipPath>
-        </defs>
-        <g
-          style={{
-            transformOrigin: "29px 6.5px",
-            animation: "dock-count-bar-breathe 2.4s ease-in-out infinite",
-          }}
-        >
-          <rect x="0" y="3" width="58" height="7" rx="0" ry="0" fill={`url(#${fillId})`} />
-          <g clipPath={`url(#${clipTopId})`}>
-            <rect
-              x="0"
-              y="3"
-              width="28"
-              height="7"
-              fill={`url(#${glossId})`}
-              style={{ animation: "dock-count-bar-flash 3.6s ease-in-out infinite" }}
-            />
-          </g>
-        </g>
-        <g
-          style={{
-            transformOrigin: "48px 17.5px",
-            animation: "dock-count-bar-breathe 2.4s ease-in-out 0.2s infinite",
-          }}
-        >
-          <rect x="0" y="14" width="96" height="7" rx="0" ry="0" fill={`url(#${fillId})`} />
-          <g clipPath={`url(#${clipBotId})`}>
-            <rect
-              x="0"
-              y="14"
-              width="36"
-              height="7"
-              fill={`url(#${glossId})`}
-              style={{ animation: "dock-count-bar-flash 3.6s ease-in-out 0.35s infinite" }}
-            />
-          </g>
-        </g>
-      </svg>
+      <span className="dock-count-pulse h-2.5 w-[3.6rem] shrink-0 rounded-sm bg-zinc-700" />
+      <span className="dock-count-pulse dock-count-pulse-delay h-2.5 w-full shrink-0 rounded-sm bg-zinc-700" />
     </span>
   );
 }

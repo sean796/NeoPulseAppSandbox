@@ -738,17 +738,41 @@ All colors MUST be HSL.
 /**
  * Properties left sidebar: ALL text pure white forever (toolbar, headers, rows, idle, active).
  * Unlayered so Tailwind zinc/muted utilities cannot win. Lime active = background only.
+ * Primary run buttons keep black label on lime (do not force white fill).
  */
 .properties-dock,
-.properties-dock *:not(.dock-count-fade),
-.properties-dock *:not(.dock-count-fade)::before,
-.properties-dock *:not(.dock-count-fade)::after,
+.properties-dock *:not(.dock-count-fade):not(.dock-count-pulse):not(.bg-primary),
+.properties-dock *:not(.dock-count-fade):not(.dock-count-pulse):not(.bg-primary)::before,
+.properties-dock *:not(.dock-count-fade):not(.dock-count-pulse):not(.bg-primary)::after,
 .properties-dock input,
 .properties-dock input::placeholder {
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
   filter: none !important;
   opacity: 1 !important;
+}
+
+.properties-dock .bg-primary,
+.properties-dock .bg-primary * {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/** Dock fields stay zinc wells; Chrome autofill must not paint light. */
+.properties-dock input {
+  background-color: hsl(var(--ui-field)) !important;
+  caret-color: #ffffff !important;
+}
+
+.properties-dock input:-webkit-autofill,
+.properties-dock input:-webkit-autofill:hover,
+.properties-dock input:-webkit-autofill:focus,
+.properties-dock input:-webkit-autofill:active {
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff !important;
+  transition: background-color 99999s ease-out;
+  -webkit-box-shadow: 0 0 0 1000px hsl(var(--ui-field)) inset !important;
+  box-shadow: 0 0 0 1000px hsl(var(--ui-field)) inset !important;
 }
 
 /**
@@ -766,7 +790,26 @@ All colors MUST be HSL.
 }
 
 .properties-dock .dock-count-fade {
-  animation: dock-count-fade-in 0.55s ease-out both !important;
+  animation: dock-count-fade-in 1.15s ease-in-out both !important;
+}
+
+/** Flat muted loader bars (splash-style), subtle pulse. */
+@keyframes dock-count-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+
+.properties-dock .dock-count-pulse {
+  animation: dock-count-pulse 1.8s ease-in-out infinite !important;
+}
+
+.properties-dock .dock-count-pulse-delay {
+  animation-delay: 0.2s !important;
 }
 
 /**
@@ -785,4 +828,10 @@ All colors MUST be HSL.
 
 .properties-overview button:disabled:not(.bg-primary) {
   opacity: 1 !important;
+}
+
+/** Master Rules empty drop: muted icon/label (darker than forced overview white). */
+.properties-overview .master-rules-drop-hint {
+  color: rgba(255, 255, 255, 0.4) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.4) !important;
 }

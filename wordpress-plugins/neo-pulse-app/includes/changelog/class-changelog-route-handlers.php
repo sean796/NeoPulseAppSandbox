@@ -212,8 +212,9 @@ class Neo_Pulse_App_Changelog_Route_Handlers {
 
 	/**
 	 * Commits falling inside a saved entry's date range (or all stored
-	 * commits when no entry exists yet), oldest first, used when
-	 * regenerating an existing entry with 0 uncovered commits waiting.
+	 * commits when no entry exists yet), oldest first. Used when Generate
+	 * runs with nothing uncovered, so the new report can still be written
+	 * and saved beside the earlier one.
 	 *
 	 * @param array{entries: array<int,array<string,mixed>>, commits: array<int,array<string,mixed>>} $state Stored state.
 	 * @param array<string,mixed>|null                                                                $entry Entry to match.
@@ -270,7 +271,11 @@ class Neo_Pulse_App_Changelog_Route_Handlers {
 		usort(
 			$entries,
 			static function ( $a, $b ) {
-				return strcmp( (string) ( $b['date'] ?? '' ), (string) ( $a['date'] ?? '' ) );
+				$by_date = strcmp( (string) ( $b['date'] ?? '' ), (string) ( $a['date'] ?? '' ) );
+				if ( 0 !== $by_date ) {
+					return $by_date;
+				}
+				return strcmp( (string) ( $b['createdAt'] ?? '' ), (string) ( $a['createdAt'] ?? '' ) );
 			}
 		);
 		return array(
@@ -339,6 +344,21 @@ class Neo_Pulse_App_Changelog_Route_Handlers {
 	}
 
 	/**
+	 * Timestamp with a fractional second. gmdate("u") stays 000000 on
+	 * Windows, which would tie two reports saved in the same second.
+	 */
+	private static function now_stamp(): string {
+		$now     = microtime( true );
+		$seconds = (int) $now;
+		$micros  = (int) round( ( $now - $seconds ) * 1000000 );
+		if ( $micros >= 1000000 ) {
+			$seconds++;
+			$micros = 0;
+		}
+		return gmdate( 'Y-m-d\TH:i:s', $seconds ) . sprintf( '.%06d+00:00', $micros );
+	}
+
+	/**
 	 * @param array<string,mixed> $body JSON body.
 	 */
 	private static function save_entry( array $body ): void {
@@ -376,7 +396,7 @@ class Neo_Pulse_App_Changelog_Route_Handlers {
 			'summary'     => isset( $entry['summary'] ) && is_string( $entry['summary'] ) ? substr( trim( $entry['summary'] ), 0, 4000 ) : '',
 			'highlights'  => self::clean_string_list( $entry['highlights'] ?? array() ),
 			'sections'    => $sections,
-			'createdAt'   => gmdate( 'c' ),
+			'createdAt'   => self::now_stamp(),
 		);
 		$saved = self::mutate_state(
 			static function ( array &$state ) use ( $clean ): void {

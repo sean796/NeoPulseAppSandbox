@@ -3,6 +3,7 @@
  */
 export const NEO_PULSE_APP_VISIBLE_TAB_ROUTES = [
   { method: "POST", path: "wordpress/test-connection" },
+  { method: "POST", path: "wordpress/ai-import-client" },
   { method: "POST", path: "gsc/fetch-reporting-bundle" },
   { method: "POST", path: "gsc/reporting-chat-completion" },
   { method: "POST", path: "openrouter/chat-completion" },

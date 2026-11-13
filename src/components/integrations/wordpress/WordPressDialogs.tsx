@@ -112,7 +112,7 @@ export const WordPressDialogs: React.FC<WordPressSiteFormDialogsProps> = ({
 }) => {
   return (
     <SiteDialog
-      open={isDialogOpen}
+      open={isDialogOpen && Boolean(editingSite)}
       onOpenChange={onDialogOpenChange}
       editingSite={editingSite}
       formName={formName}

@@ -63,7 +63,7 @@ export const PROPERTIES_EMPTY = cn(
 
 /** Studio left dock for the property list (+10% over Changelog 21rem). */
 export const PROPERTIES_DOCK_CLASS =
-  "properties-dock relative flex h-full min-h-0 w-[23.1rem] shrink-0 flex-col bg-zinc-950 text-white";
+  "properties-dock relative flex h-full min-h-0 w-[23.1rem] shrink-0 flex-col overflow-hidden bg-zinc-950 text-white";
 
 /** Slim Studio header on the right pane (one fixed-height row). */
 export const PROPERTIES_STUDIO_HEADER_CLASS =
@@ -83,18 +83,21 @@ export const PROPERTIES_SECTION_NAV_BTN_CLASS = cn(
 export const PROPERTIES_SECTION_NAV_DIVIDER_CLASS =
   "mx-1 h-5 w-px shrink-0 bg-white/10";
 
-/** Flat property surface. No frame. */
+/**
+ * Spotify-style section frame: square, borderless, muted zinc on black page.
+ * Spacing between frames comes from stack/grid gaps, not borders.
+ */
 export const PROPERTIES_OVERVIEW_WELL_CLASS = cn(
-  "flex w-full min-w-0 flex-col rounded-none border-0 bg-transparent shadow-none",
+  "flex w-full min-w-0 flex-col rounded-none border-0 bg-zinc-900 shadow-none",
 );
 
 export const PROPERTIES_OVERVIEW_STACK_CLASS =
-  "properties-overview flex h-full min-h-0 w-full flex-col gap-2 overflow-y-auto text-white";
+  "properties-overview flex h-full min-h-0 w-full flex-col gap-3 overflow-y-auto bg-black p-3 text-white";
 
 /** Identity strip: name + URL + soft status pills. */
 export const PROPERTIES_OVERVIEW_IDENTITY_CLASS = cn(
   PROPERTIES_OVERVIEW_WELL_CLASS,
-  "min-h-14 shrink-0 flex-row flex-wrap items-center gap-3 p-4",
+  "min-h-14 shrink-0 flex-row flex-wrap items-center gap-3 px-4 py-3",
 );
 
 export const PROPERTIES_OVERVIEW_IDENTITY_NAME_CLASS =
@@ -140,9 +143,9 @@ export const PROPERTIES_OVERVIEW_CHIP_DOT_WARN_CLASS = "h-1.5 w-1.5 shrink-0 rou
 export const PROPERTIES_OVERVIEW_CHIP_DOT_MUTED_CLASS = "h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-400";
 export const PROPERTIES_OVERVIEW_CHIP_DOT_LITE_CLASS = "h-1.5 w-1.5 shrink-0 rounded-full bg-sky-400";
 
-/** Shared key-value pill row (KPI / Profile / Integrations). */
+/** Shared key-value pill row (darker well inside muted section frame). */
 export const PROPERTIES_OVERVIEW_PILL_ROW_CLASS = cn(
-  "flex h-11 w-full min-w-0 items-center justify-between gap-3 rounded-none border-0 bg-zinc-900 px-3",
+  "flex h-11 w-full min-w-0 items-center justify-between gap-3 rounded-none border-0 bg-black px-3",
 );
 
 export const PROPERTIES_OVERVIEW_PILL_LABEL_CLASS =
@@ -159,11 +162,11 @@ export const PROPERTIES_OVERVIEW_PILL_NOTE_CLASS =
 
 /** Independent KPI cards (pill metric inside well). */
 export const PROPERTIES_OVERVIEW_KPI_ROW_CLASS =
-  "grid w-full shrink-0 grid-cols-2 gap-0";
+  "grid w-full shrink-0 grid-cols-2 gap-3";
 
 export const PROPERTIES_OVERVIEW_KPI_TILE_CLASS = cn(
   PROPERTIES_OVERVIEW_WELL_CLASS,
-  "min-h-0 justify-center gap-2 overflow-visible bg-zinc-900 p-3",
+  "min-h-0 justify-center gap-2 overflow-visible p-3",
 );
 
 export const PROPERTIES_OVERVIEW_KPI_LABEL_CLASS = PROPERTIES_OVERVIEW_PILL_LABEL_CLASS;
@@ -179,7 +182,7 @@ export const PROPERTIES_OVERVIEW_DUAL_CLASS = "grid min-h-0 shrink grid-cols-2 g
 
 export const PROPERTIES_OVERVIEW_PANEL_CLASS = cn(
   PROPERTIES_OVERVIEW_WELL_CLASS,
-  "min-w-0 gap-1 overflow-hidden px-3 py-2",
+  "min-w-0 gap-2 overflow-hidden p-3",
 );
 
 export const PROPERTIES_OVERVIEW_PANEL_TITLE_CLASS =
@@ -263,7 +266,7 @@ export const PROPERTIES_DOCK_COUNT_ACTIVE_CLASS = PROPERTIES_DOCK_COUNT_CLASS;
 
 /** Column header above the dock site list (white uppercase + bottom rule). */
 export const PROPERTIES_DOCK_COLUMN_HEADER_CLASS = cn(
-  "flex w-full min-w-0 shrink-0 items-center gap-2 border-b border-white/10 px-2 py-1 text-white",
+  "relative z-10 flex w-full min-w-0 shrink-0 items-center gap-2 border-b border-white/10 bg-zinc-950 px-2 py-1 text-white",
 );
 
 export const PROPERTIES_DOCK_COLUMN_HEADER_LABEL_CLASS =

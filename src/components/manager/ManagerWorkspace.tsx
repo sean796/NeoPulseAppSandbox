@@ -100,7 +100,7 @@ export const ManagerWorkspace: React.FC<ManagerWorkspaceProps> = ({
   const showResetToolbar = embedded && onResetBlueprint && onResetWorkspace;
 
   /** Embedded: small air gap below the sticky mega menu; overlay keeps classic inset. */
-  const embeddedTabPanelTopClass = embedded ? "mt-0" : "mt-2";
+  const embeddedTabPanelTopClass = embedded ? "mt-1.5" : "mt-2";
   const embeddedMainColumnTopClass = embedded ? "pt-3 md:pt-4" : "pt-2 md:pt-3";
   /** Keeps content width static beside docked rail without shifting when sidebar drawer opens. */
   const embeddedAssistAwareInsetClass = "pr-[var(--neo-pulse-shortcut-rail-width)]";

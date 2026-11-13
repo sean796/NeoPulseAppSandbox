@@ -74,7 +74,10 @@ describe("app changelog writer agent", () => {
 
   it("builds entry facts from the pack, never from the draft", () => {
     const entry = buildChangelogEntry(VALID_DRAFT, COMMITS, "2026-11-06");
-    expect(entry.id).toBe("2026-11-02..2026-11-05");
+    const again = buildChangelogEntry(VALID_DRAFT, COMMITS, "2026-11-06");
+    expect(entry.id.startsWith("2026-11-06-")).toBe(true);
+    expect(entry.id).not.toBe(again.id);
+    expect(entry.id).not.toBe("2026-11-02..2026-11-05");
     expect(entry.date).toBe("2026-11-06");
     expect(entry.rangeFrom).toBe("2026-11-02");
     expect(entry.rangeTo).toBe("2026-11-05");

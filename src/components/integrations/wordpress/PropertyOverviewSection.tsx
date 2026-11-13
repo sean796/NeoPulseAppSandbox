@@ -424,7 +424,7 @@ export function PropertyOverviewSection({
         </div>
       </section>
 
-      <section className="grid shrink-0 grid-cols-2 gap-2" aria-label="Platform">
+      <section className="grid shrink-0 grid-cols-2 gap-3" aria-label="Platform">
         <KpiTile
           label="WordPress"
           value={propertyHostingLabel(site)}
@@ -433,7 +433,7 @@ export function PropertyOverviewSection({
         <KpiTile label="Scheduled" value={scheduled ? String(scheduled.count) : "0"} />
       </section>
 
-      <div className="grid w-full grid-cols-2 items-start gap-x-3 gap-y-2">
+      <div className="grid w-full grid-cols-2 items-start gap-3">
         <section className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)} aria-label="Profile">
           <PanelHeading title="Profile" />
           <dl className={PROPERTIES_OVERVIEW_DL_CLASS}>
@@ -699,16 +699,6 @@ export function PropertyOverviewSection({
                 />
               ) : null}
             </IntegrationRow>
-            <IntegrationRow label="Production" value={editing ? undefined : site.productionSiteUrl?.trim() ?? ""}>
-              {editing ? (
-                <Field
-                  defaultValue={site.productionSiteUrl ?? ""}
-                  onBlur={(e) => patch({ productionSiteUrl: e.target.value.trim() || undefined })}
-                  placeholder="Production"
-                  aria-label="Production"
-                />
-              ) : null}
-            </IntegrationRow>
             <IntegrationRow label="Username" value={editing ? undefined : site.username?.trim() ?? ""}>
               {editing ? (
                 <Field
@@ -731,16 +721,6 @@ export function PropertyOverviewSection({
               ) : null}
             </IntegrationRow>
             <IntegrationRow label="Editorial" value={editorialTier ?? ""} />
-            <IntegrationRow label="Publish time" value={editing ? undefined : site.editorialPublishTimeLocal?.trim() ?? ""}>
-              {editing ? (
-                <Field
-                  defaultValue={site.editorialPublishTimeLocal ?? ""}
-                  onBlur={(e) => patch({ editorialPublishTimeLocal: e.target.value.trim() || undefined })}
-                  placeholder="Publish time"
-                  aria-label="Publish time"
-                />
-              ) : null}
-            </IntegrationRow>
             <IntegrationRow label="Benchmark" value={editing ? undefined : site.benchmarkCustomTag?.trim() ?? ""}>
               {editing ? (
                 <Field
@@ -754,7 +734,7 @@ export function PropertyOverviewSection({
           </dl>
         </section>
 
-        <div className="flex min-w-0 flex-col gap-2">
+        <div className="flex min-w-0 flex-col gap-3">
           <section className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)} aria-label="Master Rules">
             <PanelHeading title="Master Rules" />
             <MasterInstructionsSection

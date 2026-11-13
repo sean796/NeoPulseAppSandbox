@@ -154,6 +154,16 @@ $res = dispatch( '', 'GET' );
 check( 'entries list newest first', $res['data']['entries'][0]['id'] === '2026-11-03..2026-11-05' );
 check( 'all commits covered after second entry', $res['data']['source']['uncoveredCount'] === 0 );
 
+// 7b. A later report on the same date is kept beside the earlier one.
+usleep( 20000 );
+$entry3 = $entry2;
+$entry3['id'] = '2026-11-05-new-report';
+$entry3['title'] = 'Grid speed, second report';
+$res = dispatch( 'entry', 'POST', array( 'entry' => $entry3 ) );
+check( 'same-day report is added, not a replacement', count( $res['data']['entries'] ) === 3 );
+check( 'newer same-day report is listed first', $res['data']['entries'][0]['id'] === '2026-11-05-new-report' );
+check( 'earlier same-day report is still in the archive', $res['data']['entries'][1]['id'] === '2026-11-03..2026-11-05' );
+
 // 8. Validation and unknown routes.
 $res = dispatch( 'entry', 'POST', array( 'entry' => array( 'id' => 'x' ) ) );
 check( 'entry without date and title is a 400', $res['status'] === 400 && $res['data']['ok'] === false );

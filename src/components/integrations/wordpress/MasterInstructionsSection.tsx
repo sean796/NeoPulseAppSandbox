@@ -368,12 +368,12 @@ export const MasterInstructionsSection: React.FC<MasterInstructionsSectionProps>
               onPickFiles();
             }
           }}
-          className={`flex min-h-0 flex-1 flex-col overflow-hidden bg-black p-2 ${
+          className={`flex min-h-0 flex-1 flex-col overflow-hidden border border-dashed border-white/25 bg-ui-field p-2 ${
             isDragging ? "ring-2 ring-primary" : ""
           } ${fileText ? "" : "cursor-pointer items-center justify-center"}`}
         >
           {busy ? (
-            <span className="text-base text-white">
+            <span className="master-rules-drop-hint text-base">
               {summarizingPhase ? "Extracting nested triples…" : "Reading file…"}
             </span>
           ) : fileText ? (
@@ -382,8 +382,8 @@ export const MasterInstructionsSection: React.FC<MasterInstructionsSectionProps>
             </pre>
           ) : (
             <>
-              <Upload className="h-5 w-5 text-white" aria-hidden />
-              <span className="text-base text-white">Drop files</span>
+              <Upload className="master-rules-drop-hint h-5 w-5" aria-hidden />
+              <span className="master-rules-drop-hint text-base">Drop files</span>
             </>
           )}
         </div>

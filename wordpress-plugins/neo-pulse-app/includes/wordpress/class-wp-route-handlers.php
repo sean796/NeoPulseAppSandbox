@@ -87,6 +87,12 @@ class Neo_Pulse_App_Wp_Route_Handlers {
 			case 'test-connection':
 				return Neo_Pulse_App_Wp_Connection::test_connection( $body );
 
+			case 'ai-import-client':
+				if ( $method !== 'POST' ) {
+					return self::method_not_allowed( $method, $action );
+				}
+				return Neo_Pulse_App_Wp_Ai_Import_Client::import( $body );
+
 			case 'detect-sitemaps':
 				return Neo_Pulse_App_Wp_Sitemap::detect_sitemaps( $body );
 			case 'parse-sitemap':

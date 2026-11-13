@@ -361,6 +361,7 @@ class Neo_Pulse_App_Loader {
 		require_once $wp . 'class-wp-post-fields-by-url.php';
 		require_once $wp . 'class-wp-post-field-keys-discovery.php';
 		require_once $wp . 'class-neo-mcp-client.php';
+		require_once $wp . 'class-wp-ai-import-client.php';
 		require_once $wp . 'class-wp-editorial-counts.php';
 		require_once $wp . 'class-wp-overview-seo-item.php';
 		require_once $wp . 'class-wp-meta.php';

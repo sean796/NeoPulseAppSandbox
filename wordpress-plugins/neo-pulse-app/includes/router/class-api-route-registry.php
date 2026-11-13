@@ -15,6 +15,7 @@ class Neo_Pulse_App_Api_Route_Registry {
 	public static function visible_tab_routes(): array {
 		return array(
 			array( 'method' => 'POST', 'path' => 'wordpress/test-connection' ),
+			array( 'method' => 'POST', 'path' => 'wordpress/ai-import-client' ),
 			array( 'method' => 'POST', 'path' => 'wordpress/bulk-update-overview-seo' ),
 			array( 'method' => 'POST', 'path' => 'wordpress/discover-post-field-keys' ),
 			array( 'method' => 'POST', 'path' => 'gsc/fetch-reporting-bundle' ),

@@ -97,8 +97,9 @@ export const appChangelogWriterAgent = createPulseAgent<ChangelogAgentInput, Cha
 
 /**
  * Build the archive entry around a model draft. Code owns every fact:
- * the id, the entry date, the covered range, and the commit count all
- * come from the pack, never from the model.
+ * the entry date, the covered range, and the commit count come from the
+ * pack and the clock, never from the model. Each call gets a new id so
+ * Generate adds a dated report and leaves earlier reports in the archive.
  */
 export function buildChangelogEntry(
   draft: ChangelogDraft,
@@ -117,7 +118,7 @@ export function buildChangelogEntry(
   const rangeFrom = commits[0]?.date ?? entryDate;
   const rangeTo = commits[commits.length - 1]?.date ?? entryDate;
   return {
-    id: `${rangeFrom}..${rangeTo}`,
+    id: `${entryDate}-${crypto.randomUUID()}`,
     date: entryDate,
     rangeFrom,
     rangeTo,

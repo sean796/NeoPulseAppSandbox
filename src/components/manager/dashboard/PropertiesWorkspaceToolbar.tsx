@@ -43,7 +43,7 @@ export function PropertiesWorkspaceToolbar({
   const monthOptions = editorialMonthOptions ?? [];
 
   return (
-    <div className="neo-pulse-properties-dock-head flex w-full min-w-0 shrink-0 flex-col gap-1.5 bg-zinc-950 py-1.5">
+    <div className="neo-pulse-properties-dock-head flex w-full min-w-0 shrink-0 flex-col gap-1.5 bg-zinc-950 py-1.5 z-10">
       <div className="flex h-8 w-full min-w-0 items-center gap-1.5">
         <div className="min-w-0 flex-1">
           <SelectField
@@ -119,7 +119,7 @@ export function PropertiesDockFooterActions({
   onAddSite,
 }: PropertiesDockFooterActionsProps) {
   return (
-    <div className="neo-pulse-properties-dock-foot flex h-10 w-full min-w-0 shrink-0 items-center gap-1.5 bg-zinc-950 py-1">
+    <div className="neo-pulse-properties-dock-foot z-10 flex h-10 w-full min-w-0 shrink-0 items-center gap-1.5 bg-[#111113] px-1 py-1">
       <div className="min-w-0 flex-1">
         <button
           type="button"
