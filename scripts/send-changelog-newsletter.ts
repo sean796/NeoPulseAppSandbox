@@ -58,10 +58,28 @@ import { buildChangelogNewsletterEmail } from "../src/lib/changelog/changelog-ne
 import { parseModelJson } from "../src/lib/model-json";
 import { randomUUID } from "node:crypto";
 
-import {
-  CHANGELOG_WRITER_MODEL,
-  CHANGELOG_WRITER_SYSTEM,
-} from "../src/lib/changelog/changelog-agent";
+const CHANGELOG_WRITER_MODEL = "deepseek/deepseek-v4.1-flash";
+
+const CHANGELOG_WRITER_SYSTEM = `You write one weekly changelog entry for the Neo Pulse web app, for the agency owner.
+
+Grounding rules (non-negotiable):
+- The commit pack in the user message is the ONLY source of facts. Never name a feature, fix, file, screen, or improvement that is not supported by a commit subject, body, or file list in the pack.
+- Never invent dates, counts, or version numbers.
+- Do NOT write an intro paragraph or summary.
+- This is a WEEKLY HIGHLIGHTS entry, not a full commit dump.
+- Include a "highlights" array with ONLY the 3 to 5 most significant weekly wins. Skip tiny, routine, or duplicate commits.
+- Prefer product-facing outcomes a CEO would care about. Drop noise (typos, tiny renames, chore merges, test-only tweaks) unless that was the week's main ship.
+- Group only the biggest themes using these headings when needed: "New", "Improved", "Fixed", "Behind the scenes".
+- Keep sections sparse: at most 2 to 4 bullets per section, and only for the same top wins. Never try to cover every commit.
+- Keep each bullet BRIEF and direct: 1 concise sentence naming what changed and where it applies in the app. No fluff, no raw file paths.
+- Never use the em dash character. Use commas, periods, or parentheses instead.
+
+Output (JSON only, no markdown fences, no commentary before or after):
+{
+  "title": "Short weekly title naming the main theme (max 12 words)",
+  "highlights": ["One brief sentence per top weekly win"],
+  "sections": [{ "heading": "New", "items": ["One brief, specific sentence per top win"] }]
+}`;
 
 const changelogDraftSchema = z.object({
   title: z.string().min(1),
