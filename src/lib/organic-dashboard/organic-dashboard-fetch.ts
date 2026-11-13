@@ -232,18 +232,80 @@ async function fetchOrganicDashboardPart(
   return data;
 }
 
+const ORGANIC_DASHBOARD_PARTS: OrganicDashboardPart[] = [
+  "ga4",
+  "gsc",
+  "semrush",
+  "googleAds",
+  "ndusLeads",
+  "gmbLeads",
+];
+
+/** One failed part must not blank the whole report; merge a skipped/error stub instead. */
+function organicDashboardPartFailureStub(
+  part: OrganicDashboardPart,
+  error: unknown,
+): OrganicDashboardBundleResponse {
+  const message =
+    error instanceof Error && error.message.trim()
+      ? error.message.trim()
+      : `Organic dashboard ${part} failed`;
+  const sources: NonNullable<OrganicDashboardBundleResponse["sources"]> = {
+    ga4: "skipped",
+    gsc: "skipped",
+    semrush: "skipped",
+    googleAds: "skipped",
+    ndusLeads: "skipped",
+    gmbLeads: "skipped",
+  };
+  sources[part] = "error";
+  return {
+    success: true,
+    [part]: {
+      skipped: true,
+      reason: "part_error",
+      error: message,
+    },
+    sources,
+  };
+}
+
 async function fetchOrganicDashboardViaParts(
   params: OrganicDashboardFetchParams,
   signal: AbortSignal,
 ): Promise<OrganicDashboardBundleResponse> {
-  const parts = await Promise.all([
-    fetchOrganicDashboardPart(params, "ga4", signal),
-    fetchOrganicDashboardPart(params, "gsc", signal),
-    fetchOrganicDashboardPart(params, "semrush", signal),
-    fetchOrganicDashboardPart(params, "googleAds", signal),
-    fetchOrganicDashboardPart(params, "ndusLeads", signal),
-    fetchOrganicDashboardPart(params, "gmbLeads", signal),
-  ]);
+  const settled = await Promise.allSettled(
+    ORGANIC_DASHBOARD_PARTS.map((part) => fetchOrganicDashboardPart(params, part, signal)),
+  );
+
+  const parts: OrganicDashboardBundleResponse[] = [];
+  let unsupportedCount = 0;
+  let firstFatal: unknown = null;
+
+  for (let i = 0; i < settled.length; i += 1) {
+    const result = settled[i]!;
+    const part = ORGANIC_DASHBOARD_PARTS[i]!;
+    if (result.status === "fulfilled") {
+      parts.push(result.value);
+      continue;
+    }
+    if (result.reason instanceof OrganicDashboardFetchPartUnsupportedError) {
+      unsupportedCount += 1;
+      continue;
+    }
+    if (!firstFatal) firstFatal = result.reason;
+    parts.push(organicDashboardPartFailureStub(part, result.reason));
+  }
+
+  if (parts.length === 0) {
+    if (unsupportedCount === ORGANIC_DASHBOARD_PARTS.length) {
+      throw new OrganicDashboardFetchPartUnsupportedError();
+    }
+    throw firstFatal instanceof Error
+      ? firstFatal
+      : new Error("Organic dashboard parts failed");
+  }
+
   return mergeOrganicDashboardBundleParts(parts);
 }
 

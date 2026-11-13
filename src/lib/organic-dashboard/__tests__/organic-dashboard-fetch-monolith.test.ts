@@ -78,6 +78,51 @@ describe("fetchOrganicDashboardBundle fetch-part 404", () => {
     expect(new OrganicDashboardFetchPartUnsupportedError().code).toBe("ORGANIC_FETCH_PART_UNSUPPORTED");
   });
 
+  it("keeps other parts when one fetch-part returns Invalid or missing part", async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      const body = init?.body ? JSON.parse(String(init.body)) : {};
+      if (url.includes("fetch-part")) {
+        if (body.part === "gmbLeads") {
+          return new Response(JSON.stringify({ success: false, error: "Invalid or missing part" }), {
+            status: 400,
+          });
+        }
+        return new Response(
+          JSON.stringify({
+            success: true,
+            meta: MONOLITH_BODY.meta,
+            ga4: body.part === "ga4" ? { success: true } : { skipped: true, reason: "partial_request" },
+            gsc: body.part === "gsc" ? { success: true } : { skipped: true, reason: "partial_request" },
+            semrush:
+              body.part === "semrush" ? { success: true } : { skipped: true, reason: "partial_request" },
+            sources: {
+              ga4: body.part === "ga4" ? "ok" : "skipped",
+              gsc: body.part === "gsc" ? "ok" : "skipped",
+              semrush: body.part === "semrush" ? "ok" : "skipped",
+              googleAds: "skipped",
+              ndusLeads: "skipped",
+              gmbLeads: "skipped",
+            },
+          }),
+          { status: 200 },
+        );
+      }
+      return new Response("unexpected", { status: 500 });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const data = await fetchOrganicDashboardBundle(PARAMS);
+    expect(data.ga4).toMatchObject({ success: true });
+    expect(data.gsc).toMatchObject({ success: true });
+    expect(data.gmbLeads).toMatchObject({
+      skipped: true,
+      reason: "part_error",
+      error: "Invalid or missing part",
+    });
+    expect(data.sources?.gmbLeads).toBe("error");
+  });
+
   it("loads googleAds via fetch-part when monolith omits googleAds but customer id is set", async () => {
     const params: OrganicDashboardFetchParams = {
       ...PARAMS,
