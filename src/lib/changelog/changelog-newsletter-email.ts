@@ -214,7 +214,7 @@ export function buildChangelogNewsletterHtml(payload: ChangelogNewsletterPayload
 <td style="padding:22px 24px;">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
 <tr><td style="padding:0 0 8px 0;">${brandLockupHtml()}</td></tr>
-<tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:16px;color:${NEO_PULSE_NEWSLETTER_TEXT};">${escapeHtml(dateLabel)} · ${payload.commitCount} commits</td></tr>
+<tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:16px;color:${NEO_PULSE_NEWSLETTER_TEXT};">${escapeHtml(dateLabel)} · This week · ${payload.commitCount} commits</td></tr>
 </table>
 </td>
 </tr>
@@ -272,7 +272,7 @@ export function buildChangelogNewsletterText(payload: ChangelogNewsletterPayload
   const changelogUrl = payload.changelogUrl || CHANGELOG_NEWSLETTER_FULL_URL;
   const lines: string[] = [
     "neopulse",
-    `${dateLabel} · ${payload.commitCount} commits`,
+    `${dateLabel} · This week · ${payload.commitCount} commits`,
     "",
     payload.hook,
     "",

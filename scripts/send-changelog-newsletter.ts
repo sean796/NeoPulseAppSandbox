@@ -63,11 +63,12 @@ const CHANGELOG_WRITER_MODEL = "deepseek/deepseek-v4.1-flash";
 const CHANGELOG_WRITER_SYSTEM = `You write one weekly changelog entry for the Neo Pulse web app, for the agency owner.
 
 Grounding rules (non-negotiable):
-- The commit pack in the user message is the ONLY source of facts. Never name a feature, fix, file, screen, or improvement that is not supported by a commit subject, body, or file list in the pack.
+- The commit pack in the user message is the FULL WEEK of commits. It is the ONLY source of facts.
+- Summarize the ENTIRE week. Never fixate on the newest commit or a single day's ship.
 - Never invent dates, counts, or version numbers.
 - Do NOT write an intro paragraph or summary.
-- This is a WEEKLY HIGHLIGHTS entry, not a full commit dump.
-- Include a "highlights" array with ONLY the 3 to 5 most significant weekly wins. Skip tiny, routine, or duplicate commits.
+- This is a WEEKLY HIGHLIGHTS entry, not a full commit dump and not a one-change blurb.
+- Include a "highlights" array with ONLY the 3 to 5 most significant weekly wins across the whole pack. Skip tiny, routine, or duplicate commits.
 - Prefer product-facing outcomes a CEO would care about. Drop noise (typos, tiny renames, chore merges, test-only tweaks) unless that was the week's main ship.
 - Group only the biggest themes using these headings when needed: "New", "Improved", "Fixed", "Behind the scenes".
 - Keep sections sparse: at most 2 to 4 bullets per section, and only for the same top wins. Never try to cover every commit.
@@ -116,7 +117,8 @@ function buildChangelogWriterUserPrompt(
 Commit pack (oldest first):
 ${lines.join("\n")}
 
-Write the weekly highlights changelog JSON now. Most significant wins only.`;
+Write the weekly highlights changelog JSON now.
+Cover the ENTIRE week pack. Most significant wins only (3 to 5). Do not write about only the newest commit.`;
 }
 
 function buildFreshChangelogEntry(
@@ -248,6 +250,13 @@ function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
+/** Newsletter always summarizes the last 7 days, not "since last archive entry". */
+const NEWSLETTER_WEEK_DAYS = 7;
+
+function weekSinceIso(): string {
+  return new Date(Date.now() - NEWSLETTER_WEEK_DAYS * 24 * 60 * 60 * 1000).toISOString();
+}
+
 function gitCommitsSince(sinceIso: string): ChangelogCommit[] {
   const subjectsRaw = execFileSync(
     "git",
@@ -299,42 +308,37 @@ function extractChatContent(raw: Record<string, unknown>): string {
   return "";
 }
 
-async function generateFreshEntry(
+async function generateWeeklyHighlightsEntry(
   authHeaders: Record<string, string>,
   previous: ArchiveEntry | null,
-): Promise<ArchiveEntry> {
-  const since =
-    previous?.createdAt?.trim() ||
-    previous?.date?.trim() ||
-    new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-  console.log(`Collecting git commits after ${since} for a fresh changelog entry…`);
+): Promise<{ entry: ArchiveEntry; weekCommits: ChangelogCommit[] }> {
+  const since = weekSinceIso();
+  console.log(
+    `Collecting THIS WEEK's git commits (last ${NEWSLETTER_WEEK_DAYS} days) since ${since}…`,
+  );
   const commits = gitCommitsSince(since);
   if (commits.length === 0) {
-    if (!previous?.title) {
-      throw new Error(
-        `No git commits after ${since} and no prior changelog entry. Refusing stale/empty send.`,
-      );
-    }
-    console.log(
-      `No newer commits since ${since}. Using latest archive entry for this send: ${previous.title}`,
+    throw new Error(
+      `No git commits in the last ${NEWSLETTER_WEEK_DAYS} days since ${since}. Refusing empty weekly send.`,
     );
-    return previous;
   }
-  console.log(`Found ${commits.length} commit(s). Feeding source pool…`);
+  console.log(
+    `Found ${commits.length} commit(s) this week (${commits[0]?.date} → ${commits[commits.length - 1]?.date}). Summarizing into top weekly wins…`,
+  );
   await hubApi("changelog/source/", {
     method: "POST",
     headers: authHeaders,
     body: JSON.stringify({ commits }),
   });
 
-  console.log(`Writing fresh changelog entry with ${CHANGELOG_WRITER_MODEL}…`);
+  console.log(`Writing weekly highlights entry with ${CHANGELOG_WRITER_MODEL}…`);
   const draftRaw = await hubApi("openrouter/chat-completion", {
     method: "POST",
     headers: authHeaders,
     body: JSON.stringify({
       model: CHANGELOG_WRITER_MODEL,
       temperature: 0.3,
-      maxTokens: 8192,
+      maxTokens: 4096,
       responseFormat: { type: "json_object" },
       system: CHANGELOG_WRITER_SYSTEM,
       user: buildChangelogWriterUserPrompt(commits, previous?.date?.trim() || null),
@@ -356,9 +360,9 @@ async function generateFreshEntry(
     throw new Error("Save changelog entry did not return the new entry.");
   }
   console.log(
-    `Fresh entry saved: ${savedNewest.date} · ${savedNewest.title} (${savedNewest.commitCount} commits)`,
+    `Weekly entry saved: ${savedNewest.date} · ${savedNewest.title} (${savedNewest.commitCount} commits this week)`,
   );
-  return savedNewest;
+  return { entry: savedNewest, weekCommits: commits };
 }
 
 async function main(): Promise<void> {
@@ -384,7 +388,7 @@ async function main(): Promise<void> {
     );
   }
 
-  const entry = await generateFreshEntry(authHeaders, previous);
+  const { entry, weekCommits } = await generateWeeklyHighlightsEntry(authHeaders, previous);
   if (entryOnly) {
     console.log(`Entry-only complete. Archive now has entry: ${entry.date} · ${entry.title}`);
     return;
@@ -399,15 +403,15 @@ async function main(): Promise<void> {
         }))
         .filter((section) => section.heading && section.items.length > 0)
     : [];
-  const rangeFrom = String(entry.rangeFrom || entry.date || "").trim();
-  const rangeTo = String(entry.rangeTo || entry.date || "").trim();
-  const commitSubjects = gitCommitsSince(previous?.createdAt || previous?.date || rangeFrom).map(
-    (c) => c.subject,
-  );
+  const rangeFrom = String(entry.rangeFrom || weekCommits[0]?.date || entry.date || "").trim();
+  const rangeTo = String(
+    entry.rangeTo || weekCommits[weekCommits.length - 1]?.date || entry.date || "",
+  ).trim();
+  const commitSubjects = weekCommits.map((c) => c.subject);
   const highlights = stripBannedChangelogTopics({
     title: String(entry.title || "").trim(),
     date: String(entry.date || "").trim(),
-    commitCount: Number(entry.commitCount) || 0,
+    commitCount: weekCommits.length,
     highlights: Array.isArray(entry.highlights)
       ? entry.highlights.map((h) => String(h).trim()).filter(Boolean)
       : [],
@@ -417,7 +421,7 @@ async function main(): Promise<void> {
     rangeTo,
   });
   console.log(
-    `Newsletter pack: ${highlights.date} · ${highlights.title} (${highlights.commitCount} commits)`,
+    `Newsletter pack: ${highlights.date} · ${highlights.title} (${highlights.commitCount} commits this week)`,
   );
 
   console.log(`Writing Morning Brew editorial (hook/body/highlights) with ${CHANGELOG_NEWSLETTER_INTRO_MODEL}…`);

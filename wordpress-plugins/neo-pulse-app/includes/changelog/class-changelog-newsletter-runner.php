@@ -70,16 +70,8 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 	 * @return array<int,array<string,mixed>>
 	 */
 	private static function fetch_github_commits( array $state ): array {
-		$covered = null;
-		foreach ( $state['entries'] as $entry ) {
-			$to = isset( $entry['rangeTo'] ) && is_string( $entry['rangeTo'] ) ? $entry['rangeTo'] : '';
-			if ( $to !== '' && ( $covered === null || strcmp( $to, $covered ) > 0 ) ) {
-				$covered = $to;
-			}
-		}
-		$since = $covered
-			? gmdate( 'c', strtotime( $covered . 'T00:00:00Z' ) + 86400 )
-			: gmdate( 'c', time() - 14 * 86400 );
+		// Always summarize the last 7 days for weekly highlights (not "since last archive entry").
+		$since = gmdate( 'c', time() - 7 * 86400 );
 
 		$token = self::github_token();
 		$url   = 'https://api.github.com/repos/' . self::REPO . '/commits?since=' . rawurlencode( $since ) . '&per_page=100';
@@ -192,11 +184,11 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 		}
 		$from = (string) $commits[0]['date'];
 		$to   = (string) $commits[ count( $commits ) - 1 ]['date'];
-		$user = "Covered period: {$from} to {$to} (" . count( $commits ) . " commits). Previous archive coverage ended: " . ( $covered ?? 'never (first entry)' ) . ".\n\nCommit pack (oldest first):\n" . implode( "\n", $lines ) . "\n\nWrite the changelog entry JSON now.";
+		$user = "Covered period: {$from} to {$to} (" . count( $commits ) . " commits this week). Previous archive coverage ended: " . ( $covered ?? 'never (first entry)' ) . ".\n\nCommit pack (oldest first):\n" . implode( "\n", $lines ) . "\n\nWrite the weekly highlights changelog JSON now.\nCover the ENTIRE week pack. Most significant wins only (3 to 5). Do not write about only the newest commit.";
 
-		$system = 'You write one weekly changelog entry for Neo Pulse. Ground only in the commit pack. No intro paragraph. WEEKLY HIGHLIGHTS only: 3 to 5 most significant wins. Skip tiny or routine commits. Sections New/Improved/Fixed/Behind the scenes only when needed, max 2 to 4 bullets each. Never use the em dash. Output JSON only: {"title":"...","highlights":["..."],"sections":[{"heading":"New","items":["..."]}]}';
+		$system = 'You write one weekly changelog entry for Neo Pulse. The commit pack is the FULL WEEK. Summarize the ENTIRE week. Never fixate on the newest commit. No intro paragraph. WEEKLY HIGHLIGHTS only: 3 to 5 most significant wins across the whole pack. Skip tiny or routine commits. Sections New/Improved/Fixed/Behind the scenes only when needed, max 2 to 4 bullets each. Never use the em dash. Output JSON only: {"title":"...","highlights":["..."],"sections":[{"heading":"New","items":["..."]}]}';
 
-		$raw = self::openrouter_json( self::WRITER_MODEL, $system, $user, 0.3, 8192 );
+		$raw = self::openrouter_json( self::WRITER_MODEL, $system, $user, 0.3, 4096 );
 		$title = isset( $raw['title'] ) ? trim( (string) $raw['title'] ) : '';
 		if ( $title === '' ) {
 			throw new RuntimeException( 'Changelog writer returned empty title' );
@@ -245,8 +237,8 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 		}
 		$pack = "Neo Pulse update: {$entry['title']}\nDate: {$entry['date']}\nCommits: {$entry['commitCount']}\n\nHighlights:\n" . implode( "\n", $pack_lines );
 
-		$intro_system = 'You write the Neo Pulse product newsletter in a Morning Brew voice. Write from PULSE point of view. Never client-owned framing. Plain English for a CEO who does not code. Banned jargon: commit, module, refactor, schema, API, pipeline, CI. Hook max 8 words and 48 chars. Weekly highlights only: 3 to 5 most significant repo updates. Never em dash. JSON only: {"hook":"...","body":"...","highlights":["..."]}';
-		$intro        = self::openrouter_json( self::INTRO_MODEL, $intro_system, $pack . "\n\nWrite hook, body, and weekly highlights (3 to 5 most significant wins only). Pulse is the actor.", 0.45, 3072 );
+		$intro_system = 'You write the Neo Pulse product newsletter in a Morning Brew voice. Write from PULSE point of view. Never client-owned framing. Plain English for a CEO who does not code. Banned jargon: commit, module, refactor, schema, API, pipeline, CI. Hook max 8 words and 48 chars. Weekly highlights: summarize the ENTIRE week pack into 3 to 5 most significant repo updates. Never fixate on one commit or one day. Never em dash. JSON only: {"hook":"...","body":"...","highlights":["..."]}';
+		$intro        = self::openrouter_json( self::INTRO_MODEL, $intro_system, $pack . "\n\nWrite hook, body, and weekly highlights. Cover the ENTIRE week (3 to 5 most significant wins only). Never only the newest ship. Pulse is the actor.", 0.45, 3072 );
 
 		$pulse_seeds = array(
 			array(
@@ -606,7 +598,7 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 		$google_exp = 'Google Search updates that hit rankings, reporting, or client briefs. Watch these first.';
 		$ind_exp    = 'Fun stories from the wider industry this week. Skim for coffee, not homework.';
 
-		return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' . self::escape( self::build_subject( (string) $pack['hook'] ) ) . '</title></head><body style="margin:0;padding:0;background-color:' . self::BG . ';width:100%;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;background-color:' . self::BG . ';"><tr><td align="center" style="padding:0;width:100%;"><table role="presentation" width="' . $w . '" cellspacing="0" cellpadding="0" border="0" style="width:100%;max-width:' . $w . 'px;background-color:' . self::BG . ';"><tr><td style="padding:28px 20px 20px 20px;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;background-color:' . self::WELL . ';"><tr><td width="4" style="width:4px;background-color:' . self::ACCENT . ';">&nbsp;</td><td style="padding:22px 24px;"><span style="font-family:Arial,Helvetica,sans-serif;font-size:26px;font-weight:700;"><span style="color:' . self::ACCENT . ';">neo</span><span style="color:#ffffff;">pulse</span></span><div style="font-family:Arial,Helvetica,sans-serif;font-size:16px;color:' . self::TEXT . ';margin-top:8px;">' . $date . ' · ' . $count . ' commits</div></td></tr></table></td></tr><tr><td style="padding:0 20px 28px 20px;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">'
+		return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' . self::escape( self::build_subject( (string) $pack['hook'] ) ) . '</title></head><body style="margin:0;padding:0;background-color:' . self::BG . ';width:100%;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;background-color:' . self::BG . ';"><tr><td align="center" style="padding:0;width:100%;"><table role="presentation" width="' . $w . '" cellspacing="0" cellpadding="0" border="0" style="width:100%;max-width:' . $w . 'px;background-color:' . self::BG . ';"><tr><td style="padding:28px 20px 20px 20px;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;background-color:' . self::WELL . ';"><tr><td width="4" style="width:4px;background-color:' . self::ACCENT . ';">&nbsp;</td><td style="padding:22px 24px;"><span style="font-family:Arial,Helvetica,sans-serif;font-size:26px;font-weight:700;"><span style="color:' . self::ACCENT . ';">neo</span><span style="color:#ffffff;">pulse</span></span><div style="font-family:Arial,Helvetica,sans-serif;font-size:16px;color:' . self::TEXT . ';margin-top:8px;">' . $date . ' · This week · ' . $count . ' commits</div></td></tr></table></td></tr><tr><td style="padding:0 20px 28px 20px;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">'
 			. self::framed( '', self::PANEL, $summary, 0 )
 			. self::framed( 'Weekly highlights', self::WELL, '<tr><td style="padding:0 0 16px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:' . self::TEXT . ';">' . self::escape( $weekly_exp ) . '</td></tr>' . $highlights, 16 )
 			. self::framed( 'More you know', self::PANEL, '<tr><td style="padding:0 0 16px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:' . self::TEXT . ';">' . self::escape( $more_exp ) . '</td></tr>' . self::articles_html( (array) $pack['articles'] ), 16 )
@@ -638,7 +630,7 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 	private static function build_text( array $pack ): string {
 		$lines = array(
 			'neopulse',
-			$pack['date'] . ' · ' . $pack['commitCount'] . ' commits',
+			$pack['date'] . ' · This week · ' . $pack['commitCount'] . ' commits',
 			'',
 			$pack['hook'],
 			'',

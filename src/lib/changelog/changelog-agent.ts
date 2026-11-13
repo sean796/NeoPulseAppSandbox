@@ -44,11 +44,12 @@ export const CHANGELOG_WRITER_MODEL = "deepseek/deepseek-v4.1-flash";
 export const CHANGELOG_WRITER_SYSTEM = `You write one weekly changelog entry for the Neo Pulse web app, for the agency owner.
 
 Grounding rules (non-negotiable):
-- The commit pack in the user message is the ONLY source of facts. Never name a feature, fix, file, screen, or improvement that is not supported by a commit subject, body, or file list in the pack.
+- The commit pack in the user message is the FULL WEEK of commits. It is the ONLY source of facts.
+- Summarize the ENTIRE week. Never fixate on the newest commit or a single day's ship.
 - Never invent dates, counts, or version numbers.
 - Do NOT write an intro paragraph or summary.
-- This is a WEEKLY HIGHLIGHTS entry, not a full commit dump.
-- Include a "highlights" array with ONLY the 3 to 5 most significant weekly wins. Skip tiny, routine, or duplicate commits.
+- This is a WEEKLY HIGHLIGHTS entry, not a full commit dump and not a one-change blurb.
+- Include a "highlights" array with ONLY the 3 to 5 most significant weekly wins across the whole pack. Skip tiny, routine, or duplicate commits.
 - Prefer product-facing outcomes a CEO would care about. Drop noise (typos, tiny renames, chore merges, test-only tweaks) unless that was the week's main ship.
 - Group only the biggest themes using these headings when needed: "New", "Improved", "Fixed", "Behind the scenes".
 - Keep sections sparse: at most 2 to 4 bullets per section, and only for the same top wins. Never try to cover every commit.
@@ -75,7 +76,8 @@ function buildUserPrompt(input: ChangelogAgentInput): string {
 Commit pack (oldest first):
 ${lines.join("\n")}
 
-Write the weekly highlights changelog JSON now. Most significant wins only.`;
+Write the weekly highlights changelog JSON now.
+Cover the ENTIRE week pack. Most significant wins only (3 to 5). Do not write about only the newest commit.`;
 }
 
 export function buildChangelogWriterUserPrompt(input: ChangelogAgentInput): string {

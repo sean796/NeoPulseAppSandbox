@@ -381,6 +381,7 @@ describe("changelog newsletter email", () => {
     expect(email.html).toContain(INTRO.body);
     expect(email.html).toContain("Full changelog →");
     expect(email.html).toContain(CHANGELOG_NEWSLETTER_FULL_URL);
+    expect(email.html).toContain("This week ·");
     expect(email.html).toContain("Weekly highlights");
     expect(email.html).toContain(CHANGELOG_NEWSLETTER_WEEKLY_HIGHLIGHTS_EXPLAINER);
     expect(email.html).toContain("More you know");

@@ -51,7 +51,9 @@ describe("app changelog writer agent", () => {
     expect(call.system).toContain("ONLY source of facts");
     expect(call.system).toContain("WEEKLY HIGHLIGHTS");
     expect(call.system).toContain("3 to 5 most significant");
+    expect(call.system).toContain("ENTIRE week");
     expect(call.system).not.toContain("8 to 20");
+    expect(call.user).toContain("Do not write about only the newest commit");
   });
 
   it("rejects malformed model output visibly", async () => {
