@@ -34,6 +34,7 @@ import {
   CHANGELOG_NEWSLETTER_GOOGLE_UPDATES_EXPLAINER,
   CHANGELOG_NEWSLETTER_INDUSTRY_NEWS_EXPLAINER,
   CHANGELOG_NEWSLETTER_MORE_YOU_KNOW_EXPLAINER,
+  CHANGELOG_NEWSLETTER_WEEKLY_HIGHLIGHTS_EXPLAINER,
   NEO_PULSE_BRAND_ACCENT,
   NEO_PULSE_NEWSLETTER_MAX_WIDTH,
   NEO_PULSE_NEWSLETTER_TEXT,
@@ -50,7 +51,6 @@ const INTRO: ChangelogNewsletterIntroDraft = {
     "The changelog screen now has a real home for what shipped this week.",
     "Weekly update email ships through a cleaner send path you can trust.",
     "Deep links open the right screen instead of dumping you on Dashboard.",
-    "Organic reports keep going even when one data source hiccups.",
   ],
 };
 
@@ -197,7 +197,8 @@ describe("changelog newsletter drafts", () => {
     const intro = parseChangelogNewsletterIntroDraft(JSON.stringify(INTRO));
     expect(intro.hook.length).toBeLessThanOrEqual(48);
     expect(intro.hook.split(/\s+/).length).toBeLessThanOrEqual(8);
-    expect(intro.highlights.length).toBeGreaterThanOrEqual(5);
+    expect(intro.highlights.length).toBeGreaterThanOrEqual(3);
+    expect(intro.highlights.length).toBeLessThanOrEqual(5);
     const draft = parseChangelogNewsletterReadingDraft(JSON.stringify(READING));
     expect(draft.articles).toHaveLength(3);
     expect(draft.articles[0]?.sourceUrl.startsWith("https://")).toBe(true);
@@ -380,7 +381,8 @@ describe("changelog newsletter email", () => {
     expect(email.html).toContain(INTRO.body);
     expect(email.html).toContain("Full changelog →");
     expect(email.html).toContain(CHANGELOG_NEWSLETTER_FULL_URL);
-    expect(email.html).toContain("Highlights");
+    expect(email.html).toContain("Weekly highlights");
+    expect(email.html).toContain(CHANGELOG_NEWSLETTER_WEEKLY_HIGHLIGHTS_EXPLAINER);
     expect(email.html).toContain("More you know");
     expect(email.html).toContain(CHANGELOG_NEWSLETTER_MORE_YOU_KNOW_EXPLAINER);
     expect(email.html).toContain("AISEO News");
@@ -409,6 +411,8 @@ describe("changelog newsletter email", () => {
     expect(googleIdx).toBeGreaterThan(aiseoIdx);
     expect(industryIdx).toBeGreaterThan(googleIdx);
 
+    expect(email.text).toContain("WEEKLY HIGHLIGHTS");
+    expect(email.text).toContain(CHANGELOG_NEWSLETTER_WEEKLY_HIGHLIGHTS_EXPLAINER);
     expect(email.text).toContain("MORE YOU KNOW");
     expect(email.text).toContain("AISEO NEWS");
     expect(email.text).toContain("GOOGLE UPDATES");

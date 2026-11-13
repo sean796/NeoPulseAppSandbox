@@ -39,7 +39,7 @@ export const newsletterArticleSchema = z.object({
   whyItHelps: z.string().min(NEWSLETTER_WHY_MIN),
 });
 
-/** Pack-only pass: hook, body, personality highlights. */
+/** Pack-only pass: hook, body, weekly highlights (most significant only). */
 export const changelogNewsletterIntroDraftSchema = z.object({
   hook: z
     .string()
@@ -49,7 +49,7 @@ export const changelogNewsletterIntroDraftSchema = z.object({
       message: "hook must be 8 words or fewer",
     }),
   body: z.string().min(NEWSLETTER_BODY_MIN),
-  highlights: z.array(z.string().min(1)).min(5).max(8),
+  highlights: z.array(z.string().min(1)).min(3).max(5),
 });
 
 /** Pulse-relative More you know. */
@@ -184,7 +184,7 @@ Banned jargon (never use these words or close cousins in hook, body, or highligh
 commit, commits, module, refactor, flatten, schema, API, endpoint, payload, hydrate, deploy, pipeline, worker, JSON, TypeScript, PHP, CI, gate, PR, merge, soft-reset, sandbox, origin, repo, OpenRouter, AgentMail (ok only if explained as "the email Pulse sends you"), hash, UUID, CLS, DOM, Tailwind.
 
 Layout this copy feeds:
-- Summary block (hook + body), then Highlights. More you know, AISEO News, Google Updates, and Industry News are written elsewhere.
+- Summary block (hook + body), then Weekly highlights (repo updates only). More you know, AISEO News, Google Updates, and Industry News are written elsewhere.
 - Never write Languages, hero image, Do this week, or extra sections into the copy.
 
 Voice:
@@ -200,8 +200,8 @@ Grounding:
 
 Write:
 1) hook: SHORT email-safe headline. Max 8 words and max 48 characters. Complete thought. Never end mid-phrase. Gmail subject from Pulse's POV (examples: "Pulse reports look finished.", "Pulse makes adding a site simpler.").
-2) body: one short plain-English paragraph about what Pulse shipped and why it matters. Not a feature dump. Pulse is the actor.
-3) highlights: 5 to 8 bullets with personality. Same facts as the pack, rewritten as Pulse outcomes. Lead with what Pulse did.
+2) body: one short plain-English paragraph about the week's biggest Pulse ships and why they matter. Not a feature dump. Pulse is the actor.
+3) highlights: ONLY the 3 to 5 most significant weekly repo updates. Rewrite as Pulse outcomes. Skip tiny or routine noise. Lead with what Pulse did.
 
 Banned tone:
 - Dry release-note speak ("Significant improvements to…", "extensive refactoring").
@@ -335,8 +335,9 @@ export function buildChangelogNewsletterIntroUserPrompt(
 ): string {
   return `${packBlock(entry)}
 
-Write the Morning Brew style hook, body, and highlights for this ship.
-Audience reminder: CEO / agency owner who does not know the code. Plain English outcomes only. Return the editorial JSON.`;
+Write the Morning Brew style hook, body, and weekly highlights for this ship.
+Audience reminder: CEO / agency owner who does not know the code. Plain English outcomes only.
+Repo updates rule: only the most significant weekly wins (3 to 5). Return the editorial JSON.`;
 }
 
 export type ChangelogNewsletterNewsSeed = {
@@ -672,7 +673,8 @@ export function assembleChangelogNewsletter(
   const highlights = intro.highlights.map((h) => h.trim()).filter(Boolean);
   if (!hook) throw new Error("Newsletter hook is required.");
   if (!body) throw new Error("Newsletter body is required.");
-  if (highlights.length < 5) throw new Error("Newsletter needs at least 5 highlights.");
+  if (highlights.length < 3) throw new Error("Newsletter needs at least 3 weekly highlights.");
+  if (highlights.length > 5) throw new Error("Newsletter may include at most 5 weekly highlights.");
   return {
     title: cleaned.title.trim(),
     date: cleaned.date.trim(),

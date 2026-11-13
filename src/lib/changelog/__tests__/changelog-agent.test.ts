@@ -49,6 +49,9 @@ describe("app changelog writer agent", () => {
     expect(call.category).toBe("research");
     expect(call.user).toContain("Fix login loop");
     expect(call.system).toContain("ONLY source of facts");
+    expect(call.system).toContain("WEEKLY HIGHLIGHTS");
+    expect(call.system).toContain("3 to 5 most significant");
+    expect(call.system).not.toContain("8 to 20");
   });
 
   it("rejects malformed model output visibly", async () => {

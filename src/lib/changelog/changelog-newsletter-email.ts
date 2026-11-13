@@ -1,7 +1,7 @@
 /**
  * Multipart changelog newsletter (Morning Brew / TLDR skim layout).
  * Fluid full-width shell + framed section wells with green accent bars.
- * Layout: summary → Highlights → More you know → AISEO News → Google Updates → Industry News.
+ * Layout: summary → Weekly highlights → More you know → AISEO News → Google Updates → Industry News.
  */
 
 import type { ChangelogNewsletterPayload } from "./changelog-newsletter-agent";
@@ -17,6 +17,10 @@ export const NEO_PULSE_NEWSLETTER_TEXT = "#ffffff";
 export const NEO_PULSE_NEWSLETTER_HEADING = "#ffffff";
 /** Fluid content width for Gmail reading pane (not skinny 600). */
 export const NEO_PULSE_NEWSLETTER_MAX_WIDTH = 720;
+
+/** Fixed explainer under Weekly highlights. Code-owned, not LLM. */
+export const CHANGELOG_NEWSLETTER_WEEKLY_HIGHLIGHTS_EXPLAINER =
+  "The most significant Pulse ships from this week. Not every commit, just the wins worth knowing.";
 
 /** Fixed explainer under More you know. Code-owned, not LLM. */
 export const CHANGELOG_NEWSLETTER_MORE_YOU_KNOW_EXPLAINER =
@@ -224,10 +228,10 @@ ${framedSection({
   innerHtml: summaryInner(payload.hook, payload.body, changelogUrl),
 })}
 ${framedSection({
-  label: "Highlights",
+  label: "Weekly highlights",
   wellBg: NEO_PULSE_BRAND_WELL,
   topMarginPx: 16,
-  innerHtml: highlightInner,
+  innerHtml: `${explainerInner(CHANGELOG_NEWSLETTER_WEEKLY_HIGHLIGHTS_EXPLAINER)}${highlightInner}`,
 })}
 ${framedSection({
   label: "More you know",
@@ -276,7 +280,8 @@ export function buildChangelogNewsletterText(payload: ChangelogNewsletterPayload
     "",
     `Full changelog → ${changelogUrl}`,
     "",
-    "HIGHLIGHTS",
+    "WEEKLY HIGHLIGHTS",
+    CHANGELOG_NEWSLETTER_WEEKLY_HIGHLIGHTS_EXPLAINER,
   ];
   if (payload.highlights.length === 0) {
     lines.push("- No highlights on this entry.");

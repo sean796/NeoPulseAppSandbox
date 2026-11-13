@@ -13,7 +13,6 @@ import {
 } from "@/ui";
 import type { WordPressSite } from "../types";
 import { propertyHostingLabel } from "./property-profile-view-model";
-import { WordPressCardActions } from "./WordPressCardActions";
 import { MasterInstructionsSection } from "./MasterInstructionsSection";
 import { ProfileLocationSelect } from "./ProfileServiceAreaFields";
 import {
@@ -44,7 +43,6 @@ import {
   resolveEditorialContentPackageForSite,
 } from "@/lib/editorial-content-package";
 import {
-  PROPERTIES_DIAGNOSTICS_SECTION_CLASS,
   PROPERTIES_OVERVIEW_CHIP_CLASS,
   PROPERTIES_OVERVIEW_CHIP_DOT_LITE_CLASS,
   PROPERTIES_OVERVIEW_CHIP_DOT_MUTED_CLASS,
@@ -74,12 +72,6 @@ import {
 
 export type PropertyOverviewSectionProps = {
   site: WordPressSite;
-  isTesting: boolean;
-  isDetecting: boolean;
-  isExtractingNAPAndGraph: boolean;
-  onTest: () => void;
-  onDetect: () => void;
-  onExtractNAPAndGraph?: () => void;
   onPatchSite?: (siteId: string, patch: Partial<WordPressSite>) => void;
   /** Kept for callers. Edits happen on this screen. */
   onOpenSettingsProfile?: () => void;
@@ -245,12 +237,6 @@ function locationOptionLabel(loc: { id: string; city?: string; state?: string; n
 
 export function PropertyOverviewSection({
   site,
-  isTesting,
-  isDetecting,
-  isExtractingNAPAndGraph,
-  onTest,
-  onDetect,
-  onExtractNAPAndGraph,
   onPatchSite,
   editing = false,
   onToggleEditing,
@@ -1042,21 +1028,6 @@ export function PropertyOverviewSection({
           </section>
         </div>
       </div>
-
-      <section className={PROPERTIES_DIAGNOSTICS_SECTION_CLASS} aria-label="Diagnostics">
-        <WordPressCardActions
-          site={site}
-          isTesting={isTesting}
-          isDetecting={isDetecting}
-          isExtractingNAPAndGraph={isExtractingNAPAndGraph}
-          onTest={onTest}
-          onDetect={onDetect}
-          onExtractNAPAndGraph={onExtractNAPAndGraph}
-          onPatchSite={onPatchSite}
-          tone="propertyBlack"
-          layout="profileCard"
-        />
-      </section>
     </div>
   );
 }

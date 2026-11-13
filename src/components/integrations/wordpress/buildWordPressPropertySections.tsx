@@ -1,7 +1,6 @@
 import React from "react";
 import { LayoutDashboard, Map, ScrollText, Settings } from "lucide-react";
 import type { WordPressSite } from "../types";
-import { WordPressCardActions } from "./WordPressCardActions";
 import { SitemapSection } from "./SitemapSection";
 import { getCyberpunkTextClasses } from "./cyberpunk-theme";
 import type { WordPressSiteAdminSection } from "./WordPressSiteAdminLayout";
@@ -50,15 +49,12 @@ export function buildWordPressPropertySections(
 ): WordPressSiteAdminSection[] {
   const {
     site,
-    isTesting,
     isDetecting,
     isFetchingScheduled,
     isScrapingSitemap,
     isGeneratingEntities = {},
     isIndexingSitemap = {},
     isLoadingCalendar = {},
-    isExtractingNAPAndGraph = false,
-    onTest,
     onDetect,
     onScrapeChildSitemap,
     onEntityGeneration,
@@ -71,7 +67,6 @@ export function buildWordPressPropertySections(
     onToggleChildCustomTag,
     onIndexSitemap,
     onLoadCalendarPosts,
-    onExtractNAPAndGraph,
     getScrapingKey,
     onPatchSite,
     onOpenSettingsProfile,
@@ -80,7 +75,6 @@ export function buildWordPressPropertySections(
   } = params;
 
   const isModal = shell === "modal";
-  const isEmbedded = shell === "embedded";
   const showSitemapSummary = !!site.sitemaps && shell === "card";
 
   return [
@@ -91,12 +85,6 @@ export function buildWordPressPropertySections(
       content: isModal ? (
         <PropertyOverviewSection
           site={site}
-          isTesting={isTesting}
-          isDetecting={isDetecting}
-          isExtractingNAPAndGraph={isExtractingNAPAndGraph}
-          onTest={onTest}
-          onDetect={onDetect}
-          onExtractNAPAndGraph={onExtractNAPAndGraph}
           onPatchSite={onPatchSite}
           onOpenSettingsProfile={onOpenSettingsProfile}
         />
@@ -141,18 +129,6 @@ export function buildWordPressPropertySections(
               ) : null}
             </dl>
           )}
-
-          <WordPressCardActions
-            site={site}
-            isTesting={isTesting}
-            isDetecting={isDetecting}
-            isExtractingNAPAndGraph={isExtractingNAPAndGraph}
-            onTest={onTest}
-            onDetect={onDetect}
-            onExtractNAPAndGraph={onExtractNAPAndGraph}
-            onPatchSite={onPatchSite}
-            tone={isEmbedded ? "propertyBlack" : "card"}
-          />
         </>
       ),
     },

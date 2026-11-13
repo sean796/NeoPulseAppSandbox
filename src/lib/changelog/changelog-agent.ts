@@ -41,23 +41,25 @@ export type ChangelogAgentInput = z.infer<typeof changelogInputSchema>;
 
 export const CHANGELOG_WRITER_MODEL = "deepseek/deepseek-v4.1-flash";
 
-export const CHANGELOG_WRITER_SYSTEM = `You write one changelog entry for the Neo Pulse web app, for the agency owner.
+export const CHANGELOG_WRITER_SYSTEM = `You write one weekly changelog entry for the Neo Pulse web app, for the agency owner.
 
 Grounding rules (non-negotiable):
 - The commit pack in the user message is the ONLY source of facts. Never name a feature, fix, file, screen, or improvement that is not supported by a commit subject, body, or file list in the pack.
 - Never invent dates, counts, or version numbers.
 - Do NOT write an intro paragraph or summary.
-- Include a "highlights" array with 5 to 8 brief, punchy one-sentence bullets covering the biggest wins.
-- Group commits into themes using only these section headings, and only when the pack supports them: "New", "Improved", "Fixed", "Behind the scenes".
-- Include MANY bullets per section (8 to 20 items per section when the commit pack is large) so every meaningful update across the pack is covered.
+- This is a WEEKLY HIGHLIGHTS entry, not a full commit dump.
+- Include a "highlights" array with ONLY the 3 to 5 most significant weekly wins. Skip tiny, routine, or duplicate commits.
+- Prefer product-facing outcomes a CEO would care about. Drop noise (typos, tiny renames, chore merges, test-only tweaks) unless that was the week's main ship.
+- Group only the biggest themes using these headings when needed: "New", "Improved", "Fixed", "Behind the scenes".
+- Keep sections sparse: at most 2 to 4 bullets per section, and only for the same top wins. Never try to cover every commit.
 - Keep each bullet BRIEF and direct: 1 concise sentence naming what changed and where it applies in the app. No fluff, no raw file paths.
 - Never use the em dash character. Use commas, periods, or parentheses instead.
 
 Output (JSON only, no markdown fences, no commentary before or after):
 {
-  "title": "Short entry title naming the main theme (max 12 words)",
-  "highlights": ["One brief sentence per highlight"],
-  "sections": [{ "heading": "New", "items": ["One brief, specific sentence per update"] }]
+  "title": "Short weekly title naming the main theme (max 12 words)",
+  "highlights": ["One brief sentence per top weekly win"],
+  "sections": [{ "heading": "New", "items": ["One brief, specific sentence per top win"] }]
 }`;
 
 function buildUserPrompt(input: ChangelogAgentInput): string {
@@ -73,7 +75,7 @@ function buildUserPrompt(input: ChangelogAgentInput): string {
 Commit pack (oldest first):
 ${lines.join("\n")}
 
-Write the changelog entry JSON now.`;
+Write the weekly highlights changelog JSON now. Most significant wins only.`;
 }
 
 export function buildChangelogWriterUserPrompt(input: ChangelogAgentInput): string {
@@ -86,11 +88,11 @@ export const appChangelogWriterAgent = createPulseAgent<ChangelogAgentInput, Cha
   category: "research",
   domain: "reporting",
   reason:
-    "Turns git commits since the last archived entry into one plain-language changelog entry for the Neo Pulse web app, grouped into themes with highlights.",
+    "Turns this week's git commits into a short plain-language Neo Pulse weekly highlights entry (most significant wins only).",
   inputSchema: changelogInputSchema,
   outputSchema: changelogDraftSchema,
   temperature: 0.3,
-  maxTokens: 8192,
+  maxTokens: 4096,
   buildSystemPrompt: () => CHANGELOG_WRITER_SYSTEM,
   buildUserPrompt: (input) => buildUserPrompt(input),
   parseOutput: (rawContent) => {

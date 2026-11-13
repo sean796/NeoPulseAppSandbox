@@ -150,6 +150,13 @@ export interface SitePropertyFormFieldsProps {
   /** Profile Settings edit actions (replaces dock row … menu). */
   onDeleteProperty?: () => void;
   onTogglePropertyEnabled?: () => void;
+  /** Settings → Tests diagnostics (connection / GMB / GA / NAP / sitemaps). */
+  isTesting?: boolean;
+  isDetecting?: boolean;
+  isExtractingNAPAndGraph?: boolean;
+  onTest?: () => void;
+  onDetect?: () => void;
+  onExtractNAPAndGraph?: () => void;
 }
 
 export const SEMRUSH_MATCH_STATES = ["Match project from Semrush", "Matching"] as const;

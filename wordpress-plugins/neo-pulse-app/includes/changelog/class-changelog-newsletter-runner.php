@@ -194,7 +194,7 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 		$to   = (string) $commits[ count( $commits ) - 1 ]['date'];
 		$user = "Covered period: {$from} to {$to} (" . count( $commits ) . " commits). Previous archive coverage ended: " . ( $covered ?? 'never (first entry)' ) . ".\n\nCommit pack (oldest first):\n" . implode( "\n", $lines ) . "\n\nWrite the changelog entry JSON now.";
 
-		$system = 'You write one changelog entry for the Neo Pulse web app, for the agency owner. Ground only in the commit pack. No intro paragraph. Include highlights (5-8) and sections New/Improved/Fixed/Behind the scenes when supported. Never use the em dash. Output JSON only: {"title":"...","highlights":["..."],"sections":[{"heading":"New","items":["..."]}]}';
+		$system = 'You write one weekly changelog entry for Neo Pulse. Ground only in the commit pack. No intro paragraph. WEEKLY HIGHLIGHTS only: 3 to 5 most significant wins. Skip tiny or routine commits. Sections New/Improved/Fixed/Behind the scenes only when needed, max 2 to 4 bullets each. Never use the em dash. Output JSON only: {"title":"...","highlights":["..."],"sections":[{"heading":"New","items":["..."]}]}';
 
 		$raw = self::openrouter_json( self::WRITER_MODEL, $system, $user, 0.3, 8192 );
 		$title = isset( $raw['title'] ) ? trim( (string) $raw['title'] ) : '';
@@ -245,8 +245,8 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 		}
 		$pack = "Neo Pulse update: {$entry['title']}\nDate: {$entry['date']}\nCommits: {$entry['commitCount']}\n\nHighlights:\n" . implode( "\n", $pack_lines );
 
-		$intro_system = 'You write the Neo Pulse product newsletter in a Morning Brew voice. Write from PULSE point of view. Never client-owned framing. Plain English for a CEO who does not code. Banned jargon: commit, module, refactor, schema, API, pipeline, CI. Hook max 8 words and 48 chars. Never em dash. JSON only: {"hook":"...","body":"...","highlights":["..."]}';
-		$intro        = self::openrouter_json( self::INTRO_MODEL, $intro_system, $pack . "\n\nWrite hook, body, highlights. Pulse is the actor.", 0.45, 3072 );
+		$intro_system = 'You write the Neo Pulse product newsletter in a Morning Brew voice. Write from PULSE point of view. Never client-owned framing. Plain English for a CEO who does not code. Banned jargon: commit, module, refactor, schema, API, pipeline, CI. Hook max 8 words and 48 chars. Weekly highlights only: 3 to 5 most significant repo updates. Never em dash. JSON only: {"hook":"...","body":"...","highlights":["..."]}';
+		$intro        = self::openrouter_json( self::INTRO_MODEL, $intro_system, $pack . "\n\nWrite hook, body, and weekly highlights (3 to 5 most significant wins only). Pulse is the actor.", 0.45, 3072 );
 
 		$pulse_seeds = array(
 			array(
@@ -600,6 +600,7 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 			. '<tr><td style="padding:0 0 16px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.65;color:' . self::TEXT . ';">' . $body . '</td></tr>'
 			. '<tr><td style="padding:0;font-family:Arial,Helvetica,sans-serif;font-size:16px;"><a href="' . $url . '" style="color:' . self::ACCENT . ';text-decoration:underline;font-weight:700;">Full changelog →</a></td></tr>';
 
+		$weekly_exp = 'The most significant Pulse ships from this week. Not every commit, just the wins worth knowing.';
 		$more_exp   = 'Why these reads: three articles that help explain what this Pulse update is really about, in plain English, so the ship makes sense beyond the product screen.';
 		$aiseo_exp  = 'AI SEO this week: AI Overviews, GEO, and citation visibility that changes how agencies win search.';
 		$google_exp = 'Google Search updates that hit rankings, reporting, or client briefs. Watch these first.';
@@ -607,7 +608,7 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 
 		return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' . self::escape( self::build_subject( (string) $pack['hook'] ) ) . '</title></head><body style="margin:0;padding:0;background-color:' . self::BG . ';width:100%;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;background-color:' . self::BG . ';"><tr><td align="center" style="padding:0;width:100%;"><table role="presentation" width="' . $w . '" cellspacing="0" cellpadding="0" border="0" style="width:100%;max-width:' . $w . 'px;background-color:' . self::BG . ';"><tr><td style="padding:28px 20px 20px 20px;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;background-color:' . self::WELL . ';"><tr><td width="4" style="width:4px;background-color:' . self::ACCENT . ';">&nbsp;</td><td style="padding:22px 24px;"><span style="font-family:Arial,Helvetica,sans-serif;font-size:26px;font-weight:700;"><span style="color:' . self::ACCENT . ';">neo</span><span style="color:#ffffff;">pulse</span></span><div style="font-family:Arial,Helvetica,sans-serif;font-size:16px;color:' . self::TEXT . ';margin-top:8px;">' . $date . ' · ' . $count . ' commits</div></td></tr></table></td></tr><tr><td style="padding:0 20px 28px 20px;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">'
 			. self::framed( '', self::PANEL, $summary, 0 )
-			. self::framed( 'Highlights', self::WELL, $highlights, 16 )
+			. self::framed( 'Weekly highlights', self::WELL, '<tr><td style="padding:0 0 16px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:' . self::TEXT . ';">' . self::escape( $weekly_exp ) . '</td></tr>' . $highlights, 16 )
 			. self::framed( 'More you know', self::PANEL, '<tr><td style="padding:0 0 16px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:' . self::TEXT . ';">' . self::escape( $more_exp ) . '</td></tr>' . self::articles_html( (array) $pack['articles'] ), 16 )
 			. self::framed( 'AISEO News', self::WELL, '<tr><td style="padding:0 0 16px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:' . self::TEXT . ';">' . self::escape( $aiseo_exp ) . '</td></tr>' . self::articles_html( (array) ( $pack['aiseoArticles'] ?? array() ) ), 16 )
 			. self::framed( 'Google Updates', self::PANEL, '<tr><td style="padding:0 0 16px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:' . self::TEXT . ';">' . self::escape( $google_exp ) . '</td></tr>' . self::articles_html( (array) ( $pack['googleArticles'] ?? array() ) ), 16 )
@@ -645,7 +646,8 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 			'',
 			'Full changelog → ' . $pack['changelogUrl'],
 			'',
-			'HIGHLIGHTS',
+			'WEEKLY HIGHLIGHTS',
+			'The most significant Pulse ships from this week. Not every commit, just the wins worth knowing.',
 		);
 		foreach ( (array) $pack['highlights'] as $h ) {
 			$lines[] = '- ' . $h;

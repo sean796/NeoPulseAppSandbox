@@ -51,14 +51,11 @@ export type PropertyProfilePageProps = {
 export function PropertyProfilePage({
   site,
   siteSettingsPanel,
-  isTesting,
   isDetecting,
   isScrapingSitemap,
   isGeneratingEntities = {},
   isIndexingSitemap = {},
   isLoadingCalendar = {},
-  isExtractingNAPAndGraph = false,
-  onTest,
   onDetect,
   onScrapeChildSitemap,
   onEntityGeneration,
@@ -71,7 +68,6 @@ export function PropertyProfilePage({
   onToggleChildCustomTag,
   onIndexSitemap,
   onLoadCalendarPosts,
-  onExtractNAPAndGraph,
   getScrapingKey,
   onPatchSite,
   onSaveProperty,
@@ -84,12 +80,6 @@ export function PropertyProfilePage({
     <div className="flex min-h-0 w-full flex-1 flex-col overflow-hidden bg-black font-sans text-base">
       <PropertyOverviewSection
         site={site}
-        isTesting={isTesting}
-        isDetecting={isDetecting}
-        isExtractingNAPAndGraph={isExtractingNAPAndGraph}
-        onTest={onTest}
-        onDetect={onDetect}
-        onExtractNAPAndGraph={onExtractNAPAndGraph}
         onPatchSite={onPatchSite}
         editing={editing}
         onToggleEditing={onToggleEditing}

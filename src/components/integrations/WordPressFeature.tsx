@@ -227,6 +227,12 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
       settingsSubSectionId={settingsSubSectionId}
       onSettingsSubSectionChange={setSettingsSubSectionId}
       hideSave
+      isTesting={isTesting === profileSite.id}
+      isDetecting={isDetecting === profileSite.id}
+      isExtractingNAPAndGraph={Boolean(isExtractingNAPAndGraph[profileSite.id])}
+      onTest={() => handleTestConnection(profileSite)}
+      onDetect={() => handleDetectSitemaps(profileSite)}
+      onExtractNAPAndGraph={() => void handleExtractNAPAndLinkGraph(profileSite)}
       onDeleteProperty={() => handleDeleteSite(profileSite.id)}
       onTogglePropertyEnabled={() => handleToggleEnabled(profileSite)}
       formName={formName}
@@ -469,7 +475,7 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
               onToggleEditing={() => setPropertyEditing((open) => !open)}
               onOpenSettingsProfile={() => {
                 setProfileSectionId("site-settings");
-                setSettingsSubSectionId("profile");
+                setSettingsSubSectionId("tests");
               }}
             />
           ) : (

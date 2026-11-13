@@ -28,6 +28,7 @@ import { ProfileAdditionalLocationsEditor, ProfileLocationSelect } from "./Profi
 import { regionPlaceholder, SERVICE_COUNTRY_OPTIONS, serviceRegionOptions } from "@/lib/keyword-location-utils";
 import { EDITORIAL_PACKAGE_OPTIONS, IGNORE_CREDENTIAL_MANAGER, SEMRUSH_MATCH_STATES, type SitePropertySectionsProps } from "./site-property-form-chrome";
 import { PropertySettingsEditActions } from "./PropertySettingsEditActions";
+import { WordPressCardActions } from "./WordPressCardActions";
 
 export function SitePropertyModalFlatSections(props: SitePropertySectionsProps) {
   const {
@@ -40,6 +41,8 @@ export function SitePropertyModalFlatSections(props: SitePropertySectionsProps) 
     onFormProfileTagsChange, onFormServiceCityChange, serviceAreaSite, onPatchSite, patchSiteId, className = "", settingsSubSectionId = "profile",
     onSettingsSubSectionChange,
     onDeleteProperty, onTogglePropertyEnabled,
+    isTesting = false, isDetecting = false, isExtractingNAPAndGraph = false,
+    onTest, onDetect, onExtractNAPAndGraph,
     semrushMatching, semrushBusy, canPatchSemrush, handleMatchSemrushProject, handlePushSemrushId, handleCopySiteId, persistServiceArea, applyServiceCountry, applyServiceState,
   } = props;
 
@@ -418,12 +421,35 @@ export function SitePropertyModalFlatSections(props: SitePropertySectionsProps) 
     </TaskFormSideSection>
   );
 
+  const testsSection =
+    serviceAreaSite && onTest && onDetect ? (
+      <TaskFormSideSection title="Tests">
+        <WordPressCardActions
+          site={serviceAreaSite}
+          isTesting={isTesting}
+          isDetecting={isDetecting}
+          isExtractingNAPAndGraph={isExtractingNAPAndGraph}
+          onTest={onTest}
+          onDetect={onDetect}
+          onExtractNAPAndGraph={onExtractNAPAndGraph}
+          onPatchSite={onPatchSite}
+          tone="propertyBlack"
+          layout="profileCard"
+        />
+      </TaskFormSideSection>
+    ) : (
+      <TaskFormSideSection title="Tests">
+        <p className="text-base text-muted-foreground">Open a saved property to run connection tests.</p>
+      </TaskFormSideSection>
+    );
+
   const modalSections: Record<PropertySettingsSubSectionId, React.ReactNode> = {
     profile: profileSection,
     access: accessSection,
     integrations: integrationsSection,
     editorial: editorialSection,
     provisioning: provisioningSection,
+    tests: testsSection,
   };
 
   return (

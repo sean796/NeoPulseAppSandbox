@@ -1,13 +1,13 @@
 /**
  * Send one Neo Pulse changelog newsletter via AgentMail.
  *
- * Email lock: summary (plain-English hook + body) + Highlights
- * + More you know (Pulse-relative) + AISEO News + Google Updates
- * + Industry News (fun stories).
+ * Email lock: summary (plain-English hook + body) + Weekly highlights
+ * (most significant repo updates only) + More you know (Pulse-relative)
+ * + AISEO News + Google Updates + Industry News (fun stories).
  * Confident Morning Brew voice (never "mystery delivery" / clueless humor).
  *
- * Always generates a FRESH changelog entry from git commits after the last
- * archived entry before drafting the email. Never reuses a stale pack.
+ * Always generates a FRESH weekly-highlights entry from git commits after the
+ * last archived entry before drafting the email. Never reuses a stale pack.
  *
  * Usage:
  *   npx tsx scripts/send-changelog-newsletter.ts [--dry-run] [--entry-only] [--to=email]
@@ -58,26 +58,10 @@ import { buildChangelogNewsletterEmail } from "../src/lib/changelog/changelog-ne
 import { parseModelJson } from "../src/lib/model-json";
 import { randomUUID } from "node:crypto";
 
-const CHANGELOG_WRITER_MODEL = "deepseek/deepseek-v4.1-flash";
-
-const CHANGELOG_WRITER_SYSTEM = `You write one changelog entry for the Neo Pulse web app, for the agency owner.
-
-Grounding rules (non-negotiable):
-- The commit pack in the user message is the ONLY source of facts. Never name a feature, fix, file, screen, or improvement that is not supported by a commit subject, body, or file list in the pack.
-- Never invent dates, counts, or version numbers.
-- Do NOT write an intro paragraph or summary.
-- Include a "highlights" array with 5 to 8 brief, punchy one-sentence bullets covering the biggest wins.
-- Group commits into themes using only these section headings, and only when the pack supports them: "New", "Improved", "Fixed", "Behind the scenes".
-- Include MANY bullets per section (8 to 20 items per section when the commit pack is large) so every meaningful update across the pack is covered.
-- Keep each bullet BRIEF and direct: 1 concise sentence naming what changed and where it applies in the app. No fluff, no raw file paths.
-- Never use the em dash character. Use commas, periods, or parentheses instead.
-
-Output (JSON only, no markdown fences, no commentary before or after):
-{
-  "title": "Short entry title naming the main theme (max 12 words)",
-  "highlights": ["One brief sentence per highlight"],
-  "sections": [{ "heading": "New", "items": ["One brief, specific sentence per update"] }]
-}`;
+import {
+  CHANGELOG_WRITER_MODEL,
+  CHANGELOG_WRITER_SYSTEM,
+} from "../src/lib/changelog/changelog-agent";
 
 const changelogDraftSchema = z.object({
   title: z.string().min(1),
@@ -114,7 +98,7 @@ function buildChangelogWriterUserPrompt(
 Commit pack (oldest first):
 ${lines.join("\n")}
 
-Write the changelog entry JSON now.`;
+Write the weekly highlights changelog JSON now. Most significant wins only.`;
 }
 
 function buildFreshChangelogEntry(

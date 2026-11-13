@@ -66,6 +66,12 @@ export const SitePropertyFormFields: React.FC<SitePropertyFormFieldsProps> = ({
   onSettingsSubSectionChange,
   onDeleteProperty,
   onTogglePropertyEnabled,
+  isTesting = false,
+  isDetecting = false,
+  isExtractingNAPAndGraph = false,
+  onTest,
+  onDetect,
+  onExtractNAPAndGraph,
 }) => {
   const hc = helpClass(chrome);
   const sh = strongHelpClass(chrome);
@@ -163,6 +169,7 @@ export const SitePropertyFormFields: React.FC<SitePropertyFormFieldsProps> = ({
     onFormProfileTagsChange, onFormServiceCityChange, onFormServiceStateChange, onFormServiceCountryChange, serviceAreaSite, onPatchSite, patchSiteId, semrushActionsDisabled, className, layout, settingsSubSectionId,
     onSettingsSubSectionChange,
     onDeleteProperty, onTogglePropertyEnabled,
+    isTesting, isDetecting, isExtractingNAPAndGraph, onTest, onDetect, onExtractNAPAndGraph,
     hc, sh, semrushMatching, semrushBusy, canPatchSemrush, handleMatchSemrushProject, handlePushSemrushId, handleCopySiteId, persistServiceArea, applyServiceCountry, applyServiceState,
   };
 
