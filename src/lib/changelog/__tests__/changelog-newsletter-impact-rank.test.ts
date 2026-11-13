@@ -11,14 +11,14 @@ describe("changelog newsletter impact rank", () => {
   it("locks Decision Engine model and bans newsletter meta in the rank prompt", () => {
     expect(CHANGELOG_IMPACT_DECISION_MODEL).toContain("liquid/lfm");
     expect(CHANGELOG_IMPACT_RANK_SYSTEM).toContain("Decision Engine");
-    expect(CHANGELOG_IMPACT_RANK_SYSTEM).toContain("USER-FACING PRODUCT IMPACT");
-    expect(CHANGELOG_IMPACT_RANK_SYSTEM).toContain("BAN from ranked list");
+    expect(CHANGELOG_IMPACT_RANK_SYSTEM).toContain("MAJOR WEEKLY FEATURES");
+    expect(CHANGELOG_IMPACT_RANK_SYSTEM).toContain("Hard BAN from ranked list");
     expect(CHANGELOG_IMPACT_RANK_SYSTEM).toContain("AgentMail");
-    expect(CHANGELOG_IMPACT_RANK_SYSTEM).toContain("everyday Pulse users");
+    expect(CHANGELOG_IMPACT_RANK_SYSTEM).toContain("API Keys");
     expect(CHANGELOG_IMPACT_RANK_SYSTEM).toContain("Recency bias is forbidden");
   });
 
-  it("parses ranked themes and returns highest scores first", () => {
+  it("parses ranked themes and drops keys/deep-link polish from top picks", () => {
     const rank = parseChangelogImpactRank(
       JSON.stringify({
         ranked: [
@@ -32,14 +32,25 @@ describe("changelog newsletter impact rank", () => {
             impactScore: 5,
             why: "New weekly review screen people open.",
           },
-          { theme: "Keys screen registers your AI key as you type", impactScore: 4, why: "Generation starts working." },
+          { theme: "Keys screen registers your AI key as you type", impactScore: 5, why: "Generation starts working." },
+          {
+            theme: "Integrations add-client dock",
+            impactScore: 5,
+            why: "Add clients from the properties list.",
+          },
+          {
+            theme: "Google Business and Organic Website Leads in Integrations",
+            impactScore: 4,
+            why: "Leads live on the property.",
+          },
         ],
       }),
     );
     expect(rank.ranked[0]?.impactScore).toBe(5);
-    expect(topImpactThemes(rank, 2)).toEqual([
+    expect(topImpactThemes(rank, 3)).toEqual([
       "Changelog screen with approve and due flag",
-      "Workspace links open the page you clicked",
+      "Integrations add-client dock",
+      "Google Business and Organic Website Leads in Integrations",
     ]);
   });
 
@@ -48,7 +59,7 @@ describe("changelog newsletter impact rank", () => {
       "- 2026-11-06 Wave 5 batch 2: split 45 files under 500 lines",
       "- 2026-11-13 Do not blank the organic report when a single fetch-part fails",
     ]);
-    expect(prompt).toContain("USER-FACING product IMPACT");
+    expect(prompt).toContain("major weekly FEATURES");
     expect(prompt).toContain("Wave 5");
     expect(prompt).toContain("organic report");
   });

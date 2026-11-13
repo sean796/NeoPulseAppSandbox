@@ -411,7 +411,7 @@ describe("changelog newsletter email", () => {
 
     expect(email.text).toContain("WEEKLY HIGHLIGHTS");
     expect(email.text).toContain(CHANGELOG_NEWSLETTER_WEEKLY_HIGHLIGHTS_EXPLAINER);
-    expect(email.html).toContain("change how you work this week");
+    expect(email.html).toContain("This week's major Pulse features.");
     expect(email.text).toContain("MORE YOU KNOW");
     expect(email.text).toContain("AISEO NEWS");
     expect(email.text).toContain("GOOGLE UPDATES");

@@ -78,19 +78,17 @@ Grounding rules (non-negotiable):
 
 When REQUIRED Decision Engine themes are listed in the user message, those ARE the highlights. Cover them in order as full user-facing sentences. Do not swap them for newsletter meta or codebase craft.
 
-What counts as significant (Decision Engine ranks these):
-- New or changed screens users open (Changelog with archive, draft approval, weekly due flag)
-- Integrations features (Google Business Profile leads, Organic Website Leads, add-client dock)
-- Keys screen: paste your AI key and Pulse starts using it as you type
-- Workspace links that open the page you clicked, even in a new tab
-- Client reports that still show every section that loaded when one feed is quiet
+What counts as significant (Decision Engine ranks MAJOR FEATURES only):
+- Changelog screen (archive, draft approval, weekly due flag)
+- Integrations add-client dock
+- Google Business Profile leads and Organic Website Leads in Integrations
 
-Banned from highlights / title (never lead with these):
-- This newsletter, AgentMail, AISEO News / Google Updates email sections, email palette / wire-seed / setup-key, Friday auto-send meta
-- Hub, deploy, disk, module splits, Wave / audit / grade / CI / Storybook / evals, "ownable", "small enough to own", vague "source fails" talk
-- Tiny renames, test-only tweaks, flatten/push ops, doc-only commits
+Banned from highlights / title (never include):
+- API Keys, AI key, OpenRouter, deep links, cold load, partial report fixes
+- This newsletter, AgentMail, AISEO/Google email sections, wire-seed, palette, Friday auto-send meta
+- Hub, deploy, Wave, CI, "ownable", what something is not, "small fix" language
 
-- Include a "highlights" array with ONLY the top 3 Decision-ranked wins. Each bullet one short FULL sentence (max 22 words) naming the screen or feature and what the user can do. No OpenRouter.
+- Include a "highlights" array with ONLY the top 3 major features. Each bullet one short FULL sentence (max 22 words) naming the feature and what you can do.
 - Group only those top wins using "New", "Improved", "Fixed" when needed (max 2 to 4 bullets per section). Never "Behind the scenes" for engineering chores.
 - No fluff, no raw file paths, no engineer jargon.
 - Never use the em dash character. Use commas, periods, or parentheses instead.

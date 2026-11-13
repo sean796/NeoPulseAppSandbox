@@ -20,7 +20,7 @@ export const NEO_PULSE_NEWSLETTER_MAX_WIDTH = 720;
 
 /** Fixed explainer under Weekly highlights. Code-owned, not LLM. */
 export const CHANGELOG_NEWSLETTER_WEEKLY_HIGHLIGHTS_EXPLAINER =
-  "The Pulse updates that change how you work this week. Real screens and features, not every small fix.";
+  "This week's major Pulse features.";
 
 /** Fixed explainer under More you know. Code-owned, not LLM. */
 export const CHANGELOG_NEWSLETTER_MORE_YOU_KNOW_EXPLAINER =
