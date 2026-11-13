@@ -24,19 +24,19 @@ export const CHANGELOG_NEWSLETTER_WEEKLY_HIGHLIGHTS_EXPLAINER =
 
 /** Fixed explainer under More you know. Code-owned, not LLM. */
 export const CHANGELOG_NEWSLETTER_MORE_YOU_KNOW_EXPLAINER =
-  "Why these reads: three articles that help explain what this Pulse update is really about, in plain English, so the ship makes sense beyond the product screen.";
+  "Why these reads: three Canada and US market stories that explain what this Pulse update is really about.";
 
 /** Fixed explainer under AISEO News. Code-owned, not LLM. */
 export const CHANGELOG_NEWSLETTER_AISEO_NEWS_EXPLAINER =
-  "AI SEO this week: AI Overviews, GEO, and citation visibility that changes how agencies win search.";
+  "AI SEO for Canada and US agencies: AI Overviews, GEO, and citation visibility that change how you win search.";
 
 /** Fixed explainer under Google Updates. Code-owned, not LLM. */
 export const CHANGELOG_NEWSLETTER_GOOGLE_UPDATES_EXPLAINER =
-  "Google Search updates that hit rankings, reporting, or client briefs. Watch these first.";
+  "Google Search updates that hit Canada and US rankings, reporting, or client briefs. Watch these first.";
 
 /** Fixed explainer under Industry News. Code-owned, not LLM. */
 export const CHANGELOG_NEWSLETTER_INDUSTRY_NEWS_EXPLAINER =
-  "Fun stories from the wider industry this week. Skim for coffee, not homework.";
+  "Fun Canada and US industry stories this week. Skim for coffee, not homework.";
 
 export { CHANGELOG_NEWSLETTER_FULL_URL };
 

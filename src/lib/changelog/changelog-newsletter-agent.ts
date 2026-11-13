@@ -8,6 +8,13 @@
 import { z } from "zod";
 import { parseModelJson } from "../model-json";
 
+/**
+ * All newsletter news blocks (More you know, AISEO, Google Updates, Industry)
+ * must stay relevant to Canada and United States search / agency markets only.
+ */
+export const CHANGELOG_NEWSLETTER_MARKETS_RULE =
+  "Markets (non-negotiable): Canada and United States only. Stories must matter to CA/US search, SEO agencies, or North American digital marketing. Ban EU-only, UK-only, APAC-only, or other single-region pieces (for example France AI Overviews) unless the same change clearly hits CA/US Google Search the same way. Prefer US/Canada data, Google Search US/CA rollouts, and North American agency impact.";
+
 /** Pack-only editorial voice (hook, body, highlights). */
 export const CHANGELOG_NEWSLETTER_INTRO_MODEL = "deepseek/deepseek-v4.1-flash";
 
@@ -218,6 +225,8 @@ export const CHANGELOG_NEWSLETTER_PULSE_PICK_SYSTEM = `You find 3 CURRENT, real 
 
 Themes must come from the user pack (client reporting trust, local SEO / map visibility, internal changelog / ops clarity, client onboarding, search ranking shifts, AI tools for agencies). This is NOT fun Industry News. Do not pick random NVIDIA/OpenAI headlines unless they clearly explain a theme from THIS ship.
 
+${CHANGELOG_NEWSLETTER_MARKETS_RULE}
+
 Hard rules:
 - Use web search NOW. Return only live https article URLs you actually opened.
 - Prefer roughly the last 14 days (stretch to 30 only if needed).
@@ -237,6 +246,9 @@ export const CHANGELOG_NEWSLETTER_READING_SYSTEM = `You write punchy "More you k
 
 Job: explain 3 required live articles that help a non-technical CEO understand WHY this Pulse ship matters. Use ONLY the required https URLs in the user message. sourceUrl must match exactly.
 
+${CHANGELOG_NEWSLETTER_MARKETS_RULE}
+Frame every card for Canada and United States agency readers. Do not center EU/UK/APAC-only impact.
+
 Voice:
 - Punchy. 1 to 2 sentence summaries max. No engineering jargon.
 - whyItHelps: one short kicker that ties the article to what Pulse just shipped. Plain English. Never "This is why Pulse shipped…" formula. Never clueless / mystery-delivery energy.
@@ -255,6 +267,9 @@ Output JSON only:
 export const CHANGELOG_NEWSLETTER_AISEO_SYSTEM = `You write punchy cards for the "AISEO News" block in a Neo Pulse newsletter.
 
 Job: cover 3 CURRENT AI SEO stories (AI Overviews, AI Mode, GEO, AI citations, generative search visibility). Agency-relevant. Not a Pulse changelog rewrite. Not generic Industry News fluff. Not Google core-update recaps (those belong in Google Updates).
+
+${CHANGELOG_NEWSLETTER_MARKETS_RULE}
+Write for Canada and United States SEO agencies. Do not lead with France/EU/UK-only AI Overview studies.
 
 Voice:
 - Punchy. 1 to 2 sentence summaries max.
@@ -276,6 +291,9 @@ export const CHANGELOG_NEWSLETTER_GOOGLE_SYSTEM = `You write punchy cards for th
 
 Job: cover 3 CURRENT Google Search updates (core updates, spam updates, Search Console changes, Search Status / product docs that affect rankings or reporting). Agency-relevant. Not AISEO theory pieces. Not fun Industry News.
 
+${CHANGELOG_NEWSLETTER_MARKETS_RULE}
+Prefer Google Search changes that roll out to (or are measured in) Canada and the United States.
+
 Voice:
 - Punchy. 1 to 2 sentence summaries max.
 - whyItHelps: one short kicker on what an agency should watch or brief this week.
@@ -296,6 +314,9 @@ export const CHANGELOG_NEWSLETTER_INDUSTRY_SYSTEM = `You write punchy cards for 
 
 Job: make 3 fun, engaging CURRENT industry stories feel worth a coffee skim. Tech / AI / marketing / agency vibes. Not a rewrite of the Pulse changelog. Not "why we shipped" pieces. Not AISEO deep-dives. Not Google core-update recaps.
 
+${CHANGELOG_NEWSLETTER_MARKETS_RULE}
+Pick stories Canadian and US agency readers would actually skim. Skip region-only foreign market pieces.
+
 Voice:
 - Punchy. 1 to 2 sentence summaries max.
 - whyItHelps: one short witty kicker for agency folks. Light and human. Not stiff.
@@ -315,6 +336,8 @@ Output JSON only:
 export const CHANGELOG_NEWSLETTER_SYSTEM = CHANGELOG_NEWSLETTER_READING_SYSTEM;
 
 export const CHANGELOG_NEWSLETTER_NEWS_PICK_SYSTEM = `You pick the 3 most important, engaging CURRENT industry news stories for a Neo Pulse newsletter (tech / AI / marketing / agency / search).
+
+${CHANGELOG_NEWSLETTER_MARKETS_RULE}
 
 Hard rules:
 - Use web search NOW. Return only live https article URLs you actually found.
@@ -368,9 +391,9 @@ export const CHANGELOG_NEWSLETTER_PULSE_WIRE_SEEDS: ChangelogNewsletterNewsSeed[
     date: "Oct 15, 2026",
   },
   {
-    title: "Google AI Overviews in France: Big click losses, but not for everyone",
-    url: "https://searchengineland.com/google-ai-overviews-france-analysis-501153",
-    date: "Nov 9, 2026",
+    title: "Study Confirms Google AI Overviews Cut Organic Clicks 38%",
+    url: "https://www.searchenginejournal.com/ai-overviews-cut-organic-clicks-38-field-study-finds/573145/",
+    date: "Apr 16, 2026",
   },
 ];
 
@@ -456,7 +479,8 @@ export type ChangelogNewsletterNewsSeeds = z.infer<typeof changelogNewsletterNew
 
 export function buildChangelogNewsletterNewsPickUserPrompt(): string {
   const today = new Date().toISOString().slice(0, 10);
-  return `Today is ${today}. Web-search and return exactly 3 top current industry news stories as JSON.`;
+  return `Today is ${today}. Web-search and return exactly 3 top current industry news stories as JSON.
+Canada and United States markets only. No EU/UK/APAC-only stories.`;
 }
 
 export function buildChangelogNewsletterPulsePickUserPrompt(
@@ -466,7 +490,8 @@ export function buildChangelogNewsletterPulsePickUserPrompt(
   return `${packBlock(entry)}
 
 Today is ${today}. Web-search and return exactly 3 live Pulse-relative supporting stories as JSON.
-Real https news URLs only. No evergreen filler. No invented domains.`;
+Real https news URLs only. No evergreen filler. No invented domains.
+Canada and United States markets only. No France/EU/UK/APAC-only stories.`;
 }
 
 export function buildChangelogNewsletterReadingUserPrompt(

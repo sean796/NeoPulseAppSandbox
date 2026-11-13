@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  CHANGELOG_NEWSLETTER_MARKETS_RULE,
   CHANGELOG_NEWSLETTER_AISEO_SYSTEM,
   CHANGELOG_NEWSLETTER_AISEO_WIRE_SEEDS,
   CHANGELOG_NEWSLETTER_FULL_URL,
@@ -237,12 +238,20 @@ describe("changelog newsletter drafts", () => {
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("AgentMail");
     expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("WHY this Pulse ship matters");
     expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("required https URLs");
+    expect(CHANGELOG_NEWSLETTER_MARKETS_RULE).toContain("Canada and United States only");
     expect(CHANGELOG_NEWSLETTER_AISEO_SYSTEM).toContain("AISEO News");
     expect(CHANGELOG_NEWSLETTER_AISEO_SYSTEM).toContain("GEO");
+    expect(CHANGELOG_NEWSLETTER_AISEO_SYSTEM).toContain("Canada and United States only");
     expect(CHANGELOG_NEWSLETTER_GOOGLE_SYSTEM).toContain("Google Updates");
     expect(CHANGELOG_NEWSLETTER_GOOGLE_SYSTEM).toContain("core updates");
+    expect(CHANGELOG_NEWSLETTER_GOOGLE_SYSTEM).toContain("Canada and United States only");
     expect(CHANGELOG_NEWSLETTER_INDUSTRY_SYSTEM).toContain("Industry News");
     expect(CHANGELOG_NEWSLETTER_INDUSTRY_SYSTEM).toContain("fun");
+    expect(CHANGELOG_NEWSLETTER_INDUSTRY_SYSTEM).toContain("Canada and United States only");
+    expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("Canada and United States only");
+    expect(CHANGELOG_NEWSLETTER_PULSE_WIRE_SEEDS.every((s) => !/france/i.test(s.url + s.title))).toBe(
+      true,
+    );
     expect(CHANGELOG_NEWSLETTER_FULL_URL).toContain("/changelog");
     const pulsePrompt = buildChangelogNewsletterReadingUserPrompt(
       ENTRY,

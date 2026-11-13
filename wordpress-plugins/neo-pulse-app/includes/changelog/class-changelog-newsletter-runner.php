@@ -252,9 +252,9 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 				'date'  => 'Oct 15, 2026',
 			),
 			array(
-				'title' => 'Google AI Overviews in France: Big click losses, but not for everyone',
-				'url'   => 'https://searchengineland.com/google-ai-overviews-france-analysis-501153',
-				'date'  => 'Nov 9, 2026',
+				'title' => 'Study Confirms Google AI Overviews Cut Organic Clicks 38%',
+				'url'   => 'https://www.searchenginejournal.com/ai-overviews-cut-organic-clicks-38-field-study-finds/573145/',
+				'date'  => 'Apr 16, 2026',
 			),
 		);
 		$aiseo_seeds = array(
@@ -339,8 +339,8 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 			$n = $i + 1;
 			$seed_block .= "{$n}. {$s['title']} ({$s['date']})\n   {$s['url']}\n";
 		}
-		$system = "You write punchy {$kind} cards. Use ONLY the required https URLs exactly. Never invent URLs. Never em dash. JSON only: {\"articles\":[{\"title\":\"...\",\"summary\":\"...\",\"date\":\"...\",\"sourceUrl\":\"https://...\",\"whyItHelps\":\"...\"}]}";
-		$user   = $pack . "\n\nRequired live stories:\n" . $seed_block . "\nReturn articles JSON. sourceUrl must match exactly.";
+		$system = "You write punchy {$kind} cards for Canada and United States agency readers only. Frame CA/US market impact. Never lead with EU/UK/APAC-only stories. Use ONLY the required https URLs exactly. Never invent URLs. Never em dash. JSON only: {\"articles\":[{\"title\":\"...\",\"summary\":\"...\",\"date\":\"...\",\"sourceUrl\":\"https://...\",\"whyItHelps\":\"...\"}]}";
+		$user   = $pack . "\n\nRequired live stories (Canada/US relevant):\n" . $seed_block . "\nReturn articles JSON. sourceUrl must match exactly.";
 		$raw    = self::openrouter_json( self::WEB_MODEL, $system, $user, 0.3, 4096 );
 		$arts   = isset( $raw['articles'] ) && is_array( $raw['articles'] ) ? $raw['articles'] : array();
 		$out    = array();
@@ -592,11 +592,11 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 			. '<tr><td style="padding:0 0 16px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.65;color:' . self::TEXT . ';">' . $body . '</td></tr>'
 			. '<tr><td style="padding:0;font-family:Arial,Helvetica,sans-serif;font-size:16px;"><a href="' . $url . '" style="color:' . self::ACCENT . ';text-decoration:underline;font-weight:700;">Full changelog →</a></td></tr>';
 
-		$weekly_exp = 'The most significant Pulse ships from this week. Not every commit, just the wins worth knowing.';
-		$more_exp   = 'Why these reads: three articles that help explain what this Pulse update is really about, in plain English, so the ship makes sense beyond the product screen.';
-		$aiseo_exp  = 'AI SEO this week: AI Overviews, GEO, and citation visibility that changes how agencies win search.';
-		$google_exp = 'Google Search updates that hit rankings, reporting, or client briefs. Watch these first.';
-		$ind_exp    = 'Fun stories from the wider industry this week. Skim for coffee, not homework.';
+		$weekly_exp = "This week's major Pulse features.";
+		$more_exp   = 'Why these reads: three Canada and US market stories that explain what this Pulse update is really about.';
+		$aiseo_exp  = 'AI SEO for Canada and US agencies: AI Overviews, GEO, and citation visibility that change how you win search.';
+		$google_exp = 'Google Search updates that hit Canada and US rankings, reporting, or client briefs. Watch these first.';
+		$ind_exp    = 'Fun Canada and US industry stories this week. Skim for coffee, not homework.';
 
 		return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' . self::escape( self::build_subject( (string) $pack['hook'] ) ) . '</title></head><body style="margin:0;padding:0;background-color:' . self::BG . ';width:100%;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;background-color:' . self::BG . ';"><tr><td align="center" style="padding:0;width:100%;"><table role="presentation" width="' . $w . '" cellspacing="0" cellpadding="0" border="0" style="width:100%;max-width:' . $w . 'px;background-color:' . self::BG . ';"><tr><td style="padding:28px 20px 20px 20px;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;background-color:' . self::WELL . ';"><tr><td width="4" style="width:4px;background-color:' . self::ACCENT . ';">&nbsp;</td><td style="padding:22px 24px;"><span style="font-family:Arial,Helvetica,sans-serif;font-size:26px;font-weight:700;"><span style="color:' . self::ACCENT . ';">neo</span><span style="color:#ffffff;">pulse</span></span><div style="font-family:Arial,Helvetica,sans-serif;font-size:16px;color:' . self::TEXT . ';margin-top:8px;">' . $date . ' · This week · ' . $count . ' commits</div></td></tr></table></td></tr><tr><td style="padding:0 20px 28px 20px;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">'
 			. self::framed( '', self::PANEL, $summary, 0 )
