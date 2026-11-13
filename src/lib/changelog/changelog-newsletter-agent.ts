@@ -1,7 +1,8 @@
 /**
  * Changelog newsletter draft: Morning Brew / TLDR voice.
  * Layout: summary (hook + body) + Highlights + More you know (Pulse-relative)
- * + Industry News (fun stories). Never Languages, hero, or Do this week.
+ * + AISEO News + Google Updates + Industry News (fun stories).
+ * Never Languages, hero, or Do this week.
  */
 
 import { z } from "zod";
@@ -61,11 +62,23 @@ export const changelogNewsletterIndustryDraftSchema = z.object({
   articles: z.array(newsletterArticleSchema).length(3),
 });
 
+/** AISEO News (AI Overviews / GEO / AI search visibility). */
+export const changelogNewsletterAiseoDraftSchema = z.object({
+  articles: z.array(newsletterArticleSchema).length(3),
+});
+
+/** Google Updates (core updates, Search Console, Search product changes). */
+export const changelogNewsletterGoogleDraftSchema = z.object({
+  articles: z.array(newsletterArticleSchema).length(3),
+});
+
 export type ChangelogNewsletterIntroDraft = z.infer<typeof changelogNewsletterIntroDraftSchema>;
 export type ChangelogNewsletterReadingDraft = z.infer<typeof changelogNewsletterReadingDraftSchema>;
 export type ChangelogNewsletterIndustryDraft = z.infer<
   typeof changelogNewsletterIndustryDraftSchema
 >;
+export type ChangelogNewsletterAiseoDraft = z.infer<typeof changelogNewsletterAiseoDraftSchema>;
+export type ChangelogNewsletterGoogleDraft = z.infer<typeof changelogNewsletterGoogleDraftSchema>;
 
 /** @deprecated */
 export type ChangelogNewsletterEditorialDraft = ChangelogNewsletterIntroDraft;
@@ -92,6 +105,10 @@ export type ChangelogNewsletterPayload = ChangelogNewsletterHighlights & {
   changelogUrl: string;
   /** Pulse-relative supporting articles (More you know). */
   articles: z.infer<typeof newsletterArticleSchema>[];
+  /** AISEO / AI search visibility stories. */
+  aiseoArticles: z.infer<typeof newsletterArticleSchema>[];
+  /** Google Search algorithm and product updates. */
+  googleArticles: z.infer<typeof newsletterArticleSchema>[];
   /** Fun industry stories (Industry News). */
   industryArticles: z.infer<typeof newsletterArticleSchema>[];
 };
@@ -167,7 +184,7 @@ Banned jargon (never use these words or close cousins in hook, body, or highligh
 commit, commits, module, refactor, flatten, schema, API, endpoint, payload, hydrate, deploy, pipeline, worker, JSON, TypeScript, PHP, CI, gate, PR, merge, soft-reset, sandbox, origin, repo, OpenRouter, AgentMail (ok only if explained as "the email Pulse sends you"), hash, UUID, CLS, DOM, Tailwind.
 
 Layout this copy feeds:
-- Summary block (hook + body), then Highlights. More you know and Industry News are written elsewhere.
+- Summary block (hook + body), then Highlights. More you know, AISEO News, Google Updates, and Industry News are written elsewhere.
 - Never write Languages, hero image, Do this week, or extra sections into the copy.
 
 Voice:
@@ -236,10 +253,50 @@ Output JSON only:
   "articles": [{ "title": "...", "summary": "...", "date": "Nov 12, 2026", "sourceUrl": "https://...", "whyItHelps": "..." }]
 }`;
 
+/** AISEO News: AI Overviews / GEO / AI search visibility. */
+export const CHANGELOG_NEWSLETTER_AISEO_SYSTEM = `You write punchy cards for the "AISEO News" block in a Neo Pulse newsletter.
+
+Job: cover 3 CURRENT AI SEO stories (AI Overviews, AI Mode, GEO, AI citations, generative search visibility). Agency-relevant. Not a Pulse changelog rewrite. Not generic Industry News fluff. Not Google core-update recaps (those belong in Google Updates).
+
+Voice:
+- Punchy. 1 to 2 sentence summaries max.
+- whyItHelps: one short kicker on why an agency SEO lead should care this week.
+- Competent wit only. Never clueless or mystery-delivery energy.
+
+Hard rules:
+- Use ONLY the required live https URLs provided in the user message. sourceUrl must match exactly. Never invent replacements.
+- Never use the em dash character.
+- Never mention Rank Math or EMCP.
+
+Output JSON only:
+{
+  "articles": [{ "title": "...", "summary": "...", "date": "Nov 12, 2026", "sourceUrl": "https://...", "whyItHelps": "..." }]
+}`;
+
+/** Google Updates: Search algorithm and Search product changes. */
+export const CHANGELOG_NEWSLETTER_GOOGLE_SYSTEM = `You write punchy cards for the "Google Updates" block in a Neo Pulse newsletter.
+
+Job: cover 3 CURRENT Google Search updates (core updates, spam updates, Search Console changes, Search Status / product docs that affect rankings or reporting). Agency-relevant. Not AISEO theory pieces. Not fun Industry News.
+
+Voice:
+- Punchy. 1 to 2 sentence summaries max.
+- whyItHelps: one short kicker on what an agency should watch or brief this week.
+- Competent wit only. Never clueless or mystery-delivery energy.
+
+Hard rules:
+- Use ONLY the required live https URLs provided in the user message. sourceUrl must match exactly. Never invent replacements.
+- Never use the em dash character.
+- Never mention Rank Math or EMCP.
+
+Output JSON only:
+{
+  "articles": [{ "title": "...", "summary": "...", "date": "Nov 12, 2026", "sourceUrl": "https://...", "whyItHelps": "..." }]
+}`;
+
 /** Industry News: fun / engaging top stories (separate section). */
 export const CHANGELOG_NEWSLETTER_INDUSTRY_SYSTEM = `You write punchy cards for the "Industry News" block in a Neo Pulse newsletter.
 
-Job: make 3 fun, engaging CURRENT industry stories feel worth a coffee skim. Tech / AI / marketing / agency / search vibes. Not a rewrite of the Pulse changelog. Not "why we shipped" pieces.
+Job: make 3 fun, engaging CURRENT industry stories feel worth a coffee skim. Tech / AI / marketing / agency vibes. Not a rewrite of the Pulse changelog. Not "why we shipped" pieces. Not AISEO deep-dives. Not Google core-update recaps.
 
 Voice:
 - Punchy. 1 to 2 sentence summaries max.
@@ -290,7 +347,7 @@ export type ChangelogNewsletterNewsSeed = {
 
 /**
  * Code-owned live wire seeds for Pulse-relative More you know.
- * Themes match this ship: client reporting trust, local maps, organic report honesty.
+ * Themes: client reporting trust, local maps, AI Overview traffic impact.
  */
 export const CHANGELOG_NEWSLETTER_PULSE_WIRE_SEEDS: ChangelogNewsletterNewsSeed[] = [
   {
@@ -304,8 +361,52 @@ export const CHANGELOG_NEWSLETTER_PULSE_WIRE_SEEDS: ChangelogNewsletterNewsSeed[
     date: "Oct 15, 2026",
   },
   {
+    title: "Google AI Overviews in France: Big click losses, but not for everyone",
+    url: "https://searchengineland.com/google-ai-overviews-france-analysis-501153",
+    date: "Nov 9, 2026",
+  },
+];
+
+/**
+ * Code-owned live wire seeds for AISEO News.
+ * Titles must overlap each page's document title for live URL assert.
+ */
+export const CHANGELOG_NEWSLETTER_AISEO_WIRE_SEEDS: ChangelogNewsletterNewsSeed[] = [
+  {
+    title: "Google's Guide to Optimizing for Generative AI Features on Google Search",
+    url: "https://developers.google.com/search/docs/fundamentals/ai-optimization-guide",
+    date: "Nov 12, 2026",
+  },
+  {
+    title: "Google Placing Citation/Source Icons At Bottom Of AI Overviews",
+    url: "https://www.seroundtable.com/google-ai-overview-source-icons-bottom-42519.html",
+    date: "Nov 11, 2026",
+  },
+  {
+    title: "Are we chasing AI visibility at the expense of business results?",
+    url: "https://searchengineland.com/are-we-chasing-ai-visibility-at-the-expense-of-business-results-501382",
+    date: "Nov 12, 2026",
+  },
+];
+
+/**
+ * Code-owned live wire seeds for Google Updates.
+ * Titles must overlap each page's document title for live URL assert.
+ */
+export const CHANGELOG_NEWSLETTER_GOOGLE_WIRE_SEEDS: ChangelogNewsletterNewsSeed[] = [
+  {
+    title: "Google November 2026 core update rolling out now",
+    url: "https://searchengineland.com/google-november-2026-core-update-rolling-out-now-501348",
+    date: "Nov 10, 2026",
+  },
+  {
     title: "Google Search Console performance report data bug Nov 9 -11",
     url: "https://searchengineland.com/google-search-console-performance-report-data-bug-nov-9-11-501899",
+    date: "Nov 12, 2026",
+  },
+  {
+    title: "November 2026 Google Webmaster Report: Spam Update Done, AI Overviews, Help Docs, Local",
+    url: "https://www.seroundtable.com/november-2026-google-webmaster-report-42431.html",
     date: "Nov 12, 2026",
   },
 ];
@@ -326,9 +427,9 @@ export const CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS: ChangelogNewsletterNewsSe
     date: "Nov 10, 2026",
   },
   {
-    title: "Google November 2026 core update rolling out now",
-    url: "https://searchengineland.com/google-november-2026-core-update-rolling-out-now-501348",
-    date: "Nov 12, 2026",
+    title: "OpenAI rolls out new business profiles, making ChatGPT just a little bit more like Google",
+    url: "https://techcrunch.com/2026/11/10/openai-rolls-out-new-business-profiles-making-chatgpt-just-a-little-bit-more-like-google/",
+    date: "Nov 10, 2026",
   },
 ];
 
@@ -388,6 +489,30 @@ ${seedBlock}
 Write punchy Industry News cards for these three fun stories. Return the industry JSON (articles only). sourceUrl must match exactly.`;
 }
 
+export function buildChangelogNewsletterAiseoUserPrompt(
+  seeds: ChangelogNewsletterNewsSeed[],
+): string {
+  const seedBlock = seeds
+    .map((s, i) => `${i + 1}. ${s.title}${s.date ? ` (${s.date})` : ""}\n   ${s.url}`)
+    .join("\n");
+  return `Required live AISEO News stories (use THESE exact https URLs; do not invent replacements):
+${seedBlock}
+
+Write punchy AISEO News cards for these three AI search / GEO stories. Return the AISEO JSON (articles only). sourceUrl must match exactly.`;
+}
+
+export function buildChangelogNewsletterGoogleUserPrompt(
+  seeds: ChangelogNewsletterNewsSeed[],
+): string {
+  const seedBlock = seeds
+    .map((s, i) => `${i + 1}. ${s.title}${s.date ? ` (${s.date})` : ""}\n   ${s.url}`)
+    .join("\n");
+  return `Required live Google Updates stories (use THESE exact https URLs; do not invent replacements):
+${seedBlock}
+
+Write punchy Google Updates cards for these three Search / Search Console stories. Return the Google Updates JSON (articles only). sourceUrl must match exactly.`;
+}
+
 export function parseChangelogNewsletterNewsSeeds(raw: string): ChangelogNewsletterNewsSeeds {
   return parseModelJson(raw, changelogNewsletterNewsSeedsSchema, "changelog newsletter news seeds");
 }
@@ -414,6 +539,18 @@ export function parseChangelogNewsletterIndustryDraft(
     raw,
     changelogNewsletterIndustryDraftSchema,
     "changelog newsletter industry draft",
+  );
+}
+
+export function parseChangelogNewsletterAiseoDraft(raw: string): ChangelogNewsletterAiseoDraft {
+  return parseModelJson(raw, changelogNewsletterAiseoDraftSchema, "changelog newsletter aiseo draft");
+}
+
+export function parseChangelogNewsletterGoogleDraft(raw: string): ChangelogNewsletterGoogleDraft {
+  return parseModelJson(
+    raw,
+    changelogNewsletterGoogleDraftSchema,
+    "changelog newsletter google draft",
   );
 }
 
@@ -516,6 +653,8 @@ export function assembleChangelogNewsletter(
   entry: ChangelogNewsletterHighlights,
   intro: ChangelogNewsletterIntroDraft,
   reading: ChangelogNewsletterReadingDraft,
+  aiseo: ChangelogNewsletterAiseoDraft,
+  google: ChangelogNewsletterGoogleDraft,
   industry: ChangelogNewsletterIndustryDraft,
   changelogUrl: string = CHANGELOG_NEWSLETTER_FULL_URL,
 ): ChangelogNewsletterPayload {
@@ -547,6 +686,8 @@ export function assembleChangelogNewsletter(
     body,
     changelogUrl: changelogUrl.trim(),
     articles: reading.articles,
+    aiseoArticles: aiseo.articles,
+    googleArticles: google.articles,
     industryArticles: industry.articles,
   };
 }

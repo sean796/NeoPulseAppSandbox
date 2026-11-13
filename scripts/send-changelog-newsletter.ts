@@ -2,7 +2,8 @@
  * Send one Neo Pulse changelog newsletter via AgentMail.
  *
  * Email lock: summary (plain-English hook + body) + Highlights
- * + More you know (Pulse-relative) + Industry News (fun stories).
+ * + More you know (Pulse-relative) + AISEO News + Google Updates
+ * + Industry News (fun stories).
  * Confident Morning Brew voice (never "mystery delivery" / clueless humor).
  *
  * Always generates a FRESH changelog entry from git commits after the last
@@ -26,7 +27,11 @@ import { fileURLToPath } from "node:url";
 
 import { z } from "zod";
 import {
+  CHANGELOG_NEWSLETTER_AISEO_SYSTEM,
+  CHANGELOG_NEWSLETTER_AISEO_WIRE_SEEDS,
   CHANGELOG_NEWSLETTER_FULL_URL,
+  CHANGELOG_NEWSLETTER_GOOGLE_SYSTEM,
+  CHANGELOG_NEWSLETTER_GOOGLE_WIRE_SEEDS,
   CHANGELOG_NEWSLETTER_INDUSTRY_SYSTEM,
   CHANGELOG_NEWSLETTER_INTRO_MODEL,
   CHANGELOG_NEWSLETTER_INTRO_SYSTEM,
@@ -36,9 +41,13 @@ import {
   CHANGELOG_NEWSLETTER_WEB_MODEL,
   assembleChangelogNewsletter,
   assertNewsletterArticleSourcesReachable,
+  buildChangelogNewsletterAiseoUserPrompt,
+  buildChangelogNewsletterGoogleUserPrompt,
   buildChangelogNewsletterIndustryUserPrompt,
   buildChangelogNewsletterIntroUserPrompt,
   buildChangelogNewsletterReadingUserPrompt,
+  parseChangelogNewsletterAiseoDraft,
+  parseChangelogNewsletterGoogleDraft,
   parseChangelogNewsletterIndustryDraft,
   parseChangelogNewsletterIntroDraft,
   parseChangelogNewsletterReadingDraft,
@@ -465,6 +474,76 @@ async function main(): Promise<void> {
     }
   }
 
+  const aiseoSeeds: ChangelogNewsletterNewsSeed[] = CHANGELOG_NEWSLETTER_AISEO_WIRE_SEEDS.map(
+    (s) => ({ ...s }),
+  );
+  console.log("Verifying AISEO News wire-seed URLs are live (fail on 404)…");
+  await assertNewsletterArticleSourcesReachable(
+    aiseoSeeds.map((s) => ({ title: s.title, sourceUrl: s.url })),
+  );
+  console.log(`Writing AISEO News cards with ${CHANGELOG_NEWSLETTER_WEB_MODEL}…`);
+  const aiseoRaw = await hubApi("openrouter/chat-completion", {
+    method: "POST",
+    headers: authHeaders,
+    body: JSON.stringify({
+      model: CHANGELOG_NEWSLETTER_WEB_MODEL,
+      temperature: 0.3,
+      maxTokens: 4096,
+      responseFormat: { type: "json_object" },
+      system: CHANGELOG_NEWSLETTER_AISEO_SYSTEM,
+      user: buildChangelogNewsletterAiseoUserPrompt(aiseoSeeds),
+    }),
+  });
+  const aiseoContent = extractChatContent(aiseoRaw);
+  if (!aiseoContent.trim()) {
+    throw new Error("OpenRouter AISEO News draft returned empty content.");
+  }
+  const aiseo = parseChangelogNewsletterAiseoDraft(aiseoContent);
+  for (let i = 0; i < aiseoSeeds.length; i++) {
+    const want = aiseoSeeds[i]!.url;
+    const got = aiseo.articles[i]?.sourceUrl;
+    if (got !== want) {
+      throw new Error(
+        `AISEO News article ${i + 1} URL drifted from seed. Expected ${want}, got ${got ?? "(missing)"}.`,
+      );
+    }
+  }
+
+  const googleSeeds: ChangelogNewsletterNewsSeed[] = CHANGELOG_NEWSLETTER_GOOGLE_WIRE_SEEDS.map(
+    (s) => ({ ...s }),
+  );
+  console.log("Verifying Google Updates wire-seed URLs are live (fail on 404)…");
+  await assertNewsletterArticleSourcesReachable(
+    googleSeeds.map((s) => ({ title: s.title, sourceUrl: s.url })),
+  );
+  console.log(`Writing Google Updates cards with ${CHANGELOG_NEWSLETTER_WEB_MODEL}…`);
+  const googleRaw = await hubApi("openrouter/chat-completion", {
+    method: "POST",
+    headers: authHeaders,
+    body: JSON.stringify({
+      model: CHANGELOG_NEWSLETTER_WEB_MODEL,
+      temperature: 0.3,
+      maxTokens: 4096,
+      responseFormat: { type: "json_object" },
+      system: CHANGELOG_NEWSLETTER_GOOGLE_SYSTEM,
+      user: buildChangelogNewsletterGoogleUserPrompt(googleSeeds),
+    }),
+  });
+  const googleContent = extractChatContent(googleRaw);
+  if (!googleContent.trim()) {
+    throw new Error("OpenRouter Google Updates draft returned empty content.");
+  }
+  const google = parseChangelogNewsletterGoogleDraft(googleContent);
+  for (let i = 0; i < googleSeeds.length; i++) {
+    const want = googleSeeds[i]!.url;
+    const got = google.articles[i]?.sourceUrl;
+    if (got !== want) {
+      throw new Error(
+        `Google Updates article ${i + 1} URL drifted from seed. Expected ${want}, got ${got ?? "(missing)"}.`,
+      );
+    }
+  }
+
   const industrySeeds: ChangelogNewsletterNewsSeed[] =
     CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS.map((s) => ({ ...s }));
   console.log("Verifying Industry News wire-seed URLs are live (fail on 404)…");
@@ -503,6 +582,8 @@ async function main(): Promise<void> {
     highlights,
     intro,
     reading,
+    aiseo,
+    google,
     industry,
     CHANGELOG_NEWSLETTER_FULL_URL,
   );

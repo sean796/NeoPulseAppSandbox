@@ -260,8 +260,42 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 				'date'  => 'Oct 15, 2026',
 			),
 			array(
+				'title' => 'Google AI Overviews in France: Big click losses, but not for everyone',
+				'url'   => 'https://searchengineland.com/google-ai-overviews-france-analysis-501153',
+				'date'  => 'Nov 9, 2026',
+			),
+		);
+		$aiseo_seeds = array(
+			array(
+				'title' => "Google's Guide to Optimizing for Generative AI Features on Google Search",
+				'url'   => 'https://developers.google.com/search/docs/fundamentals/ai-optimization-guide',
+				'date'  => 'Nov 12, 2026',
+			),
+			array(
+				'title' => 'Google Placing Citation/Source Icons At Bottom Of AI Overviews',
+				'url'   => 'https://www.seroundtable.com/google-ai-overview-source-icons-bottom-42519.html',
+				'date'  => 'Nov 11, 2026',
+			),
+			array(
+				'title' => 'Are we chasing AI visibility at the expense of business results?',
+				'url'   => 'https://searchengineland.com/are-we-chasing-ai-visibility-at-the-expense-of-business-results-501382',
+				'date'  => 'Nov 12, 2026',
+			),
+		);
+		$google_seeds = array(
+			array(
+				'title' => 'Google November 2026 core update rolling out now',
+				'url'   => 'https://searchengineland.com/google-november-2026-core-update-rolling-out-now-501348',
+				'date'  => 'Nov 10, 2026',
+			),
+			array(
 				'title' => 'Google Search Console performance report data bug Nov 9 -11',
 				'url'   => 'https://searchengineland.com/google-search-console-performance-report-data-bug-nov-9-11-501899',
+				'date'  => 'Nov 12, 2026',
+			),
+			array(
+				'title' => 'November 2026 Google Webmaster Report: Spam Update Done, AI Overviews, Help Docs, Local',
+				'url'   => 'https://www.seroundtable.com/november-2026-google-webmaster-report-42431.html',
 				'date'  => 'Nov 12, 2026',
 			),
 		);
@@ -277,14 +311,16 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 				'date'  => 'Nov 10, 2026',
 			),
 			array(
-				'title' => 'Google November 2026 core update rolling out now',
-				'url'   => 'https://searchengineland.com/google-november-2026-core-update-rolling-out-now-501348',
-				'date'  => 'Nov 12, 2026',
+				'title' => 'OpenAI rolls out new business profiles, making ChatGPT just a little bit more like Google',
+				'url'   => 'https://techcrunch.com/2026/11/10/openai-rolls-out-new-business-profiles-making-chatgpt-just-a-little-bit-more-like-google/',
+				'date'  => 'Nov 10, 2026',
 			),
 		);
 
-		$pulse_cards = self::article_cards( $pack, $pulse_seeds, true );
-		$ind_cards   = self::article_cards( $pack, $industry_seeds, false );
+		$pulse_cards   = self::article_cards( $pack, $pulse_seeds, 'More you know Pulse-relative' );
+		$aiseo_cards   = self::article_cards( $pack, $aiseo_seeds, 'AISEO News' );
+		$google_cards  = self::article_cards( $pack, $google_seeds, 'Google Updates' );
+		$ind_cards     = self::article_cards( $pack, $industry_seeds, 'Industry News fun' );
 
 		return array(
 			'title'             => (string) $entry['title'],
@@ -294,6 +330,8 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 			'body'              => trim( (string) ( $intro['body'] ?? '' ) ),
 			'highlights'        => self::string_list( $intro['highlights'] ?? $highlights ),
 			'articles'          => $pulse_cards,
+			'aiseoArticles'     => $aiseo_cards,
+			'googleArticles'    => $google_cards,
 			'industryArticles'  => $ind_cards,
 			'changelogUrl'      => self::FULL_URL,
 		);
@@ -303,13 +341,12 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 	 * @param array<int,array<string,string>> $seeds
 	 * @return array<int,array<string,string>>
 	 */
-	private static function article_cards( string $pack, array $seeds, bool $pulse ): array {
+	private static function article_cards( string $pack, array $seeds, string $kind ): array {
 		$seed_block = '';
 		foreach ( $seeds as $i => $s ) {
 			$n = $i + 1;
 			$seed_block .= "{$n}. {$s['title']} ({$s['date']})\n   {$s['url']}\n";
 		}
-		$kind   = $pulse ? 'More you know Pulse-relative' : 'Industry News fun';
 		$system = "You write punchy {$kind} cards. Use ONLY the required https URLs exactly. Never invent URLs. Never em dash. JSON only: {\"articles\":[{\"title\":\"...\",\"summary\":\"...\",\"date\":\"...\",\"sourceUrl\":\"https://...\",\"whyItHelps\":\"...\"}]}";
 		$user   = $pack . "\n\nRequired live stories:\n" . $seed_block . "\nReturn articles JSON. sourceUrl must match exactly.";
 		$raw    = self::openrouter_json( self::WEB_MODEL, $system, $user, 0.3, 4096 );
@@ -563,13 +600,17 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 			. '<tr><td style="padding:0 0 16px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.65;color:' . self::TEXT . ';">' . $body . '</td></tr>'
 			. '<tr><td style="padding:0;font-family:Arial,Helvetica,sans-serif;font-size:16px;"><a href="' . $url . '" style="color:' . self::ACCENT . ';text-decoration:underline;font-weight:700;">Full changelog →</a></td></tr>';
 
-		$more_exp = 'Why these reads: three articles that help explain what this Pulse update is really about, in plain English, so the ship makes sense beyond the product screen.';
-		$ind_exp  = 'Fun stories from the wider industry this week. Skim for coffee, not homework.';
+		$more_exp   = 'Why these reads: three articles that help explain what this Pulse update is really about, in plain English, so the ship makes sense beyond the product screen.';
+		$aiseo_exp  = 'AI SEO this week: AI Overviews, GEO, and citation visibility that changes how agencies win search.';
+		$google_exp = 'Google Search updates that hit rankings, reporting, or client briefs. Watch these first.';
+		$ind_exp    = 'Fun stories from the wider industry this week. Skim for coffee, not homework.';
 
 		return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' . self::escape( self::build_subject( (string) $pack['hook'] ) ) . '</title></head><body style="margin:0;padding:0;background-color:' . self::BG . ';width:100%;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;background-color:' . self::BG . ';"><tr><td align="center" style="padding:0;width:100%;"><table role="presentation" width="' . $w . '" cellspacing="0" cellpadding="0" border="0" style="width:100%;max-width:' . $w . 'px;background-color:' . self::BG . ';"><tr><td style="padding:28px 20px 20px 20px;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;background-color:' . self::WELL . ';"><tr><td width="4" style="width:4px;background-color:' . self::ACCENT . ';">&nbsp;</td><td style="padding:22px 24px;"><span style="font-family:Arial,Helvetica,sans-serif;font-size:26px;font-weight:700;"><span style="color:' . self::ACCENT . ';">neo</span><span style="color:#ffffff;">pulse</span></span><div style="font-family:Arial,Helvetica,sans-serif;font-size:16px;color:' . self::TEXT . ';margin-top:8px;">' . $date . ' · ' . $count . ' commits</div></td></tr></table></td></tr><tr><td style="padding:0 20px 28px 20px;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">'
 			. self::framed( '', self::PANEL, $summary, 0 )
 			. self::framed( 'Highlights', self::WELL, $highlights, 16 )
 			. self::framed( 'More you know', self::PANEL, '<tr><td style="padding:0 0 16px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:' . self::TEXT . ';">' . self::escape( $more_exp ) . '</td></tr>' . self::articles_html( (array) $pack['articles'] ), 16 )
+			. self::framed( 'AISEO News', self::WELL, '<tr><td style="padding:0 0 16px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:' . self::TEXT . ';">' . self::escape( $aiseo_exp ) . '</td></tr>' . self::articles_html( (array) ( $pack['aiseoArticles'] ?? array() ) ), 16 )
+			. self::framed( 'Google Updates', self::PANEL, '<tr><td style="padding:0 0 16px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:' . self::TEXT . ';">' . self::escape( $google_exp ) . '</td></tr>' . self::articles_html( (array) ( $pack['googleArticles'] ?? array() ) ), 16 )
 			. self::framed( 'Industry News', self::WELL, '<tr><td style="padding:0 0 16px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:' . self::TEXT . ';">' . self::escape( $ind_exp ) . '</td></tr>' . self::articles_html( (array) $pack['industryArticles'] ), 16 )
 			. '<tr><td style="padding:24px 4px 8px 4px;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:' . self::TEXT . ';">Sent by Neo Pulse. Reply to this email to reach sean@neodigital.ca.</td></tr></table></td></tr></table></td></tr></table></body></html>';
 	}
@@ -612,6 +653,28 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 		$lines[] = '';
 		$lines[] = 'MORE YOU KNOW';
 		foreach ( (array) $pack['articles'] as $a ) {
+			if ( ! is_array( $a ) ) {
+				continue;
+			}
+			$lines[] = '- ' . $a['title'] . ' (' . $a['date'] . ')';
+			$lines[] = '  ' . $a['summary'];
+			$lines[] = '  ' . $a['whyItHelps'];
+			$lines[] = '  ' . $a['sourceUrl'];
+		}
+		$lines[] = '';
+		$lines[] = 'AISEO NEWS';
+		foreach ( (array) ( $pack['aiseoArticles'] ?? array() ) as $a ) {
+			if ( ! is_array( $a ) ) {
+				continue;
+			}
+			$lines[] = '- ' . $a['title'] . ' (' . $a['date'] . ')';
+			$lines[] = '  ' . $a['summary'];
+			$lines[] = '  ' . $a['whyItHelps'];
+			$lines[] = '  ' . $a['sourceUrl'];
+		}
+		$lines[] = '';
+		$lines[] = 'GOOGLE UPDATES';
+		foreach ( (array) ( $pack['googleArticles'] ?? array() ) as $a ) {
 			if ( ! is_array( $a ) ) {
 				continue;
 			}

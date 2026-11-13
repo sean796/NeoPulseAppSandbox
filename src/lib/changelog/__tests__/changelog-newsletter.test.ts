@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
+  CHANGELOG_NEWSLETTER_AISEO_SYSTEM,
+  CHANGELOG_NEWSLETTER_AISEO_WIRE_SEEDS,
   CHANGELOG_NEWSLETTER_FULL_URL,
+  CHANGELOG_NEWSLETTER_GOOGLE_SYSTEM,
+  CHANGELOG_NEWSLETTER_GOOGLE_WIRE_SEEDS,
   CHANGELOG_NEWSLETTER_INDUSTRY_SYSTEM,
   CHANGELOG_NEWSLETTER_INTRO_SYSTEM,
   CHANGELOG_NEWSLETTER_PULSE_WIRE_SEEDS,
@@ -9,17 +13,25 @@ import {
   CHANGELOG_NEWSLETTER_WEB_MODEL,
   assembleChangelogNewsletter,
   assertNewsletterArticleSourcesReachable,
+  buildChangelogNewsletterAiseoUserPrompt,
+  buildChangelogNewsletterGoogleUserPrompt,
   buildChangelogNewsletterIndustryUserPrompt,
   buildChangelogNewsletterReadingUserPrompt,
+  parseChangelogNewsletterAiseoDraft,
+  parseChangelogNewsletterGoogleDraft,
   parseChangelogNewsletterIndustryDraft,
   parseChangelogNewsletterIntroDraft,
   parseChangelogNewsletterReadingDraft,
   stripBannedChangelogTopics,
+  type ChangelogNewsletterAiseoDraft,
+  type ChangelogNewsletterGoogleDraft,
   type ChangelogNewsletterIndustryDraft,
   type ChangelogNewsletterIntroDraft,
   type ChangelogNewsletterReadingDraft,
 } from "@/lib/changelog/changelog-newsletter-agent";
 import {
+  CHANGELOG_NEWSLETTER_AISEO_NEWS_EXPLAINER,
+  CHANGELOG_NEWSLETTER_GOOGLE_UPDATES_EXPLAINER,
   CHANGELOG_NEWSLETTER_INDUSTRY_NEWS_EXPLAINER,
   CHANGELOG_NEWSLETTER_MORE_YOU_KNOW_EXPLAINER,
   NEO_PULSE_BRAND_ACCENT,
@@ -71,6 +83,64 @@ const READING: ChangelogNewsletterReadingDraft = {
   ],
 };
 
+const AISEO: ChangelogNewsletterAiseoDraft = {
+  articles: [
+    {
+      title: "Google publishes generative AI optimization guidance",
+      summary:
+        "Search Central explains how AI Overviews still lean on crawlable, people-first pages and retrieval from the Search index.",
+      date: "Nov 12, 2026",
+      sourceUrl: "https://example.com/aiseo-google-guide",
+      whyItHelps: "Useful when clients ask what AISEO actually means this quarter.",
+    },
+    {
+      title: "AI Overview citation icons move to the bottom",
+      summary:
+        "Google is testing source icons at the bottom of AI Overviews, which can hide citations and cut referral clicks.",
+      date: "Nov 11, 2026",
+      sourceUrl: "https://example.com/aiseo-citation-icons",
+      whyItHelps: "Brief clients before they panic about vanishing AI Overview traffic.",
+    },
+    {
+      title: "AI visibility metrics are not the whole scoreboard",
+      summary:
+        "New industry take on why citation share of voice can distract from pipeline and revenue outcomes.",
+      date: "Nov 12, 2026",
+      sourceUrl: "https://example.com/aiseo-visibility-metrics",
+      whyItHelps: "Keeps AISEO reporting honest for agency owners.",
+    },
+  ],
+};
+
+const GOOGLE: ChangelogNewsletterGoogleDraft = {
+  articles: [
+    {
+      title: "November 2026 Google core update is rolling",
+      summary:
+        "Google started the November 2026 core update with a two-week rollout window across languages.",
+      date: "Nov 10, 2026",
+      sourceUrl: "https://example.com/google-core-update",
+      whyItHelps: "First thing to check when a client Slack says rankings moved overnight.",
+    },
+    {
+      title: "Search Console Generative AI report had a logging bug",
+      summary:
+        "Google confirmed impression dips Nov 9 to 11 were a logging error, not real AI Mode performance loss.",
+      date: "Nov 12, 2026",
+      sourceUrl: "https://example.com/google-gsc-bug",
+      whyItHelps: "Stops a bad client report before it leaves the building.",
+    },
+    {
+      title: "November webmaster report covers spam and AI Overviews",
+      summary:
+        "Weekly Google search wrap includes spam update wrap-up, AI Overview notes, and local Search bits.",
+      date: "Nov 12, 2026",
+      sourceUrl: "https://example.com/google-webmaster-report",
+      whyItHelps: "A fast skim before Friday client status calls.",
+    },
+  ],
+};
+
 const INDUSTRY: ChangelogNewsletterIndustryDraft = {
   articles: [
     {
@@ -90,12 +160,12 @@ const INDUSTRY: ChangelogNewsletterIndustryDraft = {
       whyItHelps: "The kind of headline your client Slack will ping about by lunch.",
     },
     {
-      title: "Google Search feature change hits local SEO reporting again",
+      title: "Anthropic launches Claude Meetings for workplace plans",
       summary:
-        "New reporting on a Google SERP tweak that changes how local visibility gets measured week to week.",
-      date: "Nov 8, 2026",
-      sourceUrl: "https://example.com/google-local-seo-serp-news",
-      whyItHelps: "Directly relevant if you live in client SEO decks.",
+        "Claude can turn meeting chatter into tasks, which is the kind of AI ops story agencies trade over coffee.",
+      date: "Nov 10, 2026",
+      sourceUrl: "https://example.com/anthropic-claude-meetings-news",
+      whyItHelps: "Fun industry noise that is not another core-update recap.",
     },
   ],
 };
@@ -123,7 +193,7 @@ const ENTRY = {
 };
 
 describe("changelog newsletter drafts", () => {
-  it("parses editorial hook/body/highlights and both article drafts", () => {
+  it("parses editorial hook/body/highlights and all article drafts", () => {
     const intro = parseChangelogNewsletterIntroDraft(JSON.stringify(INTRO));
     expect(intro.hook.length).toBeLessThanOrEqual(48);
     expect(intro.hook.split(/\s+/).length).toBeLessThanOrEqual(8);
@@ -131,6 +201,8 @@ describe("changelog newsletter drafts", () => {
     const draft = parseChangelogNewsletterReadingDraft(JSON.stringify(READING));
     expect(draft.articles).toHaveLength(3);
     expect(draft.articles[0]?.sourceUrl.startsWith("https://")).toBe(true);
+    expect(parseChangelogNewsletterAiseoDraft(JSON.stringify(AISEO)).articles).toHaveLength(3);
+    expect(parseChangelogNewsletterGoogleDraft(JSON.stringify(GOOGLE)).articles).toHaveLength(3);
     const industry = parseChangelogNewsletterIndustryDraft(JSON.stringify(INDUSTRY));
     expect(industry.articles).toHaveLength(3);
   });
@@ -154,7 +226,7 @@ describe("changelog newsletter drafts", () => {
     expect(cleaned.sections?.[0]?.items.some((i) => /rank math/i.test(i))).toBe(false);
   });
 
-  it("locks prompts to plain-English body and two news sections", () => {
+  it("locks prompts to plain-English body and dedicated news sections", () => {
     expect(CHANGELOG_NEWSLETTER_WEB_MODEL).toMatch(/:online|sonar/i);
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("does NOT write code");
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("PULSE's point of view");
@@ -163,8 +235,14 @@ describe("changelog newsletter drafts", () => {
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("Never list technical changes");
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("Morning Brew");
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("Max 8 words");
+    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("AISEO News");
+    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("Google Updates");
     expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("WHY this Pulse ship matters");
     expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("required https URLs");
+    expect(CHANGELOG_NEWSLETTER_AISEO_SYSTEM).toContain("AISEO News");
+    expect(CHANGELOG_NEWSLETTER_AISEO_SYSTEM).toContain("GEO");
+    expect(CHANGELOG_NEWSLETTER_GOOGLE_SYSTEM).toContain("Google Updates");
+    expect(CHANGELOG_NEWSLETTER_GOOGLE_SYSTEM).toContain("core updates");
     expect(CHANGELOG_NEWSLETTER_INDUSTRY_SYSTEM).toContain("Industry News");
     expect(CHANGELOG_NEWSLETTER_INDUSTRY_SYSTEM).toContain("fun");
     expect(CHANGELOG_NEWSLETTER_FULL_URL).toContain("/changelog");
@@ -174,6 +252,12 @@ describe("changelog newsletter drafts", () => {
     );
     expect(pulsePrompt).toContain("Required live More you know");
     expect(pulsePrompt).toContain("seo-report-client-wrong");
+    expect(buildChangelogNewsletterAiseoUserPrompt(CHANGELOG_NEWSLETTER_AISEO_WIRE_SEEDS)).toContain(
+      "Required live AISEO News",
+    );
+    expect(
+      buildChangelogNewsletterGoogleUserPrompt(CHANGELOG_NEWSLETTER_GOOGLE_WIRE_SEEDS),
+    ).toContain("Required live Google Updates");
     const industryPrompt = buildChangelogNewsletterIndustryUserPrompt(
       CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS,
     );
@@ -181,20 +265,25 @@ describe("changelog newsletter drafts", () => {
     expect(industryPrompt).toContain("nvidianews.nvidia.com");
   });
 
-  it("locks More you know and Industry News to verified wire-seed https URLs", () => {
+  it("locks all news sections to verified wire-seed https URLs", () => {
     expect(CHANGELOG_NEWSLETTER_PULSE_WIRE_SEEDS).toHaveLength(3);
+    expect(CHANGELOG_NEWSLETTER_AISEO_WIRE_SEEDS).toHaveLength(3);
+    expect(CHANGELOG_NEWSLETTER_GOOGLE_WIRE_SEEDS).toHaveLength(3);
     expect(CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS).toHaveLength(3);
     for (const seed of [
       ...CHANGELOG_NEWSLETTER_PULSE_WIRE_SEEDS,
+      ...CHANGELOG_NEWSLETTER_AISEO_WIRE_SEEDS,
+      ...CHANGELOG_NEWSLETTER_GOOGLE_WIRE_SEEDS,
       ...CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS,
     ]) {
       expect(seed.url.startsWith("https://")).toBe(true);
       expect(seed.title.length).toBeGreaterThan(0);
     }
     expect(CHANGELOG_NEWSLETTER_PULSE_WIRE_SEEDS[0]?.url).toContain("seo-report-client-wrong");
+    expect(CHANGELOG_NEWSLETTER_AISEO_WIRE_SEEDS[0]?.url).toContain("ai-optimization-guide");
+    expect(CHANGELOG_NEWSLETTER_GOOGLE_WIRE_SEEDS[0]?.url).toContain("core-update-rolling-out");
     expect(CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS[0]?.url).toContain("nvidianews.nvidia.com");
-    expect(CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS[1]?.url).toContain("techcrunch.com");
-    expect(CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS[2]?.url).toContain("searchengineland.com");
+    expect(CHANGELOG_NEWSLETTER_VERIFIED_WIRE_SEEDS[2]?.url).toContain("techcrunch.com");
   });
 
   it("fails when an article URL resolves to a domain-for-sale page", async () => {
@@ -236,13 +325,15 @@ describe("changelog newsletter drafts", () => {
     }
   });
 
-  it("assembles hook, body, Pulse articles, and industry articles", () => {
-    const payload = assembleChangelogNewsletter(ENTRY, INTRO, READING, INDUSTRY);
+  it("assembles hook, body, Pulse, AISEO, Google, and industry articles", () => {
+    const payload = assembleChangelogNewsletter(ENTRY, INTRO, READING, AISEO, GOOGLE, INDUSTRY);
     expect(payload.hook).toBe(INTRO.hook);
     expect(payload.body).toContain("client");
     expect(payload.highlights[0]).toContain("PDFs");
     expect(payload.changelogUrl).toBe(CHANGELOG_NEWSLETTER_FULL_URL);
     expect(payload.articles[0]?.whyItHelps).toContain("Pulse");
+    expect(payload.aiseoArticles[0]?.whyItHelps).toContain("AISEO");
+    expect(payload.googleArticles[0]?.whyItHelps).toContain("rankings");
     expect(payload.industryArticles[0]?.whyItHelps).toContain("AI budgets");
   });
 });
@@ -256,6 +347,8 @@ describe("changelog newsletter email", () => {
         hook: "Client reports look finished",
       },
       READING,
+      AISEO,
+      GOOGLE,
       INDUSTRY,
     );
     const long = {
@@ -270,7 +363,7 @@ describe("changelog newsletter email", () => {
   });
 
   it("renders full-width framed sections with white/green only", () => {
-    const payload = assembleChangelogNewsletter(ENTRY, INTRO, READING, INDUSTRY);
+    const payload = assembleChangelogNewsletter(ENTRY, INTRO, READING, AISEO, GOOGLE, INDUSTRY);
     const email = buildChangelogNewsletterEmail(payload);
 
     expect(email.subject).toBe("Neo Pulse: Client reports look finished.");
@@ -290,6 +383,10 @@ describe("changelog newsletter email", () => {
     expect(email.html).toContain("Highlights");
     expect(email.html).toContain("More you know");
     expect(email.html).toContain(CHANGELOG_NEWSLETTER_MORE_YOU_KNOW_EXPLAINER);
+    expect(email.html).toContain("AISEO News");
+    expect(email.html).toContain(CHANGELOG_NEWSLETTER_AISEO_NEWS_EXPLAINER);
+    expect(email.html).toContain("Google Updates");
+    expect(email.html).toContain(CHANGELOG_NEWSLETTER_GOOGLE_UPDATES_EXPLAINER);
     expect(email.html).toContain("Industry News");
     expect(email.html).toContain(CHANGELOG_NEWSLETTER_INDUSTRY_NEWS_EXPLAINER);
     expect(email.html).toContain("Read →");
@@ -304,12 +401,20 @@ describe("changelog newsletter email", () => {
     expect(email.html).not.toContain("#fafafa");
 
     const moreIdx = email.html.indexOf("More you know");
+    const aiseoIdx = email.html.indexOf("AISEO News");
+    const googleIdx = email.html.indexOf("Google Updates");
     const industryIdx = email.html.indexOf("Industry News");
     expect(moreIdx).toBeGreaterThan(-1);
-    expect(industryIdx).toBeGreaterThan(moreIdx);
+    expect(aiseoIdx).toBeGreaterThan(moreIdx);
+    expect(googleIdx).toBeGreaterThan(aiseoIdx);
+    expect(industryIdx).toBeGreaterThan(googleIdx);
 
     expect(email.text).toContain("MORE YOU KNOW");
+    expect(email.text).toContain("AISEO NEWS");
+    expect(email.text).toContain("GOOGLE UPDATES");
     expect(email.text).toContain("INDUSTRY NEWS");
+    expect(email.text).toContain(CHANGELOG_NEWSLETTER_AISEO_NEWS_EXPLAINER);
+    expect(email.text).toContain(CHANGELOG_NEWSLETTER_GOOGLE_UPDATES_EXPLAINER);
     expect(email.text).toContain(CHANGELOG_NEWSLETTER_INDUSTRY_NEWS_EXPLAINER);
     expect(email.text).not.toContain("DO THIS WEEK");
     expect(email.text).not.toContain("LANGUAGES");

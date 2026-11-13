@@ -1,7 +1,7 @@
 /**
  * Multipart changelog newsletter (Morning Brew / TLDR skim layout).
  * Fluid full-width shell + framed section wells with green accent bars.
- * Layout: summary → Highlights → More you know → Industry News.
+ * Layout: summary → Highlights → More you know → AISEO News → Google Updates → Industry News.
  */
 
 import type { ChangelogNewsletterPayload } from "./changelog-newsletter-agent";
@@ -21,6 +21,14 @@ export const NEO_PULSE_NEWSLETTER_MAX_WIDTH = 720;
 /** Fixed explainer under More you know. Code-owned, not LLM. */
 export const CHANGELOG_NEWSLETTER_MORE_YOU_KNOW_EXPLAINER =
   "Why these reads: three articles that help explain what this Pulse update is really about, in plain English, so the ship makes sense beyond the product screen.";
+
+/** Fixed explainer under AISEO News. Code-owned, not LLM. */
+export const CHANGELOG_NEWSLETTER_AISEO_NEWS_EXPLAINER =
+  "AI SEO this week: AI Overviews, GEO, and citation visibility that changes how agencies win search.";
+
+/** Fixed explainer under Google Updates. Code-owned, not LLM. */
+export const CHANGELOG_NEWSLETTER_GOOGLE_UPDATES_EXPLAINER =
+  "Google Search updates that hit rankings, reporting, or client briefs. Watch these first.";
 
 /** Fixed explainer under Industry News. Code-owned, not LLM. */
 export const CHANGELOG_NEWSLETTER_INDUSTRY_NEWS_EXPLAINER =
@@ -228,6 +236,18 @@ ${framedSection({
   innerHtml: `${explainerInner(CHANGELOG_NEWSLETTER_MORE_YOU_KNOW_EXPLAINER)}${articlesInner(payload.articles)}`,
 })}
 ${framedSection({
+  label: "AISEO News",
+  wellBg: NEO_PULSE_BRAND_WELL,
+  topMarginPx: 16,
+  innerHtml: `${explainerInner(CHANGELOG_NEWSLETTER_AISEO_NEWS_EXPLAINER)}${articlesInner(payload.aiseoArticles)}`,
+})}
+${framedSection({
+  label: "Google Updates",
+  wellBg: NEO_PULSE_BRAND_WELL_ALT,
+  topMarginPx: 16,
+  innerHtml: `${explainerInner(CHANGELOG_NEWSLETTER_GOOGLE_UPDATES_EXPLAINER)}${articlesInner(payload.googleArticles)}`,
+})}
+${framedSection({
   label: "Industry News",
   wellBg: NEO_PULSE_BRAND_WELL,
   topMarginPx: 16,
@@ -265,6 +285,20 @@ export function buildChangelogNewsletterText(payload: ChangelogNewsletterPayload
   }
   lines.push("", "MORE YOU KNOW", CHANGELOG_NEWSLETTER_MORE_YOU_KNOW_EXPLAINER, "");
   for (const a of payload.articles) {
+    lines.push(`- ${a.title} (${a.date})`);
+    lines.push(`  ${a.summary}`);
+    lines.push(`  ${a.whyItHelps}`);
+    lines.push(`  ${a.sourceUrl}`);
+  }
+  lines.push("", "AISEO NEWS", CHANGELOG_NEWSLETTER_AISEO_NEWS_EXPLAINER, "");
+  for (const a of payload.aiseoArticles) {
+    lines.push(`- ${a.title} (${a.date})`);
+    lines.push(`  ${a.summary}`);
+    lines.push(`  ${a.whyItHelps}`);
+    lines.push(`  ${a.sourceUrl}`);
+  }
+  lines.push("", "GOOGLE UPDATES", CHANGELOG_NEWSLETTER_GOOGLE_UPDATES_EXPLAINER, "");
+  for (const a of payload.googleArticles) {
     lines.push(`- ${a.title} (${a.date})`);
     lines.push(`  ${a.summary}`);
     lines.push(`  ${a.whyItHelps}`);
