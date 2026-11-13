@@ -121,6 +121,16 @@ export interface WordPressSite {
   /** Default local grid / geo-grid keyword (e.g. blinds near me). */
   primaryLocalKeyword?: string;
 
+  /**
+   * Profile keyword list. Optional `locationId` assigns a keyword to a site location;
+   * omit / empty = unassigned. First non-empty keyword syncs to `primaryLocalKeyword`.
+   */
+  localKeywords?: Array<{
+    id: string;
+    keyword: string;
+    locationId?: string;
+  }>;
+
   /** Client site logo URL for reports (Integrations → Profile). */
   clientLogoUrl?: string;
   /** When the logo URL was last fetched from the live site (epoch ms). */

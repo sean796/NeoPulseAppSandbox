@@ -226,11 +226,21 @@ export const PROPERTIES_DIAGNOSTICS_TOOL_CLASS = cn(
 export const PROPERTIES_DIAGNOSTICS_ICON_CLASS =
   "flex h-4 w-4 shrink-0 items-center justify-center !text-white [&>svg]:h-4 [&>svg]:w-4";
 
+/** Shared dock row height (real sites + empty fillers). */
+export const PROPERTIES_DOCK_ROW_HEIGHT_CLASS = "h-10 min-h-10 max-h-10";
+
 /** Command-palette dock row (compact, no card chrome). Left border reserved for zero CLS. */
 export const PROPERTIES_DOCK_ROW_CLASS = cn(
-  "group flex min-h-0 w-full min-w-0 cursor-pointer items-center gap-2 rounded-none border-l-2 border-l-transparent px-2 py-1.5 shadow-none",
+  "group flex w-full min-w-0 cursor-pointer items-center gap-2 rounded-none border-l-2 border-l-transparent px-2 py-1.5 shadow-none",
+  PROPERTIES_DOCK_ROW_HEIGHT_CLASS,
   "text-white !text-white [&_*]:!text-white [&_svg]:!text-white",
   "transition-colors hover:bg-white/5",
+);
+
+/** Empty stripe-only filler under real dock sites (no content, not interactive). */
+export const PROPERTIES_DOCK_FILLER_ROW_CLASS = cn(
+  "pointer-events-none w-full min-w-0 select-none border-l-2 border-l-transparent px-2",
+  PROPERTIES_DOCK_ROW_HEIGHT_CLASS,
 );
 
 /** Alternating grayscale dock stripes (inactive rows). */
@@ -253,7 +263,7 @@ export const PROPERTIES_DOCK_COUNT_ACTIVE_CLASS = PROPERTIES_DOCK_COUNT_CLASS;
 
 /** Column header above the dock site list (white uppercase + bottom rule). */
 export const PROPERTIES_DOCK_COLUMN_HEADER_CLASS = cn(
-  "flex w-full min-w-0 shrink-0 items-center gap-2 border-b border-white/10 px-2 py-1.5 text-white",
+  "flex w-full min-w-0 shrink-0 items-center gap-2 border-b border-white/10 px-2 py-1 text-white",
 );
 
 export const PROPERTIES_DOCK_COLUMN_HEADER_LABEL_CLASS =

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import { Checkbox } from "@/ui";
 import { cn } from "@/lib/utils";
 import { CompactWordPressTile } from "./CompactWordPressTile";
@@ -12,6 +12,7 @@ import {
   PROPERTIES_DOCK_COLUMN_HEADER_CLASS,
   PROPERTIES_DOCK_COLUMN_HEADER_LABEL_CLASS,
   PROPERTIES_DOCK_COLUMN_HEADER_METRIC_CLASS,
+  PROPERTIES_DOCK_FILLER_ROW_CLASS,
   PROPERTIES_DOCK_ROW_CLASS,
   PROPERTIES_EMPTY,
   PROPERTIES_LIST_SCROLL_CLASS,
@@ -134,6 +135,36 @@ export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
 }) => {
   const isDock = layout === "dock";
   const [canonicalRenameSite, setCanonicalRenameSite] = useState<WordPressSite | null>(null);
+  const dockScrollRef = useRef<HTMLDivElement | null>(null);
+  const dockStackRef = useRef<HTMLDivElement | null>(null);
+  const [dockFillerCount, setDockFillerCount] = useState(0);
+
+  useLayoutEffect(() => {
+    if (!isDock) {
+      setDockFillerCount(0);
+      return;
+    }
+    const scrollEl = dockScrollRef.current;
+    const stackEl = dockStackRef.current;
+    if (!scrollEl || !stackEl) return;
+
+    const measure = () => {
+      const rowSample =
+        stackEl.querySelector<HTMLElement>("[data-dock-real-row='1']") ??
+        stackEl.querySelector<HTMLElement>("[data-dock-filler-row='1']");
+      const rowHeight = rowSample?.getBoundingClientRect().height || 40;
+      const realCount = filteredSites.length;
+      const realHeight = realCount * rowHeight;
+      const available = scrollEl.clientHeight;
+      const next = Math.max(0, Math.floor((available - realHeight) / rowHeight));
+      setDockFillerCount((prev) => (prev === next ? prev : next));
+    };
+
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(scrollEl);
+    return () => ro.disconnect();
+  }, [isDock, filteredSites.length, siteSearchQuery, editorialPackageFilter]);
 
   const renderPropertyRowTrailingControls = (site: WordPressSite, dockActive = false) => {
     const stop = (e: React.SyntheticEvent) => e.stopPropagation();
@@ -228,7 +259,7 @@ export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
           </p>
         </div>
       ) : (
-        <div className={PROPERTIES_LIST_SCROLL_CLASS}>
+        <>
         {isDock ? (
           <div
             className={PROPERTIES_DOCK_COLUMN_HEADER_CLASS}
@@ -256,7 +287,11 @@ export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
             </span>
           </div>
         ) : null}
-        <div className={PROPERTIES_LIST_STACK}>
+        <div
+          ref={isDock ? dockScrollRef : undefined}
+          className={PROPERTIES_LIST_SCROLL_CLASS}
+        >
+        <div ref={isDock ? dockStackRef : undefined} className={PROPERTIES_LIST_STACK}>
           {filteredSites.map((site, index) => {
             const rowSelected = selectedSiteIds?.has(site.id) ?? false;
             const isActive = isDock && activeSiteId === site.id;
@@ -318,7 +353,7 @@ export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
             );
 
             return (
-              <div key={site.id} className="min-w-0 w-full">
+              <div key={site.id} className="min-w-0 w-full" data-dock-real-row={isDock ? "1" : undefined}>
                 <div
                   className={cn(
                     isDock
@@ -350,8 +385,25 @@ export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
               </div>
             );
           })}
+          {isDock
+            ? Array.from({ length: dockFillerCount }, (_, i) => {
+                const stripeIndex = filteredSites.length + i;
+                return (
+                  <div
+                    key={`dock-filler-${stripeIndex}`}
+                    data-dock-filler-row="1"
+                    className={cn(
+                      PROPERTIES_DOCK_FILLER_ROW_CLASS,
+                      propertiesDockRowStripeClass(stripeIndex),
+                    )}
+                    aria-hidden
+                  />
+                );
+              })
+            : null}
         </div>
         </div>
+        </>
       )}
     </div>
   );

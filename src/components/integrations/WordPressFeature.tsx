@@ -17,7 +17,10 @@ import {
 } from "./storage";
 import { cn } from "@/lib/utils";
 import { useWordPressOptimization } from "@/contexts/wordpress-optimization-context";
-import { PropertiesWorkspaceToolbar } from "@/components/manager/dashboard/PropertiesWorkspaceToolbar";
+import {
+  PropertiesDockFooterActions,
+  PropertiesWorkspaceToolbar,
+} from "@/components/manager/dashboard/PropertiesWorkspaceToolbar";
 import { PropertiesStudioHeader } from "./wordpress/PropertiesStudioHeader";
 import { PROPERTIES_DOCK_CLASS, PROPERTIES_EMPTY } from "./wordpress/wordpress-properties-surfaces";
 import { useWordPressFeatureForm } from "./use-wordpress-feature-form";
@@ -158,6 +161,7 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
   }, [sites, registerIntegrationSites]);
 
   const [bulkImportDialogOpen, setBulkImportDialogOpen] = useState(false);
+  const [propertyEditing, setPropertyEditing] = useState(false);
   const [editorialPackageFilter, setEditorialPackageFilter] = useState<
     "all" | "standard" | "lite" | "unassigned"
   >("all");
@@ -269,6 +273,10 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
 
   const displaySite = profileSite ?? tierFilteredSites[0] ?? null;
 
+  useEffect(() => {
+    setPropertyEditing(false);
+  }, [displaySite?.id]);
+
   // Auto-select first visible property once for the Studio right pane (no roster reload storm).
   const autoOpenedTierKeyRef = useRef("");
   useEffect(() => {
@@ -301,10 +309,6 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
             isRefreshingAllOptimizationCounts={isRefreshingAllOptimizationCounts}
             refreshAllQuarterCounts={refreshAllQuarterCounts}
             refreshAllOptimizationCounts={refreshAllOptimizationCounts}
-            sitesCount={sites.length}
-            onExportAllSitesCsv={handleExportAllSitesCsv}
-            onBulkImport={() => setBulkImportDialogOpen(true)}
-            onAddSite={handleAddSite}
           />
           <WordPressSiteList
             sites={sites}
@@ -348,6 +352,12 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
             layout="dock"
             activeSiteId={displaySite?.id}
           />
+          <PropertiesDockFooterActions
+            sitesCount={sites.length}
+            onExportAllSitesCsv={handleExportAllSitesCsv}
+            onBulkImport={() => setBulkImportDialogOpen(true)}
+            onAddSite={handleAddSite}
+          />
         </aside>
         <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-zinc-950">
           <PropertiesStudioHeader
@@ -360,6 +370,8 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
             settingsSubSectionId={settingsSubSectionId}
             onSettingsSubSectionChange={setSettingsSubSectionId}
             onSaveProperty={handleSaveSiteClick}
+            editing={propertyEditing}
+            onToggleEditing={() => setPropertyEditing((open) => !open)}
           />
           {displaySite ? (
             <PropertyProfilePage
@@ -396,6 +408,7 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
               getScrapingKey={getScrapingKey}
               onPatchSite={handlePatchSite}
               onSaveProperty={handleSaveSiteClick}
+              editing={propertyEditing}
               onOpenSettingsProfile={() => {
                 setProfileSectionId("site-settings");
                 setSettingsSubSectionId("profile");

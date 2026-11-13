@@ -16,13 +16,16 @@ export type PropertiesWorkspaceToolbarProps = {
   isRefreshingAllOptimizationCounts: boolean;
   refreshAllQuarterCounts: () => Promise<unknown>;
   refreshAllOptimizationCounts: () => Promise<unknown>;
+};
+
+export type PropertiesDockFooterActionsProps = {
   sitesCount: number;
   onExportAllSitesCsv: () => void;
   onBulkImport: () => void;
   onAddSite: () => void;
 };
 
-/** Dock head controls for the Properties Studio left pane. */
+/** Dock head: filters on top, search full-width underneath. */
 export function PropertiesWorkspaceToolbar({
   siteSearchQuery,
   onSearchChange,
@@ -36,55 +39,47 @@ export function PropertiesWorkspaceToolbar({
   isRefreshingAllOptimizationCounts: _isRefreshingAllOptimizationCounts,
   refreshAllQuarterCounts,
   refreshAllOptimizationCounts,
-  sitesCount,
-  onExportAllSitesCsv,
-  onBulkImport,
-  onAddSite,
 }: PropertiesWorkspaceToolbarProps) {
   const monthOptions = editorialMonthOptions ?? [];
 
   return (
-    <div className="neo-pulse-properties-dock-head flex w-full min-w-0 shrink-0 flex-col gap-2 bg-zinc-950 py-2">
-      <div className="flex w-full min-w-0 items-center gap-1.5">
+    <div className="neo-pulse-properties-dock-head flex w-full min-w-0 shrink-0 flex-col gap-1.5 bg-zinc-950 py-1.5">
+      <div className="flex h-8 w-full min-w-0 items-center gap-1.5">
         <div className="min-w-0 flex-1">
-          <Field
-            placeholder="Search sites"
-            value={siteSearchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            aria-label="Search sites by name"
-          />
-        </div>
-        <SelectField
-          tone="data"
-          width="xs"
-          placeholder="All tiers"
-          value={editorialPackageFilter}
-          onValueChange={(v) =>
-            setEditorialPackageFilter(v as "all" | "standard" | "lite" | "unassigned")
-          }
-          options={[
-            { value: "all", label: "All tiers" },
-            { value: "standard", label: "Standard" },
-            { value: "lite", label: "Lite" },
-            { value: "unassigned", label: "Unassigned" },
-          ]}
-        />
-        {monthOptions.length > 0 && editorialSelectedMonthKey ? (
           <SelectField
             tone="data"
-            width="xs"
-            placeholder="Month"
-            value={editorialSelectedMonthKey}
-            onValueChange={setEditorialSelectedMonthKey}
-            options={monthOptions.map((opt) => ({ value: opt.key, label: opt.label }))}
+            width="full"
+            placeholder="All tiers"
+            value={editorialPackageFilter}
+            onValueChange={(v) =>
+              setEditorialPackageFilter(v as "all" | "standard" | "lite" | "unassigned")
+            }
+            options={[
+              { value: "all", label: "All tiers" },
+              { value: "standard", label: "Standard" },
+              { value: "lite", label: "Lite" },
+              { value: "unassigned", label: "Unassigned" },
+            ]}
           />
+        </div>
+        {monthOptions.length > 0 && editorialSelectedMonthKey ? (
+          <div className="min-w-0 flex-1">
+            <SelectField
+              tone="data"
+              width="full"
+              placeholder="Month"
+              value={editorialSelectedMonthKey}
+              onValueChange={setEditorialSelectedMonthKey}
+              options={monthOptions.map((opt) => ({ value: opt.key, label: opt.label }))}
+            />
+          </div>
         ) : null}
-        <div className="h-8 w-8 shrink-0">
         <Button
           variant="tool"
           size="icon"
           icon={RotateCcw}
           type="button"
+          className="h-8 w-8 shrink-0"
           disabled={credentialedSiteCount === 0}
           onClick={() =>
             void (OPTIMIZATION_TILE_COUNTS_ENABLED
@@ -102,41 +97,62 @@ export function PropertiesWorkspaceToolbar({
               : "Refresh editorial counts for all properties"
           }
         />
-        </div>
       </div>
-      <div className="flex w-full min-w-0 items-center gap-1.5">
-        <div className="min-w-0 flex-1">
-          <button
-            type="button"
-            onClick={onAddSite}
-            title="Add Site"
-            aria-label="Add Site"
-            className="inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-none border-0 bg-transparent px-3 text-base font-medium text-white shadow-none transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <Plus className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            <span>Add Site</span>
-          </button>
-        </div>
-        <Button
-          variant="tool"
-          size="icon"
-          icon={Upload}
-          type="button"
-          onClick={onBulkImport}
-          title="Bulk import properties from CSV"
-          aria-label="Import properties"
-        />
-        <Button
-          variant="tool"
-          size="icon"
-          icon={Download}
-          type="button"
-          onClick={onExportAllSitesCsv}
-          disabled={sitesCount === 0}
-          title="Download all properties as a CSV spreadsheet (includes credentials - store securely)"
-          aria-label="Export all properties"
+      <div className="w-full min-w-0">
+        <Field
+          placeholder="Search sites"
+          value={siteSearchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+          aria-label="Search sites by name"
+          className="h-8 w-full"
         />
       </div>
+    </div>
+  );
+}
+
+/** Dock footer: Add Site / Import / Export pinned under the site list. */
+export function PropertiesDockFooterActions({
+  sitesCount,
+  onExportAllSitesCsv,
+  onBulkImport,
+  onAddSite,
+}: PropertiesDockFooterActionsProps) {
+  return (
+    <div className="neo-pulse-properties-dock-foot flex h-10 w-full min-w-0 shrink-0 items-center gap-1.5 bg-zinc-950 py-1">
+      <div className="min-w-0 flex-1">
+        <button
+          type="button"
+          onClick={onAddSite}
+          title="Add Site"
+          aria-label="Add Site"
+          className="inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-none border-0 bg-transparent px-3 text-base font-medium text-white shadow-none transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <Plus className="h-4 w-4 shrink-0" aria-hidden />
+          <span>Add Site</span>
+        </button>
+      </div>
+      <Button
+        variant="tool"
+        size="icon"
+        icon={Upload}
+        type="button"
+        className="h-8 w-8 shrink-0"
+        onClick={onBulkImport}
+        title="Bulk import properties from CSV"
+        aria-label="Import properties"
+      />
+      <Button
+        variant="tool"
+        size="icon"
+        icon={Download}
+        type="button"
+        className="h-8 w-8 shrink-0"
+        onClick={onExportAllSitesCsv}
+        disabled={sitesCount === 0}
+        title="Download all properties as a CSV spreadsheet (includes credentials - store securely)"
+        aria-label="Export all properties"
+      />
     </div>
   );
 }

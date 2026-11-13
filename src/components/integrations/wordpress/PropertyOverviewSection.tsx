@@ -1,19 +1,33 @@
-import { useEffect, useState, type ReactNode } from "react";
-import { Pencil } from "lucide-react";
-import { Field, SelectField } from "@/ui";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Plus, Trash2 } from "lucide-react";
+import { Button, Field, SelectField } from "@/ui";
 import type { WordPressSite } from "../types";
 import { propertyHostingLabel } from "./property-profile-view-model";
 import { WordPressCardActions } from "./WordPressCardActions";
 import { MasterInstructionsSection } from "./MasterInstructionsSection";
 import { ProfileLocationSelect } from "./ProfileServiceAreaFields";
 import {
+  buildSiteAdditionalLocationsPatch,
   buildSiteLocationsPatch,
+  readSiteAdditionalLocations,
+  readSiteLocationsList,
   readSiteServiceCity,
   readSiteServiceCountry,
   readSiteServiceState,
 } from "@/lib/wordpress-api/site-service-area";
+import {
+  buildSiteLocalKeywordsPatch,
+  readSiteLocalKeywords,
+  type SiteLocalKeyword,
+} from "@/lib/wordpress-api/site-local-keywords";
 import { persistGbpLocationIdInput } from "@/lib/gbp-post/normalize-gbp-location-id";
-import { regionPlaceholder, serviceRegionOptions } from "@/lib/keyword-location-utils";
+import {
+  inferServiceCountry,
+  isServiceCountry,
+  nextStateForCountry,
+  regionPlaceholder,
+  serviceRegionOptions,
+} from "@/lib/keyword-location-utils";
 import { cn } from "@/lib/utils";
 import {
   editorialContentPackageShortLabelForSite,
@@ -60,29 +74,9 @@ export type PropertyOverviewSectionProps = {
   onOpenSettingsProfile?: () => void;
   settingsPanel?: ReactNode;
   sitemapPanel?: ReactNode;
+  /** Single Studio Edit pencil controls every field on this screen. */
+  editing?: boolean;
 };
-
-function PanelPencil({
-  label,
-  editing,
-  onToggle,
-}: {
-  label: string;
-  editing: boolean;
-  onToggle: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-none border-0 bg-transparent text-white hover:bg-white/10"
-      aria-label={editing ? `Done editing ${label}` : `Edit ${label}`}
-      aria-pressed={editing}
-      onClick={onToggle}
-    >
-      <Pencil className="h-4 w-4" aria-hidden />
-    </button>
-  );
-}
 
 function sitemapOptionLabel(url: string): string {
   try {
@@ -93,19 +87,10 @@ function sitemapOptionLabel(url: string): string {
   }
 }
 
-function PanelHeading({
-  title,
-  editing,
-  onToggle,
-}: {
-  title: string;
-  editing: boolean;
-  onToggle: () => void;
-}) {
+function PanelHeading({ title }: { title: string }) {
   return (
-    <div className="flex shrink-0 items-center justify-between gap-2">
+    <div className="flex h-8 shrink-0 items-center">
       <h2 className={PROPERTIES_OVERVIEW_PANEL_TITLE_CLASS}>{title}</h2>
-      <PanelPencil label={title} editing={editing} onToggle={onToggle} />
     </div>
   );
 }
@@ -163,6 +148,10 @@ function gbpDisplayId(raw: string): string {
   return digits?.[0] ?? value;
 }
 
+/** Value column stays right-aligned in view and edit (type boxes fill the right slot). */
+const VALUE_EDIT_WRAP_CLASS =
+  "flex h-8 w-full min-w-0 items-center justify-end gap-1.5 [&_input]:text-right [&_button]:justify-end [&_button>span]:text-right";
+
 function IntegrationRow({
   label,
   value,
@@ -191,10 +180,21 @@ function IntegrationRow({
         title={empty || children ? undefined : title || value}
         style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
       >
-        {children ?? <span className="truncate">{empty ? "Not set" : value}</span>}
+        {children ? (
+          <div className={VALUE_EDIT_WRAP_CLASS}>{children}</div>
+        ) : (
+          <span className="truncate text-right">{empty ? "Not set" : value}</span>
+        )}
       </dd>
     </div>
   );
+}
+
+function locationOptionLabel(loc: { id: string; city?: string; state?: string; name?: string }): string {
+  const city = loc.city?.trim() ?? "";
+  const state = loc.state?.trim() ?? "";
+  if (city && state) return `${city}, ${state}`;
+  return city || state || loc.name?.trim() || loc.id;
 }
 
 export function PropertyOverviewSection({
@@ -206,6 +206,7 @@ export function PropertyOverviewSection({
   onDetect,
   onExtractNAPAndGraph,
   onPatchSite,
+  editing = false,
 }: PropertyOverviewSectionProps) {
   const scheduled = site.scheduledPosts;
   const ga4 = site.ga4PropertyId?.trim() ?? "";
@@ -220,6 +221,9 @@ export function PropertyOverviewSection({
   const serviceCountry = readSiteServiceCountry(site);
   const logoUrl = site.clientLogoUrl?.trim() ?? "";
   const logoTheme = site.clientLogoBoxTheme === "white" ? "white" : "black";
+  const siteLocations = readSiteLocationsList(site);
+  const additionalLocations = readSiteAdditionalLocations(site);
+  const localKeywords = readSiteLocalKeywords(site);
   const sitemapUrls =
     site.sitemaps?.type === "index"
       ? (site.sitemaps.childSitemaps ?? [])
@@ -230,31 +234,25 @@ export function PropertyOverviewSection({
       ? "semrushSiteAuditProjectId"
       : "semrushPositionTrackingProjectId";
 
-  const [editIdentity, setEditIdentity] = useState(false);
-  const [editProfile, setEditProfile] = useState(false);
-  const [editIntegrations, setEditIntegrations] = useState(false);
-  const [editSettings, setEditSettings] = useState(false);
-  const [editRules, setEditRules] = useState(false);
-  const [editSitemaps, setEditSitemaps] = useState(false);
   const [nameDraft, setNameDraft] = useState(site.name);
   const [logoDraft, setLogoDraft] = useState(logoUrl);
-  const [keywordDraft, setKeywordDraft] = useState(primaryKeyword);
+  const [keywordRows, setKeywordRows] = useState<SiteLocalKeyword[]>(() => readSiteLocalKeywords(site));
   const [cityDraft, setCityDraft] = useState(readSiteServiceCity(site));
   const [stateDraft, setStateDraft] = useState(readSiteServiceState(site));
+  const [extraLocationRows, setExtraLocationRows] = useState(() =>
+    readSiteAdditionalLocations(site).map((loc, idx) => ({
+      id: loc.id || `loc-${site.id}-extra-${idx + 1}`,
+      city: loc.city ?? "",
+      state: loc.state ?? "",
+      country: loc.country ?? serviceCountry,
+    })),
+  );
   const [ga4Draft, setGa4Draft] = useState(ga4);
   const [adsDraft, setAdsDraft] = useState(ads);
   const [gbpDraft, setGbpDraft] = useState(gbpRaw);
   const [semrushDraft, setSemrushDraft] = useState(semrush);
   const [sitemapPick, setSitemapPick] = useState(sitemapUrls[0] ?? "");
-
-  useEffect(() => {
-    setEditIdentity(false);
-    setEditProfile(false);
-    setEditIntegrations(false);
-    setEditSettings(false);
-    setEditRules(false);
-    setEditSitemaps(false);
-  }, [site.id]);
+  const wasEditingRef = useRef(false);
 
   useEffect(() => {
     const urls = sitemapKey ? sitemapKey.split("\n") : [];
@@ -265,9 +263,80 @@ export function PropertyOverviewSection({
     onPatchSite?.(site.id, next);
   };
 
-  const commitLocations = (city: string, state: string) => {
+  const commitPrimaryLocation = (city: string, state: string) => {
     patch(buildSiteLocationsPatch(site, city, state, serviceCountry));
   };
+
+  const commitKeywordRows = (rows: SiteLocalKeyword[]) => {
+    setKeywordRows(rows);
+    patch(buildSiteLocalKeywordsPatch(site, rows));
+  };
+
+  const commitExtraLocations = (
+    rows: Array<{ id: string; city: string; state: string; country: string }>,
+  ) => {
+    setExtraLocationRows(rows);
+    const locationsPatch = buildSiteAdditionalLocationsPatch(site, rows);
+    const staleKeywords = buildSiteLocalKeywordsPatch(
+      { ...site, ...locationsPatch },
+      keywordRows,
+    );
+    patch({ ...locationsPatch, ...staleKeywords });
+  };
+
+  useEffect(() => {
+    if (editing && !wasEditingRef.current) {
+      setNameDraft(site.name);
+      setLogoDraft(logoUrl);
+      setKeywordRows(readSiteLocalKeywords(site));
+      setCityDraft(readSiteServiceCity(site));
+      setStateDraft(readSiteServiceState(site));
+      setExtraLocationRows(
+        readSiteAdditionalLocations(site).map((loc, idx) => ({
+          id: loc.id || `loc-${site.id}-extra-${idx + 1}`,
+          city: loc.city ?? "",
+          state: loc.state ?? "",
+          country: (loc.country && isServiceCountry(loc.country) ? loc.country : "") || serviceCountry,
+        })),
+      );
+      setGa4Draft(ga4);
+      setAdsDraft(ads);
+      setGbpDraft(gbpRaw);
+      setSemrushDraft(semrush);
+    }
+    if (!editing && wasEditingRef.current) {
+      const name = nameDraft.trim();
+      const nextLogo = logoDraft.trim();
+      const gbpNext = persistGbpLocationIdInput(gbpDraft);
+      const keywordPatch = buildSiteLocalKeywordsPatch(site, keywordRows);
+      const primaryLocPatch = buildSiteLocationsPatch(site, cityDraft, stateDraft, serviceCountry);
+      const extraPatch = buildSiteAdditionalLocationsPatch(
+        { ...site, ...primaryLocPatch },
+        extraLocationRows,
+      );
+      const keywordAfterLoc = buildSiteLocalKeywordsPatch(
+        { ...site, ...extraPatch },
+        keywordRows,
+      );
+      patch({
+        ...(name ? { name } : {}),
+        clientLogoUrl: nextLogo || undefined,
+        clientLogoSource: nextLogo ? "manual" : undefined,
+        clientLogoFetchedAt: nextLogo ? Date.now() : undefined,
+        ga4PropertyId: ga4Draft.trim() || undefined,
+        googleAdsCustomerId: adsDraft.trim() || undefined,
+        gbpLocationId: gbpNext || undefined,
+        [semrushKey]: semrushDraft.trim() || undefined,
+        ...primaryLocPatch,
+        ...extraPatch,
+        ...keywordPatch,
+        ...keywordAfterLoc,
+      });
+    }
+    wasEditingRef.current = editing;
+    // Seed/commit only on edit enter/exit; drafts otherwise update via field handlers.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional edge trigger
+  }, [editing]);
 
   const workspacePanel = "h-auto";
 
@@ -286,7 +355,7 @@ export function PropertyOverviewSection({
         </div>
         <div className="flex h-16 min-w-0 flex-1 basis-[12rem] flex-col justify-center gap-0">
           <div className="flex h-8 items-center overflow-hidden">
-            {editIdentity ? (
+            {editing ? (
               <Field
                 value={nameDraft}
                 onChange={(e) => setNameDraft(e.target.value)}
@@ -302,7 +371,7 @@ export function PropertyOverviewSection({
             )}
           </div>
           <div className="flex h-8 items-center overflow-hidden">
-            {editIdentity ? (
+            {editing ? (
               <Field
                 value={logoDraft}
                 onChange={(e) => setLogoDraft(e.target.value)}
@@ -352,27 +421,6 @@ export function PropertyOverviewSection({
               <span>{editorialTier ?? "No editorial"}</span>
             </span>
           </div>
-          <PanelPencil
-            label="name and logo"
-            editing={editIdentity}
-            onToggle={() => {
-              if (editIdentity) {
-                const name = nameDraft.trim();
-                const nextLogo = logoDraft.trim();
-                patch({
-                  ...(name ? { name } : {}),
-                  clientLogoUrl: nextLogo || undefined,
-                  clientLogoSource: nextLogo ? "manual" : undefined,
-                  clientLogoFetchedAt: nextLogo ? Date.now() : undefined,
-                });
-                setEditIdentity(false);
-                return;
-              }
-              setNameDraft(site.name);
-              setLogoDraft(logoUrl);
-              setEditIdentity(true);
-            }}
-          />
         </div>
       </section>
 
@@ -387,91 +435,212 @@ export function PropertyOverviewSection({
 
       <div className="grid w-full grid-cols-2 items-start gap-x-3 gap-y-2">
         <section className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)} aria-label="Profile">
-          <PanelHeading
-            title="Profile"
-            editing={editProfile}
-            onToggle={() => {
-              if (editProfile) {
-                patch({ primaryLocalKeyword: keywordDraft.trim() || undefined });
-                commitLocations(cityDraft, stateDraft);
-                setEditProfile(false);
-                return;
-              }
-              setKeywordDraft(primaryKeyword);
-              setCityDraft(readSiteServiceCity(site));
-              setStateDraft(readSiteServiceState(site));
-              setEditProfile(true);
-            }}
-          />
+          <PanelHeading title="Profile" />
           <dl className={PROPERTIES_OVERVIEW_DL_CLASS}>
-            <IntegrationRow label="Keyword" value={editProfile ? undefined : primaryKeyword}>
-              {editProfile ? (
-                <Field
-                  value={keywordDraft}
-                  onChange={(e) => setKeywordDraft(e.target.value)}
-                  onBlur={(e) => patch({ primaryLocalKeyword: e.target.value.trim() || undefined })}
-                  placeholder="Keyword"
-                  aria-label="Keyword"
+            {editing ? (
+              <>
+                {keywordRows.map((row, idx) => (
+                  <IntegrationRow key={row.id} label={idx === 0 ? "Keyword" : `Keyword ${idx + 1}`}>
+                    <Field
+                      value={row.keyword}
+                      onChange={(e) => {
+                        const next = keywordRows.map((k, i) =>
+                          i === idx ? { ...k, keyword: e.target.value } : k,
+                        );
+                        setKeywordRows(next);
+                      }}
+                      onBlur={(e) => {
+                        commitKeywordRows(
+                          keywordRows.map((k, i) =>
+                            i === idx ? { ...k, keyword: e.target.value } : k,
+                          ),
+                        );
+                      }}
+                      placeholder="Keyword"
+                      aria-label={idx === 0 ? "Keyword" : `Keyword ${idx + 1}`}
+                    />
+                    <SelectField
+                      placeholder="Assign location"
+                      width="sm"
+                      value={row.locationId ?? "__unassigned__"}
+                      options={[
+                        { value: "__unassigned__", label: "Unassigned" },
+                        ...siteLocations.map((loc) => ({
+                          value: loc.id,
+                          label: locationOptionLabel(loc),
+                        })),
+                      ]}
+                      onValueChange={(next) => {
+                        const locationId = next === "__unassigned__" ? undefined : next;
+                        commitKeywordRows(
+                          keywordRows.map((k, i) => (i === idx ? { ...k, locationId } : k)),
+                        );
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="tool"
+                      size="icon"
+                      icon={Trash2}
+                      className="h-8 w-8 shrink-0"
+                      aria-label={`Remove keyword ${idx + 1}`}
+                      onClick={() => commitKeywordRows(keywordRows.filter((_, i) => i !== idx))}
+                    />
+                  </IntegrationRow>
+                ))}
+                <div className="flex h-11 max-h-11 items-center justify-end">
+                  <Button
+                    type="button"
+                    variant="tool"
+                    icon={Plus}
+                    className="h-8"
+                    onClick={() =>
+                      commitKeywordRows([
+                        ...keywordRows,
+                        {
+                          id: `kw-${site.id}-${Date.now()}`,
+                          keyword: "",
+                        },
+                      ])
+                    }
+                  >
+                    Add keyword
+                  </Button>
+                </div>
+                <IntegrationRow label="City">
+                  <Field
+                    value={cityDraft}
+                    onChange={(e) => setCityDraft(e.target.value)}
+                    onBlur={(e) => commitPrimaryLocation(e.target.value, stateDraft)}
+                    placeholder="City"
+                    aria-label="City"
+                  />
+                </IntegrationRow>
+                <IntegrationRow label={regionPlaceholder(serviceCountry)}>
+                  <ProfileLocationSelect
+                    placeholder={regionPlaceholder(serviceCountry)}
+                    value={stateDraft}
+                    options={serviceRegionOptions(serviceCountry)}
+                    disabled={!serviceCountry}
+                    onChange={(next) => {
+                      setStateDraft(next);
+                      commitPrimaryLocation(cityDraft, next);
+                    }}
+                  />
+                </IntegrationRow>
+                {extraLocationRows.map((row, idx) => {
+                  const country =
+                    (row.country && isServiceCountry(row.country) ? row.country : "") ||
+                    serviceCountry ||
+                    inferServiceCountry(row.state, "");
+                  return (
+                    <IntegrationRow key={row.id} label={`City ${idx + 2}`}>
+                      <Field
+                        value={row.city}
+                        onChange={(e) => {
+                          const next = extraLocationRows.map((r, i) =>
+                            i === idx ? { ...r, city: e.target.value } : r,
+                          );
+                          setExtraLocationRows(next);
+                        }}
+                        onBlur={(e) => {
+                          commitExtraLocations(
+                            extraLocationRows.map((r, i) =>
+                              i === idx ? { ...r, city: e.target.value } : r,
+                            ),
+                          );
+                        }}
+                        placeholder="City"
+                        aria-label={`Additional city ${idx + 1}`}
+                      />
+                      <ProfileLocationSelect
+                        placeholder={regionPlaceholder(country)}
+                        value={row.state}
+                        options={serviceRegionOptions(country)}
+                        disabled={!country}
+                        onChange={(next) => {
+                          commitExtraLocations(
+                            extraLocationRows.map((r, i) =>
+                              i === idx ? { ...r, state: next, country } : r,
+                            ),
+                          );
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        variant="tool"
+                        size="icon"
+                        icon={Trash2}
+                        className="h-8 w-8 shrink-0"
+                        aria-label={`Remove location ${idx + 2}`}
+                        onClick={() =>
+                          commitExtraLocations(extraLocationRows.filter((_, i) => i !== idx))
+                        }
+                      />
+                    </IntegrationRow>
+                  );
+                })}
+                <div className="flex h-11 max-h-11 items-center justify-end">
+                  <Button
+                    type="button"
+                    variant="tool"
+                    icon={Plus}
+                    className="h-8"
+                    onClick={() => {
+                      const country = isServiceCountry(serviceCountry) ? serviceCountry : "Canada";
+                      commitExtraLocations([
+                        ...extraLocationRows,
+                        {
+                          id: `loc-${site.id}-extra-${Date.now()}`,
+                          city: "",
+                          state: nextStateForCountry(stateDraft, country),
+                          country,
+                        },
+                      ]);
+                    }}
+                  >
+                    Add location
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <IntegrationRow
+                  label="Keyword"
+                  value={
+                    localKeywords[0]?.keyword || primaryKeyword
+                      ? `${localKeywords[0]?.keyword || primaryKeyword}${
+                          localKeywords.length > 1 ? ` (+${localKeywords.length - 1})` : ""
+                        }`
+                      : ""
+                  }
                 />
-              ) : null}
-            </IntegrationRow>
-            <IntegrationRow label="City" value={editProfile ? undefined : readSiteServiceCity(site)}>
-              {editProfile ? (
-                <Field
-                  value={cityDraft}
-                  onChange={(e) => setCityDraft(e.target.value)}
-                  onBlur={(e) => commitLocations(e.target.value, stateDraft)}
-                  placeholder="City"
-                  aria-label="City"
+                <IntegrationRow
+                  label="City"
+                  value={
+                    readSiteServiceCity(site)
+                      ? `${readSiteServiceCity(site)}${
+                          additionalLocations.length > 0
+                            ? ` (+${additionalLocations.length})`
+                            : ""
+                        }`
+                      : ""
+                  }
                 />
-              ) : null}
-            </IntegrationRow>
-            <IntegrationRow
-              label={regionPlaceholder(serviceCountry)}
-              value={editProfile ? undefined : readSiteServiceState(site)}
-            >
-              {editProfile ? (
-                <ProfileLocationSelect
-                  placeholder={regionPlaceholder(serviceCountry)}
-                  value={stateDraft}
-                  options={serviceRegionOptions(serviceCountry)}
-                  disabled={!serviceCountry}
-                  onChange={(next) => {
-                    setStateDraft(next);
-                    commitLocations(cityDraft, next);
-                  }}
+                <IntegrationRow
+                  label={regionPlaceholder(serviceCountry)}
+                  value={readSiteServiceState(site)}
                 />
-              ) : null}
-            </IntegrationRow>
+              </>
+            )}
           </dl>
         </section>
 
         <section className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)} aria-label="Integrations">
-          <PanelHeading
-            title="Integrations"
-            editing={editIntegrations}
-            onToggle={() => {
-              if (editIntegrations) {
-                const gbpNext = persistGbpLocationIdInput(gbpDraft);
-                patch({
-                  ga4PropertyId: ga4Draft.trim() || undefined,
-                  googleAdsCustomerId: adsDraft.trim() || undefined,
-                  gbpLocationId: gbpNext || undefined,
-                  [semrushKey]: semrushDraft.trim() || undefined,
-                });
-                setEditIntegrations(false);
-                return;
-              }
-              setGa4Draft(ga4);
-              setAdsDraft(ads);
-              setGbpDraft(gbp);
-              setSemrushDraft(semrush);
-              setEditIntegrations(true);
-            }}
-          />
+          <PanelHeading title="Integrations" />
           <dl className={PROPERTIES_OVERVIEW_DL_CLASS}>
-            <IntegrationRow label="GA4" value={editIntegrations ? undefined : ga4}>
-              {editIntegrations ? (
+            <IntegrationRow label="GA4" value={editing ? undefined : ga4}>
+              {editing ? (
                 <Field
                   value={ga4Draft}
                   onChange={(e) => setGa4Draft(e.target.value)}
@@ -481,8 +650,8 @@ export function PropertyOverviewSection({
                 />
               ) : null}
             </IntegrationRow>
-            <IntegrationRow label="Google Ads" value={editIntegrations ? undefined : ads}>
-              {editIntegrations ? (
+            <IntegrationRow label="Google Ads" value={editing ? undefined : ads}>
+              {editing ? (
                 <Field
                   value={adsDraft}
                   onChange={(e) => setAdsDraft(e.target.value)}
@@ -492,8 +661,8 @@ export function PropertyOverviewSection({
                 />
               ) : null}
             </IntegrationRow>
-            <IntegrationRow label="GBP" value={editIntegrations ? undefined : gbp} title={gbpRaw || undefined}>
-              {editIntegrations ? (
+            <IntegrationRow label="GBP" value={editing ? undefined : gbp} title={gbpRaw || undefined}>
+              {editing ? (
                 <Field
                   value={gbpDraft}
                   onChange={(e) => setGbpDraft(e.target.value)}
@@ -503,8 +672,8 @@ export function PropertyOverviewSection({
                 />
               ) : null}
             </IntegrationRow>
-            <IntegrationRow label="Semrush" value={editIntegrations ? undefined : semrush}>
-              {editIntegrations ? (
+            <IntegrationRow label="Semrush" value={editing ? undefined : semrush}>
+              {editing ? (
                 <Field
                   value={semrushDraft}
                   onChange={(e) => setSemrushDraft(e.target.value)}
@@ -518,10 +687,10 @@ export function PropertyOverviewSection({
         </section>
 
         <section className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)} aria-label="Settings">
-          <PanelHeading title="Settings" editing={editSettings} onToggle={() => setEditSettings((open) => !open)} />
+          <PanelHeading title="Settings" />
           <dl className={PROPERTIES_OVERVIEW_DL_CLASS}>
-            <IntegrationRow label="Site URL" value={editSettings ? undefined : site.siteUrl?.trim() ?? ""}>
-              {editSettings ? (
+            <IntegrationRow label="Site URL" value={editing ? undefined : site.siteUrl?.trim() ?? ""}>
+              {editing ? (
                 <Field
                   defaultValue={site.siteUrl ?? ""}
                   onBlur={(e) => patch({ siteUrl: e.target.value.trim() })}
@@ -530,8 +699,8 @@ export function PropertyOverviewSection({
                 />
               ) : null}
             </IntegrationRow>
-            <IntegrationRow label="Production" value={editSettings ? undefined : site.productionSiteUrl?.trim() ?? ""}>
-              {editSettings ? (
+            <IntegrationRow label="Production" value={editing ? undefined : site.productionSiteUrl?.trim() ?? ""}>
+              {editing ? (
                 <Field
                   defaultValue={site.productionSiteUrl ?? ""}
                   onBlur={(e) => patch({ productionSiteUrl: e.target.value.trim() || undefined })}
@@ -540,8 +709,8 @@ export function PropertyOverviewSection({
                 />
               ) : null}
             </IntegrationRow>
-            <IntegrationRow label="Username" value={editSettings ? undefined : site.username?.trim() ?? ""}>
-              {editSettings ? (
+            <IntegrationRow label="Username" value={editing ? undefined : site.username?.trim() ?? ""}>
+              {editing ? (
                 <Field
                   defaultValue={site.username ?? ""}
                   onBlur={(e) => patch({ username: e.target.value })}
@@ -550,8 +719,8 @@ export function PropertyOverviewSection({
                 />
               ) : null}
             </IntegrationRow>
-            <IntegrationRow label="Password" value={editSettings ? undefined : site.appPassword?.trim() ? "Set" : ""}>
-              {editSettings ? (
+            <IntegrationRow label="Password" value={editing ? undefined : site.appPassword?.trim() ? "Set" : ""}>
+              {editing ? (
                 <Field
                   type="password"
                   defaultValue={site.appPassword ?? ""}
@@ -562,8 +731,8 @@ export function PropertyOverviewSection({
               ) : null}
             </IntegrationRow>
             <IntegrationRow label="Editorial" value={editorialTier ?? ""} />
-            <IntegrationRow label="Publish time" value={editSettings ? undefined : site.editorialPublishTimeLocal?.trim() ?? ""}>
-              {editSettings ? (
+            <IntegrationRow label="Publish time" value={editing ? undefined : site.editorialPublishTimeLocal?.trim() ?? ""}>
+              {editing ? (
                 <Field
                   defaultValue={site.editorialPublishTimeLocal ?? ""}
                   onBlur={(e) => patch({ editorialPublishTimeLocal: e.target.value.trim() || undefined })}
@@ -572,8 +741,8 @@ export function PropertyOverviewSection({
                 />
               ) : null}
             </IntegrationRow>
-            <IntegrationRow label="Benchmark" value={editSettings ? undefined : site.benchmarkCustomTag?.trim() ?? ""}>
-              {editSettings ? (
+            <IntegrationRow label="Benchmark" value={editing ? undefined : site.benchmarkCustomTag?.trim() ?? ""}>
+              {editing ? (
                 <Field
                   defaultValue={site.benchmarkCustomTag ?? ""}
                   onBlur={(e) => patch({ benchmarkCustomTag: e.target.value.trim() || undefined })}
@@ -587,18 +756,18 @@ export function PropertyOverviewSection({
 
         <div className="flex min-w-0 flex-col gap-2">
           <section className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)} aria-label="Master Rules">
-            <PanelHeading title="Master Rules" editing={editRules} onToggle={() => setEditRules((open) => !open)} />
+            <PanelHeading title="Master Rules" />
             <MasterInstructionsSection
               siteId={site.id}
               siteUrl={site.siteUrl}
               siteName={site.name}
               disabled={site.enabled === false}
               layout="dropdown"
-              editing={editRules}
+              editing={editing}
             />
           </section>
           <section className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)} aria-label="Sitemaps">
-            <PanelHeading title="Sitemaps" editing={editSitemaps} onToggle={() => setEditSitemaps((open) => !open)} />
+            <PanelHeading title="Sitemaps" />
             <div className="flex h-8 shrink-0 items-center overflow-hidden">
               {sitemapUrls.length > 0 ? (
                 <SelectField

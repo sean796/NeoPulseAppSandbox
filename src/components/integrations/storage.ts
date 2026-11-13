@@ -128,6 +128,7 @@ export async function loadSitesFromServerAlways(): Promise<WordPressSite[]> {
       locations: s.locations?.length ? s.locations : cur.locations,
       napInfo: s.napInfo ?? cur.napInfo,
       primaryLocalKeyword: s.primaryLocalKeyword || cur.primaryLocalKeyword,
+      localKeywords: s.localKeywords?.length ? s.localKeywords : cur.localKeywords,
       sitemaps: s.sitemaps ?? cur.sitemaps,
       entitySitemapUrl: s.entitySitemapUrl || cur.entitySitemapUrl,
       manualEndpoint: s.manualEndpoint || cur.manualEndpoint,

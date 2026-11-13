@@ -118,6 +118,7 @@ export function minimalSiteForLocalStorage(site: WordPressSite): WordPressSite {
     industryVertical: slim.industryVertical,
     benchmarkCustomTag: slim.benchmarkCustomTag,
     primaryLocalKeyword: slim.primaryLocalKeyword,
+    localKeywords: slim.localKeywords,
     locations: slim.locations,
     napInfo: slim.napInfo,
     clientLogoUrl: clientLogoUrlForLocalStorage(slim.clientLogoUrl),
