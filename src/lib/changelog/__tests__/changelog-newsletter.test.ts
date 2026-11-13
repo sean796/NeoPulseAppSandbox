@@ -233,7 +233,7 @@ describe("changelog newsletter drafts", () => {
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("Steve Jobs");
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("REQUIRED Decision Engine themes");
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("Max 8 words");
-    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("name a screen");
+    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("MAJOR FEATURES");
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("AgentMail");
     expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("WHY this Pulse ship matters");
     expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("required https URLs");
