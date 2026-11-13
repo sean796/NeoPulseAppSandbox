@@ -56,6 +56,7 @@ export function PropertiesWorkspaceToolbar({
         </div>
         <SelectField
           tone="data"
+          width="xs"
           placeholder="All tiers"
           value={editorialPackageFilter}
           onValueChange={(v) =>
@@ -71,12 +72,14 @@ export function PropertiesWorkspaceToolbar({
         {monthOptions.length > 0 && editorialSelectedMonthKey ? (
           <SelectField
             tone="data"
+            width="xs"
             placeholder="Month"
             value={editorialSelectedMonthKey}
             onValueChange={setEditorialSelectedMonthKey}
             options={monthOptions.map((opt) => ({ value: opt.key, label: opt.label }))}
           />
         ) : null}
+        <div className="h-8 w-8 shrink-0">
         <Button
           variant="tool"
           size="icon"
@@ -99,6 +102,7 @@ export function PropertiesWorkspaceToolbar({
               : "Refresh editorial counts for all properties"
           }
         />
+        </div>
       </div>
       <div className="flex w-full min-w-0 items-center gap-1.5">
         <div className="min-w-0 flex-1">
@@ -107,7 +111,7 @@ export function PropertiesWorkspaceToolbar({
             onClick={onAddSite}
             title="Add Site"
             aria-label="Add Site"
-            className="inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-none border border-white/10 bg-white/5 px-3 text-base font-medium text-white shadow-none transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-none border-0 bg-transparent px-3 text-base font-medium text-white shadow-none transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <Plus className="h-3.5 w-3.5 shrink-0" aria-hidden />
             <span>Add Site</span>

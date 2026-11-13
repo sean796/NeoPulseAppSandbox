@@ -83,13 +83,13 @@ export const PROPERTIES_SECTION_NAV_BTN_CLASS = cn(
 export const PROPERTIES_SECTION_NAV_DIVIDER_CLASS =
   "mx-1 h-5 w-px shrink-0 bg-white/10";
 
-/** Elevated craft card (Linear/Vercel-style). */
+/** Flat property surface. No frame. */
 export const PROPERTIES_OVERVIEW_WELL_CLASS = cn(
-  "flex flex-col rounded-none border border-white/10 bg-[#12141a] shadow-none",
+  "flex w-full min-w-0 flex-col rounded-none border-0 bg-transparent shadow-none",
 );
 
 export const PROPERTIES_OVERVIEW_STACK_CLASS =
-  "properties-overview flex h-full min-h-0 flex-col gap-3 overflow-hidden text-white";
+  "properties-overview flex h-full min-h-0 w-full flex-col gap-2 overflow-y-auto text-white";
 
 /** Identity strip: name + URL + soft status pills. */
 export const PROPERTIES_OVERVIEW_IDENTITY_CLASS = cn(
@@ -117,22 +117,22 @@ export const PROPERTIES_OVERVIEW_CHIP_EDITORIAL_SLOT =
 
 export const PROPERTIES_OVERVIEW_CHIP_CLASS = cn(
   PROPERTIES_OVERVIEW_CHIP_BASE,
-  "border border-emerald-500/20 bg-emerald-500/10",
+  "border-0 bg-emerald-500/10",
 );
 
 export const PROPERTIES_OVERVIEW_CHIP_MUTED_CLASS = cn(
   PROPERTIES_OVERVIEW_CHIP_BASE,
-  "border border-zinc-500/20 bg-zinc-500/10",
+  "border-0 bg-zinc-500/10",
 );
 
 export const PROPERTIES_OVERVIEW_CHIP_WARN_CLASS = cn(
   PROPERTIES_OVERVIEW_CHIP_BASE,
-  "border border-amber-500/20 bg-amber-500/10",
+  "border-0 bg-amber-500/10",
 );
 
 export const PROPERTIES_OVERVIEW_CHIP_LITE_CLASS = cn(
   PROPERTIES_OVERVIEW_CHIP_BASE,
-  "border border-sky-500/20 bg-sky-500/10",
+  "border-0 bg-sky-500/10",
 );
 
 export const PROPERTIES_OVERVIEW_CHIP_DOT_OK_CLASS = "h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400";
@@ -142,7 +142,7 @@ export const PROPERTIES_OVERVIEW_CHIP_DOT_LITE_CLASS = "h-1.5 w-1.5 shrink-0 rou
 
 /** Shared key-value pill row (KPI / Profile / Integrations). */
 export const PROPERTIES_OVERVIEW_PILL_ROW_CLASS = cn(
-  "flex min-h-11 items-start justify-between gap-3 rounded-none border border-white/5 bg-zinc-900/60 p-2.5",
+  "flex h-11 w-full min-w-0 items-center justify-between gap-3 rounded-none border-0 bg-zinc-900 px-3",
 );
 
 export const PROPERTIES_OVERVIEW_PILL_LABEL_CLASS =
@@ -159,11 +159,11 @@ export const PROPERTIES_OVERVIEW_PILL_NOTE_CLASS =
 
 /** Independent KPI cards (pill metric inside well). */
 export const PROPERTIES_OVERVIEW_KPI_ROW_CLASS =
-  "grid shrink-0 grid-cols-2 gap-3 xl:grid-cols-4";
+  "grid w-full shrink-0 grid-cols-2 gap-0";
 
 export const PROPERTIES_OVERVIEW_KPI_TILE_CLASS = cn(
   PROPERTIES_OVERVIEW_WELL_CLASS,
-  "min-h-0 justify-center gap-2 overflow-visible p-3",
+  "min-h-0 justify-center gap-2 overflow-visible bg-zinc-900 p-3",
 );
 
 export const PROPERTIES_OVERVIEW_KPI_LABEL_CLASS = PROPERTIES_OVERVIEW_PILL_LABEL_CLASS;
@@ -179,7 +179,7 @@ export const PROPERTIES_OVERVIEW_DUAL_CLASS = "grid min-h-0 shrink grid-cols-2 g
 
 export const PROPERTIES_OVERVIEW_PANEL_CLASS = cn(
   PROPERTIES_OVERVIEW_WELL_CLASS,
-  "min-w-0 gap-2 overflow-hidden p-4",
+  "min-w-0 gap-1 overflow-hidden px-3 py-2",
 );
 
 export const PROPERTIES_OVERVIEW_PANEL_TITLE_CLASS =
@@ -200,7 +200,7 @@ export const PROPERTIES_OVERVIEW_CTA_CLASS = cn(
 );
 
 /** Integrations dense definition list. */
-export const PROPERTIES_OVERVIEW_DL_CLASS = "flex flex-col gap-2";
+export const PROPERTIES_OVERVIEW_DL_CLASS = "flex w-full flex-col gap-1";
 
 export const PROPERTIES_OVERVIEW_DL_ROW_CLASS = PROPERTIES_OVERVIEW_PILL_ROW_CLASS;
 
@@ -217,7 +217,7 @@ export const PROPERTIES_DIAGNOSTICS_SECTION_CLASS = cn(
 );
 
 export const PROPERTIES_DIAGNOSTICS_TOOL_CLASS = cn(
-  "!rounded-none inline-flex h-11 min-w-0 items-center gap-2 border border-white/5 bg-white/5 px-3 text-left text-base font-medium text-white shadow-none",
+  "!rounded-none inline-flex h-11 w-full min-w-0 items-center gap-2 border-0 bg-zinc-900 px-3 text-left text-base font-medium text-white shadow-none",
   "hover:bg-white/10 hover:text-white",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-[#12141a]",
   "disabled:cursor-not-allowed disabled:!opacity-100 disabled:text-white disabled:hover:bg-white/5",

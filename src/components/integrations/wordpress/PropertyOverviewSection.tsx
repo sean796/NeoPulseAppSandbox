@@ -269,7 +269,7 @@ export function PropertyOverviewSection({
     patch(buildSiteLocationsPatch(site, city, state, serviceCountry));
   };
 
-  const workspacePanel = "h-full min-h-0";
+  const workspacePanel = "h-auto";
 
   return (
     <div className={PROPERTIES_OVERVIEW_STACK_CLASS}>
@@ -385,7 +385,7 @@ export function PropertyOverviewSection({
         <KpiTile label="Scheduled" value={scheduled ? String(scheduled.count) : "0"} />
       </section>
 
-      <div className="grid min-h-0 flex-1 grid-cols-2 grid-rows-2 gap-2">
+      <div className="grid w-full grid-cols-2 items-start gap-x-3 gap-y-2">
         <section className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)} aria-label="Profile">
           <PanelHeading
             title="Profile"
@@ -585,7 +585,7 @@ export function PropertyOverviewSection({
           </dl>
         </section>
 
-        <div className="grid h-full min-h-0 grid-rows-2 gap-2">
+        <div className="flex min-w-0 flex-col gap-2">
           <section className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)} aria-label="Master Rules">
             <PanelHeading title="Master Rules" editing={editRules} onToggle={() => setEditRules((open) => !open)} />
             <MasterInstructionsSection
