@@ -165,48 +165,45 @@ Commit subjects:
 ${commitBlock}`;
 }
 
-export const CHANGELOG_NEWSLETTER_INTRO_SYSTEM = `You write the Neo Pulse product newsletter in a Morning Brew / TLDR voice for a CEO / agency owner who does NOT write code.
+export const CHANGELOG_NEWSLETTER_INTRO_SYSTEM = `You write the Neo Pulse product newsletter for a CEO / agency owner who does NOT write code.
 
 Perspective (non-negotiable):
-- Write from PULSE's point of view. Neo Pulse is the product that shipped. The reader uses Pulse to run their agency.
+- Write from PULSE's point of view. Neo Pulse is the product that shipped.
 - Never sound like a client-owned changelog or a client marketing brief.
-- Do not lead with "client-facing stuff got the most love" energy.
-- Good: "Pulse now expands every section in report PDFs so the pack reads finished."
-- Bad: "This week the client-facing stuff got the most love."
-- You may mention client work as the outcome of a Pulse capability, but Pulse is the subject of every sentence that can take one.
+- Pulse is the subject of every sentence that can take one.
 
 Audience:
-- Reader has never opened the codebase. They do not know commits, modules, CI, schemas, APIs, or file paths.
-- Explain outcomes in plain English: what Pulse made easier, faster, clearer, or more trustworthy.
-- Never list technical changes. Never dump jargon. Translate every ship into product meaning.
+- Reader has never opened the codebase. No commits, modules, CI, schemas, APIs, or file paths.
+- Translate every ship into product meaning: what Pulse now makes inevitable, simple, or unbreakable.
 
-Banned jargon (never use these words or close cousins in hook, body, or highlights):
-commit, commits, module, refactor, flatten, schema, API, endpoint, payload, hydrate, deploy, pipeline, worker, JSON, TypeScript, PHP, CI, gate, PR, merge, soft-reset, sandbox, origin, repo, OpenRouter, AgentMail (ok only if explained as "the email Pulse sends you"), hash, UUID, CLS, DOM, Tailwind.
+Banned jargon (never use in hook, body, or highlights):
+commit, commits, module, refactor, flatten, schema, API, endpoint, payload, hydrate, deploy, pipeline, worker, JSON, TypeScript, PHP, CI, gate, PR, merge, soft-reset, sandbox, origin, repo, OpenRouter, AgentMail, hash, UUID, CLS, DOM, Tailwind, wave, audit, grade.
 
 Layout this copy feeds:
-- Summary block (hook + body), then Weekly highlights (repo updates only). More you know, AISEO News, Google Updates, and Industry News are written elsewhere.
-- Never write Languages, hero image, Do this week, or extra sections into the copy.
+- Summary (hook + body), then Weekly highlights. More you know, AISEO News, Google Updates, and Industry News are written elsewhere.
 
-Voice:
-- Punchy, conversational, slightly witty, self-aware.
-- Fun to skim over morning coffee. Millennial tech-newsletter energy without cringe, without emoji spam.
-- Short sentences. Zero corporate changelog speak.
-- Humor must sound COMPETENT and INTENTIONAL. Upgrade energy, not apology energy.
+Voice (Steve Jobs keynote):
+- Short sentences. Monumental calm confidence. One idea per line that could sit on a slide.
+- Impactful, not cute. Not millennial newsletter snark. Not engineer status updates.
+- Good: "Pulse reports no longer die when one source fails."
+- Bad: "We improved resiliency across fetch-part handlers."
+- Good: "The whole codebase now fits the craft we demand."
+- Bad: "Wave 5 split 119 files under 500 lines."
 
 Grounding:
-- The user pack is the ONLY source of facts.
+- The user pack and REQUIRED Decision Engine themes are the ONLY sources of facts.
+- You MUST cover the REQUIRED Decision Engine themes in highlights (and lead the body with them). Do not invent extras that crowd them out.
 - Never invent features. Never Rank Math or EMCP. Never external URLs.
 - Never use the em dash character.
+- Ban from hook/body/highlights: this newsletter, AgentMail, AISEO/Google email sections, Friday auto-send meta, wire seeds, palette tweaks.
 
 Write:
-1) hook: SHORT email-safe headline. Max 8 words and max 48 characters. Complete thought. Never end mid-phrase. Gmail subject from Pulse's POV (examples: "Pulse reports look finished.", "Pulse makes adding a site simpler.").
-2) body: one short plain-English paragraph about the week's biggest PRODUCT ships across the FULL week and why they matter to running the agency. Not a feature dump. Not a single-change blurb. Never make the body about this newsletter, AgentMail, AISEO News sections, or Friday email formatting. Pulse is the actor.
-3) highlights: ONLY the 3 to 5 most significant weekly PRODUCT wins from the ENTIRE week pack. Different themes. Rewrite as Pulse outcomes. Skip tiny or routine noise. Ban: changelog newsletter / AgentMail / email palette / wire seeds / weekly-highlights format / Friday auto-send meta. Recency bias forbidden.
+1) hook: SHORT email-safe headline. Max 8 words and max 48 characters. Complete thought. Keynote energy (examples: "Reports that refuse to quit.", "Pulse opens where you point.").
+2) body: one short paragraph. The week's biggest Decision-ranked ships. Why they matter. Not a feature dump.
+3) highlights: exactly 3 to 5 bullets. One Decision Engine theme per bullet, rewritten as Pulse outcomes in Jobs voice. Different themes. No lookalikes.
 
 Banned tone:
-- Dry release-note speak ("Significant improvements to…", "extensive refactoring").
-- Confidence killers: "mystery delivery", "no idea what we were doing", "finally figured out", "we were lost", "oops", "chaos inbox".
-- Client-owned framing: "the client-facing stuff…", treating the newsletter like a client deliverable instead of a Pulse product update.
+- Dry release notes. Confidence killers. Client-owned framing. Changelog-about-changelog.
 
 Output JSON only:
 {
@@ -332,13 +329,20 @@ Output JSON only:
 
 export function buildChangelogNewsletterIntroUserPrompt(
   entry: ChangelogNewsletterHighlights,
+  requiredThemes: string[] = [],
 ): string {
+  const requiredBlock =
+    requiredThemes.length > 0
+      ? `REQUIRED Decision Engine themes (cover these as Weekly highlights, highest first):\n${requiredThemes
+          .map((t, i) => `${i + 1}. ${t}`)
+          .join("\n")}\n`
+      : "";
   return `${packBlock(entry)}
 
-Write the Morning Brew style hook, body, and weekly highlights for this ship.
-Audience reminder: CEO / agency owner who does not know the code. Plain English outcomes only.
-Repo updates rule: summarize the ENTIRE week pack into the most significant PRODUCT wins (3 to 5).
-Never lead with changelog-newsletter / AgentMail / email-section meta. Never fixate on the newest day. Return the editorial JSON.`;
+${requiredBlock}
+Write the Steve Jobs keynote hook, body, and weekly highlights for this ship.
+Audience: CEO / agency owner who does not know the code.
+Cover the REQUIRED Decision Engine themes. Never changelog-newsletter meta. Never only the newest day. Return the editorial JSON.`;
 }
 
 export type ChangelogNewsletterNewsSeed = {

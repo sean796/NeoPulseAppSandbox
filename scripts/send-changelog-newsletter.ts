@@ -4,10 +4,10 @@
  * Email lock: summary (plain-English hook + body) + Weekly highlights
  * (most significant repo updates only) + More you know (Pulse-relative)
  * + AISEO News + Google Updates + Industry News (fun stories).
- * Confident Morning Brew voice (never "mystery delivery" / clueless humor).
+ * Decision Engine ranks coding impact first; Jobs-keynote weekly highlights follow.
  *
- * Always generates a FRESH weekly-highlights entry from git commits after the
- * last archived entry before drafting the email. Never reuses a stale pack.
+ * Always packs the last 7 days of commits, ranks impact, then drafts. Never a
+ * one-commit blurb.
  *
  * Usage:
  *   npx tsx scripts/send-changelog-newsletter.ts [--dry-run] [--entry-only] [--to=email]
@@ -54,6 +54,13 @@ import {
   stripBannedChangelogTopics,
   type ChangelogNewsletterNewsSeed,
 } from "../src/lib/changelog/changelog-newsletter-agent";
+import {
+  CHANGELOG_IMPACT_DECISION_MODEL,
+  CHANGELOG_IMPACT_RANK_SYSTEM,
+  buildChangelogImpactRankUserPrompt,
+  parseChangelogImpactRank,
+  topImpactThemes,
+} from "../src/lib/changelog/changelog-newsletter-impact-rank";
 import { buildChangelogNewsletterEmail } from "../src/lib/changelog/changelog-newsletter-email";
 import { parseModelJson } from "../src/lib/model-json";
 import { randomUUID } from "node:crypto";
@@ -69,24 +76,24 @@ Grounding rules (non-negotiable):
 - Do NOT write an intro paragraph or summary.
 - This is a WEEKLY HIGHLIGHTS entry of the week's MOST SIGNIFICANT product wins for a CEO / agency owner.
 
-What counts as significant (rank these first):
-- Client reporting that still ships when a data source fails
-- Integrations / add-client / site property workflows that save real operator time
-- Google Business / website leads surfaces that change how they run accounts
-- Deep links / navigation that stop dumping people on the wrong screen
-- API Keys / OpenRouter key entry that unblocks generation
-- Major reliability or hub/live fixes that keep Pulse working
-- Large architecture cleanup only if it clearly makes the product more trustworthy (one bullet max, Behind the scenes)
+When REQUIRED Decision Engine themes are listed in the user message, those ARE the highlights. Cover them in order. Do not swap them for newsletter meta.
 
-Banned from highlights / title (never lead with these, even if many commits say them):
-- This newsletter itself, AgentMail sends, AISEO News / Google Updates email sections, weekly-highlights format tweaks, email palette / wire-seed / setup-key fixes
-- Changelog studio / Friday auto-send / Pulse POV newsletter copy about the changelog email
-- Wave / audit / grade / CI ratchet / console-sweep / line-count split chore language
+What counts as significant (Decision Engine ranks these):
+- Foundational craft: the product rebuilt so every piece stays small enough to own (say it like a keynote, never "Wave 5" or "500 lines")
+- Client reporting that still ships when a data source fails
+- Integrations / add-client / leads surfaces that change the workday
+- Deep links / navigation that open where you point
+- API Keys that unblock generation as you type
+- Hub / live reliability that keeps Pulse up
+
+Banned from highlights / title (never lead with these):
+- This newsletter, AgentMail, AISEO News / Google Updates email sections, email palette / wire-seed / setup-key, Friday auto-send meta
+- Wave / audit / grade / CI ratchet wording (translate foundation work into craft, not chore labels)
 - Tiny renames, test-only tweaks, flatten/push ops, doc-only commits
 
-- Include a "highlights" array with ONLY the 3 to 5 most significant weekly wins. Each bullet a different theme. No lookalike bullets.
+- Include a "highlights" array with ONLY the 3 to 5 Decision-ranked wins. Each bullet a different theme. Jobs keynote voice.
 - Group only those top wins using "New", "Improved", "Fixed", "Behind the scenes" when needed (max 2 to 4 bullets per section).
-- Keep each bullet BRIEF and direct: 1 concise sentence naming what changed and where it applies in the app. No fluff, no raw file paths.
+- Keep each bullet BRIEF. No fluff, no raw file paths.
 - Never use the em dash character. Use commas, periods, or parentheses instead.
 
 Output (JSON only, no markdown fences, no commentary before or after):
@@ -118,6 +125,7 @@ type ChangelogCommit = {
 function buildChangelogWriterUserPrompt(
   commits: ChangelogCommit[],
   coveredThrough: string | null,
+  requiredThemes: string[] = [],
 ): string {
   const lines = commits.map((c) => {
     const files = c.files.length > 0 ? ` [files: ${c.files.slice(0, 8).join(", ")}]` : "";
@@ -126,13 +134,19 @@ function buildChangelogWriterUserPrompt(
   });
   const from = commits[0]?.date ?? "";
   const to = commits[commits.length - 1]?.date ?? "";
+  const requiredBlock =
+    requiredThemes.length > 0
+      ? `REQUIRED Decision Engine themes (these ARE the weekly highlights, highest first):\n${requiredThemes
+          .map((t, i) => `${i + 1}. ${t}`)
+          .join("\n")}\n\n`
+      : "";
   return `Covered period: ${from} to ${to} (${commits.length} commits). Previous archive coverage ended: ${coveredThrough ?? "never (first entry)"}.
 
 Commit pack (oldest first):
 ${lines.join("\n")}
 
-Write the weekly highlights changelog JSON now.
-Cover the ENTIRE week pack. Pick the 3 to 5 MOST SIGNIFICANT product wins for a CEO.
+${requiredBlock}Write the weekly highlights changelog JSON now.
+Steve Jobs keynote clarity. Cover REQUIRED Decision Engine themes.
 Do not write about the changelog newsletter, AgentMail, or email section tweaks.
 Do not fixate on the newest commits.`;
 }
@@ -324,10 +338,45 @@ function extractChatContent(raw: Record<string, unknown>): string {
   return "";
 }
 
+async function rankWeekImpacts(
+  authHeaders: Record<string, string>,
+  commits: ChangelogCommit[],
+): Promise<string[]> {
+  const commitLines = commits.map((c) => `- ${c.date} ${c.subject}`);
+  console.log(
+    `Decision Engine ranking coding impact with ${CHANGELOG_IMPACT_DECISION_MODEL}…`,
+  );
+  const rankRaw = await hubApi("openrouter/chat-completion", {
+    method: "POST",
+    headers: authHeaders,
+    body: JSON.stringify({
+      model: CHANGELOG_IMPACT_DECISION_MODEL,
+      temperature: 0.1,
+      maxTokens: 2048,
+      responseFormat: { type: "json_object" },
+      system: CHANGELOG_IMPACT_RANK_SYSTEM,
+      user: buildChangelogImpactRankUserPrompt(commitLines),
+    }),
+  });
+  const rankContent = extractChatContent(rankRaw);
+  if (!rankContent.trim()) {
+    throw new Error("Decision Engine impact rank returned empty content.");
+  }
+  const rank = parseChangelogImpactRank(rankContent);
+  const themes = topImpactThemes(rank, 5);
+  for (const row of rank.ranked.slice(0, 8)) {
+    console.log(`  impact ${row.impactScore}: ${row.theme}`);
+  }
+  if (themes.length < 3) {
+    throw new Error("Decision Engine returned fewer than 3 impact themes.");
+  }
+  return themes;
+}
+
 async function generateWeeklyHighlightsEntry(
   authHeaders: Record<string, string>,
   previous: ArchiveEntry | null,
-): Promise<{ entry: ArchiveEntry; weekCommits: ChangelogCommit[] }> {
+): Promise<{ entry: ArchiveEntry; weekCommits: ChangelogCommit[]; requiredThemes: string[] }> {
   const since = weekSinceIso();
   console.log(
     `Collecting THIS WEEK's git commits (last ${NEWSLETTER_WEEK_DAYS} days) since ${since}…`,
@@ -339,13 +388,15 @@ async function generateWeeklyHighlightsEntry(
     );
   }
   console.log(
-    `Found ${commits.length} commit(s) this week (${commits[0]?.date} → ${commits[commits.length - 1]?.date}). Summarizing into top weekly wins…`,
+    `Found ${commits.length} commit(s) this week (${commits[0]?.date} → ${commits[commits.length - 1]?.date}).`,
   );
   await hubApi("changelog/source/", {
     method: "POST",
     headers: authHeaders,
     body: JSON.stringify({ commits }),
   });
+
+  const requiredThemes = await rankWeekImpacts(authHeaders, commits);
 
   console.log(`Writing weekly highlights entry with ${CHANGELOG_WRITER_MODEL}…`);
   const draftRaw = await hubApi("openrouter/chat-completion", {
@@ -357,7 +408,11 @@ async function generateWeeklyHighlightsEntry(
       maxTokens: 4096,
       responseFormat: { type: "json_object" },
       system: CHANGELOG_WRITER_SYSTEM,
-      user: buildChangelogWriterUserPrompt(commits, previous?.date?.trim() || null),
+      user: buildChangelogWriterUserPrompt(
+        commits,
+        previous?.date?.trim() || null,
+        requiredThemes,
+      ),
     }),
   });
   const draftContent = extractChatContent(draftRaw);
@@ -378,7 +433,7 @@ async function generateWeeklyHighlightsEntry(
   console.log(
     `Weekly entry saved: ${savedNewest.date} · ${savedNewest.title} (${savedNewest.commitCount} commits this week)`,
   );
-  return { entry: savedNewest, weekCommits: commits };
+  return { entry: savedNewest, weekCommits: commits, requiredThemes };
 }
 
 async function main(): Promise<void> {
@@ -404,7 +459,10 @@ async function main(): Promise<void> {
     );
   }
 
-  const { entry, weekCommits } = await generateWeeklyHighlightsEntry(authHeaders, previous);
+  const { entry, weekCommits, requiredThemes } = await generateWeeklyHighlightsEntry(
+    authHeaders,
+    previous,
+  );
   if (entryOnly) {
     console.log(`Entry-only complete. Archive now has entry: ${entry.date} · ${entry.title}`);
     return;
@@ -440,17 +498,19 @@ async function main(): Promise<void> {
     `Newsletter pack: ${highlights.date} · ${highlights.title} (${highlights.commitCount} commits this week)`,
   );
 
-  console.log(`Writing Morning Brew editorial (hook/body/highlights) with ${CHANGELOG_NEWSLETTER_INTRO_MODEL}…`);
+  console.log(
+    `Writing Jobs-keynote editorial from Decision Engine themes with ${CHANGELOG_NEWSLETTER_INTRO_MODEL}…`,
+  );
   const introRaw = await hubApi("openrouter/chat-completion", {
     method: "POST",
     headers: authHeaders,
     body: JSON.stringify({
       model: CHANGELOG_NEWSLETTER_INTRO_MODEL,
-      temperature: 0.45,
+      temperature: 0.4,
       maxTokens: 3072,
       responseFormat: { type: "json_object" },
       system: CHANGELOG_NEWSLETTER_INTRO_SYSTEM,
-      user: buildChangelogNewsletterIntroUserPrompt(highlights),
+      user: buildChangelogNewsletterIntroUserPrompt(highlights, requiredThemes),
     }),
   });
   const introContent = extractChatContent(introRaw);
