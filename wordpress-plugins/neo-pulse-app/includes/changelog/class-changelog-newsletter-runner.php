@@ -184,9 +184,9 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 		}
 		$from = (string) $commits[0]['date'];
 		$to   = (string) $commits[ count( $commits ) - 1 ]['date'];
-		$user = "Covered period: {$from} to {$to} (" . count( $commits ) . " commits this week). Previous archive coverage ended: " . ( $covered ?? 'never (first entry)' ) . ".\n\nCommit pack (oldest first):\n" . implode( "\n", $lines ) . "\n\nWrite the weekly highlights changelog JSON now.\nCover the ENTIRE week pack. Most significant wins only (3 to 5). Do not write about only the newest commit.";
+		$user = "Covered period: {$from} to {$to} (" . count( $commits ) . " commits this week). Previous archive coverage ended: " . ( $covered ?? 'never (first entry)' ) . ".\n\nCommit pack (oldest first):\n" . implode( "\n", $lines ) . "\n\nWrite the weekly highlights changelog JSON now.\nCover the ENTIRE week pack. Pick the 3 to 5 MOST SIGNIFICANT product wins for a CEO.\nDo not write about the changelog newsletter, AgentMail, or email section tweaks.\nDo not fixate on the newest commits.";
 
-		$system = 'You write one weekly changelog entry for Neo Pulse. The commit pack is the FULL WEEK. Summarize the ENTIRE week. Never fixate on the newest commit. No intro paragraph. WEEKLY HIGHLIGHTS only: 3 to 5 most significant wins across the whole pack. Skip tiny or routine commits. Sections New/Improved/Fixed/Behind the scenes only when needed, max 2 to 4 bullets each. Never use the em dash. Output JSON only: {"title":"...","highlights":["..."],"sections":[{"heading":"New","items":["..."]}]}';
+		$system = 'You write one weekly changelog entry for Neo Pulse. The commit pack is the FULL WEEK. Recency bias forbidden. Rank real product wins first: client reports that still ship when a source fails, Integrations/add-client workflows, GMB/website leads, deep links, API Keys, major reliability. BAN from highlights/title: this newsletter, AgentMail, AISEO/Google email sections, weekly-highlights format, changelog studio Friday auto-send meta, wave/audit/CI chore language. No intro paragraph. 3 to 5 most significant wins, different themes. Sections New/Improved/Fixed/Behind the scenes only when needed, max 2 to 4 bullets each. Never em dash. Output JSON only: {"title":"...","highlights":["..."],"sections":[{"heading":"New","items":["..."]}]}';
 
 		$raw = self::openrouter_json( self::WRITER_MODEL, $system, $user, 0.3, 4096 );
 		$title = isset( $raw['title'] ) ? trim( (string) $raw['title'] ) : '';
@@ -237,8 +237,8 @@ class Neo_Pulse_App_Changelog_Newsletter_Runner {
 		}
 		$pack = "Neo Pulse update: {$entry['title']}\nDate: {$entry['date']}\nCommits: {$entry['commitCount']}\n\nHighlights:\n" . implode( "\n", $pack_lines );
 
-		$intro_system = 'You write the Neo Pulse product newsletter in a Morning Brew voice. Write from PULSE point of view. Never client-owned framing. Plain English for a CEO who does not code. Banned jargon: commit, module, refactor, schema, API, pipeline, CI. Hook max 8 words and 48 chars. Weekly highlights: summarize the ENTIRE week pack into 3 to 5 most significant repo updates. Never fixate on one commit or one day. Never em dash. JSON only: {"hook":"...","body":"...","highlights":["..."]}';
-		$intro        = self::openrouter_json( self::INTRO_MODEL, $intro_system, $pack . "\n\nWrite hook, body, and weekly highlights. Cover the ENTIRE week (3 to 5 most significant wins only). Never only the newest ship. Pulse is the actor.", 0.45, 3072 );
+		$intro_system = 'You write the Neo Pulse product newsletter in a Morning Brew voice. Write from PULSE point of view. Never client-owned framing. Plain English for a CEO who does not code. Banned jargon: commit, module, refactor, schema, API, pipeline, CI. Hook max 8 words and 48 chars. Weekly highlights: 3 to 5 most significant PRODUCT wins from the ENTIRE week. BAN body/highlights about this newsletter, AgentMail, AISEO/Google email sections, or Friday auto-send meta. Recency bias forbidden. Never em dash. JSON only: {"hook":"...","body":"...","highlights":["..."]}';
+		$intro        = self::openrouter_json( self::INTRO_MODEL, $intro_system, $pack . "\n\nWrite hook, body, and weekly highlights. Cover the ENTIRE week PRODUCT wins (3 to 5). Never changelog-newsletter meta. Never only the newest ship. Pulse is the actor.", 0.45, 3072 );
 
 		$pulse_seeds = array(
 			array(

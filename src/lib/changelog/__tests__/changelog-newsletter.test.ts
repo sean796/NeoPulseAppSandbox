@@ -238,6 +238,9 @@ describe("changelog newsletter drafts", () => {
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("Max 8 words");
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("AISEO News");
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("Google Updates");
+    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("PRODUCT wins");
+    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("Ban:");
+    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("AgentMail");
     expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("WHY this Pulse ship matters");
     expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("required https URLs");
     expect(CHANGELOG_NEWSLETTER_AISEO_SYSTEM).toContain("AISEO News");

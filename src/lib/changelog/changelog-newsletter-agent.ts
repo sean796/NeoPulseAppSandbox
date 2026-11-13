@@ -200,8 +200,8 @@ Grounding:
 
 Write:
 1) hook: SHORT email-safe headline. Max 8 words and max 48 characters. Complete thought. Never end mid-phrase. Gmail subject from Pulse's POV (examples: "Pulse reports look finished.", "Pulse makes adding a site simpler.").
-2) body: one short plain-English paragraph about the week's biggest Pulse ships across the FULL week and why they matter. Not a feature dump. Not a single-change blurb. Pulse is the actor.
-3) highlights: ONLY the 3 to 5 most significant weekly repo updates drawn from the ENTIRE week pack. Rewrite as Pulse outcomes. Skip tiny or routine noise. Never write 7 lookalike bullets about one Friday ship. Lead with what Pulse did.
+2) body: one short plain-English paragraph about the week's biggest PRODUCT ships across the FULL week and why they matter to running the agency. Not a feature dump. Not a single-change blurb. Never make the body about this newsletter, AgentMail, AISEO News sections, or Friday email formatting. Pulse is the actor.
+3) highlights: ONLY the 3 to 5 most significant weekly PRODUCT wins from the ENTIRE week pack. Different themes. Rewrite as Pulse outcomes. Skip tiny or routine noise. Ban: changelog newsletter / AgentMail / email palette / wire seeds / weekly-highlights format / Friday auto-send meta. Recency bias forbidden.
 
 Banned tone:
 - Dry release-note speak ("Significant improvements to…", "extensive refactoring").
@@ -337,7 +337,8 @@ export function buildChangelogNewsletterIntroUserPrompt(
 
 Write the Morning Brew style hook, body, and weekly highlights for this ship.
 Audience reminder: CEO / agency owner who does not know the code. Plain English outcomes only.
-Repo updates rule: summarize the ENTIRE week pack into the most significant weekly wins (3 to 5). Never fixate on one commit or one day. Return the editorial JSON.`;
+Repo updates rule: summarize the ENTIRE week pack into the most significant PRODUCT wins (3 to 5).
+Never lead with changelog-newsletter / AgentMail / email-section meta. Never fixate on the newest day. Return the editorial JSON.`;
 }
 
 export type ChangelogNewsletterNewsSeed = {

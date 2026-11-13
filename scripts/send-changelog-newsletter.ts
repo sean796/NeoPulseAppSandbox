@@ -64,20 +64,34 @@ const CHANGELOG_WRITER_SYSTEM = `You write one weekly changelog entry for the Ne
 
 Grounding rules (non-negotiable):
 - The commit pack in the user message is the FULL WEEK of commits. It is the ONLY source of facts.
-- Summarize the ENTIRE week. Never fixate on the newest commit or a single day's ship.
+- Summarize the ENTIRE week. Recency bias is forbidden. Earlier-week ships can outrank today's commits.
 - Never invent dates, counts, or version numbers.
 - Do NOT write an intro paragraph or summary.
-- This is a WEEKLY HIGHLIGHTS entry, not a full commit dump and not a one-change blurb.
-- Include a "highlights" array with ONLY the 3 to 5 most significant weekly wins across the whole pack. Skip tiny, routine, or duplicate commits.
-- Prefer product-facing outcomes a CEO would care about. Drop noise (typos, tiny renames, chore merges, test-only tweaks) unless that was the week's main ship.
-- Group only the biggest themes using these headings when needed: "New", "Improved", "Fixed", "Behind the scenes".
-- Keep sections sparse: at most 2 to 4 bullets per section, and only for the same top wins. Never try to cover every commit.
+- This is a WEEKLY HIGHLIGHTS entry of the week's MOST SIGNIFICANT product wins for a CEO / agency owner.
+
+What counts as significant (rank these first):
+- Client reporting that still ships when a data source fails
+- Integrations / add-client / site property workflows that save real operator time
+- Google Business / website leads surfaces that change how they run accounts
+- Deep links / navigation that stop dumping people on the wrong screen
+- API Keys / OpenRouter key entry that unblocks generation
+- Major reliability or hub/live fixes that keep Pulse working
+- Large architecture cleanup only if it clearly makes the product more trustworthy (one bullet max, Behind the scenes)
+
+Banned from highlights / title (never lead with these, even if many commits say them):
+- This newsletter itself, AgentMail sends, AISEO News / Google Updates email sections, weekly-highlights format tweaks, email palette / wire-seed / setup-key fixes
+- Changelog studio / Friday auto-send / Pulse POV newsletter copy about the changelog email
+- Wave / audit / grade / CI ratchet / console-sweep / line-count split chore language
+- Tiny renames, test-only tweaks, flatten/push ops, doc-only commits
+
+- Include a "highlights" array with ONLY the 3 to 5 most significant weekly wins. Each bullet a different theme. No lookalike bullets.
+- Group only those top wins using "New", "Improved", "Fixed", "Behind the scenes" when needed (max 2 to 4 bullets per section).
 - Keep each bullet BRIEF and direct: 1 concise sentence naming what changed and where it applies in the app. No fluff, no raw file paths.
 - Never use the em dash character. Use commas, periods, or parentheses instead.
 
 Output (JSON only, no markdown fences, no commentary before or after):
 {
-  "title": "Short weekly title naming the main theme (max 12 words)",
+  "title": "Short weekly title naming the main product theme (max 12 words)",
   "highlights": ["One brief sentence per top weekly win"],
   "sections": [{ "heading": "New", "items": ["One brief, specific sentence per top win"] }]
 }`;
@@ -118,7 +132,9 @@ Commit pack (oldest first):
 ${lines.join("\n")}
 
 Write the weekly highlights changelog JSON now.
-Cover the ENTIRE week pack. Most significant wins only (3 to 5). Do not write about only the newest commit.`;
+Cover the ENTIRE week pack. Pick the 3 to 5 MOST SIGNIFICANT product wins for a CEO.
+Do not write about the changelog newsletter, AgentMail, or email section tweaks.
+Do not fixate on the newest commits.`;
 }
 
 function buildFreshChangelogEntry(
