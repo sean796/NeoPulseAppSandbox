@@ -274,8 +274,11 @@ async function fetchOrganicDashboardViaParts(
   params: OrganicDashboardFetchParams,
   signal: AbortSignal,
 ): Promise<OrganicDashboardBundleResponse> {
+  const requestedParts = ORGANIC_DASHBOARD_PARTS.filter(
+    (part) => part !== "gmbLeads" || Boolean(params.gbpLocationId?.trim()),
+  );
   const settled = await Promise.allSettled(
-    ORGANIC_DASHBOARD_PARTS.map((part) => fetchOrganicDashboardPart(params, part, signal)),
+    requestedParts.map((part) => fetchOrganicDashboardPart(params, part, signal)),
   );
 
   const parts: OrganicDashboardBundleResponse[] = [];
@@ -284,7 +287,7 @@ async function fetchOrganicDashboardViaParts(
 
   for (let i = 0; i < settled.length; i += 1) {
     const result = settled[i]!;
-    const part = ORGANIC_DASHBOARD_PARTS[i]!;
+    const part = requestedParts[i]!;
     if (result.status === "fulfilled") {
       parts.push(result.value);
       continue;
@@ -298,7 +301,7 @@ async function fetchOrganicDashboardViaParts(
   }
 
   if (parts.length === 0) {
-    if (unsupportedCount === ORGANIC_DASHBOARD_PARTS.length) {
+    if (unsupportedCount === requestedParts.length) {
       throw new OrganicDashboardFetchPartUnsupportedError();
     }
     throw firstFatal instanceof Error

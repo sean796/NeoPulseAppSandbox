@@ -407,7 +407,7 @@ export function buildOrganicClientReportContent(input: OrganicClientReportDeckIn
     gmbLeadsDeckRows,
     showGmbLeadsSection:
       (viewModel.hasGmbLeads && gmbLeadsDeckRows.length > 0) ||
-      Boolean(viewModel.gmbLeadsLoadError),
+      Boolean(viewModel.gmbLeadsLoadError?.trim()),
     gmbLeadsLoadError: viewModel.gmbLeadsLoadError,
     showSemrushSection,
     showKeywordSection: false,

@@ -87,10 +87,18 @@ export function formatGmbMetricValue(value: number): string {
   return formatCanadianNumber(value);
 }
 
+/** No GBP location id on the property: omit the report section entirely. */
+export function isGmbLeadsMissingLocationId(
+  block: OrganicDashboardGmbLeadsPayload | undefined,
+): boolean {
+  return isOrganicSkippedBlock(block) && block.reason === "missing_gbp_location_id";
+}
+
 export function formatGmbLeadsLoadError(
   block: OrganicDashboardGmbLeadsPayload | undefined,
 ): string | null {
   if (!block) return null;
+  if (isGmbLeadsMissingLocationId(block)) return null;
   if (isOrganicSkippedBlock(block)) {
     return block.error?.trim() || `Google My Business Leads skipped (${block.reason}).`;
   }
