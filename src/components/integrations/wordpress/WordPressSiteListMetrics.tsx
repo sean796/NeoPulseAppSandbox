@@ -24,25 +24,27 @@ import {
 } from "./wordpress-properties-surfaces";
 import { PropertyMetricCountLoadingMark } from "./PropertyMetricCountLoadingMark";
 
-/** One splash-style placeholder covering both count columns. Width matches the two slots. */
-function DockRowSplashMark() {
+/** One mark across both count columns. Height is 1em, the same line as the numbers. */
+function DockRowCountMark() {
+  const id = React.useId().replace(/:/g, "");
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 96 32"
-      className="block h-8 w-[6rem] max-h-8 max-w-[6rem]"
+      viewBox="0 0 96 16"
+      className="block h-[1em] max-h-[1em] w-[6rem] max-w-[6rem]"
       aria-hidden
     >
-      <rect width="96" height="32" rx="3" fill="#18181b" />
-      <rect x="4" y="3" width="88" height="7" rx="3.5" fill="#27272a" />
-      <circle cx="9" cy="6.5" r="1.6" fill="#a3e635" />
-      <rect x="13" y="5.4" width="28" height="2.2" rx="1" fill="#52525b" />
-      <text x="5" y="16.5" fill="#a3e635" fontSize="4.5" fontFamily="sans-serif">1</text>
-      <rect x="12" y="13.2" width="70" height="2.4" rx="1" fill="#3f3f46" />
-      <text x="5" y="22.5" fill="#a3e635" fontSize="4.5" fontFamily="sans-serif">2</text>
-      <rect x="12" y="19.2" width="52" height="2.4" rx="1" fill="#3f3f46" />
-      <text x="5" y="28.5" fill="#a3e635" fontSize="4.5" fontFamily="sans-serif">3</text>
-      <rect x="12" y="25.2" width="62" height="2.4" rx="1" fill="#3f3f46" />
+      <defs>
+        <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#d9f99d" />
+          <stop offset="55%" stopColor="#65a30d" />
+          <stop offset="100%" stopColor="#3f3f46" />
+        </linearGradient>
+      </defs>
+      <rect x="50" y="3" width="44" height="10" rx="2" fill={`url(#${id})`} />
+      <rect x="50" y="3" width="44" height="4" rx="2" fill="#ffffff" opacity="0.28" />
+      <rect x="2" y="3" width="44" height="10" rx="2" fill={`url(#${id})`} />
+      <rect x="2" y="3" width="44" height="4" rx="2" fill="#ffffff" opacity="0.28" />
     </svg>
   );
 }
@@ -121,14 +123,14 @@ export function QuarterEditorialCountsStrip({
     if (countsLoading) {
       return (
         <span
-          className="inline-flex h-8 w-[6rem] shrink-0 items-center overflow-hidden !text-white"
+          className="inline-flex h-[1em] w-[6rem] shrink-0 items-center overflow-hidden !text-white"
           title={stripSummaryTitle}
           onClick={stop}
           onPointerDown={stop}
           aria-label="Counting editorial posts"
           style={white}
         >
-          <DockRowSplashMark />
+          <DockRowCountMark />
         </span>
       );
     }
