@@ -1,6 +1,6 @@
 /**
- * Decision-engine ranking for weekly newsletter coding impacts.
- * Scores themes from the week pack; writer must lead with the top winners.
+ * Decision-engine ranking for weekly newsletter product impacts.
+ * Scores everyday user-facing Pulse features; writer must lead with the top winners.
  */
 
 import { z } from "zod";
@@ -21,25 +21,27 @@ export const changelogImpactRankSchema = z.object({
 
 export type ChangelogImpactRank = z.infer<typeof changelogImpactRankSchema>;
 
-export const CHANGELOG_IMPACT_RANK_SYSTEM = `You are the Neo Pulse Decision Engine scoring CODING IMPACT for a weekly CEO newsletter.
+export const CHANGELOG_IMPACT_RANK_SYSTEM = `You are the Neo Pulse Decision Engine scoring USER-FACING PRODUCT IMPACT for a weekly newsletter.
 
-Job: read the week's commit pack and return the 5 to 8 most significant coding / product-engineering impacts, ranked by impactScore (0 to 5).
+Readers are everyday Pulse users (agency owners and staff). They open screens, run reports, connect clients, and paste keys. They have never opened the codebase.
 
-Score for REAL impact on the product and the agency that runs on it:
-- 5 = foundational / transformative (architecture that changes what Pulse can ship; reporting that refuses to fail; live hub that stays up)
-- 4 = major unlock (keys that unblock generation; navigation that finally works; Integrations/leads that change the workday)
-- 3 = important reliability or workflow win
-- 2 = useful but not headline
+Job: read the week's commit pack and return the 5 to 8 most significant product features / workflow wins people can see and use, ranked by impactScore (0 to 5).
+
+Score ONLY what a daily user would notice in the product:
+- 5 = new or transformed screen / workflow they use every week (Changelog studio, Integrations leads, add-client dock, Keys that unlock generation)
+- 4 = clear fix to a broken everyday path (cold links open the right page; client report still shows the sections that loaded)
+- 3 = useful polish on a named screen or report people already use
+- 2 = small UI clarity
 - 1 = minor
 - 0 = noise
 
 Hard rules:
 - Recency bias is forbidden. Score the whole week.
-- Prefer structural coding wins (architecture under 500-line modules, hub live reliability, report resilience, deep links, API keys, Integrations/leads) over newsletter meta.
-- BAN from ranked list (do not include): AgentMail, AISEO News / Google Updates email sections, weekly-highlights format tweaks, email palette / wire-seed / setup-key, Friday auto-send copy about the newsletter, flatten/push ops, wave/audit grade language as a theme title.
-- Changelog studio may appear only if impactScore would be >= 4 AND it is not crowding out higher foundation wins; prefer product reliability over "we built a changelog email".
-- theme: short CEO-readable label of the win (not a commit hash).
-- why: one short sentence of why the score is high.
+- theme must name the SCREEN or FEATURE in plain English a user would recognize (Changelog, Integrations, Keys, client reports, workspace links). Never "hub", "deploy", "module", "architecture", "ownable", "Wave", "CI", "Storybook", "evals", "disk", "500 lines".
+- Prefer concrete product ships over reliability poetry. If a reliability fix matters, say what the user still gets on screen (for example "client reports still show the sections that loaded").
+- BAN from ranked list: AgentMail, AISEO News / Google Updates email sections, weekly-highlights format, email palette / wire-seed / setup-key, Friday auto-send about the newsletter itself, flatten/push ops, Wave/audit/grade/CI/Storybook/eval work, PHP trait splits, console-call sweeps, "codebase craft" / "small enough to own".
+- Changelog studio may rank high when it is a real new screen users open (archive, approve drafts, due flag).
+- why: one short sentence of why a daily Pulse user cares.
 - Never use the em dash character.
 
 Output JSON only:
@@ -49,12 +51,12 @@ Output JSON only:
 
 export function buildChangelogImpactRankUserPrompt(commitLines: string[]): string {
   const today = new Date().toISOString().slice(0, 10);
-  return `Today is ${today}. Score coding IMPACT for this week's Neo Pulse commit pack.
+  return `Today is ${today}. Score everyday USER-FACING product IMPACT for this week's Neo Pulse commit pack.
 
 Commit pack (oldest first):
 ${commitLines.join("\n")}
 
-Return the ranked Decision Engine JSON now. Highest impactScore first.`;
+Return the ranked Decision Engine JSON now. Highest impactScore first. Themes must name screens and features users recognize.`;
 }
 
 export function parseChangelogImpactRank(raw: string): ChangelogImpactRank {

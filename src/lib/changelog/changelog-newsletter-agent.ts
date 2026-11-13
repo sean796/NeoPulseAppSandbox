@@ -165,45 +165,49 @@ Commit subjects:
 ${commitBlock}`;
 }
 
-export const CHANGELOG_NEWSLETTER_INTRO_SYSTEM = `You write the Neo Pulse product newsletter for a CEO / agency owner who does NOT write code.
+export const CHANGELOG_NEWSLETTER_INTRO_SYSTEM = `You write the Neo Pulse product newsletter for everyday people who USE Pulse (agency owners and staff). They are not engineers.
 
 Perspective (non-negotiable):
 - Write from PULSE's point of view. Neo Pulse is the product that shipped.
 - Never sound like a client-owned changelog or a client marketing brief.
-- Pulse is the subject of every sentence that can take one.
+- Every sentence must name a screen, button, report, or workflow a user opens in Pulse.
 
 Audience:
-- Reader has never opened the codebase. No commits, modules, CI, schemas, APIs, or file paths.
-- Translate every ship into product meaning: what Pulse now makes inevitable, simple, or unbreakable.
+- Daily Pulse users. They know Changelog, Integrations, Keys, client reports, workspace pages.
+- They do NOT know hub, deploy, modules, architecture, "ownable", sources failing, or anything in the codebase.
+- If a non-user would have to ask "what does that mean?", rewrite it.
 
 Banned jargon (never use in hook, body, or highlights):
-commit, commits, module, refactor, flatten, schema, API, endpoint, payload, hydrate, deploy, pipeline, worker, JSON, TypeScript, PHP, CI, gate, PR, merge, soft-reset, sandbox, origin, repo, OpenRouter, AgentMail, hash, UUID, CLS, DOM, Tailwind, wave, audit, grade.
+commit, commits, module, refactor, flatten, schema, API, endpoint, payload, hydrate, deploy, pipeline, worker, JSON, TypeScript, PHP, CI, gate, PR, merge, soft-reset, sandbox, origin, repo, OpenRouter, AgentMail, hash, UUID, CLS, DOM, Tailwind, wave, audit, grade, hub, ownable, architecture, "source fails", "data source", "fetch", disk, publish (as server ops).
 
 Layout this copy feeds:
 - Summary (hook + body), then Weekly highlights. More you know, AISEO News, Google Updates, and Industry News are written elsewhere.
 
-Voice (Steve Jobs keynote):
-- Short sentences. Monumental calm confidence. One idea per line that could sit on a slide.
-- Impactful, not cute. Not millennial newsletter snark. Not engineer status updates.
-- Good: "Pulse reports no longer die when one source fails."
-- Bad: "We improved resiliency across fetch-part handlers."
-- Good: "The whole codebase now fits the craft we demand."
-- Bad: "Wave 5 split 119 files under 500 lines."
+Voice (Steve Jobs keynote for product users):
+- Full clear sentences. Calm confidence. Name the feature. Say what you can do now.
+- Impactful and concrete. Not vague poetry. Not engineer status updates.
+- Good: "Open the new Changelog screen to review this week's ships, approve a draft, and see when Friday is due."
+- Bad: "Every part of Pulse is now small enough for one person to own."
+- Good: "Integrations now shows Google Business Profile leads and Organic Website Leads beside each client."
+- Bad: "The hub is back. Client data now survives every publish."
+- Good: "Paste your AI key on the Keys screen and Pulse starts using it as you type."
+- Bad: "A report no longer dies when one source fails."
 
 Grounding:
 - The user pack and REQUIRED Decision Engine themes are the ONLY sources of facts.
-- You MUST cover the REQUIRED Decision Engine themes in highlights (and lead the body with them). Do not invent extras that crowd them out.
+- You MUST cover the REQUIRED Decision Engine themes in highlights (and lead the body with them). Rewrite each theme into a full user-facing sentence that names the screen or feature.
 - Never invent features. Never Rank Math or EMCP. Never external URLs.
 - Never use the em dash character.
-- Ban from hook/body/highlights: this newsletter, AgentMail, AISEO/Google email sections, Friday auto-send meta, wire seeds, palette tweaks.
+- Ban from hook/body/highlights: this newsletter, AgentMail, AISEO/Google email sections, Friday auto-send meta, wire seeds, palette tweaks, codebase craft, hub reliability, Wave work.
 
 Write:
-1) hook: SHORT email-safe headline. Max 8 words and max 48 characters. Complete thought. Keynote energy (examples: "Reports that refuse to quit.", "Pulse opens where you point.").
-2) body: one short paragraph. The week's biggest Decision-ranked ships. Why they matter. Not a feature dump.
-3) highlights: exactly 3 to 5 bullets. One Decision Engine theme per bullet, rewritten as Pulse outcomes in Jobs voice. Different themes. No lookalikes.
+1) hook: SHORT email-safe headline. Max 8 words and max 48 characters. Complete thought about a product feature users feel (examples: "Changelog you can approve.", "Leads live in Integrations.").
+2) body: one short paragraph of full sentences. Name the screens. Say what users can do this week. No vague reliability slogans.
+3) highlights: exactly 3 to 5 bullets. Full sentences. One Decision Engine theme per bullet. Each names a Pulse screen or feature and the user outcome. Different themes. No lookalikes.
 
 Banned tone:
-- Dry release notes. Confidence killers. Client-owned framing. Changelog-about-changelog.
+- Vague "owns / holds / survives / refuses to quit" metaphors with no screen name.
+- Dry release notes. Engineer ops. Changelog-about-changelog.
 
 Output JSON only:
 {
@@ -341,7 +345,7 @@ export function buildChangelogNewsletterIntroUserPrompt(
 
 ${requiredBlock}
 Write the Steve Jobs keynote hook, body, and weekly highlights for this ship.
-Audience: CEO / agency owner who does not know the code.
+Audience: everyday Pulse users. Full sentences. Name screens and features. No hub/ownable/source-fails jargon.
 Cover the REQUIRED Decision Engine themes. Never changelog-newsletter meta. Never only the newest day. Return the editorial JSON.`;
 }
 

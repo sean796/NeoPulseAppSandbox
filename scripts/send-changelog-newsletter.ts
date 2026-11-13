@@ -67,40 +67,39 @@ import { randomUUID } from "node:crypto";
 
 const CHANGELOG_WRITER_MODEL = "deepseek/deepseek-v4.1-flash";
 
-const CHANGELOG_WRITER_SYSTEM = `You write one weekly changelog entry for the Neo Pulse web app, for the agency owner.
+const CHANGELOG_WRITER_SYSTEM = `You write one weekly changelog entry for Neo Pulse for everyday people who USE the program (agency owners and staff). Not engineers.
 
 Grounding rules (non-negotiable):
 - The commit pack in the user message is the FULL WEEK of commits. It is the ONLY source of facts.
 - Summarize the ENTIRE week. Recency bias is forbidden. Earlier-week ships can outrank today's commits.
 - Never invent dates, counts, or version numbers.
 - Do NOT write an intro paragraph or summary.
-- This is a WEEKLY HIGHLIGHTS entry of the week's MOST SIGNIFICANT product wins for a CEO / agency owner.
+- This is a WEEKLY HIGHLIGHTS entry of the week's MOST SIGNIFICANT product features users can open and use.
 
-When REQUIRED Decision Engine themes are listed in the user message, those ARE the highlights. Cover them in order. Do not swap them for newsletter meta.
+When REQUIRED Decision Engine themes are listed in the user message, those ARE the highlights. Cover them in order as full user-facing sentences. Do not swap them for newsletter meta or codebase craft.
 
 What counts as significant (Decision Engine ranks these):
-- Foundational craft: the product rebuilt so every piece stays small enough to own (say it like a keynote, never "Wave 5" or "500 lines")
-- Client reporting that still ships when a data source fails
-- Integrations / add-client / leads surfaces that change the workday
-- Deep links / navigation that open where you point
-- API Keys that unblock generation as you type
-- Hub / live reliability that keeps Pulse up
+- New or changed screens users open (Changelog with archive, draft approval, weekly due flag)
+- Integrations features (Google Business Profile leads, Organic Website Leads, add-client dock)
+- Keys screen: paste your AI key and Pulse starts using it as you type
+- Workspace links that open the page you clicked, even in a new tab
+- Client reports that still show every section that loaded when one feed is quiet
 
 Banned from highlights / title (never lead with these):
 - This newsletter, AgentMail, AISEO News / Google Updates email sections, email palette / wire-seed / setup-key, Friday auto-send meta
-- Wave / audit / grade / CI ratchet wording (translate foundation work into craft, not chore labels)
+- Hub, deploy, disk, module splits, Wave / audit / grade / CI / Storybook / evals, "ownable", "small enough to own", vague "source fails" talk
 - Tiny renames, test-only tweaks, flatten/push ops, doc-only commits
 
-- Include a "highlights" array with ONLY the 3 to 5 Decision-ranked wins. Each bullet a different theme. Jobs keynote voice.
-- Group only those top wins using "New", "Improved", "Fixed", "Behind the scenes" when needed (max 2 to 4 bullets per section).
-- Keep each bullet BRIEF. No fluff, no raw file paths.
+- Include a "highlights" array with ONLY the 3 to 5 Decision-ranked wins. Each bullet a FULL sentence naming the screen or feature and what the user can do.
+- Group only those top wins using "New", "Improved", "Fixed" when needed (max 2 to 4 bullets per section). Never "Behind the scenes" for engineering chores.
+- No fluff, no raw file paths, no engineer jargon.
 - Never use the em dash character. Use commas, periods, or parentheses instead.
 
 Output (JSON only, no markdown fences, no commentary before or after):
 {
-  "title": "Short weekly title naming the main product theme (max 12 words)",
-  "highlights": ["One brief sentence per top weekly win"],
-  "sections": [{ "heading": "New", "items": ["One brief, specific sentence per top win"] }]
+  "title": "Short weekly title naming the main user-facing feature theme (max 12 words)",
+  "highlights": ["One full sentence naming a screen or feature and the user outcome"],
+  "sections": [{ "heading": "New", "items": ["One full sentence per top win"] }]
 }`;
 
 const changelogDraftSchema = z.object({

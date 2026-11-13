@@ -229,14 +229,14 @@ describe("changelog newsletter drafts", () => {
 
   it("locks prompts to plain-English body and dedicated news sections", () => {
     expect(CHANGELOG_NEWSLETTER_WEB_MODEL).toMatch(/:online|sonar/i);
-    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("does NOT write code");
+    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("everyday people who USE Pulse");
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("PULSE's point of view");
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("client-owned");
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("Banned jargon");
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("Steve Jobs");
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("REQUIRED Decision Engine themes");
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("Max 8 words");
-    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("Decision Engine");
+    expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("name a screen");
     expect(CHANGELOG_NEWSLETTER_INTRO_SYSTEM).toContain("AgentMail");
     expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("WHY this Pulse ship matters");
     expect(CHANGELOG_NEWSLETTER_READING_SYSTEM).toContain("required https URLs");
@@ -414,7 +414,7 @@ describe("changelog newsletter email", () => {
 
     expect(email.text).toContain("WEEKLY HIGHLIGHTS");
     expect(email.text).toContain(CHANGELOG_NEWSLETTER_WEEKLY_HIGHLIGHTS_EXPLAINER);
-    expect(email.html).toContain("Decision Engine picks");
+    expect(email.html).toContain("change how you work this week");
     expect(email.text).toContain("MORE YOU KNOW");
     expect(email.text).toContain("AISEO NEWS");
     expect(email.text).toContain("GOOGLE UPDATES");

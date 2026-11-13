@@ -20,7 +20,7 @@ export const NEO_PULSE_NEWSLETTER_MAX_WIDTH = 720;
 
 /** Fixed explainer under Weekly highlights. Code-owned, not LLM. */
 export const CHANGELOG_NEWSLETTER_WEEKLY_HIGHLIGHTS_EXPLAINER =
-  "Decision Engine picks. The week's highest-impact Pulse ships. Not every commit. The ones that change the work.";
+  "The Pulse updates that change how you work this week. Real screens and features, not every small fix.";
 
 /** Fixed explainer under More you know. Code-owned, not LLM. */
 export const CHANGELOG_NEWSLETTER_MORE_YOU_KNOW_EXPLAINER =
