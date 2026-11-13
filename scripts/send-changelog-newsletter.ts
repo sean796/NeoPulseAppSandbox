@@ -345,7 +345,7 @@ async function rankWeekImpacts(
   const models = [CHANGELOG_IMPACT_DECISION_MODEL, CHANGELOG_WRITER_MODEL];
   let lastError: Error | null = null;
   for (const model of models) {
-    console.log(`Decision Engine ranking coding impact with ${model}…`);
+    console.log(`Decision Engine ranking user-facing impact with ${model}…`);
     try {
       const rankRaw = await hubApi("openrouter/chat-completion", {
         method: "POST",
@@ -362,6 +362,9 @@ async function rankWeekImpacts(
       const rankContent = extractChatContent(rankRaw);
       if (!rankContent.trim()) {
         throw new Error("Decision Engine impact rank returned empty content.");
+      }
+      if (rankContent.trimStart().startsWith("<!DOCTYPE") || rankContent.trimStart().startsWith("<html")) {
+        throw new Error("Decision Engine impact rank returned HTML instead of JSON (hub mid-deploy).");
       }
       const rank = parseChangelogImpactRank(rankContent);
       const themes = topImpactThemes(rank, 5);
