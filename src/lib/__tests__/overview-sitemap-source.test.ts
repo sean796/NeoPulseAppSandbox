@@ -3,6 +3,7 @@ import type { WordPressSite } from "@/components/integrations/types";
 import {
   canLoadOverviewSitemapSource,
   isOverviewPostsSourceAvailable,
+  overviewEntityRestCollectionForSite,
   overviewInventoryCollectionsForOverviewLoad,
   overviewInventoryCollectionsFromSource,
   overviewInventoryCollectionsForSite,
@@ -20,7 +21,8 @@ function shutterSpotSite(): WordPressSite {
     username: "user",
     appPassword: "pass",
     connectedAt: Date.now(),
-    entitySitemapUrl: "https://shutterspot.com/location-sitemap.xml",
+    entitySitemapUrl: "https://shutterspot.com/service-area-sitemap.xml",
+    manualEndpoint: "service-area",
     sitemaps: {
       mainSitemapUrl: "https://shutterspot.com/sitemap_index.xml",
       detectedAt: Date.now(),
@@ -29,9 +31,23 @@ function shutterSpotSite(): WordPressSite {
         "https://shutterspot.com/post-sitemap.xml",
         "https://shutterspot.com/page-sitemap.xml",
         "https://shutterspot.com/hunter-douglas-sitemap.xml",
+        "https://shutterspot.com/service-area-sitemap.xml",
         "https://shutterspot.com/location-sitemap.xml",
         "https://shutterspot.com/promotion-sitemap.xml",
       ],
+      endpoints: {
+        "https://shutterspot.com/service-area-sitemap.xml": "service-area",
+      },
+      childTagsByUrl: {
+        "https://shutterspot.com/service-area-sitemap.xml": {
+          roles: ["entity"],
+          custom: ["Service Areas"],
+        },
+        "https://shutterspot.com/location-sitemap.xml": {
+          roles: [],
+          custom: ["Locations"],
+        },
+      },
     },
   } as WordPressSite;
 }
@@ -42,6 +58,7 @@ describe("resolveOverviewSitemapUrls", () => {
     expect(resolveOverviewSitemapUrls(site, "pages")).toEqual([
       "https://shutterspot.com/page-sitemap.xml",
       "https://shutterspot.com/hunter-douglas-sitemap.xml",
+      "https://shutterspot.com/location-sitemap.xml",
       "https://shutterspot.com/promotion-sitemap.xml",
     ]);
   });
@@ -53,11 +70,27 @@ describe("resolveOverviewSitemapUrls", () => {
     ]);
   });
 
-  it("SAP resolves configured entity sitemap only", () => {
+  it("SAP resolves service-area entity sitemap only", () => {
     const site = shutterSpotSite();
     expect(resolveOverviewSitemapUrls(site, "sap")).toEqual([
-      "https://shutterspot.com/location-sitemap.xml",
+      "https://shutterspot.com/service-area-sitemap.xml",
     ]);
+  });
+
+  it("SAP never uses location-sitemap even when misconfigured as entity", () => {
+    const site = shutterSpotSite();
+    site.entitySitemapUrl = "https://shutterspot.com/location-sitemap.xml";
+    site.manualEndpoint = "location";
+    site.sitemaps!.childTagsByUrl = {
+      "https://shutterspot.com/location-sitemap.xml": {
+        roles: ["entity"],
+        custom: ["Locations"],
+      },
+    };
+    expect(resolveOverviewSitemapUrls(site, "sap")).toEqual([
+      "https://shutterspot.com/service-area-sitemap.xml",
+    ]);
+    expect(overviewEntityRestCollectionForSite(site)).toBe("service-area");
   });
 
   it("Pages still loads appendable CPT sitemaps when page sitemap is missing", () => {
@@ -67,6 +100,7 @@ describe("resolveOverviewSitemapUrls", () => {
     );
     expect(resolveOverviewSitemapUrls(site, "pages")).toEqual([
       "https://shutterspot.com/hunter-douglas-sitemap.xml",
+      "https://shutterspot.com/location-sitemap.xml",
       "https://shutterspot.com/promotion-sitemap.xml",
     ]);
   });
@@ -79,6 +113,7 @@ describe("resolveOverviewSitemapUrls", () => {
     expect(resolveOverviewSitemapUrls(site, "pages")).toEqual([
       "https://shutterspot.com/page-sitemap.xml",
       "https://shutterspot.com/hunter-douglas-sitemap.xml",
+      "https://shutterspot.com/location-sitemap.xml",
     ]);
   });
 
@@ -97,6 +132,7 @@ describe("overviewInventoryCollectionsFromSource", () => {
     expect(overviewInventoryCollectionsFromSource("pages", site)).toEqual([
       "pages",
       "hunter-douglas",
+      "location",
       "promotion",
     ]);
   });
@@ -111,6 +147,7 @@ describe("overviewInventoryCollectionsFromSource", () => {
     expect(overviewInventoryCollectionsFromSource("pages", site)).toEqual([
       "pages",
       "hunter-douglas",
+      "location",
       "promotion",
       "shop-by-room",
     ]);
@@ -121,12 +158,12 @@ describe("overviewInventoryCollectionsFromSource", () => {
     expect(overviewInventoryCollectionsFromSource("posts", site)).toEqual(["posts"]);
   });
 
-  it("SAP returns entity REST collection", () => {
+  it("SAP returns service-area REST collection", () => {
     const site = shutterSpotSite();
-    expect(overviewInventoryCollectionsFromSource("sap", site)).toEqual(["location"]);
+    expect(overviewInventoryCollectionsFromSource("sap", site)).toEqual(["service-area"]);
   });
 
-  it("SAP prefers manualEndpoint over sitemap filename", () => {
+  it("SAP prefers non-location manualEndpoint over sitemap filename", () => {
     const site = shutterSpotSite();
     site.manualEndpoint = "service-areas";
     expect(overviewInventoryCollectionsFromSource("sap", site)).toEqual(["service-areas"]);
@@ -139,6 +176,7 @@ describe("overviewInventoryCollectionsForSite", () => {
     expect(overviewInventoryCollectionsForSite(site, "pages")).toEqual([
       "pages",
       "hunter-douglas",
+      "location",
       "promotion",
     ]);
   });

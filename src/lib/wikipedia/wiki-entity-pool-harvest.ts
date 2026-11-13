@@ -83,13 +83,27 @@ async function collectFromQueries(
       poolTarget: Number.isFinite(target) ? target : null,
     });
   }
-  for (let i = 0; i < queries.length; i++) {
+  if (pool.size >= target || queries.length === 0) {
+    if (trace) {
+      localGridWikiConsoleLog(`collectFromQueries done (${tier})`, { poolSize: pool.size });
+    }
+    return;
+  }
+
+  // Fan out Wikipedia searches in parallel (caller already caps query count), then fold in order.
+  const settled = await Promise.all(
+    queries.map(async (query, i) => {
+      const q = withSearchAugment(query, wikipediaSearchAugment);
+      if (!q) return { i, q: "", titles: [] as string[] };
+      const titles = await searchWikipediaPages(q, limitPerQuery);
+      return { i, q, titles };
+    }),
+  );
+
+  for (const { i, q, titles } of settled.sort((a, b) => a.i - b.i)) {
     if (pool.size >= target) break;
-    const query = queries[i]!;
-    const q = withSearchAugment(query, wikipediaSearchAugment);
     if (!q) continue;
     const before = pool.size;
-    const titles = await searchWikipediaPages(q, limitPerQuery);
     addTitlesToPool(titles, tier, pool, geo);
     if (trace) {
       localGridWikiConsoleLog(`collectFromQueries [${i + 1}/${queries.length}] ${tier}`, {

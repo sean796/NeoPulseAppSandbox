@@ -16,9 +16,8 @@ import {
   stripLeadingAnswerSection,
   stripLeadingOverviewSection,
 } from "@/lib/overview/overview-blog-overview-prepend";
-import { headingTitleToHarnessAnchorId } from "@/lib/bulk/harness-section-anchor-ids";
 import {
-  buildH2OpenTagForTitle,
+  allocateUniquePassageAnchorId,
   rewriteBlogPassageSection,
   splitHtmlBodyIntoH2PassageSections,
   stitchHtmlBodyFromH2PassageSections,
@@ -143,13 +142,23 @@ export function useOverviewDocSectionBlocks({
     sectionIdx: number,
     patch: { title?: string; bodyHtml?: string },
   ) => {
+    const usedIds = new Set(
+      parsedPassageDoc.sections
+        .filter((_, idx) => idx !== sectionIdx)
+        .map((s) => s.id)
+        .filter(Boolean),
+    );
     const nextSections = parsedPassageDoc.sections.map((sec, idx) => {
       if (idx !== sectionIdx) return sec;
       const nextTitle = patch.title ?? sec.title;
+      const nextId =
+        patch.title != null
+          ? allocateUniquePassageAnchorId(nextTitle, usedIds)
+          : sec.id;
       return {
         ...sec,
-        id: patch.title != null ? headingTitleToHarnessAnchorId(nextTitle) : sec.id,
-        h2OpenTag: patch.title != null ? buildH2OpenTagForTitle(nextTitle) : sec.h2OpenTag,
+        id: nextId,
+        h2OpenTag: patch.title != null ? `<h2 id="${nextId}">` : sec.h2OpenTag,
         title: nextTitle,
         bodyHtml:
           patch.bodyHtml != null
@@ -180,7 +189,7 @@ export function useOverviewDocSectionBlocks({
     if (!target) return;
     const beforeBody = target.bodyHtml;
     const beforeTitle = target.title;
-    const key = `${target.id}:${mode}`;
+    const key = `h2-${sectionIdx}:${mode}`;
     const total = parsedPassageDoc.sections.length;
     setRewritingPassageKey(key);
     onPassageStatusChange?.({

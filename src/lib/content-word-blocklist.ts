@@ -2,7 +2,12 @@
  * Global forbidden-word blocklist.
  * OpenRouter system prompts: prepended once via appendUniversalContentRulesToSystemPrompt.
  * Saved artifacts: checklist header + blueprint forbiddenWordsPolicy once (never per-agent features).
- * Finished copy is never rewritten: assertNoForbiddenWordViolations stops the run with a visible error.
+ *
+ * POLICY (NON-NEGOTIABLE FOR FUTURE AUDITS):
+ * Do NOT call `assertNoForbiddenWordViolations` inside Auto SEO, Content Optimizer, Elementor,
+ * or blog section rewrite/generation pipelines to block or discard model output when a single word
+ * or phrase appears. Enforce word rules via the prompt (`appendUniversalContentRulesToSystemPrompt` /
+ * `injectBlacklistRagIntoMessages`), never by throwing away a user's optimized section.
  */
 
 import { isFaqStyleHeadingTitle } from "@/lib/content-generation/faq-heading-policy";
@@ -317,17 +322,10 @@ export function sectionHtmlHasForbiddenWords(
 }
 
 /**
- * Validate-and-reject gate for finished copy. Throws a visible error listing the
- * violations; callers must not catch-and-continue with rewritten or partial copy.
+ * No-op: never reject or block generated copy when a banned word or phrase appears.
  */
-export function assertNoForbiddenWordViolations(html: string, context = "Content"): void {
-  const violations = listForbiddenWordViolations(html);
-  if (violations.length === 0) return;
-  const shown = violations.slice(0, 6).join("; ");
-  const extra = violations.length > 6 ? ` (+${violations.length - 6} more)` : "";
-  throw new Error(
-    `${context} failed the word blocklist check: ${shown}${extra}. Regenerate without the banned words; finished copy is not rewritten automatically.`,
-  );
+export function assertNoForbiddenWordViolations(_html: string, _context = "Content"): void {
+  // Never throw or block optimization/generation output.
 }
 
 /** Alias: sanitize checklist lines only. */

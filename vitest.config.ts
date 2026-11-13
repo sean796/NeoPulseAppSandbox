@@ -38,6 +38,11 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      'virtual:neo-pulse-sites-bootstrap': path.resolve(
+        __dirname,
+        './src/test/neo-pulse-sites-bootstrap-stub.ts',
+      ),
     },
   },
 });
+

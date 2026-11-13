@@ -34,7 +34,7 @@ describe("quarter-editorial-count-display", () => {
         quarterPairTotalForStrip(stats.postsLive, stats.postsScheduled, postsStripLoading(stats)),
         postsStripLoading(stats),
       ),
-    ).toBe("—");
+    ).toBe("0");
   });
 
   it("entityStripLoading respects showEntityCount", () => {
@@ -45,7 +45,7 @@ describe("quarter-editorial-count-display", () => {
 
   it("formatQuarterCountCell shows digits when not loading", () => {
     expect(formatQuarterCountCell(18, false)).toBe("18");
-    expect(formatQuarterCountCell(null, false)).toBe("—");
+    expect(formatQuarterCountCell(null, false)).toBe("0");
   });
 
   it("editorialPostsMonthBreakdown sums published and scheduled for the month", () => {

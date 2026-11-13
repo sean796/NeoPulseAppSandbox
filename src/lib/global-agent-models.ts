@@ -20,7 +20,7 @@ export const NEO_PULSE_AGENT_REPORT_MODEL_KEY = "neo-pulse-agent-report-model";
 export const NEO_PULSE_AGENT_ADS_MODEL_KEY = "neo-pulse-agent-ads-model";
 /** Global Video agent (OpenRouter video generation). */
 export const NEO_PULSE_AGENT_VIDEO_MODEL_KEY = "neo-pulse-agent-video-model-v3";
-/** Global Decision agent (Liquid d1.1 checker, routing, and scoring). */
+/** Global Decision agent (Liquid checker, routing, and scoring). */
 export const NEO_PULSE_AGENT_DECISION_MODEL_KEY = "neo-pulse-agent-decision-model";
 
 const GLOBAL_RESEARCH_MODEL_KEY = "global_research_model";
@@ -40,8 +40,7 @@ export const TEXT_AGENT_MODEL_PRESETS: { value: string; label: string }[] = [
 ];
 
 export const DECISION_AGENT_MODEL_PRESETS: { value: string; label: string }[] = [
-  { value: "liquid/d1.1", label: "Liquid d1.1 (Checker & Router)" },
-  { value: "liquid/lfm-2.5-24b-a2b", label: "LiquidAI LFM2.5 24B MoE" },
+  { value: "liquid/lfm-2.5-24b-a2b", label: "Liquid LFM2.5 24B (Checker & Router)" },
   { value: GEMINI_FLASH_LITE_MODEL, label: "Gemini 2.5 Flash Lite" },
   { value: DEEPSEEK_FLASH_MODEL, label: "DeepSeek V4.1 Flash" },
   { value: GEMINI_FLASH_MODEL, label: "Gemini 2.5 Flash" },
@@ -243,7 +242,7 @@ export function readGlobalDecisionAgentModel(): string {
 
 export function writeGlobalDecisionAgentModel(model: string): void {
   if (typeof window === "undefined") return;
-  const id = model.trim();
+  const id = coerceOpenRouterModelId(model, DEFAULT_SETTINGS.decisionModel);
   if (!id) return;
   try {
     localStorage.setItem(NEO_PULSE_AGENT_DECISION_MODEL_KEY, id);

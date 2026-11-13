@@ -25,7 +25,6 @@ import { aiseoRowFilesForUpload } from "@/lib/overview/overview-aiseo-row-artifa
 import { buildFaqJsonGeneratedFile } from "@/lib/overview/overview-faq-harness-sections";
 import { appendFaqSectionToPostHtml } from "@/lib/overview/overview-blog-faq-append";
 import {
-  isTruncatedFaqSourceBody,
   resolveFaqHarnessSourceHtml,
   scoreFaqSourceBody,
 } from "@/lib/overview/overview-faq-source-html";
@@ -231,16 +230,7 @@ export async function runFaqPairsForRow(params: RunFaqPairsForRowParams): Promis
     markFaqRowError(url, rowIndex, harnessSetters, updateRow, "No post HTML in cache.");
     return false;
   }
-  if (isTruncatedFaqSourceBody(sourceHtml)) {
-    markFaqRowError(
-      url,
-      rowIndex,
-      harnessSetters,
-      updateRow,
-      "Post body is truncated (Answer only). Re-scrape this row from WordPress, then retry FAQs.",
-    );
-    return false;
-  }
+  // Never skip FAQ generation for short / Answer-only bodies. Prefer fuller live HTML when present.
   if (liveHtml && liveHtml.length > cachedHtml.length) {
     updateRow(rowIndex, { postContent: liveHtml });
   } else if (liveHtml && scoreFaqSourceBody(liveHtml) > scoreFaqSourceBody(cachedHtml)) {
@@ -260,7 +250,9 @@ export async function runFaqPairsForRow(params: RunFaqPairsForRowParams): Promis
       : clampBulkAiFaqSeed(bulkAiFaqSeedCount);
   const totalSections = totalHarnessSectionsIn ?? pairCount;
 
-  updateRow(rowIndex, { status: "ai-faq" });
+  if (!skipLoadingState) {
+    updateRow(rowIndex, { status: "ai-faq" });
+  }
   const briefSeed = row.seoResearch?.trim();
   const dfsContextSeed = briefSeed ? undefined : await deps.getDfsSerpContext(row);
   const existingFaqText =

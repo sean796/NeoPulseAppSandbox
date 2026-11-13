@@ -45,9 +45,9 @@ export async function detectEntitySitemap(site: WordPressSite): Promise<string |
       reasons.push('entity keyword in URL');
     }
     
-    if (urlLower.includes('location') || urlLower.includes('locations')) {
-      score += 5;
-      reasons.push('location keyword in URL');
+    // Never treat Locations CPT sitemaps as SAP / entity (always service-area).
+    if (urlLower.includes('location-sitemap') || urlLower.includes('locations-sitemap')) {
+      continue;
     }
 
     // Check URL patterns in sitemap content

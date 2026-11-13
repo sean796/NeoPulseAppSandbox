@@ -165,23 +165,29 @@ export async function generateAndPrependOverviewHtml(args: {
   const bodyH2Titles = extractH2TextsFromHtml(stripped).filter(
     (t) => !isOverviewHeadingTitle(t) && !isAnswerHeadingTitle(t),
   );
-  if (!bodyH2Titles.length) {
-    throw new Error("No H2 headings to cite from Overview");
-  }
-
   const keyword = args.focusKeyword.trim() || args.articleTitle.trim() || "this topic";
   const pageLabel = harnessPageKindLabel(args.pageKind);
-  const purpose =
-    args.pageKind === "entity" && args.entity?.trim()
+  const hasBodyH2s = bodyH2Titles.length > 0;
+  const purpose = !hasBodyH2s
+    ? args.pageKind === "entity" && args.entity?.trim()
+      ? `AI Overview opener for "${keyword}" on an existing ${pageLabel} near ${args.entity.trim()} that summarizes the article body with bold-label key points (no same-page H2 anchors available yet).`
+      : `AI Overview opener for "${keyword}" that summarizes the article body with bold-label key points (no same-page H2 anchors available yet).`
+    : args.pageKind === "entity" && args.entity?.trim()
       ? `AI Overview opener for "${keyword}" on an existing ${pageLabel} near ${args.entity.trim()} that cites body sections via same-page #anchors.`
       : `AI Overview opener for "${keyword}" that maps remaining body sections via same-page #anchors.`;
   const outline = outlineFromBodyH2Titles(bodyH2Titles);
-  const outlineBlock = formatOutlineTitlesForHarnessPrompt(outline);
-  const anchorMap = buildHarnessSectionAnchorMap(outline);
-  const bodyWithIds = injectBodyH2AnchorIds(stripped, anchorMap);
-  const anchorBlock = formatHarnessInPageAnchorBlock(anchorMap);
-  const totalSections = outline.length + 2;
-  const publishedTitles = ["Answer", "Overview", ...bodyH2Titles];
+  const outlineBlock = hasBodyH2s
+    ? formatOutlineTitlesForHarnessPrompt(outline)
+    : "Body outline: Introduction and full article prose (no discrete H2 sections yet).";
+  const anchorMap = hasBodyH2s ? buildHarnessSectionAnchorMap(outline) : [];
+  const bodyWithIds = hasBodyH2s ? injectBodyH2AnchorIds(stripped, anchorMap) : stripped;
+  const anchorBlock = hasBodyH2s
+    ? formatHarnessInPageAnchorBlock(anchorMap)
+    : "IN-PAGE ANCHORS: none yet. Write Overview key points from the article prose without href=\"#...\" scroll links.";
+  const totalSections = Math.max(outline.length, 1) + 2;
+  const publishedTitles = hasBodyH2s
+    ? ["Answer", "Overview", ...bodyH2Titles]
+    : ["Answer", "Overview", "Introduction"];
 
   const model = args.model?.trim() || getProductionModel();
   let answerHtml = args.pregeneratedAnswerHtml?.trim() || "";
@@ -284,33 +290,32 @@ ${pageCtx.primaryCity ? `\n${PRIMARY_CITY_CONSISTENCY_RULE}` : ""}`;
   overviewHtml = await ensureHarnessSectionLengthCompliance({
     sectionHtml: overviewHtml,
     sectionTitle: BLOG_HARNESS_SUMMARY_TITLE,
-    siblingSectionTitles: bodyH2Titles,
+    siblingSectionTitles: hasBodyH2s ? bodyH2Titles : ["Introduction"],
     articleTitle: args.articleTitle.trim() || keyword,
     apiKey: args.apiKey,
     model: args.model,
     signal: args.signal,
     isOverviewSection: true,
     inPageAnchorBlock: anchorBlock,
-    overviewBulletCount: anchorMap.length,
+    overviewBulletCount: hasBodyH2s ? Math.max(anchorMap.length, 1) : 4,
   });
 
   overviewHtml = ensureOverviewBulletBoldLabels(overviewHtml);
-  if (anchorMap.length === 0) {
-    throw new Error("No body H2 anchors to cite from Overview");
+  if (anchorMap.length > 0) {
+    if (!overviewBulletsHaveRequiredScrollLinks(overviewHtml, anchorMap)) {
+      overviewHtml = await applyOverviewHarnessScrollLinks({
+        html: overviewHtml,
+        anchorMap,
+        articleTitle: args.articleTitle.trim() || keyword,
+        keyword,
+        apiKey: args.apiKey,
+        model: args.model,
+        signal: args.signal,
+        inPageAnchorBlock: anchorBlock,
+      });
+    }
+    overviewHtml = completeOverviewScrollLinks(overviewHtml, anchorMap);
   }
-  if (!overviewBulletsHaveRequiredScrollLinks(overviewHtml, anchorMap)) {
-    overviewHtml = await applyOverviewHarnessScrollLinks({
-      html: overviewHtml,
-      anchorMap,
-      articleTitle: args.articleTitle.trim() || keyword,
-      keyword,
-      apiKey: args.apiKey,
-      model: args.model,
-      signal: args.signal,
-      inPageAnchorBlock: anchorBlock,
-    });
-  }
-  overviewHtml = completeOverviewScrollLinks(overviewHtml, anchorMap);
   overviewHtml = ensureOverviewBulletBoldLabels(overviewHtml);
   overviewHtml = injectHarnessSectionH2AnchorId(overviewHtml, HARNESS_OVERVIEW_ANCHOR_ID);
   overviewHtml = wrapOverviewSectionHtml(overviewHtml);

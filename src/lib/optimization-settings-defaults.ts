@@ -16,7 +16,7 @@ export interface OptimizationSettings {
   imageModel: string;
   /** Video agent: OpenRouter video generation (HeyGen Video) */
   videoModel: string;
-  /** Decision agent: Liquid d1.1 checker, quality gate batches, score rubrics, and fix routing */
+  /** Decision agent: Liquid checker, quality gate batches, score rubrics, and fix routing */
   decisionModel: string;
   customModels: string[];
   temperature: number;
@@ -32,7 +32,7 @@ export const DEFAULT_SETTINGS: OptimizationSettings = {
   adsModel: "deepseek/deepseek-v4.1-flash",
   imageModel: DEFAULT_IMAGE_MODEL,
   videoModel: DEFAULT_VIDEO_MODEL,
-  decisionModel: "liquid/d1.1",
+  decisionModel: "liquid/lfm-2.5-24b-a2b",
   customModels: [],
   temperature: 1.0,
   maxTokens: 4000,

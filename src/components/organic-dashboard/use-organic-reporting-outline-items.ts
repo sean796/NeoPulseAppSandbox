@@ -37,11 +37,55 @@ export function useOrganicReportingOutlineItems(reportContent: OrganicClientRepo
 
 
 
+    if (reportContent.showSeoLeadsSection) {
+      items.push({
+        id: "outline-organic-website-leads",
+        title: formatOwnerReportHeading("Organic Website Leads"),
+        subtitle: "/organic-website-leads",
+        anchorId: "export-section-organic-website-leads",
+        isReady: reportContent.seoLeadsDeckRows.length > 0,
+        downloadFile: {
+          name: "organic-website-leads.json",
+          content: JSON.stringify(
+            {
+              summary: reportContent.seoLeadsDeckRows,
+            },
+            null,
+            2,
+          ),
+          mimeType: "application/json;charset=utf-8",
+        },
+      });
+    }
+
+    if (reportContent.showGmbLeadsSection) {
+      items.push({
+        id: "outline-gmb-leads",
+        title: formatOwnerReportHeading("Google My Business Leads"),
+        subtitle: "/google-my-business-leads",
+        anchorId: "export-section-google-my-business-leads",
+        isReady:
+          reportContent.gmbLeadsDeckRows.length > 0 || Boolean(reportContent.gmbLeadsLoadError),
+        downloadFile: {
+          name: "google-my-business-leads.json",
+          content: JSON.stringify(
+            {
+              summary: reportContent.gmbLeadsDeckRows,
+              error: reportContent.gmbLeadsLoadError,
+            },
+            null,
+            2,
+          ),
+          mimeType: "application/json;charset=utf-8",
+        },
+      });
+    }
+
     if (reportContent.showPerformanceSection) {
       items.push({
         id: "outline-performance",
         title: formatOwnerReportHeading("Performance summary"),
-        subtitle: "/ga4",
+        subtitle: "/google-analytics",
         anchorId: "export-section-performance-summary",
         isReady: reportContent.traffic.length > 0 || reportContent.search.length > 0,
         downloadFile: {

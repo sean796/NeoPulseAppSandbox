@@ -141,7 +141,7 @@ export function BulkBlogGenerationTab({
 
         <div className="pointer-events-none absolute h-0 w-0 overflow-hidden opacity-0" aria-hidden>
           <BulkAutoGeneratePanel
-            forcedInputMode={studioEditorMode === "csv" ? "csv" : "prompt"}
+            forcedInputMode={studioEditorMode === "blog-import" ? "blog-import" : "prompt"}
             apiKey={effectiveDataForSeoApiKey}
             openRouterApiKey={openRouterApiKey}
             selectedModel={selectedModel}

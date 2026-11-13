@@ -580,6 +580,34 @@ class Neo_Pulse_App_Secrets {
 		return '';
 	}
 
+	/**
+	 * NDUS agency leads report URL (remote hub when neo-pulse-app is not co-hosted with NDUS).
+	 */
+	public static function ndus_leads_report_url(): string {
+		if ( defined( 'NEO_PULSE_APP_NDUS_LEADS_URL' ) && NEO_PULSE_APP_NDUS_LEADS_URL !== '' ) {
+			return rtrim( trim( (string) NEO_PULSE_APP_NDUS_LEADS_URL ), '/' );
+		}
+		$from_env = self::env_string( 'NEO_PULSE_APP_NDUS_LEADS_URL' );
+		if ( $from_env !== '' ) {
+			return rtrim( $from_env, '/' );
+		}
+		return 'https://neodigital.ca/wp-json/neo-updates/v1/leads/report';
+	}
+
+	public static function ndus_leads_user(): string {
+		if ( defined( 'NEO_PULSE_APP_NDUS_LEADS_USER' ) && NEO_PULSE_APP_NDUS_LEADS_USER !== '' ) {
+			return trim( (string) NEO_PULSE_APP_NDUS_LEADS_USER );
+		}
+		return self::env_string( 'NEO_PULSE_APP_NDUS_LEADS_USER' );
+	}
+
+	public static function ndus_leads_app_password(): string {
+		if ( defined( 'NEO_PULSE_APP_NDUS_LEADS_APP_PASSWORD' ) && NEO_PULSE_APP_NDUS_LEADS_APP_PASSWORD !== '' ) {
+			return trim( (string) NEO_PULSE_APP_NDUS_LEADS_APP_PASSWORD );
+		}
+		return self::env_string( 'NEO_PULSE_APP_NDUS_LEADS_APP_PASSWORD' );
+	}
+
 	public static function ollama_auth(): string {
 		if ( defined( 'NEO_PULSE_APP_OLLAMA_AUTH' ) && NEO_PULSE_APP_OLLAMA_AUTH !== '' ) {
 			return trim( (string) NEO_PULSE_APP_OLLAMA_AUTH );

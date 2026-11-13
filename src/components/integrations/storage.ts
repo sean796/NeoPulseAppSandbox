@@ -10,6 +10,7 @@ import {
   fetchClientSiteLogoUrl,
   resolveClientSiteOrigin,
 } from "@/lib/integrations/client-site-logo";
+import { BOOTSTRAP_SITES } from "virtual:neo-pulse-sites-bootstrap";
 import type { WordPressSite } from "./types";
 import { WORDPRESS_SITES_STORAGE_KEY } from "./types";
 import { getDeletedSitesTombstones, isSiteTombstoned } from "./storage-deleted-sites";
@@ -22,6 +23,7 @@ import {
   stripInlineClientLogoFromSite,
 } from "./storage-site-normalize";
 import { fetchWordPressSitesMirror, syncWordPressSitesToServer } from "./storage-server-sync";
+import { DEFAULT_PROPERTIES_SEED_SITES } from "./default-properties-seed";
 
 export {
   DELETED_WP_SITES_STORAGE_KEY,
@@ -52,9 +54,105 @@ export const WP_SITES_RESTORE_ORIGINAL_NAMES_ONCE_KEY =
 let serverHarnessSitesOverride: WordPressSite[] | null = null;
 /** In-memory runtime store for connected WordPress sites (backed by server mirror). */
 let memorySitesStore: WordPressSite[] | null = null;
+/** True after the first server roster load attempt finishes (success or empty). */
+let sitesServerHydrationDone = false;
+/** Shared in-flight/completed hydration so boot does not flash an empty roster. */
+let sitesServerHydrationPromise: Promise<WordPressSite[]> | null = null;
+
+function applySiteIntegrationDefaults(site: WordPressSite): WordPressSite {
+  return applySemrushProjectDefaults(
+    applyGa4PropertyIdDefaults(
+      applyWpEngineHostingDefaults(applyShutterSpotDisplayNameMigration(normalizeSiteEntry(site))),
+    ),
+  );
+}
+
+function seedMemoryFromBootstrap(): void {
+  if (memorySitesStore) return;
+  if (!Array.isArray(BOOTSTRAP_SITES) || BOOTSTRAP_SITES.length === 0) return;
+  const tombstones = getDeletedSitesTombstones();
+  memorySitesStore = BOOTSTRAP_SITES.filter((s) => !isSiteTombstoned(s, tombstones)).map(
+    applySiteIntegrationDefaults,
+  );
+}
+
+seedMemoryFromBootstrap();
 
 export function setServerHarnessSitesOverride(sites: WordPressSite[] | null): void {
   serverHarnessSitesOverride = sites;
+}
+
+export function hasSitesServerHydrated(): boolean {
+  return sitesServerHydrationDone || Boolean(memorySitesStore && memorySitesStore.length > 0);
+}
+
+/** Deduped server roster load; safe to call from module boot and React effects. */
+export function ensureSitesLoadedFromServer(): Promise<WordPressSite[]> {
+  if (!sitesServerHydrationPromise) {
+    sitesServerHydrationPromise = loadSitesFromServerAlways().finally(() => {
+      sitesServerHydrationDone = true;
+    });
+  }
+  return sitesServerHydrationPromise;
+}
+
+/**
+ * Always load the Properties roster from the server mirror into memory.
+ * Keeps seed-only properties (e.g. Custom Shades) when the mirror lacks them.
+ */
+export async function loadSitesFromServerAlways(): Promise<WordPressSite[]> {
+  purgeLegacyLocalStorageCaches();
+  const tombstones = getDeletedSitesTombstones();
+  const mirror = await fetchWordPressSitesMirror();
+  const filteredMirror = mirror
+    .filter((s) => !isSiteTombstoned(s, tombstones))
+    .map(applySiteIntegrationDefaults);
+
+  const seed = DEFAULT_PROPERTIES_SEED_SITES.filter((s) => !isSiteTombstoned(s, tombstones)).map(
+    applySiteIntegrationDefaults,
+  );
+  const byHost = new Map<string, WordPressSite>();
+  const hostOf = (s: WordPressSite) => wordPressSiteHostKey(s.siteUrl) || s.id;
+  for (const s of filteredMirror) byHost.set(hostOf(s), s);
+  for (const s of seed) {
+    const host = hostOf(s);
+    const cur = byHost.get(host);
+    if (!cur) {
+      byHost.set(host, s);
+      continue;
+    }
+    byHost.set(host, {
+      ...cur,
+      ...s,
+      appPassword: s.appPassword?.trim() ? s.appPassword : cur.appPassword,
+      locations: s.locations?.length ? s.locations : cur.locations,
+      napInfo: s.napInfo ?? cur.napInfo,
+      primaryLocalKeyword: s.primaryLocalKeyword || cur.primaryLocalKeyword,
+      sitemaps: s.sitemaps ?? cur.sitemaps,
+      entitySitemapUrl: s.entitySitemapUrl || cur.entitySitemapUrl,
+      manualEndpoint: s.manualEndpoint || cur.manualEndpoint,
+      clientLogoUrl: s.clientLogoUrl || cur.clientLogoUrl,
+      clientLogoSource: s.clientLogoSource || cur.clientLogoSource,
+      clientLogoFetchedAt: s.clientLogoFetchedAt || cur.clientLogoFetchedAt,
+      wpEngineInstall: s.wpEngineInstall || cur.wpEngineInstall,
+    });
+  }
+
+  // Prefer bootstrap/local memory credentials when mirror rows are secret-stripped.
+  if (memorySitesStore?.length) {
+    for (const local of memorySitesStore) {
+      const host = hostOf(local);
+      const cur = byHost.get(host);
+      if (!cur) continue;
+      if (!cur.appPassword?.trim() && local.appPassword?.trim()) {
+        byHost.set(host, { ...cur, appPassword: local.appPassword });
+      }
+    }
+  }
+
+  memorySitesStore = [...byHost.values()];
+  sitesServerHydrationDone = true;
+  return getStoredSites();
 }
 
 let legacyLocalStorageCachesPurged = false;

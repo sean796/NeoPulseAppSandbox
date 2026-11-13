@@ -8,7 +8,14 @@ import { loadApiKey } from "@/lib/api";
 import { applyGbpPropertyWand } from "@/lib/wordpress-site-display-name-from-dfs-gmb";
 import { wordpressSiteCanonicalName } from "@/lib/wordpress-site-display-name";
 import { type WordPressSite } from "../types";
-import { editorialContentPackageShortLabelForSite } from "@/lib/editorial-content-package";
+import {
+  editorialContentPackageShortLabelForSite,
+  resolveEditorialContentPackageForSite,
+} from "@/lib/editorial-content-package";
+import {
+  propertiesDockNameClass,
+  propertiesEditorialTierChipClass,
+} from "./wordpress-properties-surfaces";
 import { propertyWpAdminUrl } from "./property-profile-view-model";
 import type { WordPressPropertyRowDisplay } from "@/lib/wordpress-properties-row-display";
 import { getCyberpunkCardClasses, getCyberpunkTextClasses, getPropertyListRowBlackIconButtonClass, getPropertyListRowIconButtonHoverGlowClass } from "./cyberpunk-theme";
@@ -48,6 +55,10 @@ interface CompactWordPressTileProps {
   onDelete?: () => void;
   /** Properties list: edit stored property name (canonical, not header menu label). */
   onEditCanonicalName?: () => void;
+  /** Narrow Studio dock row: name truncates; WP Admin is an icon left of the label. */
+  dock?: boolean;
+  /** Dock row is the active/open property (lime name). */
+  dockActive?: boolean;
 }
 
 function copySiteUrlButton(
@@ -154,6 +165,8 @@ function menuInnerSummary(
     linkTitleToSite?: boolean;
     onOpenProfile?: () => void;
     listRowActions?: ListRowActions;
+    dock?: boolean;
+    dockActive?: boolean;
   },
 ) {
   const compact = rowDisplay === "compact";
@@ -175,17 +188,43 @@ function menuInnerSummary(
         compact ? "gap-2" : "gap-3",
       )}
     >
-      {options?.listRowActions ? (
+      {options?.dock ? (
+        siteHref ? (
+          <a
+            href={propertyWpAdminUrl(site)}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open WP admin for ${displayName}`}
+            title={`Open WP admin: ${propertyWpAdminUrl(site)}`}
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex h-4 w-4 shrink-0 items-center justify-center !text-white"
+            style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff", opacity: 1, filter: "none" }}
+          >
+            <ExternalLink className="h-4 w-4 !text-white" aria-hidden stroke="currentColor" />
+          </a>
+        ) : null
+      ) : options?.listRowActions ? (
         <>
           {listRowActionsMenu(site, options.listRowActions)}
-          {editorialContentPackageShortLabelForSite(site) ? (
-            <span
-              className="inline-flex h-8 min-h-8 w-24 shrink-0 items-center justify-center rounded-none bg-ui-field px-2 text-base font-medium tabular-nums text-foreground sm:h-9 sm:min-h-9"
-              title="Editorial content package"
-            >
-              {editorialContentPackageShortLabelForSite(site)}
-            </span>
-          ) : null}
+          {(() => {
+            const tier = resolveEditorialContentPackageForSite(site);
+            const label = editorialContentPackageShortLabelForSite(site);
+            if (!label) return null;
+            return (
+              <span
+                className={cn(
+                  "inline-flex h-8 min-h-8 w-24 shrink-0 items-center justify-center gap-2 rounded-none bg-ui-field px-2 text-base font-medium tabular-nums text-foreground sm:h-9 sm:min-h-9",
+                )}
+                title="Editorial content package"
+              >
+                <span
+                  className={cn("h-2 w-2 shrink-0 rounded-none", propertiesEditorialTierChipClass(tier))}
+                  aria-hidden
+                />
+                {label}
+              </span>
+            );
+          })()}
           {siteHref ? (
             <a
               href={propertyWpAdminUrl(site)}
@@ -209,7 +248,34 @@ function menuInnerSummary(
           {gmbDisplayNameWand}
         </>
       )}
-      {options?.onOpenProfile ? (
+      {options?.dock && options?.onOpenProfile ? (
+        (() => {
+          const tierLabel = editorialContentPackageShortLabelForSite(site) ?? "Unassigned";
+          return (
+            <button
+              type="button"
+              title={`${displayName} · ${tierLabel}`}
+              aria-label={`${displayName}, ${tierLabel} package`}
+              className={cn(
+                "min-w-0 flex-1 truncate text-left text-xs font-bold leading-none text-white",
+                propertiesDockNameClass(Boolean(options.dockActive)),
+              )}
+              style={{
+                color: "#ffffff",
+                WebkitTextFillColor: "#ffffff",
+                opacity: 1,
+                filter: "none",
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                options.onOpenProfile?.();
+              }}
+            >
+              {displayName}
+            </button>
+          );
+        })()
+      ) : options?.onOpenProfile ? (
         <TextButton
           tone="plain"
           type="button"
@@ -258,6 +324,8 @@ export const CompactWordPressTile: React.FC<CompactWordPressTileProps> = ({
   onOpenProfile,
   onDelete,
   onEditCanonicalName,
+  dock = false,
+  dockActive = false,
 }) => {
   const [isResolvingGmbDisplayName, setIsResolvingGmbDisplayName] = useState(false);
 
@@ -362,6 +430,8 @@ export const CompactWordPressTile: React.FC<CompactWordPressTileProps> = ({
     hideCopyUrl,
     linkTitleToSite,
     onOpenProfile,
+    dock,
+    dockActive,
     listRowActions:
       variant === "listRow"
         ? {

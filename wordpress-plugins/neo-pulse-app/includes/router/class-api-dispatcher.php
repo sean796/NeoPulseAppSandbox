@@ -122,6 +122,8 @@ class Neo_Pulse_App_Api_Dispatcher {
 			array( 'GET', 'gmb/callback' ),
 			array( 'GET', 'google-ads/callback' ),
 			array( 'GET', 'google-mcp/callback' ),
+			array( 'POST', 'careers/project-room/chat' ),
+			array( 'POST', 'careers/submit' ),
 		);
 	}
 
@@ -350,6 +352,12 @@ class Neo_Pulse_App_Api_Dispatcher {
 		if ( 0 === strpos( $route, 'changelog/' ) || $route === 'changelog' ) {
 			$changelog_route = $route === 'changelog' ? '' : substr( $route, 10 );
 			Neo_Pulse_App_Changelog_Route_Handlers::dispatch_http( $changelog_route, $method, $body );
+			return;
+		}
+
+		if ( 0 === strpos( $route, 'careers/' ) || $route === 'careers' ) {
+			$careers_route = $route === 'careers' ? '' : substr( $route, 8 );
+			Neo_Pulse_App_Careers_Route_Handlers::dispatch_http( $careers_route, $method, $body );
 			return;
 		}
 

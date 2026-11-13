@@ -109,6 +109,7 @@ export function useOverviewWordPressBinding(
         source?: OverviewSitemapSource;
         silent?: boolean;
         forceRefresh?: boolean;
+        preferNeoMcp?: boolean;
       },
     ): Promise<{ ok: boolean; count: number; error?: string; csvReady?: boolean; urls?: string[] }> => {
       return runPrefetchOverviewInventory(

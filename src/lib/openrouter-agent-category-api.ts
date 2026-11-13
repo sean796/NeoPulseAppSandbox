@@ -214,6 +214,12 @@ export async function callAgentCategoryOpenRouterChat(args: {
     useWordBlacklist: args.useWordBlacklist,
   });
 
+  if (!prepared.messages?.length && (!prepared.system?.trim() || prepared.user === undefined)) {
+    throw new Error("OpenRouter agent call requires system and user, or messages.");
+  }
+
+  // Every call below funnels into postOpenRouterAppChat, which logs the
+  // model, prompt size, reply size, token usage, and seconds for each call.
   if (prepared.messages?.length) {
     return postOpenRouterAppChat({
       apiKey,
@@ -227,15 +233,11 @@ export async function callAgentCategoryOpenRouterChat(args: {
     });
   }
 
-  if (!prepared.system?.trim() || prepared.user === undefined) {
-    throw new Error("OpenRouter agent call requires system and user, or messages.");
-  }
-
   return callOpenRouterChatCompletion({
     apiKey,
     model,
-    system: prepared.system,
-    user: prepared.user,
+    system: prepared.system!,
+    user: prepared.user!,
     maxTokens: args.maxTokens ?? 16000,
     temperature: args.temperature,
     responseFormat: args.responseFormat,

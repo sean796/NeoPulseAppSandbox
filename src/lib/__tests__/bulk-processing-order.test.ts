@@ -14,13 +14,23 @@ const row = (title: string): CSVRow => ({
 });
 
 describe('buildBulkBaseRows', () => {
-  it('returns csv rows in csv mode', () => {
+  it('returns csv rows in csv mode when no selection', () => {
     const r = [row('a'), row('b')];
     const out = buildBulkBaseRows('csv', r, [], new Set());
     expect(out.ok).toBe(true);
     if (out.ok) {
       expect(out.baseRows).toEqual(r);
       expect(out.baseDisplayIndices).toBeUndefined();
+    }
+  });
+
+  it('uses selection in csv mode when rows are checked', () => {
+    const r = [row('a'), row('b'), row('c')];
+    const out = buildBulkBaseRows('csv', r, [], new Set([2, 0]));
+    expect(out.ok).toBe(true);
+    if (out.ok) {
+      expect(out.baseRows.map((x) => x.title)).toEqual(['a', 'c']);
+      expect(out.baseDisplayIndices).toEqual([0, 2]);
     }
   });
 

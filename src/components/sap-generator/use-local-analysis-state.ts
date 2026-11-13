@@ -11,7 +11,11 @@ import { LOCAL_ANALYSIS_DEFAULT_SAP_PAGES as DEFAULT_SAP_PAGES, LOCAL_ANALYSIS_S
 
 import { PER_ROW_SAP_DEFAULT, newTargetRowId, type KeywordTargetRow, type LocalAnalysisWorkspaceControls, type SapGeneratorLocalWorkspaceMode, type WikiCellState } from "@/components/sap-generator/local-analysis-helpers";
 import type { EntitySapKeywordSources } from "@/lib/local-analysis/entity-sap-row-keyword-fill";
-import { ensureEntitySiteWarmCache, gscAllQueriesFromWarmBundle } from "@/lib/local-analysis/entity-site-warm-cache";
+import {
+  clearEntitySiteWarmCache,
+  ensureEntitySiteWarmCache,
+  gscAllQueriesFromWarmBundle,
+} from "@/lib/local-analysis/entity-site-warm-cache";
 import { mergeGscQueriesWithInventoryFallback } from "@/lib/local-analysis/entity-gsc-inventory-fallback";
 import { revokeBulkSitemapInventoryLinks } from "@/lib/bulk/bulk-sitemap-inventory-session";
 import type { PromptBulkSitemapInventoryLink } from "@/lib/bulk/prompt-bulk-sitemap-inventory";
@@ -259,7 +263,13 @@ export function useLocalAnalysisState(props: LocalAnalysisPanelProps) {
 
   const loadSitePrepAndGsc = useCallback(async () => {
     const siteUrl = isTempWorkspace ? workspace.tempSeedUrl.trim() : (site.siteUrl?.trim() ?? "");
-    const warm = await ensureEntitySiteWarmCache(site, { requireGsc: !useBlindMagicKeywords });
+    if (!useBlindMagicKeywords) {
+      clearEntitySiteWarmCache(site.id);
+    }
+    const warm = await ensureEntitySiteWarmCache(site, {
+      force: !useBlindMagicKeywords,
+      requireGsc: !useBlindMagicKeywords,
+    });
     if (warm.error && !useBlindMagicKeywords) {
       throw new Error(warm.error);
     }

@@ -190,7 +190,7 @@ export async function fillEntitySlotKeywordsFromGsc(
     throw new Error("WordPress site URL is required to load GSC keywords.");
   }
 
-  args.onPhase?.("Loading site inventory and GSC cache", 0);
+  args.onPhase?.("Loading site inventory and GSC", 0);
   const warm = await ensureEntitySiteWarmCache(args.site, { requireGsc: true });
   if (warm.error) {
     throw new Error(warm.error);

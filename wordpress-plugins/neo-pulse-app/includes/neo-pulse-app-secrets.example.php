@@ -64,6 +64,15 @@ if ( ! defined( 'NEO_PULSE_APP_POST_CREATOR_WORKER_AUTH' ) ) {
 if ( ! defined( 'NEO_PULSE_APP_POST_CREATOR_API_BASE' ) ) {
 	define( 'NEO_PULSE_APP_POST_CREATOR_API_BASE', 'https://neodigital.ca' );
 }
+if ( ! defined( 'NEO_PULSE_APP_NDUS_LEADS_URL' ) ) {
+	define( 'NEO_PULSE_APP_NDUS_LEADS_URL', 'https://neodigital.ca/wp-json/neo-updates/v1/leads/report' );
+}
+if ( ! defined( 'NEO_PULSE_APP_NDUS_LEADS_USER' ) ) {
+	define( 'NEO_PULSE_APP_NDUS_LEADS_USER', '' );
+}
+if ( ! defined( 'NEO_PULSE_APP_NDUS_LEADS_APP_PASSWORD' ) ) {
+	define( 'NEO_PULSE_APP_NDUS_LEADS_APP_PASSWORD', '' );
+}
 // Wave 0: OAuth refresh tokens, site credentials, and webhook secrets live
 // in env or constants only. Access tokens are minted at runtime.
 if ( ! defined( 'NEO_PULSE_APP_GMB_OAUTH_REFRESH_TOKEN' ) ) {

@@ -11,15 +11,19 @@ import { ensureEntityPageCreatorPayload } from "@/lib/entity-page-creator/entity
 import { splitEntityTotalIntoAdGroupsAndAds } from "@/lib/local-analysis/entity-ad-group-budget";
 import {
   allocatePagesAcrossNeighbourhoodPicks,
-  pickNeighbourhoodEntitiesForCluster,
-  resolveNeighbourhoodWikiOnly,
+  fillDistinctNeighbourhoodSlotsForBucket,
+  maxClustersForBudget,
 } from "@/lib/local-analysis/entity-grid-location-wiki-agent";
 import { cityBucketFromLocationLabel } from "@/lib/local-analysis/grid-location-buckets";
 import { fillEntitySlotKeywordsFromGsc } from "@/lib/local-analysis/entity-preload-clusters-hydrate";
 import { finalizeEntitySapRowsForAdGroups } from "@/lib/local-analysis/sap-entity-ad-groups";
 import { buildBulkAutoGenerateTemplateCsvFromRows } from "@/lib/local-analysis-csv-export";
 import { parseLocalGridEntityRowCount } from "@/lib/local-grid-studio/local-grid-entity-template-rows";
-import { parseLocalDominatorCsv } from "@/lib/local-dominator-csv";
+import {
+  buildLocalGridSummary,
+  parseLocalDominatorCsv,
+  wikipediaSearchAugmentFromGridRows,
+} from "@/lib/local-dominator-csv";
 import { resolveOpenRouterApiKeyForHarness } from "@/lib/openrouter-api-key-resolve";
 import { getBlogModel } from "@/lib/optimization-settings-storage";
 import { processParsedLocalDominatorRows } from "@/lib/process-local-dominator-upload";
@@ -118,35 +122,61 @@ export async function generateLocationsWikiRowsFromGrid(options: {
   });
 
   const evaluatedPins = aggregateLocalGridScan(scan.points, scan.targetBusiness).evaluatedPins;
-  report("Picking neighbourhoods around the lowest-position pins…");
-  const usedNeighbourhoods: string[] = [];
-  const baseRows: CSVRow[] = [];
-  for (const { place: city, weight, pages } of planned) {
-    const bucket = {
-      ...cityBucketFromLocationLabel(city),
-      weight,
-      sampleAddresses: weakestPinAddressesForCity(evaluatedPins, city),
-    };
-    const picks = await pickNeighbourhoodEntitiesForCluster(
-      bucket,
-      processed.placeHints,
-      usedNeighbourhoods,
-      pages,
-      apiKey,
-      site.id,
-      {
-        entityTypeFocus: clusterContext.entityTypeFocus,
+  const gridSummaryMarkdown = buildLocalGridSummary(parsed.rows, {
+    rowsForGeographicScope: parsed.rows,
+  }).summaryMarkdown;
+  const wikipediaSearchAugment = wikipediaSearchAugmentFromGridRows(parsed.rows);
+
+  report("Harvesting Wikipedia neighbourhoods for grid cities…");
+  const citySlotBatches = await Promise.all(
+    planned.map(async ({ place: city, weight, pages }) => {
+      const bucket = {
+        ...cityBucketFromLocationLabel(city),
+        weight,
+        sampleAddresses: weakestPinAddressesForCity(evaluatedPins, city),
+      };
+      const slotCount = Math.max(1, maxClustersForBudget(pages));
+      const slots = await fillDistinctNeighbourhoodSlotsForBucket({
+        bucket,
+        slotCount,
+        gridRows: parsed.rows,
+        gridLocations: processed.placeHints,
+        gridSummaryMarkdown,
+        wikipediaSearchAugment,
+        apiKey,
+        siteId: site.id,
+        entityTypeFocus: [...clusterContext.entityTypeFocus],
         ...(clusterContext.clientAudienceContextMarkdown
           ? { clientAudienceContextMarkdown: clusterContext.clientAudienceContextMarkdown }
           : {}),
-      },
-    );
-    const allocated = allocatePagesAcrossNeighbourhoodPicks(picks, pages);
-    if (allocated.length === 0) throw new Error(`No neighbourhoods found inside ${city}.`);
-    const cityWiki = await resolveNeighbourhoodWikiOnly(allocated[0]!.entity, bucket, apiKey, site.id);
-    if (!cityWiki) throw new Error(`No Wikipedia article found for ${city}.`);
+        globalUsedKeys: new Set<string>(),
+        globalUsedNames: [],
+        onProgress: (phase) => report(phase),
+      });
+      if (slots.length === 0) {
+        throw new Error(`No neighbourhoods found inside ${city}.`);
+      }
+      const picks = slots.map((s) => ({ name: s.entity, posWeight: 1 }));
+      const allocated = allocatePagesAcrossNeighbourhoodPicks(picks, pages);
+      if (allocated.length === 0) {
+        throw new Error(`No neighbourhoods found inside ${city}.`);
+      }
+      const wikiByEntity = new Map(slots.map((s) => [s.entity.trim().toLowerCase(), s.wiki]));
+      return { city, allocated, wikiByEntity };
+    }),
+  );
+
+  const baseRows: CSVRow[] = [];
+  const seenEntities = new Set<string>();
+  for (const { city, allocated, wikiByEntity } of citySlotBatches) {
     for (const { entity, pages: entityPages } of allocated) {
-      usedNeighbourhoods.push(entity);
+      const key = entity.trim().toLowerCase();
+      if (!key || seenEntities.has(key)) continue;
+      seenEntities.add(key);
+      const wiki = wikiByEntity.get(key);
+      if (!wiki?.url?.trim() || !wiki.title?.trim()) {
+        throw new Error(`No Wikipedia article found for ${entity} (${city}).`);
+      }
       for (let i = 0; i < entityPages; i += 1) {
         baseRows.push({
           keyword: "",
@@ -155,11 +185,14 @@ export async function generateLocationsWikiRowsFromGrid(options: {
           modifier: "",
           featuredImage: "google-maps",
           sitemap_type: "entity",
-          wikipedia_url: cityWiki.url,
-          wikipedia_title: cityWiki.title,
+          wikipedia_url: wiki.url,
+          wikipedia_title: wiki.title,
         });
       }
     }
+  }
+  if (baseRows.length === 0) {
+    throw new Error("No neighbourhoods found from Wikipedia harvest for this grid.");
   }
   const rowsForAdGroups = finalizeEntitySapRowsForAdGroups(baseRows);
   assertSapRowsHaveLinkedWikipedia(rowsForAdGroups);

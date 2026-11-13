@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Download, Pencil, RefreshCw } from "lucide-react";
+import { ChevronDown, Download, Pencil, RefreshCw } from "lucide-react";
 import { ManagerErrorLogDropdownSection } from "@/components/manager/ManagerErrorLogBell";
 import { useManagerErrorLog } from "@/contexts/manager-error-log-context";
 import { getAppNotificationState, subscribeAppNotifications } from "@/lib/app-notifications";
@@ -13,7 +13,7 @@ import { SiteDisplayNameDialog } from "@/components/manager/SiteDisplayNameDialo
 import {
   MANAGER_DISPLAY_CONSOLE_ROW,
   MANAGER_DISPLAY_DROPDOWN_PANEL,
-  MANAGER_DISPLAY_NAME_LABEL,
+  MANAGER_DISPLAY_NAME_CHEVRON_SLOT,
   MANAGER_DISPLAY_NAME_BAND,
   MANAGER_DISPLAY_SITE_WARMING,
   MANAGER_HEADER_BADGE_SIZE,
@@ -35,34 +35,19 @@ import {
 import { htmlToMarkdown } from "@/lib/wordpress-converter";
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Tooltip, TooltipContent, TooltipTrigger } from "@/ui";
 
-const NAME_CHEVRON_PX = 28;
+/** Extra lane so labels clear the vertical scrollbar in the site menu. */
+const SITE_MENU_SCROLL_GUTTER_PX = 12;
+const SITE_MENU_ITEM_INSET = "pl-3 pr-5";
 
-function chipLabelWidthPx(root: HTMLElement, labelMeasure: string): number {
-  let maxLabel = 0;
+function maxMeasuredWidthPx(root: HTMLElement): number {
+  let max = 0;
   for (const el of Array.from(root.children)) {
     const row = el as HTMLElement;
-    if (row.dataset.measure === labelMeasure) {
-      maxLabel = Math.max(maxLabel, row.offsetWidth);
-    }
+    if (!row.dataset.measure) continue;
+    const w = Math.ceil(Math.max(row.getBoundingClientRect().width, row.scrollWidth, row.offsetWidth));
+    max = Math.max(max, w);
   }
-  return maxLabel > 0 ? maxLabel + NAME_CHEVRON_PX : 0;
-}
-
-function menuRowWidthPx(root: HTMLElement, rowMeasure: string): number {
-  let maxRow = 0;
-  for (const el of Array.from(root.children)) {
-    const row = el as HTMLElement;
-    if (row.dataset.measure === rowMeasure) {
-      maxRow = Math.max(maxRow, row.offsetWidth);
-    }
-  }
-  return maxRow;
-}
-
-function chipMenuWidthPx(root: HTMLElement, labelMeasure: string, rowMeasure: string): number {
-  const fromLabel = chipLabelWidthPx(root, labelMeasure);
-  const fromRow = menuRowWidthPx(root, rowMeasure);
-  return Math.max(fromLabel, fromRow);
+  return max > 0 ? max + SITE_MENU_SCROLL_GUTTER_PX : 0;
 }
 
 function csvCell(value: unknown): string {
@@ -166,6 +151,7 @@ export function ManagerTopBarDisplayConsole({
   const { sites, handleConnectSite, handlePatchSite } = useWordPressSites();
   const { activeWordPressSiteId, setActiveWordPressSiteId } = useActiveWordPressSite();
   const measureRef = useRef<HTMLDivElement>(null);
+  const menuContentRef = useRef<HTMLDivElement>(null);
   const [siteMenuOpen, setSiteMenuOpen] = useState(false);
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
   const [renameSite, setRenameSite] = useState<WordPressSite | null>(null);
@@ -193,12 +179,26 @@ export function ManagerTopBarDisplayConsole({
   const nameBandAlertClass = managerDisplayNameBandAlertClass(nameAlertKind);
 
   const displayLabelsKey = displayLabels.join("|");
-  useLayoutEffect(() => {
+  const measureKey = `${displayLabelsKey}|u${utilityRowCount}|e${hasErrorLog ? 1 : 0}`;
+  const syncSiteMenuWidth = () => {
     const root = measureRef.current;
     if (!root) return;
-    const nextWidth = chipMenuWidthPx(root, "site-label", "site-row");
+    const nextWidth = maxMeasuredWidthPx(root);
     setSiteMenuWidthPx((prev) => (prev === nextWidth ? prev : nextWidth));
-  }, [displayLabelsKey]);
+  };
+  useLayoutEffect(() => {
+    syncSiteMenuWidth();
+  }, [measureKey]);
+  useLayoutEffect(() => {
+    if (!siteMenuOpen) return;
+    syncSiteMenuWidth();
+    const menu = menuContentRef.current;
+    if (!menu) return;
+    const contentW = Math.ceil(menu.scrollWidth);
+    if (contentW > 0) {
+      setSiteMenuWidthPx((prev) => (contentW > prev ? contentW : prev));
+    }
+  }, [siteMenuOpen, measureKey]);
 
   const siteChipWidthPx = siteMenuWidthPx > 0 ? siteMenuWidthPx : 120;
   const consoleWidthPx = siteChipWidthPx;
@@ -212,8 +212,15 @@ export function ManagerTopBarDisplayConsole({
 
   const dropdownItemClass = (index: number, selected = false) =>
     variant === "embedded"
-      ? cn(MANAGER_NAV_DROPDOWN_ITEM_BASE, managerNavDropdownRowClass(index, selected))
-      : "cursor-pointer rounded-none px-3 py-2.5 text-base font-normal outline-none focus:bg-ui-field-hover/90 data-[highlighted]:bg-ui-field-hover/90";
+      ? cn(
+          MANAGER_NAV_DROPDOWN_ITEM_BASE,
+          SITE_MENU_ITEM_INSET,
+          managerNavDropdownRowClass(index, selected),
+        )
+      : cn(
+          "cursor-pointer rounded-none py-2.5 text-base font-normal outline-none focus:bg-ui-field-hover/90 data-[highlighted]:bg-ui-field-hover/90",
+          SITE_MENU_ITEM_INSET,
+        );
 
   const triggerHoverClass =
     variant === "embedded"
@@ -224,26 +231,60 @@ export function ManagerTopBarDisplayConsole({
     <>
       <div
         ref={measureRef}
-        className="pointer-events-none fixed top-0 -left-[10000px] opacity-0"
+        className="pointer-events-none fixed top-0 -left-[10000px] flex w-max flex-col items-start opacity-0"
         aria-hidden
       >
         {sites.map((site) => (
-          <span key={`site-label-${site.id}`} data-measure="site-label" className={MANAGER_DISPLAY_NAME_LABEL}>
-            {wordpressSiteMenuDisplayName(site)}
-          </span>
+          <div
+            key={`site-chip-${site.id}`}
+            data-measure="site-chip"
+            className="flex h-9 w-max items-center bg-ui-field text-base"
+          >
+            <span className="whitespace-nowrap px-2.5 text-left font-normal">
+              {wordpressSiteMenuDisplayName(site)}
+            </span>
+            <span className={MANAGER_DISPLAY_NAME_CHEVRON_SLOT} aria-hidden>
+              <ChevronDown className="h-4 w-4 shrink-0" />
+            </span>
+          </div>
         ))}
+        <div data-measure="utility-row" className={cn("inline-flex items-center gap-2.5 py-2.5", SITE_MENU_ITEM_INSET)}>
+          <RefreshCw className="h-4 w-4 shrink-0" aria-hidden />
+          <span className="whitespace-nowrap text-base font-normal leading-tight">Site data</span>
+        </div>
+        {activeSitePrefetch ? (
+          <div
+            data-measure="utility-row-cache"
+            className={cn("inline-flex items-center gap-2.5 py-2.5", SITE_MENU_ITEM_INSET)}
+          >
+            <Download className="h-4 w-4 shrink-0" aria-hidden />
+            <span className="whitespace-nowrap text-base font-normal leading-tight">Cache</span>
+          </div>
+        ) : null}
         {sites.map((site) => (
           <div
             key={`site-row-${site.id}`}
             data-measure="site-row"
-            className="inline-flex items-center gap-2.5 px-3"
+            className={cn("inline-flex w-max items-center gap-2.5 py-2.5", SITE_MENU_ITEM_INSET)}
           >
-            <Pencil className="h-4 w-4 shrink-0" aria-hidden />
+            <span className="h-8 w-8 min-w-8 max-w-8 shrink-0" aria-hidden />
             <span className="whitespace-nowrap text-base font-normal leading-tight">
               {wordpressSiteMenuDisplayName(site)}
             </span>
           </div>
         ))}
+        {hasErrorLog ? (
+          <div
+            data-measure="error-log-header"
+            className={cn("flex w-max items-center justify-between gap-3 py-2.5", SITE_MENU_ITEM_INSET)}
+          >
+            <span className="whitespace-nowrap text-base font-normal text-white">Error logs</span>
+            <span className="flex items-center gap-3">
+              <span className="whitespace-nowrap text-base">Copy all</span>
+              <span className="whitespace-nowrap text-base">Clear</span>
+            </span>
+          </div>
+        ) : null}
       </div>
       <div className={MANAGER_DISPLAY_CONSOLE_ROW} style={consoleWidthStyle}>
         {sites.length === 0 || !activeSite ? (
@@ -286,18 +327,24 @@ export function ManagerTopBarDisplayConsole({
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
+              ref={menuContentRef}
               align="start"
+              collisionPadding={8}
               style={siteMenuWidthStyle}
-              className={cn(MANAGER_DISPLAY_DROPDOWN_PANEL, dropdownAnimateClass)}
+              className={cn(
+                MANAGER_DISPLAY_DROPDOWN_PANEL,
+                dropdownAnimateClass,
+                "!overflow-y-auto !overflow-x-clip p-0",
+              )}
             >
               <DropdownMenuItem
-                className={cn(dropdownItemClass(0), "shrink-0")}
+                className={cn(dropdownItemClass(0), "w-full min-w-0 max-w-none shrink-0")}
                 aria-label="Refresh site data"
                 onSelect={() => {
                   if (activeSite) void refreshSitePrefetch(activeSite);
                 }}
               >
-                <div className="flex w-full shrink-0 items-center gap-2.5">
+                <div className="flex items-center gap-2.5">
                   <RefreshCw
                     className={cn(
                       "h-4 w-4 shrink-0 text-muted-foreground",
@@ -310,13 +357,13 @@ export function ManagerTopBarDisplayConsole({
               </DropdownMenuItem>
               {activeSitePrefetch ? (
                 <DropdownMenuItem
-                  className={cn(dropdownItemClass(1), "shrink-0")}
+                  className={cn(dropdownItemClass(1), "w-full min-w-0 max-w-none shrink-0")}
                   aria-label="Download cache"
                   onSelect={() => {
                     if (activeSite) downloadSitePrefetchBundle(activeSite);
                   }}
                 >
-                  <div className="flex w-full shrink-0 items-center gap-2.5">
+                  <div className="flex items-center gap-2.5">
                     <Download className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
                     <span className="whitespace-nowrap text-base font-normal leading-tight">Cache</span>
                   </div>
@@ -329,7 +376,10 @@ export function ManagerTopBarDisplayConsole({
                 return (
                   <DropdownMenuItem
                     key={site.id}
-                    className={cn(dropdownItemClass(utilityRowCount + index, selected), "shrink-0")}
+                    className={cn(
+                      dropdownItemClass(utilityRowCount + index, selected),
+                      "w-full min-w-0 max-w-none shrink-0",
+                    )}
                     onSelect={(event) => {
                       if (selected) {
                         event.preventDefault();
@@ -342,7 +392,7 @@ export function ManagerTopBarDisplayConsole({
                       }
                     }}
                   >
-                    <div className="flex w-full shrink-0 items-center gap-2.5">
+                    <div className="flex items-center gap-2.5">
                       <Button
                         size="icon" icon={Pencil}
                         variant="quiet"

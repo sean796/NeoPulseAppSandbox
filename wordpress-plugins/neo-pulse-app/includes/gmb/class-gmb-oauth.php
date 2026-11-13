@@ -48,10 +48,16 @@ class Neo_Pulse_App_Gmb_Oauth {
 	}
 
 	public static function redirect_uri(): string {
+		if ( defined( 'NEO_PULSE_APP_GMB_REDIRECT_URI' ) && trim( (string) NEO_PULSE_APP_GMB_REDIRECT_URI ) !== '' ) {
+			return trim( (string) NEO_PULSE_APP_GMB_REDIRECT_URI );
+		}
 		return home_url( '/api/gmb/callback' );
 	}
 
 	public static function frontend_url_default(): string {
+		if ( defined( 'NEO_PULSE_APP_FRONTEND_URL' ) && trim( (string) NEO_PULSE_APP_FRONTEND_URL ) !== '' ) {
+			return trim( (string) NEO_PULSE_APP_FRONTEND_URL );
+		}
 		return home_url( '/neo-pulse/' );
 	}
 
@@ -285,7 +291,14 @@ class Neo_Pulse_App_Gmb_Oauth {
 			return array( 'connected' => false, 'error' => 'GMB not configured' );
 		}
 		$tokens = Neo_Pulse_App_Gmb_Tokens::get_tokens();
-		return array( 'connected' => is_array( $tokens ) && ! empty( $tokens['access_token'] ) );
+		if ( ! is_array( $tokens ) || ( empty( $tokens['access_token'] ) && empty( $tokens['refresh_token'] ) ) ) {
+			return array( 'connected' => false, 'error' => 'Not connected' );
+		}
+		$access = Neo_Pulse_App_Gmb_Tokens::get_valid_access_token();
+		if ( is_wp_error( $access ) ) {
+			return array( 'connected' => false, 'error' => $access->get_error_message() );
+		}
+		return array( 'connected' => true );
 	}
 
 	/**

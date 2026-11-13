@@ -139,6 +139,10 @@ class Neo_Pulse_App_Data_Paths {
 		return self::root() . '/changelog.json';
 	}
 
+	public static function careers_applications_path(): string {
+		return self::root() . '/careers-applications.json';
+	}
+
 	public static function active_site_path(): string {
 		return self::root() . '/active-site-id.json';
 	}

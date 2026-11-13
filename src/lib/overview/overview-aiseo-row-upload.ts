@@ -3,6 +3,7 @@ import {
   resolveOverviewBindingForRow,
   uploadOverviewSeoApiItemAvoidingBatchV1,
 } from "@/lib/overview/overview-bulk-seo-payload";
+import { resolveWordPressUrls } from "@/lib/wordpress-api/posts";
 import { isAnswerOnlyHarnessBody } from "@/lib/overview/overview-blog-overview-prepend";
 import { buildOverviewRowWpUploadProofFiles } from "@/lib/overview/overview-wp-upload-harness-artifacts";
 import { mergeGeneratedFilesByName } from "@/lib/overview/overview-peer-csv-details";
@@ -71,7 +72,29 @@ export async function uploadOverviewAiseoRowToWordPress(
           subtype: invMatch.subtype,
         }
       : undefined;
-  const binding = resolveOverviewBindingForRow(params.row, params.bindings, invHit);
+  let binding = resolveOverviewBindingForRow(params.row, params.bindings, invHit);
+
+  if (!binding?.postId && params.site.username?.trim() && params.site.appPassword?.trim() && url) {
+    try {
+      const resolved = await resolveWordPressUrls(
+        params.site.siteUrl,
+        params.site.username,
+        params.site.appPassword,
+        [url],
+        params.site.entitySitemapUrl || undefined,
+        params.site.manualEndpoint || undefined,
+      );
+      const hit = resolved.resolved?.[0];
+      if (hit?.id != null && Number.isFinite(hit.id) && hit.id > 0) {
+        binding = {
+          postId: hit.id,
+          subtype: hit.subtype || params.row.postType || "post",
+        };
+      }
+    } catch {
+      // Handled by !binding?.postId check below
+    }
+  }
 
   if (!url || !rowUrlMatchesWordPressSite(url, params.site)) {
     const siteLabel = params.site.name?.trim() || params.site.siteUrl || params.site.id;

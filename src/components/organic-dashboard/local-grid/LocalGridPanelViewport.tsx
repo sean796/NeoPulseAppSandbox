@@ -302,6 +302,7 @@ export function LocalGridPanelViewport(props: LocalGridPanelViewportProps) {
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto p-4">
               <LocalGridDataReportTables
+                site={site}
                 view={aggregatedView}
                 keyword={activeScan.keyword}
                 scanDateLabel={activeScan.scanDateLabel}

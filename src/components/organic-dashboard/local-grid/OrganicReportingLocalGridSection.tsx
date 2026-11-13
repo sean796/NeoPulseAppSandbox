@@ -18,7 +18,7 @@ export function OrganicReportingLocalGridSection() {
   );
 
   const defaultSite = useMemo(
-    () => resolveOrganicDashboardSite(sites, undefined, activeWordPressSiteId) ?? sites[0] ?? null,
+    () => resolveOrganicDashboardSite(sites, undefined, activeWordPressSiteId) ?? null,
     [sites, activeWordPressSiteId],
   );
 
@@ -32,6 +32,7 @@ export function OrganicReportingLocalGridSection() {
 
   return (
     <LocalGridWorkspaceShell
+      key={defaultSite.id}
       sites={sites}
       defaultSiteId={defaultSite.id}
       reportError={reportError}

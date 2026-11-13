@@ -17,13 +17,17 @@ import {
 import {
   TASK_FORM_FLAT_CONTROL_CLASS,
 } from "@/components/manager/tasks/task-form-layout-styles";
-import type { PropertySettingsSubSectionId } from "./property-settings-types";
+import {
+  PROPERTY_SETTINGS_SUB_SECTIONS,
+  type PropertySettingsSubSectionId,
+} from "./property-settings-types";
 import { BenchmarkCategoryTagField } from "./BenchmarkCategoryTagField";
 import { PropertyClientLogoFields } from "./PropertyClientLogoFields";
 import { WpEngineHostingFields } from "./WpEngineHostingFields";
 import { ProfileAdditionalLocationsEditor, ProfileLocationSelect } from "./ProfileServiceAreaFields";
 import { regionPlaceholder, SERVICE_COUNTRY_OPTIONS, serviceRegionOptions } from "@/lib/keyword-location-utils";
 import { EDITORIAL_PACKAGE_OPTIONS, IGNORE_CREDENTIAL_MANAGER, SEMRUSH_MATCH_STATES, type SitePropertySectionsProps } from "./site-property-form-chrome";
+import { PropertySettingsEditActions } from "./PropertySettingsEditActions";
 
 export function SitePropertyModalFlatSections(props: SitePropertySectionsProps) {
   const {
@@ -34,6 +38,8 @@ export function SitePropertyModalFlatSections(props: SitePropertySectionsProps) 
     onFormSemrushSiteAuditProjectIdChange, onFormSemrushPositionTrackingProjectIdChange, onFormSemrushPositionTrackingCampaignIdChange, onFormEditorialCountsPeriodStartYmdChange, onFormOptimizationPackageChange,
     onFormEditorialContentPackageChange, onFormEditorialPublishTimeLocalChange, onFormBenchmarkCustomTagChange, onFormPrimaryLocalKeywordChange, onFormClientLogoUrlChange, onFormClientLogoBoxThemeChange,
     onFormProfileTagsChange, onFormServiceCityChange, serviceAreaSite, onPatchSite, patchSiteId, className = "", settingsSubSectionId = "profile",
+    onSettingsSubSectionChange,
+    onDeleteProperty, onTogglePropertyEnabled,
     semrushMatching, semrushBusy, canPatchSemrush, handleMatchSemrushProject, handlePushSemrushId, handleCopySiteId, persistServiceArea, applyServiceCountry, applyServiceState,
   } = props;
 
@@ -41,6 +47,16 @@ export function SitePropertyModalFlatSections(props: SitePropertySectionsProps) 
 
   const profileSection = (
     <TaskFormSideSection title="Profile">
+      {serviceAreaSite && (onDeleteProperty || onTogglePropertyEnabled || onPatchSite) ? (
+        <div className="mb-2">
+          <PropertySettingsEditActions
+            site={serviceAreaSite}
+            onPatchSite={onPatchSite}
+            onToggleEnabled={onTogglePropertyEnabled}
+            onDelete={onDeleteProperty}
+          />
+        </div>
+      ) : null}
       <TaskFormFlatGrid className="grid-cols-2">
         <TaskFormPlaceholderCell>
           <Field
@@ -416,6 +432,18 @@ export function SitePropertyModalFlatSections(props: SitePropertySectionsProps) 
       autoComplete="off"
       onSubmit={(e) => e.preventDefault()}
     >
+      {onSettingsSubSectionChange ? (
+        <SelectField
+          placeholder="Settings"
+          width="full"
+          value={settingsSubSectionId}
+          options={PROPERTY_SETTINGS_SUB_SECTIONS.map((sub) => ({
+            value: sub.id,
+            label: sub.label,
+          }))}
+          onValueChange={(value) => onSettingsSubSectionChange(value as PropertySettingsSubSectionId)}
+        />
+      ) : null}
       {modalSections[settingsSubSectionId]}
     </form>
   );

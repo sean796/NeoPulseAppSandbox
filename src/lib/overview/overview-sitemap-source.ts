@@ -91,18 +91,36 @@ export function pageSitemapXmlUrlForPlay(site: WordPressSite): string | null {
   return `${base}/page-sitemap.xml`;
 }
 
-/** Every property has a service-area CPT; WordPress serves its sitemap even when it is not in the index yet. */
+/** Every property uses service-area for SAP / entity. Never Locations (`location`). */
 const DEFAULT_ENTITY_REST_COLLECTION = "service-area";
 
-function entitySitemapUrlForSite(site: WordPressSite): string | null {
-  const tagged = resolveChildUrlForRole(site, "entity");
-  if (tagged) return tagged;
-  const url = site.entitySitemapUrl?.trim();
-  if (url) return url;
+function isLocationEntitySitemapUrl(url: string): boolean {
+  const tail = sitemapFilename(url);
+  return (
+    tail.includes("location-sitemap") ||
+    tail.includes("locations-sitemap") ||
+    tail.includes("location_sitemap")
+  );
+}
+
+function isLocationEntityCollection(collection: string | null | undefined): boolean {
+  const c = collection?.trim().toLowerCase() ?? "";
+  return c === "location" || c === "locations";
+}
+
+function defaultServiceAreaSitemapUrl(site: Pick<WordPressSite, "siteUrl">): string | null {
   const origin = (site.siteUrl || "").trim().replace(/\/+$/, "");
   if (!origin) return null;
   const base = origin.startsWith("http") ? origin : `https://${origin}`;
   return `${base}/${DEFAULT_ENTITY_REST_COLLECTION}-sitemap.xml`;
+}
+
+function entitySitemapUrlForSite(site: WordPressSite): string | null {
+  const tagged = resolveChildUrlForRole(site, "entity");
+  if (tagged && !isLocationEntitySitemapUrl(tagged)) return tagged;
+  const url = site.entitySitemapUrl?.trim();
+  if (url && !isLocationEntitySitemapUrl(url)) return url;
+  return defaultServiceAreaSitemapUrl(site);
 }
 
 function isEntitySitemapUrl(site: WordPressSite, url: string): boolean {
@@ -122,19 +140,36 @@ function restEndpointFromSitemapUrl(sitemapUrl: string): string | null {
  * manualEndpoint → sitemaps.endpoints[entitySitemapUrl] → filename from entity sitemap URL.
  */
 export function overviewEntityRestCollectionForSite(
-  site: Pick<WordPressSite, "entitySitemapUrl" | "manualEndpoint" | "sitemaps">,
+  site: Pick<WordPressSite, "entitySitemapUrl" | "manualEndpoint" | "sitemaps" | "siteUrl">,
 ): string | null {
   const manual = site.manualEndpoint?.trim();
-  if (manual && !GENERIC_WP_COLLECTIONS.has(manual.toLowerCase())) {
+  if (
+    manual &&
+    !GENERIC_WP_COLLECTIONS.has(manual.toLowerCase()) &&
+    !isLocationEntityCollection(manual)
+  ) {
     return manual;
   }
-  const entityUrl = site.entitySitemapUrl?.trim();
-  if (!entityUrl) return DEFAULT_ENTITY_REST_COLLECTION;
+  const tagged = resolveChildUrlForRole(site, "entity");
+  const configured = site.entitySitemapUrl?.trim();
+  const entityUrl =
+    (tagged && !isLocationEntitySitemapUrl(tagged) ? tagged : null) ||
+    (configured && !isLocationEntitySitemapUrl(configured) ? configured : null) ||
+    defaultServiceAreaSitemapUrl(site);
+  if (!entityUrl || isLocationEntitySitemapUrl(entityUrl)) {
+    return DEFAULT_ENTITY_REST_COLLECTION;
+  }
   const fromMap = site.sitemaps?.endpoints?.[entityUrl]?.trim();
-  if (fromMap && !GENERIC_WP_COLLECTIONS.has(fromMap.toLowerCase())) {
+  if (
+    fromMap &&
+    !GENERIC_WP_COLLECTIONS.has(fromMap.toLowerCase()) &&
+    !isLocationEntityCollection(fromMap)
+  ) {
     return fromMap;
   }
-  return restEndpointFromSitemapUrl(entityUrl);
+  const fromFilename = restEndpointFromSitemapUrl(entityUrl);
+  if (isLocationEntityCollection(fromFilename)) return DEFAULT_ENTITY_REST_COLLECTION;
+  return fromFilename ?? DEFAULT_ENTITY_REST_COLLECTION;
 }
 
 /** Sitemap XML URLs to parse for the given Overview source. */

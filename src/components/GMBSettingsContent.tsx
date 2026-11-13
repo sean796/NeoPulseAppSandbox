@@ -16,11 +16,11 @@ const PULL_STATES = ["Pull stats to KB", "Pulling"] as const;
 
 const GMB_CALLBACK_EXAMPLE = NEO_PULSE_CA_DEPLOY
   ? "https://neodigital.ca/api/gmb/callback"
-  : "http://localhost:3001/api/gmb/callback";
+  : "http://localhost:8080/api/gmb/callback";
 
 const GMB_FRONTEND_URL_EXAMPLE = NEO_PULSE_CA_DEPLOY
   ? "https://neodigital.ca/neo-pulse/"
-  : "http://localhost:5173/";
+  : "http://localhost:8080/";
 
 /** Same base as WordPress/AgentMail: VITE_MCP_API_BASE minus /api/mcp, unless overridden. */
 const BACKEND_API_BASE =

@@ -34,7 +34,6 @@ function createPanelId(): string {
   return `panel_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 }
 
-
 export function LocalGridWorkspaceShell({
   sites,
   defaultSiteId,
@@ -49,7 +48,7 @@ export function LocalGridWorkspaceShell({
   }, [sites]);
 
   const [{ panels, activePanelId }, setWorkspace] = useState(() =>
-    createDefaultPanelsForSite(siteById.get(defaultSiteId), defaultSiteId, createPanelId),
+    createFallbackWorkspace(defaultSiteId, createPanelId),
   );
   const [hydrated, setHydrated] = useState(false);
   const [dockSummaries, setDockSummaries] = useState<
@@ -62,32 +61,49 @@ export function LocalGridWorkspaceShell({
 
   useEffect(() => {
     let cancelled = false;
+    setHydrated(false);
     setDockSummaries({});
+    setCheckedIds([]);
     void (async () => {
-      const raw = await fetchLocalGridWorkspace(defaultSiteId);
-      if (cancelled) return;
-      const defaultSite = siteById.get(defaultSiteId);
-      const parsed = parsePersistedWorkspace(raw, defaultSiteId, createPanelId);
-      if (parsed) {
-        const clientPanels = parsed.panels.filter((p) => p.siteId === defaultSiteId);
-        if (clientPanels.length > 0) {
-          const activeOk = clientPanels.some((p) => p.id === parsed.activePanelId);
+      try {
+        const raw = await fetchLocalGridWorkspace(defaultSiteId);
+        if (cancelled) return;
+        const defaultSite = siteById.get(defaultSiteId);
+        const parsed = parsePersistedWorkspace(raw, defaultSiteId, createPanelId);
+        const clientPanels =
+          parsed?.panels.filter((p) => p.siteId === defaultSiteId) ?? [];
+        const usesHardcodedDowntown =
+          clientPanels.length > 0 &&
+          clientPanels.every((p) => {
+            const snap = p.layoutSnapshot;
+            return (
+              snap != null &&
+              Math.abs(snap.centerLat - 53.5461) < 0.0002 &&
+              Math.abs(snap.centerLng - -113.4938) < 0.0002
+            );
+          });
+        if (clientPanels.length > 0 && !usesHardcodedDowntown) {
+          const activeOk = clientPanels.some((p) => p.id === parsed!.activePanelId);
           setWorkspace({
             panels: clientPanels,
-            activePanelId: activeOk ? parsed.activePanelId : clientPanels[0]!.id,
+            activePanelId: activeOk ? parsed!.activePanelId : clientPanels[0]!.id,
           });
         } else {
-          setWorkspace(createDefaultPanelsForSite(defaultSite, defaultSiteId, createPanelId));
+          setWorkspace(await createDefaultPanelsForSite(defaultSite, defaultSiteId, createPanelId));
         }
-      } else {
-        setWorkspace(createDefaultPanelsForSite(defaultSite, defaultSiteId, createPanelId));
+        if (!cancelled) setHydrated(true);
+      } catch (err) {
+        if (cancelled) return;
+        const msg = err instanceof Error ? err.message : String(err);
+        reportError(`Local Grid · ${msg}`);
+        setWorkspace(createFallbackWorkspace(defaultSiteId, createPanelId));
+        setHydrated(true);
       }
-      setHydrated(true);
     })();
     return () => {
       cancelled = true;
     };
-  }, [defaultSiteId, siteById]);
+  }, [defaultSiteId, siteById, reportError]);
 
   const persistWorkspace = useCallback(
     (state: { panels: LocalGridWorkspacePanel[]; activePanelId: string }) => {

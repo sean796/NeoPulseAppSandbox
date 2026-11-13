@@ -11,6 +11,7 @@ import type { WordPressSite } from "@/components/integrations/types";
 import { getStoredSites, mergeServerGbpLocationIdsIntoLocalSites } from "@/components/integrations/storage";
 import { useWordPressSites } from "@/hooks/use-wordpress-sites";
 import { useActiveWordPressSite } from "@/contexts/active-wordpress-site-context";
+import { useAuth } from "@/contexts/AuthContext";
 import { useManagerErrorLog } from "@/contexts/manager-error-log-context";
 import { OrganicReportingStudioShell } from "@/components/organic-dashboard/OrganicReportingStudioShell";
 import {
@@ -47,7 +48,11 @@ import {
   reportOrganicDashboardSourceErrors,
 } from "@/lib/organic-dashboard/organic-dashboard-report-errors";
 import { resolveSemrushProjectDashboardUrlForSite } from "@/lib/semrush-project-id-defaults";
-import { buildOrganicClientReportContent } from "@/lib/organic-dashboard/organic-client-report-content";
+import {
+  buildOrganicClientReportContent,
+  EMPTY_CLIENT_REPORT_HIGHLIGHTS,
+} from "@/lib/organic-dashboard/organic-client-report-content";
+import { resolveReportingSplashStatus } from "@/lib/organic-dashboard/organic-reporting-splash-status";
 import {
   buildLocalGridReportingSnapshot,
   fetchAllLocalGridScansForSite,
@@ -98,6 +103,7 @@ export default function OrganicDashboardPage() {
 
 export function OrganicReportingPanel({ site, inAppTab = false }: OrganicReportingPanelProps) {
   const { setActiveWordPressSiteId } = useActiveWordPressSite();
+  const { checkAuth } = useAuth();
   const { reportError } = useManagerErrorLog();
   const { handlePatchSite } = useWordPressSites();
   const navigate = useNavigate();
@@ -300,10 +306,10 @@ export function OrganicReportingPanel({ site, inAppTab = false }: OrganicReporti
 
   const reportContent = useMemo(
     () =>
-      viewModel && mergedHighlights
+      viewModel
         ? buildOrganicClientReportContent({
             viewModel,
-            highlights: mergedHighlights,
+            highlights: mergedHighlights ?? EMPTY_CLIENT_REPORT_HIGHLIGHTS,
             siteName: siteDisplayName,
             siteUrl: sitePublicUrl,
             showCompare,
@@ -345,6 +351,17 @@ export function OrganicReportingPanel({ site, inAppTab = false }: OrganicReporti
       reportOrganicDashboardFetchError(bundleQuery.error, reportError);
     }
   }, [bundleQuery.error, reportError]);
+
+  useEffect(() => {
+    if (!bundleQuery.isError || !bundleQuery.error) return;
+    const msg =
+      bundleQuery.error instanceof Error
+        ? bundleQuery.error.message.trim()
+        : String(bundleQuery.error).trim();
+    if (msg === "Unauthorized" || msg.includes("HTTP 401")) {
+      void checkAuth();
+    }
+  }, [bundleQuery.isError, bundleQuery.error, checkAuth]);
 
   useEffect(() => {
     if (highlightsQuery.error) {
@@ -394,7 +411,7 @@ export function OrganicReportingPanel({ site, inAppTab = false }: OrganicReporti
     downloadPdfBusy ||
     clientReportBusy;
 
-  const splashVisible = studioBusy && !reportContent;
+  const splashVisible = performanceLoading;
 
   const reportIdleMessage = useMemo(() => {
     if (reportContent || splashVisible) return null;
@@ -402,9 +419,14 @@ export function OrganicReportingPanel({ site, inAppTab = false }: OrganicReporti
       return "Reporting date range is invalid. Open the date filter and apply a valid range.";
     }
     if (bundleQuery.isError) {
-      return bundleQuery.error instanceof Error
-        ? bundleQuery.error.message
-        : "Could not load GA4, Search Console, Semrush, or Google Ads metrics.";
+      const msg =
+        bundleQuery.error instanceof Error
+          ? bundleQuery.error.message.trim()
+          : "Could not load GA4, Search Console, Semrush, or Google Ads metrics.";
+      if (msg === "Unauthorized" || msg.includes("HTTP 401")) {
+        return "Your Neo Pulse session expired. Sign in again to load this report.";
+      }
+      return msg;
     }
     if (bundleQuery.data && !mergedHighlights) {
       if (highlightsError) return highlightsError;
@@ -445,6 +467,15 @@ export function OrganicReportingPanel({ site, inAppTab = false }: OrganicReporti
     clientReportBusy,
   ]);
 
+  const reportingSplashStatus = useMemo(
+    () =>
+      resolveReportingSplashStatus(
+        activeStatusText.trim() ||
+          "Loading GA4, Search Console, Semrush and Google Ads metrics",
+      ),
+    [activeStatusText],
+  );
+
   return (
     <OrganicReportingStudioShell
       siteName={siteDisplayName}
@@ -454,6 +485,8 @@ export function OrganicReportingPanel({ site, inAppTab = false }: OrganicReporti
       dateRangePopoverOpen={datePopoverOpen}
       onDateRangePopoverOpenChange={setDatePopoverOpen}
       splashVisible={splashVisible}
+      splashStatusText={reportingSplashStatus.status}
+      splashStatusVisual={reportingSplashStatus.visual}
       busy={studioBusy}
       activeStatusText={activeStatusText}
       reportContent={reportContent}

@@ -44,11 +44,13 @@ function ProgressLogLabel({ label }: { label: string }): ReactElement {
 
 type AgentRunProgressLogProps = {
   rows: AgentRunLogTimelineRow[];
+  /** Horizontal rules between log rows (Tasks drawer). */
+  withSeparators?: boolean;
 };
 
 const NEAR_BOTTOM_PX = 48;
 
-export function AgentRunProgressLog({ rows }: AgentRunProgressLogProps) {
+export function AgentRunProgressLog({ rows, withSeparators = false }: AgentRunProgressLogProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -72,6 +74,7 @@ export function AgentRunProgressLog({ rows }: AgentRunProgressLogProps) {
             className={cn(
               "flex min-h-[2rem] items-start gap-2 rounded-sm px-2 py-1.5",
               contentOptimizerRowStripeClass(index, { isActiveOptimize: row.isActive }),
+              withSeparators && index < rows.length - 1 && "border-b border-white/10",
             )}
           >
             <span className="min-w-[4.5rem] shrink-0 whitespace-nowrap pt-0.5 text-base tabular-nums text-muted-foreground">

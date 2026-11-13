@@ -18,6 +18,7 @@ export const PROTECTED_ACTIVE_CLIENT_NAMES = new Set([
   "advance blinds",
   "blind magic",
   "blinds west",
+  "custom shades of london",
   "dm interiors",
   "dm interiors & design",
   "elite shutters & shadings",

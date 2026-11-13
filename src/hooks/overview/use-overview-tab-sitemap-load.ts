@@ -12,8 +12,8 @@ import {
   type OverviewSitemapSource,
 } from "@/lib/overview/overview-sitemap-source";
 import { applyInventoryPatchesToOverviewRows } from "@/lib/overview/overview-inventory-progressive-hydrate";
-import { applyCachedElementorFieldsToOverviewRows } from "@/lib/elementor-page-content/elementor-section-headers-from-cache";
 import {
+  clearOverviewRowsSessionCache,
   getOverviewRowsSessionCache,
   mergeOverviewRowsForSitemapLoad,
   setOverviewRowsSessionCache,
@@ -23,25 +23,16 @@ import {
   setOverviewSitemapLoadFingerprint,
 } from "@/lib/overview/overview-sitemap-load-cache";
 import {
-  warmEntitySiteCache,
+  clearEntitySiteWarmCache,
   getSitePrefetchUrlsForSource,
   NEO_PULSE_SITE_DATA_REFRESHED_EVENT,
+  warmEntitySiteCache,
 } from "@/lib/local-analysis/entity-site-warm-cache";
 import { applyOverviewStudioInventoryFromCache } from "@/lib/overview/overview-studio-inventory-init";
-import { isTruncatedAiseoSourceBody } from "@/lib/overview/overview-aiseo-source-html";
 import { syncOverviewRowsFromWarmCache } from "@/lib/overview/overview-sitemap-warm-rows-sync";
-import { fetchOverviewStudioSnapshotFromServer } from "@/lib/overview/overview-studio-snapshot-api";
 import type { WordPressSite } from "@/components/integrations/types";
 import type { OverviewBinding } from "@/hooks/overview/use-overview-wordpress-binding";
 import type { OverviewTabBase } from "@/hooks/overview/use-overview-tab-base";
-
-function rowHasFullCachedBody(row: OverviewRow, source: OverviewSitemapSource): boolean {
-  if (row.elementorDataJson?.trim()) return true;
-  const html = (row.postContentOptimized?.trim() || row.postContent?.trim() || "").trim();
-  if (!html) return false;
-  if (source === "pages") return true;
-  return !isTruncatedAiseoSourceBody(html);
-}
 
 type Args = Pick<
   OverviewTabBase,
@@ -62,6 +53,7 @@ type LoadOptions = {
   silent?: boolean;
   applyToUi?: boolean;
   generation?: number;
+  preferNeoMcp?: boolean;
 };
 
 function finalizeOverviewRowsFromInventory(
@@ -140,13 +132,16 @@ export function useOverviewTabSitemapLoad({
       options?: LoadOptions,
     ): Promise<void> => {
       const force = options?.force === true;
+      const preferNeoMcp = options?.preferNeoMcp === true;
       const generation = options?.generation ?? loadGenerationRef.current;
 
       if (!canLoadOverviewSitemapSource(activeSite, source)) {
         return;
       }
       if (isStaleLoad(generation)) return;
-      warmEntitySiteCache(activeSite);
+      if (!force) {
+        warmEntitySiteCache(activeSite);
+      }
       if (inFlightBySourceRef.current.has(source)) {
         if (!force) {
           return;
@@ -173,20 +168,27 @@ export function useOverviewTabSitemapLoad({
 
       inFlightBySourceRef.current.add(source);
 
-      const warmSyncRows = syncOverviewRowsFromWarmCache(activeSite, source);
-      const sessionRows =
-        getOverviewRowsSessionCache(activeSite.id, source) ??
-        (warmSyncRows.length ? warmSyncRows : []);
+      const warmSyncRows = force
+        ? []
+        : syncOverviewRowsFromWarmCache(activeSite, source);
+      const sessionRows = force
+        ? []
+        : getOverviewRowsSessionCache(activeSite.id, source) ??
+          (warmSyncRows.length ? warmSyncRows : []);
       const hasImmediateRows =
-        sessionRows.length > 0 ||
-        (applyToUi &&
-          rowsRef.current.some(
-            (row) =>
-              row.url?.trim() &&
-              ((row.title || row.pageHeading || "").trim().length > 0),
-          ));
+        !force &&
+        (sessionRows.length > 0 ||
+          (applyToUi &&
+            rowsRef.current.some(
+              (row) =>
+                row.url?.trim() &&
+                ((row.title || row.pageHeading || "").trim().length > 0),
+            )));
 
-      if (hasImmediateRows && applyToUi && !isStaleLoad(generation)) {
+      if (force && applyToUi && !isStaleLoad(generation)) {
+        setRows([]);
+        rowsRef.current = [];
+      } else if (hasImmediateRows && applyToUi && !isStaleLoad(generation)) {
         if (sessionRows.length) {
           setRows(sessionRows);
         }
@@ -203,11 +205,13 @@ export function useOverviewTabSitemapLoad({
         const inv = await prefetchOverviewInventory(activeSite, {
           downloadCsv: false,
           collections: inventoryCollections,
+          // One pass: titles + full bodies together, then cache until Refresh.
           includeContent: true,
           includePageHeading: true,
           source,
           silent: true,
           forceRefresh: force,
+          preferNeoMcp,
         });
 
         if (isStaleLoad(generation)) return;
@@ -224,9 +228,14 @@ export function useOverviewTabSitemapLoad({
         }
 
         const warmFallbackUrls =
-          !inv.urls?.length ? getSitePrefetchUrlsForSource(activeSite.id, source) ?? [] : [];
+          !force && !preferNeoMcp && !inv.urls?.length
+            ? getSitePrefetchUrlsForSource(activeSite.id, source) ?? []
+            : [];
         const sessionFallbackUrls =
-          !inv.urls?.length && !warmFallbackUrls.length
+          !force &&
+          !preferNeoMcp &&
+          !inv.urls?.length &&
+          !warmFallbackUrls.length
             ? (getOverviewRowsSessionCache(activeSite.id, source) ?? [])
                 .map((r) => r.url?.trim())
                 .filter((u): u is string => Boolean(u))
@@ -307,14 +316,28 @@ export function useOverviewTabSitemapLoad({
       uiLoadCountByGenerationRef.current.clear();
       setOverviewSitemapLoadBusy(false);
       const generation = loadGenerationRef.current;
-      await loadOverviewSource(activeSite, sitemapSourceRef.current, {
-        force: options?.force === true,
-        silent: options?.silent === true,
-        applyToUi: true,
-        generation,
-      });
+      const force = options?.force === true;
+      const preferNeoMcp = options?.preferNeoMcp === true;
+      if (force) {
+        clearOverviewRowsSessionCache(activeSite.id);
+        clearEntitySiteWarmCache(activeSite.id);
+        setRows([]);
+        rowsRef.current = [];
+      }
+      beginUiLoad(generation);
+      try {
+        await loadOverviewSource(activeSite, sitemapSourceRef.current, {
+          force,
+          silent: options?.silent === true,
+          applyToUi: true,
+          generation,
+          preferNeoMcp,
+        });
+      } finally {
+        endUiLoad(generation);
+      }
     },
-    [loadOverviewSource],
+    [beginUiLoad, endUiLoad, loadOverviewSource, rowsRef, setRows],
   );
 
   useEffect(() => {
@@ -325,7 +348,12 @@ export function useOverviewTabSitemapLoad({
       const detail = (event as CustomEvent<{ siteId?: string }>).detail;
       const activeSite = siteRef.current;
       if (!activeSite?.id || !detail?.siteId || detail.siteId !== activeSite.id) return;
-      void handleLoadSitemap({ force: true, silent: false, applyToUi: true });
+      void handleLoadSitemap({
+        force: true,
+        silent: false,
+        applyToUi: true,
+        preferNeoMcp: true,
+      });
     };
     window.addEventListener(NEO_PULSE_SITE_DATA_REFRESHED_EVENT, onSiteDataRefreshed);
     return () => window.removeEventListener(NEO_PULSE_SITE_DATA_REFRESHED_EVENT, onSiteDataRefreshed);
@@ -340,7 +368,9 @@ export function useOverviewTabSitemapLoad({
     }
     const activeSource = sitemapSourceRef.current;
 
-    if (prevSiteIdRef.current !== undefined && prevSiteIdRef.current !== site.id) {
+    const siteChanged =
+      prevSiteIdRef.current !== undefined && prevSiteIdRef.current !== site.id;
+    if (siteChanged) {
       initialLoadKeyRef.current = null;
       loadGenerationRef.current += 1;
       inFlightBySourceRef.current.clear();
@@ -360,59 +390,40 @@ export function useOverviewTabSitemapLoad({
     }
     initialLoadKeyRef.current = loadKey;
 
-    const shouldCancelInFlight = prevSource !== null && (sourceChanged || isNewLoadKey);
-    if (shouldCancelInFlight) {
-      loadGenerationRef.current += 1;
-      inFlightBySourceRef.current.clear();
-      uiLoadCountByGenerationRef.current.clear();
-      setOverviewSitemapLoadBusy(false);
-    }
-
+    // Source switch is local only: paint saved list. Never re-crawl the site.
     applyOverviewStudioInventoryFromCache(site);
     const syncedRows = syncOverviewRowsFromWarmCache(site, activeSource);
     const cachedRows = getOverviewRowsSessionCache(site.id, activeSource);
     const initialRows = syncedRows.length ? syncedRows : cachedRows ?? [];
     if (initialRows.length) {
       setRows(initialRows);
-    }
-    const needsBodies =
-      !initialRows.length ||
-      initialRows.some(
-        (r) => Boolean(r.url?.trim()) && !rowHasFullCachedBody(r, activeSource),
-      );
-
-    const generation = loadGenerationRef.current;
-    if (!needsBodies) {
       return;
     }
 
-    void fetchOverviewStudioSnapshotFromServer(site.id, activeSource).then((serverSnap) => {
-      if (isStaleLoad(generation) || activeSource !== sitemapSourceRef.current) return;
-      if (serverSnap?.rows?.length) {
-        setOverviewRowsSessionCache(site.id, activeSource, serverSnap.rows, {
-          skipServerSync: true,
-        });
-        setRows(serverSnap.rows);
-        const snapNeedsBodies = serverSnap.rows.some(
-          (r) => Boolean(r.url?.trim()) && !rowHasFullCachedBody(r, activeSource),
-        );
-        if (!snapNeedsBodies) {
-          return;
-        }
-      }
-      void loadOverviewSourceRef.current(site, activeSource, {
-        force: true,
+    if (siteChanged || sourceChanged) {
+      setRows([]);
+      rowsRef.current = [];
+    }
+
+    // Empty bucket only: one Neo MCP list pull, then keep it until Refresh.
+    const generation = loadGenerationRef.current;
+    beginUiLoad(generation);
+    void loadOverviewSourceRef
+      .current(site, activeSource, {
+        force: false,
         silent: true,
         applyToUi: true,
         generation,
-      });
-    });
+        preferNeoMcp: true,
+      })
+      .finally(() => endUiLoad(generation));
   }, [
     site,
     sitemapSource,
     setRows,
     disableAutoSitemapLoad,
-    isStaleLoad,
+    beginUiLoad,
+    endUiLoad,
   ]);
 
   return { handleLoadSitemap, overviewSitemapLoadBusy };

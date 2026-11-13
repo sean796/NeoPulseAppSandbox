@@ -21,10 +21,9 @@ export function quarterPairTotalForStrip(
   return a + b;
 }
 
-export function formatQuarterCountCell(n: number | null, loading: boolean): string {
-  if (loading && (n === null || !Number.isFinite(n))) return "—";
+export function formatQuarterCountCell(n: number | null, _loading: boolean): string {
   if (typeof n === "number" && Number.isFinite(n)) return String(n);
-  return "—";
+  return "0";
 }
 
 /** Document icon total = published in month + scheduled in month. */

@@ -131,14 +131,8 @@ export function applyManagerCloudSnapshotToLocalStorage(snapshot: unknown): { ke
     for (const [k, v] of Object.entries(keys)) {
       if (typeof v !== "string") continue;
       if (CREDENTIAL_SNAPSHOT_KEYS.has(k)) continue;
-      if (k === WORDPRESS_SITES_STORAGE_KEY) {
-        try {
-          const parsed = JSON.parse(v) as unknown;
-          if (Array.isArray(parsed) && parsed.length === 0) continue;
-        } catch {
-          continue;
-        }
-      }
+      // Server-only Properties roster: never write wordpress_sites into localStorage.
+      if (k === WORDPRESS_SITES_STORAGE_KEY) continue;
       localStorage.setItem(k, v);
       n++;
     }

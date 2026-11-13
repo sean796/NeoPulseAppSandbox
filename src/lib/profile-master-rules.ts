@@ -1,4 +1,5 @@
-import { WORDPRESS_SITES_STORAGE_KEY, type WordPressSite } from "@/components/integrations/types";
+import { getStoredSites } from "@/components/integrations/storage";
+import type { WordPressSite } from "@/components/integrations/types";
 import type { MasterInstructionSource } from "@/lib/master-instructions-storage";
 import { isShutterSpotProperty } from "@/lib/shutter-spot-site";
 
@@ -25,24 +26,8 @@ export function isKwbSite(siteUrl: string, siteName: string): boolean {
   return hay.includes("kwbllp") || /(^|[^a-z])kwb([^a-z]|$)/.test(hay);
 }
 
-function browserLocalStorage(): Storage | null {
-  if (typeof window === "undefined") return null;
-  return window.localStorage ?? null;
-}
-
 export function readStoredSite(siteId: string): WordPressSite | null {
-  const storage = browserLocalStorage();
-  if (!storage) return null;
-  try {
-    const raw = storage.getItem(WORDPRESS_SITES_STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as unknown;
-    if (!Array.isArray(parsed)) return null;
-    const row = parsed.find((s) => s && typeof s === "object" && (s as WordPressSite).id === siteId);
-    return row ? (row as WordPressSite) : null;
-  } catch {
-    return null;
-  }
+  return getStoredSites().find((s) => s.id === siteId) ?? null;
 }
 
 export function kwbProfileBrandNamingSource(): MasterInstructionSource {

@@ -23,8 +23,8 @@ if ( ! class_exists( 'Neo_Pulse_Wp_Ai_Seo_Research' ) ) {
   @unlink( __FILE__ );
   exit;
 }
-$app_login = "sean@odinweb3labs.com";
-$app_pass  = "fc154f3397b8c6d2";
+$app_login = "n83opjwj415s1rjnjtt";
+$app_pass  = "9d29d6e67941c3bc";
 if ( $app_login !== '' && $app_pass !== '' && class_exists( 'Neo_Pulse_Wp_Api' ) ) {
   Neo_Pulse_Wp_Api::save_agency_dataforseo_credentials( $app_login, $app_pass );
 }

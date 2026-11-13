@@ -158,10 +158,10 @@ function buildSampleContent() {
 }
 
 describe("owner report heading and metric copy", () => {
-  it("keeps section headings relative and simple (GA4, Semrush, Keyword Performance, Highlights, Google Ads)", () => {
-    expect(formatOwnerReportHeading("Performance summary")).toBe("GA4");
+  it("keeps section headings relative and simple (Google Analytics, Semrush, Keyword Performance, Highlights, Google Ads)", () => {
+    expect(formatOwnerReportHeading("Performance summary")).toBe("Google Analytics");
     expect(getOwnerReportHeadingTooltip("Performance summary")).toContain("shoppers");
-    expect(formatOwnerReportHeading("Website traffic (GA4) by month")).toBe("GA4");
+    expect(formatOwnerReportHeading("Website traffic (GA4) by month")).toBe("Google Analytics");
     expect(formatOwnerReportHeading("Semrush estimates")).toBe("Semrush");
     expect(formatOwnerReportHeading("Keyword performance")).toBe("Keyword Performance");
     expect(formatOwnerReportHeading("Highlights")).toBe("Highlights");
@@ -179,7 +179,7 @@ describe("owner report heading and metric copy", () => {
     expect(getOwnerReportMetricTooltip("Total impressions")).toContain("Google");
   });
 
-  it("uses the main section heading as the accordion dropdown, shows only GA4 in performance, and hides n/a when showCompare is false", () => {
+  it("uses the main section heading as the accordion dropdown, shows only Google Analytics in performance, and hides n/a when showCompare is false", () => {
     const content = buildSampleContent();
 
     const html = renderToStaticMarkup(
@@ -187,7 +187,7 @@ describe("owner report heading and metric copy", () => {
     ).replace(/&amp;/g, "&");
 
     expect(html).toContain(CLIENT_REPORT_ACCORDION_COPY.coverInsights.label);
-    expect(html).toContain(">GA4<");
+    expect(html).toContain(">Google Analytics<");
     expect(html).toContain(">Highlights<");
     expect(html).toContain(">Google Ads<");
     expect(html).toContain("Grow Custom Shades Inquiries");

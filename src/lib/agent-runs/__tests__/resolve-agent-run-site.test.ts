@@ -156,7 +156,7 @@ describe("loadSitesForAgentRun", () => {
   it("loads the server mirror when the run site is missing from the browser list", async () => {
     const ridgeline = site("wp-1786635952128-13", "Ridgeline Solar");
     vi.spyOn(storage, "getStoredSites").mockReturnValue([]);
-    vi.spyOn(storage, "restoreSitesFromServerMirrorIfEmpty").mockResolvedValue([]);
+    vi.spyOn(storage, "loadSitesFromServerAlways").mockResolvedValue([]);
     vi.spyOn(storage, "fetchWordPressSitesMirror").mockResolvedValue([ridgeline]);
     const pool = await loadSitesForAgentRun(
       run({ context: { siteId: "wp-1786635952128-13" } }),

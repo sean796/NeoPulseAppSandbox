@@ -35,7 +35,7 @@ export function StatCell({ label, value, note, tone }: { label: string; value: s
       <span className={PROFILE_STAT_NOTE} title={note}>
         {tone === "ok" ? <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden /> : null}
         {tone === "warn" ? <AlertCircle className="h-4 w-4 shrink-0 text-semantic-warning-foreground" aria-hidden /> : null}
-        <span className="break-words">{note ?? ""}</span>
+        <span className="min-w-0 truncate">{note ?? ""}</span>
       </span>
     </div>
   );

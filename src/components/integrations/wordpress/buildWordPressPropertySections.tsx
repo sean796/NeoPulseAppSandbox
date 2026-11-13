@@ -1,5 +1,5 @@
 import React from "react";
-import { FileCode, LayoutDashboard, Map, ScrollText, Settings } from "lucide-react";
+import { LayoutDashboard, Map, ScrollText, Settings } from "lucide-react";
 import type { WordPressSite } from "../types";
 import { WordPressCardActions } from "./WordPressCardActions";
 import { SitemapSection } from "./SitemapSection";
@@ -7,7 +7,6 @@ import { getCyberpunkTextClasses } from "./cyberpunk-theme";
 import type { WordPressSiteAdminSection } from "./WordPressSiteAdminLayout";
 import { openDashboardMasterRulesSettings } from "@/lib/open-master-rules-settings";
 import { MasterInstructionsSection } from "./MasterInstructionsSection";
-import { FunctionsUpdaterPanel } from "./FunctionsUpdaterPanel";
 import { PropertyOverviewSection } from "./PropertyOverviewSection";
 import { Button } from "@/ui";
 export type BuildWordPressPropertySectionsParams = {
@@ -39,6 +38,8 @@ export type BuildWordPressPropertySectionsParams = {
   onExtractNAPAndGraph?: () => void;
   getScrapingKey: (siteId: string, sitemapUrl: string) => string;
   onPatchSite?: (siteId: string, patch: Partial<WordPressSite>) => void;
+  /** Overview CTA: open Settings → Profile. */
+  onOpenSettingsProfile?: () => void;
   /** Full property profile page, embedded expand panel, or collapsed card. */
   shell: "modal" | "embedded" | "card";
   siteSettingsPanel?: React.ReactNode;
@@ -73,6 +74,7 @@ export function buildWordPressPropertySections(
     onExtractNAPAndGraph,
     getScrapingKey,
     onPatchSite,
+    onOpenSettingsProfile,
     shell,
     siteSettingsPanel,
   } = params;
@@ -96,6 +98,7 @@ export function buildWordPressPropertySections(
           onDetect={onDetect}
           onExtractNAPAndGraph={onExtractNAPAndGraph}
           onPatchSite={onPatchSite}
+          onOpenSettingsProfile={onOpenSettingsProfile}
         />
       ) : (
         <>
@@ -151,14 +154,6 @@ export function buildWordPressPropertySections(
             tone={isEmbedded ? "propertyBlack" : "card"}
           />
         </>
-      ),
-    },
-    {
-      id: "functions-updater",
-      label: "Functions Updater",
-      icon: FileCode,
-      content: (
-        <FunctionsUpdaterPanel site={site} disabled={site.enabled === false} />
       ),
     },
     {

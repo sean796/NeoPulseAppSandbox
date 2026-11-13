@@ -29,6 +29,26 @@ export function buildBulkBaseRows(
     if (rows.length === 0) {
       return { ok: false, reason: 'csv_empty' };
     }
+    if (selectedBlogIndices.size > 0) {
+      const sorted = Array.from(selectedBlogIndices).sort((a, b) => a - b);
+      const baseRows: CSVRow[] = [];
+      const baseDisplayIndices: number[] = [];
+      for (const idx of sorted) {
+        const row = rows[idx];
+        if (row) {
+          baseRows.push(row);
+          baseDisplayIndices.push(idx);
+        }
+      }
+      if (baseRows.length === 0) {
+        return { ok: false, reason: 'selection_empty' };
+      }
+      return {
+        ok: true,
+        baseRows,
+        baseDisplayIndices,
+      };
+    }
     return { ok: true, baseRows: rows, baseDisplayIndices: undefined };
   }
 

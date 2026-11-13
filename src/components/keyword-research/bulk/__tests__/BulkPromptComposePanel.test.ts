@@ -33,10 +33,10 @@ describe("BulkPromptComposePanel Universal Layout", () => {
     expect(html).not.toContain("Approve");
   });
 
-  it("renders CSV mode with matching dropzone and universal 4-tier slot structure", () => {
+  it("renders Import Studio with CSV and draft dropzone", () => {
     const html = renderToStaticMarkup(
       createElement(BulkPromptComposePanel, {
-        studioMode: "csv",
+        studioMode: "blog-import",
         generalIntent: "",
         onGeneralIntentChange: () => {},
         numberOfBlogs: 1,
@@ -52,7 +52,7 @@ describe("BulkPromptComposePanel Universal Layout", () => {
 
     // Slot 2: Primary surface with universal min-height
     expect(html).toMatch(/min-h-\[(5|7\.5)rem\]/);
-    expect(html).toContain("Drop CSV, DOCX, MD, or other draft files here or click to browse");
+    expect(html).toContain("Drop CSV, DOCX, MD, HTML, or TXT here or click to browse");
 
     // Slot 3: Secondary grid with template download and draft fields
     expect(html).toContain("Focus keyword (optional)");
@@ -100,7 +100,7 @@ describe("BulkPromptComposePanel Universal Layout", () => {
   });
 
   it("maintains consistent max-w-5xl and unified padding across all modes", () => {
-    const modes = ["prompt", "csv", "press-release"] as const;
+    const modes = ["prompt", "blog-import", "press-release"] as const;
 
     for (const mode of modes) {
       const html = renderToStaticMarkup(

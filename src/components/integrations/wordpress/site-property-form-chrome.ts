@@ -146,6 +146,10 @@ export interface SitePropertyFormFieldsProps {
   className?: string;
   layout?: "accordion" | "modalFlat";
   settingsSubSectionId?: PropertySettingsSubSectionId;
+  onSettingsSubSectionChange?: (id: PropertySettingsSubSectionId) => void;
+  /** Profile Settings edit actions (replaces dock row … menu). */
+  onDeleteProperty?: () => void;
+  onTogglePropertyEnabled?: () => void;
 }
 
 export const SEMRUSH_MATCH_STATES = ["Match project from Semrush", "Matching"] as const;

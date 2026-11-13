@@ -48,15 +48,16 @@ export function quarterStatsForSite(
   );
   const sitemapDisabled = isEntitySitemapDisabled(site);
   const entityUrlActive = sitemapDisabled ? "" : site.entitySitemapUrl?.trim() ?? "";
+  // Hook owns network; missing tile = zeros until the user hits Refresh.
   return {
     quarterLabel: range.quarterLabel,
-    loading: true,
-    postsLive: null,
-    postsScheduled: null,
-    entityLive: null,
-    entityScheduled: null,
+    loading: false,
+    postsLive: 0,
+    postsScheduled: 0,
+    entityLive: 0,
+    entityScheduled: 0,
     entityConfigured: Boolean(site.manualEndpoint?.trim() || entityUrlActive),
-    entityCountsAvailable: false,
+    entityCountsAvailable: Boolean(site.manualEndpoint?.trim() || entityUrlActive),
     countsPeriodAfterIso: range.after,
     countsPeriodEndExclusiveIso: range.before,
     countsPeriodMode: range.mode,

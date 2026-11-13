@@ -15,18 +15,31 @@ import {
   nextEditorialPeriodTooltipText,
   propertyMetricCellClass,
   propertyMetricCellWidths,
+  propertyMetricsLoadingClusterClass,
   quarterPairTotalForStrip,
   quarterStripTooltip,
 } from "./wordpress-site-list-metrics";
+import {
+  PROPERTIES_DOCK_COUNT_CLASS,
+} from "./wordpress-properties-surfaces";
+import { PropertyMetricCountLoadingMark } from "./PropertyMetricCountLoadingMark";
 
 export function QuarterEditorialCountsStrip({
   site,
   stats,
   rowDisplay = "compact",
+  countsBatchPending = false,
+  variant = "default",
+  dockActive = false,
 }: {
   site: WordPressSite;
   stats: QuarterEditorialTileStats | undefined;
   rowDisplay?: WordPressPropertyRowDisplay;
+  /** Parent batch flag — keep splash until every site finishes, then fade together. */
+  countsBatchPending?: boolean;
+  /** Dock palette: plain trailing counts, no black frames. */
+  variant?: "default" | "dock";
+  dockActive?: boolean;
 }) {
   if (!siteHasWpCredentials(site) || !stats) return null;
 
@@ -35,60 +48,37 @@ export function QuarterEditorialCountsStrip({
   const hasManualEndpoint = Boolean(site.manualEndpoint?.trim());
   const sitemapDisabled = isEntitySitemapDisabled(site) && !hasManualEndpoint;
   const entityCountsPending =
-    stats.loading && stats.entityConfigured && !stats.entityCountsAvailable;
+    (stats.loading || countsBatchPending) &&
+    stats.entityConfigured &&
+    !stats.entityCountsAvailable;
   const showEntityCount =
     !sitemapDisabled && stats.entityConfigured && (stats.entityCountsAvailable || entityCountsPending);
 
-  const postsDisplayLoading =
-    stats.loading && (stats.postsLive === null || stats.postsScheduled === null);
-  const loading = stats.loading;
-  const postsTotal = quarterPairTotalForStrip(
-    stats.postsLive,
-    stats.postsScheduled,
-    postsDisplayLoading,
-  );
-  const entityDisplayLoading =
-    entityCountsPending ||
-    (stats.loading && (stats.entityLive === null || stats.entityScheduled === null));
+  const countsLoading = stats.loading || countsBatchPending;
+  const postsTotal = quarterPairTotalForStrip(stats.postsLive, stats.postsScheduled, countsLoading);
   const entitiesTotal = showEntityCount
-    ? quarterPairTotalForStrip(stats.entityLive, stats.entityScheduled, entityDisplayLoading)
+    ? quarterPairTotalForStrip(stats.entityLive, stats.entityScheduled, countsLoading)
     : null;
   const compact = rowDisplay === "compact";
   const mw = propertyMetricCellWidths(rowDisplay);
   const metricCell = propertyMetricCellClass(compact);
   const iconClass = cn("shrink-0 text-primary", compact ? "h-4 w-4" : "h-5 w-5");
-  const postsCountClass = cn(
+  const countClass = cn(
     PROPERTY_METRIC_COUNT_SLOT_CLASS,
-    editorialQuotas && "min-w-[2.75rem]",
-    "shrink-0 font-light tracking-tight text-foreground",
+    "shrink-0 font-medium tracking-tight text-foreground tabular-nums",
     compact ? "text-lg leading-none" : "text-xl leading-none",
   );
   const postsMetricLabel = editorialQuotas
-    ? formatScheduledVsQuota(
-        postsTotal,
-        editorialQuotas.blogsPerMonth,
-        postsDisplayLoading,
-      )
-    : formatQuarterCountCell(postsTotal, postsDisplayLoading);
+    ? formatScheduledVsQuota(postsTotal, editorialQuotas.blogsPerMonth, false)
+    : formatQuarterCountCell(postsTotal, false);
   const entityMetricLabel =
     editorialQuotas && showEntityCount
-      ? formatScheduledVsQuota(
-          entitiesTotal,
-          editorialQuotas.sapsPerMonth,
-          entityDisplayLoading,
-        )
-      : formatQuarterCountCell(entitiesTotal, entityDisplayLoading);
-  const entityIconClass = cn("shrink-0 text-primary", compact ? "h-4 w-4" : "h-5 w-5");
-  const entityCountClass = cn(
-    PROPERTY_METRIC_COUNT_SLOT_CLASS,
-    editorialQuotas && "min-w-[2.75rem]",
-    "shrink-0 font-light tracking-tight text-foreground",
-    compact ? "text-lg leading-none" : "text-xl leading-none",
-  );
+      ? formatScheduledVsQuota(entitiesTotal, editorialQuotas.sapsPerMonth, false)
+      : formatQuarterCountCell(entitiesTotal, false);
 
   const stripSummaryTitle = stats.errorTitle
-    ? `${stats.errorTitle}. ${quarterStripTooltip(stats, postsDisplayLoading)}`
-    : quarterStripTooltip(stats, postsDisplayLoading);
+    ? `${stats.errorTitle}. ${quarterStripTooltip(stats, countsLoading)}`
+    : quarterStripTooltip(stats, countsLoading);
 
   const postsTooltipIso = stats.countsPeriodEndExclusiveIso?.trim();
   const postsTooltip = postsTooltipIso ? nextEditorialPeriodTooltipText(postsTooltipIso) : "";
@@ -97,10 +87,78 @@ export function QuarterEditorialCountsStrip({
     e.stopPropagation();
   };
 
+  if (variant === "dock") {
+    const countClass = PROPERTIES_DOCK_COUNT_CLASS;
+    const white = {
+      color: "#ffffff",
+      WebkitTextFillColor: "#ffffff",
+      opacity: 1,
+      filter: "none",
+    } as const;
+    if (countsLoading) {
+      return (
+        <span
+          className="inline-flex shrink-0 items-center gap-2 !text-white"
+          title={stripSummaryTitle}
+          onClick={stop}
+          onPointerDown={stop}
+          aria-label="Counting editorial posts"
+          style={white}
+        >
+          <span className={countClass} style={white} aria-label="Entities loading">
+            …
+          </span>
+          <span className={countClass} style={white} aria-label="Posts loading">
+            …
+          </span>
+        </span>
+      );
+    }
+    return (
+      <span
+        className="inline-flex shrink-0 items-center gap-2 !text-white"
+        title={stripSummaryTitle}
+        onClick={stop}
+        onPointerDown={stop}
+        style={white}
+      >
+        <span
+          className={countClass}
+          style={white}
+          aria-label={showEntityCount ? "Entities count" : "Entities count unavailable"}
+          title={showEntityCount ? "Entities" : "Entities not configured"}
+        >
+          {showEntityCount ? entityMetricLabel : "—"}
+        </span>
+        <span className={countClass} style={white} aria-label="Posts count" title="Posts">
+          {postsMetricLabel}
+        </span>
+      </span>
+    );
+  }
+
+  // One square covering both count label slots (same width as posts + entity cells).
+  if (countsLoading) {
+    return (
+      <div
+        className={cn(
+          propertyMetricsLoadingClusterClass(rowDisplay),
+          "inline-flex shrink-0 items-center justify-center !rounded-none !bg-[#000] border-0 p-0 shadow-none",
+        )}
+        title={stripSummaryTitle}
+        onClick={stop}
+        onPointerDown={stop}
+        aria-label="Counting editorial posts"
+      >
+        <PropertyMetricCountLoadingMark />
+      </div>
+    );
+  }
+
   const postsMetricInner = (
     <span
       className={cn(
-        "flex min-w-0 items-center justify-center gap-1 text-foreground",
+        "flex w-full min-w-0 items-center justify-end gap-1 text-foreground",
         postsTooltip && "cursor-default",
       )}
       aria-label={
@@ -110,13 +168,13 @@ export function QuarterEditorialCountsStrip({
       }
     >
       <FileText className={iconClass} aria-hidden />
-      <span className={postsCountClass}>{postsMetricLabel}</span>
+      <span className={countClass}>{postsMetricLabel}</span>
     </span>
   );
 
   const postsFramed = (
     <div
-      className={cn(metricCell, mw.posts, "text-foreground")}
+      className={cn(metricCell, mw.posts, "flex items-center justify-end text-foreground")}
       title={stripSummaryTitle}
       onClick={stop}
       onPointerDown={stop}
@@ -140,7 +198,7 @@ export function QuarterEditorialCountsStrip({
 
   const entityFramed = showEntityCount ? (
     <div
-      className={cn(metricCell, mw.ent, "text-foreground")}
+      className={cn(metricCell, mw.ent, "flex items-center justify-end text-foreground")}
       title={stripSummaryTitle}
       onClick={stop}
       onPointerDown={stop}
@@ -150,22 +208,25 @@ export function QuarterEditorialCountsStrip({
           : `Entities in period: ${entityMetricLabel}`
       }
     >
-      <MapPin className={entityIconClass} aria-hidden />
-      <span className={entityCountClass}>{entityMetricLabel}</span>
+      <span className="inline-flex min-w-0 items-center justify-end gap-1">
+        <MapPin className={iconClass} aria-hidden />
+        <span className={countClass}>{entityMetricLabel}</span>
+      </span>
     </div>
   ) : (
     <div
       className={cn(
         metricCell,
         mw.ent,
-        "text-muted-foreground/60 pointer-events-none select-none",
+        "flex items-center justify-end text-muted-foreground/60 pointer-events-none select-none",
       )}
       title={entityDisabledTitle}
       aria-label={sitemapDisabled ? "Entity sitemap disabled (N/A)" : "Entity counts not configured (N/A)"}
     >
       <span
         className={cn(
-          "font-medium tabular-nums tracking-tight text-muted-foreground/70",
+          countClass,
+          "font-medium text-muted-foreground/70",
           compact ? "text-sm leading-none" : "text-base leading-none",
         )}
       >
@@ -175,10 +236,10 @@ export function QuarterEditorialCountsStrip({
   );
 
   return (
-    <>
+    <span className="inline-flex shrink-0 items-stretch animate-in fade-in duration-300">
       {postsFramed}
       {entityFramed}
-    </>
+    </span>
   );
 }
 

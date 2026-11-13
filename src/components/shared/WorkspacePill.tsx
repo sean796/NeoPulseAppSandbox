@@ -8,7 +8,6 @@ import {
   WORKSPACE_PILL_SQUARE_BASE,
 } from "@/components/shared/workspace-pill-styles";
 import { cn } from "@/lib/utils";
-import { Button } from "@/ui";
 
 export type WorkspacePillProps = {
   label: string;
@@ -39,10 +38,19 @@ export function WorkspacePill({
   const blockInteraction = disabled;
   const nativeDisabled = disabled && !active;
 
+  const toneClass =
+    tone === "forge"
+      ? active
+        ? WORKSPACE_PILL_ACTIVE_FORGE
+        : WORKSPACE_PILL_INACTIVE_FORGE
+      : active
+        ? WORKSPACE_PILL_ACTIVE
+        : WORKSPACE_PILL_INACTIVE;
+
   return (
-    <Button
-      pressed={Boolean(active)}
-      variant="quiet"
+    <button
+      type="button"
+      aria-pressed={Boolean(active)}
       disabled={nativeDisabled}
       aria-disabled={blockInteraction || undefined}
       aria-label={iconOnly ? label : undefined}
@@ -51,15 +59,22 @@ export function WorkspacePill({
         if (blockInteraction) return;
         onClick();
       }}
+      className={cn(
+        square ? WORKSPACE_PILL_SQUARE_BASE : WORKSPACE_PILL_BASE,
+        "h-8 w-[5.75rem] shrink-0 border-0 px-2",
+        toneClass,
+        blockInteraction && !active && "pointer-events-none opacity-40",
+        className,
+      )}
     >
       {iconOnly && Icon ? (
         <Icon className="relative z-[1] h-4 w-4 shrink-0" aria-hidden />
       ) : (
         <>
           {Icon ? <Icon className="relative z-[1] mr-1.5 h-4 w-4 shrink-0" aria-hidden /> : null}
-          <span className="relative z-[1] block min-w-0 break-words">{label}</span>
+          <span className="relative z-[1] block min-w-0 truncate">{label}</span>
         </>
       )}
-    </Button>
+    </button>
   );
 }

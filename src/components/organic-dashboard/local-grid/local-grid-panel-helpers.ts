@@ -60,28 +60,41 @@ export function formatHumanFriendlyScanDate(raw?: string | null): string {
   return trimmed;
 }
 
-export function inferInitialKeywordForSite(site: WordPressSite, city?: string): string {
+export function inferInitialKeywordForSite(site: WordPressSite, _city?: string): string {
+  const stored = site.primaryLocalKeyword?.trim();
+  if (stored) return stored;
   const combined = `${site.name} ${site.napInfo?.name ?? ""} ${site.siteUrl} ${site.industryVertical ?? ""}`.toLowerCase();
-  const cityLabel = city?.trim() || "";
   if (
     combined.includes("blind") ||
     combined.includes("shade") ||
     combined.includes("shutter") ||
-    combined.includes("drapery")
+    combined.includes("drapery") ||
+    combined.includes("window")
   ) {
     return "blinds near me";
   }
+  if (combined.includes("paint")) return "painters near me";
+  if (combined.includes("junk") || combined.includes("dump")) return "junk removal near me";
+  if (combined.includes("tent") || combined.includes("rental")) return "tent rental near me";
   if (
     combined.includes("kwb") ||
     combined.includes("account") ||
     combined.includes("cpa") ||
     combined.includes("tax")
   ) {
-    return cityLabel ? `${cityLabel} tax advisors` : "tax advisors near me";
+    return "tax advisors near me";
   }
-  if (combined.includes("dent")) {
-    return cityLabel ? `dentist ${cityLabel}` : "dentist near me";
+  if (combined.includes("interior")) return "interior designer near me";
+  if (combined.includes("posh") || combined.includes("glamping")) {
+    return "glamping near me";
   }
+  if (combined.includes("outdoor") || combined.includes("patio") || combined.includes("furniture")) {
+    return "outdoor furniture near me";
+  }
+  if (combined.includes("neo digital") || combined.includes("marketing") || combined.includes("neodigital")) {
+    return "digital marketing near me";
+  }
+  if (combined.includes("dent")) return "dentist near me";
   return "blinds near me";
 }
 export function getLocalGridDefaultLocation(site: WordPressSite) {

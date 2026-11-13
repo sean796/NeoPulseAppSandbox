@@ -22,7 +22,6 @@ import {
 import { isDfsPaymentLatched } from "@/lib/llm-audit/dataforseo-llm-responses-live";
 import {
   appendUniversalContentRulesToSystemPrompt,
-  assertNoForbiddenWordViolations,
   injectBlacklistRagIntoMessages,
 } from "@/lib/content-word-blocklist";
 import { postOpenRouterAppChat } from "@/lib/openrouter-app-api";
@@ -121,7 +120,6 @@ export async function fetchLlmAuditOpenRouter(
     });
 
     const responseText = content.trim();
-    assertNoForbiddenWordViolations(responseText, "LLM audit response");
     const annotations = annotationsFromOpenRouterRaw(raw);
     const annotationUrls = annotations.map((a) => a.url).filter(Boolean) as string[];
     const liveLinks = dedupeLlmAuditUrls([...annotationUrls, ...urlsFromLlmAuditText(responseText)]);

@@ -63,7 +63,7 @@ export const MANAGER_DISPLAY_SQUARE_RESET =
   "bg-ui-field text-ui-danger hover:bg-ui-field-hover hover:text-ui-danger-hover";
 
 export const MANAGER_DISPLAY_DROPDOWN_PANEL =
-  "z-50 rounded-none border-0 bg-black p-0 shadow-none overflow-y-auto overflow-x-hidden max-h-[min(70vh,36rem)]";
+  "z-50 min-w-full rounded-none border-0 bg-black p-0 shadow-none overflow-y-auto overflow-x-clip max-h-[min(70vh,36rem)]";
 
 export function managerDisplayNotifySquareClass(variant: NotifyVariant | null): string {
   if (!variant) {

@@ -101,10 +101,12 @@ export function buildOrganicDashboardFetchParams(
     googleAdsCustomerIdOverride !== undefined
       ? googleAdsCustomerIdOverride.replace(/\D/g, "")
       : resolveGoogleAdsCustomerIdForReporting(site);
+  const gbpLocationId = site.gbpLocationId?.trim() ?? "";
   return {
     siteUrl,
     ga4PropertyId,
     ...(googleAdsCustomerId.length === 10 ? { googleAdsCustomerId } : {}),
+    ...(gbpLocationId ? { gbpLocationId } : {}),
     semrushDatabase: resolveSemrushDatabaseForSite(site),
     ...(semrushProjectId ? { semrushProjectId } : {}),
     reportStructure: showCompare ? "compare" : "period_progress",

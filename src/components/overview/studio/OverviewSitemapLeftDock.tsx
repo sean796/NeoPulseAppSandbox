@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChevronDown, Search } from "lucide-react";
+import { ChevronDown, RefreshCw, Search } from "lucide-react";
 
 import { OverviewBulkClusterFlyout } from "@/components/overview/overview-tab/OverviewBulkClusterFlyout";
 import {
@@ -29,7 +29,7 @@ import { cn } from "@/lib/utils";
 import { bulkGeneratorSapPathConfigError } from "@/lib/bulk/bulk-generator-studio-rows";
 import { rowIndexForOverviewUrl } from "@/lib/bulk/bulk-generator-overview-row-bridge";
 import { BulkStudioTitleUrlOptimizingBlock } from "@/components/keyword-research/bulk/BulkStudioTitleUrlOptimizingBlock";
-import { Field, RowButton, SelectField, Checkbox } from "@/ui";
+import { Button, Field, RowButton, SelectField, Checkbox } from "@/ui";
 import type { OverviewSitemapLeftDockProps } from "@/components/overview/studio/overview-sitemap-left-dock-types";
 import {
   LEFT_DOCK_DEFAULT_WIDTH,
@@ -126,27 +126,36 @@ export function OverviewSitemapLeftDock({
   }, [optimizingRowUrl]);
 
   const generatorSelectableIndices = useMemo(() => {
-    if (!bulkGeneratorDock?.promptSelection) return [];
+    if (!bulkGeneratorDock) return [];
     return filteredRows
       .map((row) => rowIndexForOverviewUrl(c.displayRows, row.url))
       .filter((index, i) => {
         if (index < 0) return false;
         const row = filteredRows[i];
-        return row.title !== "New blog slot";
+        const title = row.title.trim();
+        if (
+          title === "New blog slot" ||
+          /^Blog slot \d+$/i.test(title) ||
+          title.toLowerCase().startsWith("blog slot") ||
+          row.url.includes("__prompt-slot-")
+        ) {
+          return false;
+        }
+        return true;
       });
-  }, [bulkGeneratorDock?.promptSelection, filteredRows, c.displayRows]);
+  }, [bulkGeneratorDock, filteredRows, c.displayRows]);
 
   const generatorAllSelected =
-    Boolean(bulkGeneratorDock?.promptSelection) &&
+    Boolean(bulkGeneratorDock) &&
     generatorSelectableIndices.length > 0 &&
     generatorSelectableIndices.every((i) => bulkGeneratorDock!.selectedBlogIndices.has(i));
   const generatorSomeSelected =
-    Boolean(bulkGeneratorDock?.promptSelection) &&
+    Boolean(bulkGeneratorDock) &&
     !generatorAllSelected &&
     generatorSelectableIndices.some((i) => bulkGeneratorDock!.selectedBlogIndices.has(i));
 
   const toggleGeneratorSelectAll = () => {
-    if (!bulkGeneratorDock?.promptSelection) return;
+    if (!bulkGeneratorDock) return;
     if (generatorAllSelected) {
       bulkGeneratorDock.setSelectedBlogIndices(new Set());
       return;
@@ -155,7 +164,7 @@ export function OverviewSitemapLeftDock({
   };
 
   const toggleGeneratorRowSelected = (displayIndex: number) => {
-    if (!bulkGeneratorDock?.promptSelection) return;
+    if (!bulkGeneratorDock) return;
     bulkGeneratorDock.setSelectedBlogIndices((prev) => {
       const next = new Set(prev);
       if (next.has(displayIndex)) next.delete(displayIndex);
@@ -177,7 +186,20 @@ export function OverviewSitemapLeftDock({
             <SelectField placeholder="Sitemap source" tone="data" value={sitemapSelectValue} onValueChange={(v) => c.setSitemapSource(v as OverviewSitemapSource)} options={sourceOptions.map((opt) => ({ value: opt.id, label: opt.label }))} width="full" />
             <ChevronDown className="pointer-events-none absolute right-2 h-4 w-4 text-white/70" aria-hidden />
           </div>
-
+          {!isBulkGeneratorDock ? (
+            <Button
+              variant="tool"
+              size="icon"
+              icon={RefreshCw}
+              aria-label="Refresh post list"
+              disabled={
+                c.overviewSitemapLoadBusy ||
+                !c.site?.username?.trim() ||
+                !c.site?.appPassword?.trim()
+              }
+              onClick={() => void c.handleRefreshSitemap()}
+            />
+          ) : null}
         </div>
       </div>
 
@@ -185,7 +207,7 @@ export function OverviewSitemapLeftDock({
       <div className="flex h-10 shrink-0 items-center gap-2 border-b border-white/10 bg-black px-2.5">
         {/* Left: Items Checkbox & Count */}
         <div className="flex shrink-0 items-center gap-1.5 pl-0.5">
-          {isBulkGeneratorDock && bulkGeneratorDock!.promptSelection ? (
+          {isBulkGeneratorDock ? (
             <>
               <Checkbox
                 checked={generatorAllSelected ? true : generatorSomeSelected ? "indeterminate" : false}
@@ -216,6 +238,8 @@ export function OverviewSitemapLeftDock({
               <span className="tabular-nums text-xs text-muted-foreground whitespace-nowrap">
                 {c.selectedCount > 0 ? (
                   <span className="font-medium text-primary">{c.selectedCount} selected</span>
+                ) : c.overviewSitemapLoadBusy && filteredRows.length === 0 ? (
+                  <span>Loading…</span>
                 ) : (
                   <span>{filteredRows.length} items</span>
                 )}
@@ -231,6 +255,7 @@ export function OverviewSitemapLeftDock({
             aria-hidden
           />
           <Field
+            size="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={
@@ -262,7 +287,19 @@ export function OverviewSitemapLeftDock({
 
       {/* Scrollable Sitemap Article List */}
       <div className="min-h-0 flex-1 overflow-y-auto">
-        {filteredRows.length === 0 ? (
+        {filteredRows.length === 0 && c.overviewSitemapLoadBusy ? (
+          <ul
+            className="divide-y divide-white/5 px-3.5 py-3"
+            aria-busy="true"
+            aria-label="Loading sitemap articles"
+          >
+            {Array.from({ length: 8 }, (_, i) => (
+              <li key={`sitemap-load-slot-${i}`} className="py-3">
+                <OverviewSitemapLeftDockPlaceholder slotNum={i + 1} />
+              </li>
+            ))}
+          </ul>
+        ) : filteredRows.length === 0 ? (
           (
             <div className="min-h-48" aria-hidden />
           )
@@ -339,33 +376,45 @@ export function OverviewSitemapLeftDock({
                         : "bg-black hover:bg-black",
                   )}
                 >
-                  {isBulkGeneratorDock && bulkGeneratorDock!.promptSelection && !isPlaceholderRow && displayIndex >= 0 ? (
+                  {isBulkGeneratorDock ? (
                     <div className="pt-1">
                       <Checkbox
-                        checked={bulkGeneratorDock!.selectedBlogIndices.has(displayIndex)}
+                        checked={!isPlaceholderRow && displayIndex >= 0 && bulkGeneratorDock!.selectedBlogIndices.has(displayIndex)}
+                        disabled={isPlaceholderRow || displayIndex < 0 || bulkWorkspaceBusy}
+                        onCheckedChange={() => {
+                          if (!isPlaceholderRow && displayIndex >= 0) {
+                            toggleGeneratorRowSelected(displayIndex);
+                          }
+                        }}
                         onClick={(e) => {
-                          e.preventDefault();
                           e.stopPropagation();
-                          toggleGeneratorRowSelected(displayIndex);
                         }}
                         aria-label={`Select ${displayTitle}`}
                         className={DASHBOARD_LIST_CHECKBOX_CLASS}
                       />
                     </div>
-                  ) : !isBulkGeneratorDock && !isPlaceholderRow ? (
+                  ) : (
                     <div className="pt-1">
                       <Checkbox
                         checked={isSelected}
+                        disabled={isPlaceholderRow || !row.url}
+                        onCheckedChange={() => {
+                          if (!isPlaceholderRow && row.url) {
+                            c.toggleSelectedUrlKey(row.url, false, pageKeys);
+                          }
+                        }}
                         onClick={(e) => {
-                          e.preventDefault();
                           e.stopPropagation();
-                          c.toggleSelectedUrlKey(row.url, e.shiftKey, pageKeys);
+                          if (e.shiftKey && !isPlaceholderRow && row.url) {
+                            e.preventDefault();
+                            c.toggleSelectedUrlKey(row.url, true, pageKeys);
+                          }
                         }}
                         aria-label={`Select ${displayTitle}`}
                         className={DASHBOARD_LIST_CHECKBOX_CLASS}
                       />
                     </div>
-                  ) : null}
+                  )}
 
                   <RowButton
                     onClick={(e) => {

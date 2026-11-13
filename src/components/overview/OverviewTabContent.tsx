@@ -9,7 +9,6 @@ import { OverviewVisualDocCanvas } from "@/components/overview/studio/OverviewVi
 import type { OverviewTabContentProps } from "@/components/overview/overview-tab/overview-tab-content-types";
 import { useOverviewTabController } from "@/hooks/overview/use-overview-tab-controller";
 import { useOverviewTabShellDerived } from "@/hooks/overview/use-overview-tab-shell-derived";
-import { useBulkSplashAiStatus } from "@/hooks/bulk/use-bulk-splash-ai-status";
 import { usePulseAssistOverviewBridge } from "@/hooks/use-pulse-assist-overview-bridge";
 import { consumeOverviewOptimizedUpload } from "@/lib/overview/overview-content-opt-html-store";
 import { resolveStudioDrawerElementorHeaders } from "@/lib/overview/overview-studio-drawer-section-headers";
@@ -199,38 +198,40 @@ export function OverviewTabContent(props: OverviewTabContentProps) {
     const minTimer = window.setTimeout(() => {
       setMinSplashElapsed(true);
     }, 650);
-    const maxTimer = window.setTimeout(() => {
-      if (ctrl.site?.id) {
-        setSplashDismissedForSiteId(ctrl.site.id);
-      }
-    }, 6000);
     return () => {
       window.clearTimeout(minTimer);
-      window.clearTimeout(maxTimer);
     };
   }, [ctrl.site?.id]);
 
   useEffect(() => {
-    if (isStudioDataReady && minSplashElapsed && ctrl.site?.id) {
+    if (ctrl.overviewSitemapLoadBusy && ctrl.site?.id) {
+      setSplashDismissedForSiteId(null);
+      return;
+    }
+    if (!minSplashElapsed || !ctrl.site?.id) return;
+    if (isStudioDataReady || !ctrl.overviewSitemapLoadBusy) {
       setSplashDismissedForSiteId(ctrl.site.id);
     }
-  }, [isStudioDataReady, minSplashElapsed, ctrl.site?.id]);
+  }, [
+    isStudioDataReady,
+    minSplashElapsed,
+    ctrl.site?.id,
+    ctrl.overviewSitemapLoadBusy,
+  ]);
 
+  // Splash only for list refresh / first empty load. Never cover the open post.
   const splashVisible =
     props.studioRowSource !== "bulk-generator" &&
     Boolean(ctrl.site?.id) &&
-    (splashDismissedForSiteId !== ctrl.site?.id || activeRow?.status === "scraping");
+    (ctrl.overviewSitemapLoadBusy ||
+      (splashDismissedForSiteId !== ctrl.site?.id &&
+        ctrl.displayRows.length === 0 &&
+        !activeRow));
 
-  const shellSplashStatus = useBulkSplashAiStatus({
-    active: splashVisible,
-    latestStep:
-      activeRow?.status === "scraping"
-        ? "Syncing live WordPress content and SEO fields"
-        : "Loading site sitemap inventory and cached articles",
-    articleTitle: expandedPageTitle ?? undefined,
-    keyword: activeRow?.focusKeyword || undefined,
-    siteName: ctrl.site?.name || undefined,
-  });
+  const splashStatusText = ctrl.overviewSitemapLoadBusy
+    ? "Refreshing post list"
+    : "Loading post list";
+  const splashStatusVisual = "writing" as const;
 
   const selectDocUrl = (url: string) => {
     if (normalizePageUrlKey(ctrl.expandedPageUrl ?? "") === normalizePageUrlKey(url)) {
@@ -242,8 +243,8 @@ export function OverviewTabContent(props: OverviewTabContentProps) {
   return (
     <OverviewStudioTabShell
       splashVisible={splashVisible}
-      splashStatusText={shellSplashStatus.status}
-      splashStatusVisual={shellSplashStatus.visual}
+      splashStatusText={splashStatusText}
+      splashStatusVisual={splashStatusVisual}
       dock={{
         ctrl,
         activeUrl: activeRow?.url ?? ctrl.expandedPageUrl,

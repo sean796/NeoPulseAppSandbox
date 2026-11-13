@@ -38,7 +38,7 @@ export function VideoPlanPanel({
         </div>
         {plan.decisionAuditJson ? (
           <div className="flex items-center justify-between gap-2 border-b border-white/5 pb-1.5 pt-0.5">
-            <span className="text-xs font-mono text-muted-foreground">Decision Agent (Liquid d1.1)</span>
+            <span className="text-xs font-mono text-muted-foreground">Decision Agent (Liquid LFM2.5)</span>
             <DecisionAuditRowBadge auditJson={plan.decisionAuditJson} showScores />
           </div>
         ) : null}

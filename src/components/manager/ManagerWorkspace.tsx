@@ -84,7 +84,8 @@ export const ManagerWorkspace: React.FC<ManagerWorkspaceProps> = ({
   /** Tabs that own the full-bleed studio layout (no 10% side inset). */
   const fullBleedTab =
     embedded &&
-    (managerTab === "chat" ||
+    (managerTab === "dashboard" ||
+      managerTab === "chat" ||
       managerTab === "tasks" ||
       managerTab === "pulse-forge" ||
       managerTab === "image-generator" ||
@@ -174,7 +175,9 @@ export const ManagerWorkspace: React.FC<ManagerWorkspaceProps> = ({
               cn(
                 "flex flex-col overflow-x-hidden overscroll-y-contain",
                 /* Integrations + Generator (incl. Opt): inner shells own vertical scroll; outer must not scroll */
-                managerTab === "integrations" ||
+                managerTab === "dashboard" ||
+                  managerTab === "dashboard" ||
+                  managerTab === "integrations" ||
                   managerTab === "knowledge" ||
                   managerTab === "generator" ||
                   managerTab === "chat" ||

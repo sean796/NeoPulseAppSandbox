@@ -44,6 +44,8 @@ export interface UseOverviewWordPressBindingResult {
       silent?: boolean;
       /** When false (default), reuse per-source cache when snapshot is populated. */
       forceRefresh?: boolean;
+      /** Live Neo MCP inventory only. No WordPress REST fallback. */
+      preferNeoMcp?: boolean;
     },
   ) => Promise<{
     ok: boolean;

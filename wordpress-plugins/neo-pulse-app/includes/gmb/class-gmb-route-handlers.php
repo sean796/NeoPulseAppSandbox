@@ -98,6 +98,24 @@ class Neo_Pulse_App_Gmb_Route_Handlers {
 			return;
 		}
 
+		if ( $subpath === 'recommend-categories' && $method === 'POST' ) {
+			$result = Neo_Pulse_App_Gmb_Categories::recommend( $body );
+			Neo_Pulse_App_Api_Dispatcher::send_json( $result['body'], $result['statusCode'] );
+			return;
+		}
+
+		if ( $subpath === 'apply-categories' && $method === 'POST' ) {
+			$result = Neo_Pulse_App_Gmb_Categories::apply( $body );
+			Neo_Pulse_App_Api_Dispatcher::send_json( $result['body'], $result['statusCode'] );
+			return;
+		}
+
+		if ( $subpath === 'write-categories' && $method === 'POST' ) {
+			$result = Neo_Pulse_App_Gmb_Categories::write( $body );
+			Neo_Pulse_App_Api_Dispatcher::send_json( $result['body'], $result['statusCode'] );
+			return;
+		}
+
 		if ( $subpath === 'generate-social-copy' && $method === 'POST' ) {
 			Neo_Pulse_App_Api_Dispatcher::send_json(
 				array(

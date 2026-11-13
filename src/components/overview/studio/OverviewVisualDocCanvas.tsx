@@ -3,18 +3,12 @@ import { FileText, Play, RefreshCw, Sparkles, Upload } from "lucide-react";
 import { useAgentRunsContext } from "@/contexts/use-agent-runs-context";
 import { OverviewDocSectionBlocks } from "@/components/overview/studio/OverviewDocSectionBlock";
 import { buildElementorPageHtml } from "@/lib/elementor-page-content/elementor-page-html";
-import {
-  isTruncatedAiseoSourceBody,
-  resolveAiseoHarnessSourceHtml,
-  resolveAiseoHarnessSourceHtmlFromCache,
-  scoreAiseoSourceBody,
-} from "@/lib/overview/overview-aiseo-source-html";
 import { overviewStudioRowFromWarmInventory } from "@/lib/overview/overview-studio-row-inventory-merge";
 import { isOverviewRowOptimizationActive } from "@/components/overview/overview-tab/overview-bulk-run-helpers";
 import { metaDisplayTitle, bulkStudioRowPathLabel, bulkStudioRowPublicUrl, overviewRowUrlPathLabel, overviewTitlePrimarySegment } from "@/lib/overview/overview-tab-display";
+import { overviewStudioUrlBoxLabel } from "@/lib/overview/overview-studio-url-box-label";
 import { setStudioDocMetaInspectorBridge } from "@/lib/overview/studio-doc-meta-bridge";
 import { writeSidebarOpen, writeSidebarPanel } from "@/lib/pulse-assist/storage";
-import { useBulkSplashAiStatus } from "@/hooks/bulk/use-bulk-splash-ai-status";
 import { useOverviewSiteWarmDetails } from "@/hooks/overview/use-overview-site-warm-details";
 import { ContentOptimizerSplashOverlay } from "@/components/overview/studio/ContentOptimizerSplashOverlay";
 import { OverviewStudioGeneratedFilesBand } from "@/components/overview/studio/OverviewStudioGeneratedFilesBand";
@@ -22,8 +16,28 @@ import { UniversalStudioHeader } from "@/components/overview/studio/UniversalStu
 import { OverviewStudioDetailsDrawerContent } from "@/components/overview/studio/OverviewStudioDetailsDrawerContent";
 import { useOverviewStudioDrawerSteps } from "@/components/overview/studio/use-overview-studio-drawer-steps";
 import { useOverviewStudioAutoSeo, STUDIO_ACTION_STATES, type OverviewVisualDocCanvasProps } from "@/components/overview/studio/use-overview-studio-auto-seo";
+import type { BulkSplashVisualKind } from "@/lib/bulk/bulk-splash-status-agent";
+import type { RowStatus } from "@/components/overview/overview-meta-row-types";
+import { normalizePageUrlKey } from "@/lib/sitemap-optimizer/normalize-page-url";
 import { cn } from "@/lib/utils";
-import { ActionButton, Button } from "@/ui";
+import { ActionButton, Button, Tooltip, TooltipContent, TooltipTrigger } from "@/ui";
+
+function splashFromBatchStep(
+  step: string | undefined,
+  rowStatus: RowStatus | undefined,
+): { text: string; visual: BulkSplashVisualKind } {
+  const s = step?.trim() ?? "";
+  if (s === "Uploading to WordPress" || s === "Publishing to WordPress" || rowStatus === "uploading") {
+    return { text: "Uploading to WordPress", visual: "publish" };
+  }
+  if (s === "Reading Data" || s === "SERP Research Brief") {
+    return { text: s || "Reading Data", visual: "research" };
+  }
+  if (s === "Optimizing content" || rowStatus === "optimizing" || s) {
+    return { text: s || "Optimizing content", visual: "writing" };
+  }
+  return { text: "Optimizing content", visual: "writing" };
+}
 
 export function OverviewVisualDocCanvas({
   ctrl: c,
@@ -69,55 +83,15 @@ export function OverviewVisualDocCanvas({
         Boolean(studioRow.elementorDataJson?.trim())),
   );
 
+  // One path: studio body is the row's post HTML. Pages may render Elementor JSON.
   const bodyHtml = useMemo(() => {
     if (!studioRow) return "";
     const liveHtml = studioRow.postContentOptimized?.trim() || studioRow.postContent?.trim() || "";
-    const optimizingThisRow = isOverviewRowOptimizationActive(studioRow.url, optimizingRowUrl);
-
-    if (isBulkGeneratorStudio) {
-      return liveHtml;
-    }
-
-    if (isElementorRow) {
-      if (optimizingThisRow && liveHtml) return liveHtml;
-      if (studioRow.elementorDataJson?.trim()) {
-        return buildElementorPageHtml(studioRow.elementorDataJson);
-      }
-      if (c.site) {
-        return (
-          resolveAiseoHarnessSourceHtmlFromCache({
-            row: studioRow,
-            site: c.site,
-            sitemapSource: c.sitemapSource,
-            getInventoryMatchForUrl: c.getInventoryMatchForUrl,
-          }) || liveHtml
-        );
-      }
-      return liveHtml;
-    }
-
-    if (optimizingThisRow && liveHtml) {
-      return liveHtml;
-    }
-
-    if (c.site) {
-      return resolveAiseoHarnessSourceHtmlFromCache({
-        row: studioRow,
-        site: c.site,
-        sitemapSource: c.sitemapSource,
-        getInventoryMatchForUrl: c.getInventoryMatchForUrl,
-      });
+    if (isElementorRow && studioRow.elementorDataJson?.trim() && !liveHtml) {
+      return buildElementorPageHtml(studioRow.elementorDataJson);
     }
     return liveHtml;
-  }, [
-    studioRow,
-    isElementorRow,
-    optimizingRowUrl,
-    c.site,
-    c.sitemapSource,
-    c.getInventoryMatchForUrl,
-    isBulkGeneratorStudio,
-  ]);
+  }, [studioRow, isElementorRow]);
 
   const siteId = c.site?.id ?? "";
   const batchKey = siteId ? `${siteId}-batch` : "";
@@ -130,56 +104,19 @@ export function OverviewVisualDocCanvas({
   );
   const busy = isViewedRowOptimizing;
 
-  const { site, sitemapSource, getInventoryMatchForUrl, updateRow } = c;
-  const autoHydratedUrlSetRef = useRef(new Set<string>());
+  const { site, handleScrapeRow } = c;
+  const syncedUrlRef = useRef("");
+  // Open a row with no saved body → one Sync. List stays cached until Refresh.
   useEffect(() => {
-    if (isBulkGeneratorStudio || busy) return;
-    if (!site || !studioRow?.url?.trim() || rowIndex < 0) return;
-    const urlKey = studioRow.url.trim().toLowerCase();
-    const hasElementorData = Boolean(
-      studioRow.elementorDataJson?.trim() ||
-        (studioRow.elementorSectionHeaders && studioRow.elementorSectionHeaders.length > 0),
-    );
-    if (isElementorRow ? (hasElementorData || Boolean(bodyHtml.trim())) : (bodyHtml.trim() && !isTruncatedAiseoSourceBody(bodyHtml))) {
-      return;
-    }
-    if (autoHydratedUrlSetRef.current.has(urlKey)) return;
-    autoHydratedUrlSetRef.current.add(urlKey);
-
-    let cancelled = false;
-    void resolveAiseoHarnessSourceHtml({
-      row: studioRow,
-      site,
-      sitemapSource,
-      getInventoryMatchForUrl,
-    }).then((res) => {
-      if (cancelled) return;
-      const resolved = res.html?.trim() ?? "";
-      if (resolved && scoreAiseoSourceBody(resolved) > scoreAiseoSourceBody(bodyHtml)) {
-        updateRow(rowIndex, {
-          postContent: resolved,
-          postContentOptimized: studioRow.postContentOptimized?.trim()
-            ? studioRow.postContentOptimized
-            : resolved,
-        });
-      }
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [
-    isBulkGeneratorStudio,
-    isElementorRow,
-    busy,
-    site,
-    sitemapSource,
-    getInventoryMatchForUrl,
-    updateRow,
-    studioRow,
-    rowIndex,
-    bodyHtml,
-  ]);
+    if (isBulkGeneratorStudio) return;
+    if (!site || !row?.url?.trim() || rowIndex < 0) return;
+    if (row.status === "scraping") return;
+    if ((row.postContentOptimized || row.postContent || "").trim()) return;
+    const urlKey = normalizePageUrlKey(row.url);
+    if (!urlKey || syncedUrlRef.current === urlKey) return;
+    syncedUrlRef.current = urlKey;
+    void handleScrapeRow(rowIndex);
+  }, [isBulkGeneratorStudio, site, row?.url, row?.status, row?.postContent, row?.postContentOptimized, rowIndex, handleScrapeRow]);
 
   const { handleAutoSeo, fullAutoRunning, passageStatus, setPassageStatus } =
     useOverviewStudioAutoSeo({
@@ -211,11 +148,19 @@ export function OverviewVisualDocCanvas({
   const bandBusy =
     isBulkGeneratorStudio ? bulkWorkspaceBusy || busy || bulkTitleUrlOptimizing : busy;
 
+  // Keep splash up for the whole Auto SEO path, including WordPress upload.
+  // Never exclude "uploading" or the overlay cuts to content then pops back.
+  // Scraping/Sync must not cover the open post with a splash.
   const rowPipelineActive = Boolean(
     row?.status &&
       row.status !== "idle" &&
       row.status !== "error" &&
-      row.status !== "uploading",
+      row.status !== "scraping",
+  );
+  const batchStepHoldSplash = Boolean(
+    activeBatchState?.currentStep?.trim() &&
+      isViewedRowOptimizing &&
+      row?.status !== "error",
   );
 
   const optimizerSplashActive =
@@ -223,41 +168,25 @@ export function OverviewVisualDocCanvas({
     !studioBody &&
     hasRow &&
     row?.status !== "error" &&
-    (busy || fullAutoRunning || rowPipelineActive);
+    (busy || fullAutoRunning || rowPipelineActive || batchStepHoldSplash);
 
   const rawTitleForSplash = hasRow && row ? metaDisplayTitle(row, c.wpTitlesByUrl) : "";
-  const optimizerLatestStep =
-    passageStatus?.label?.trim() ||
-    effectiveSnapshot?.statusMessage?.trim() ||
-    effectiveSnapshot?.label?.trim() ||
-    activeBatchState?.currentStepProgress?.message?.trim() ||
-    activeBatchState?.currentStep?.trim() ||
-    (row?.status === "scraping" ? "Syncing live WordPress post and fields" : "") ||
-    (fullAutoRunning ? "Optimizing all article sections, title, meta, and FAQs" : "") ||
-    "Optimizing article sections";
-
-  const optimizerSplashStatus = useBulkSplashAiStatus({
-    active: optimizerSplashActive,
-    latestStep: optimizerLatestStep,
-    articleTitle: rawTitleForSplash || row?.title || undefined,
-    keyword: row?.focusKeyword || undefined,
-    siteName: c.site?.name || undefined,
-  });
 
   const bulkContentSplashVisible =
     !studioBody &&
     hasRow &&
     row?.status !== "error" &&
     (isBulkGeneratorStudio
-      ? bulkWorkspaceBusy || busy || rowPipelineActive
+      ? bulkWorkspaceBusy || busy || rowPipelineActive || batchStepHoldSplash
       : optimizerSplashActive);
 
+  const optimizerSplash = splashFromBatchStep(activeBatchState?.currentStep, row?.status);
   const effectiveSplashStatusText = isBulkGeneratorStudio
     ? bulkSplashStatusText
-    : optimizerSplashStatus.status;
+    : optimizerSplash.text;
   const effectiveSplashStatusVisual = isBulkGeneratorStudio
     ? bulkSplashStatusVisual
-    : optimizerSplashStatus.visual;
+    : optimizerSplash.visual;
 
   // Sync the active row's SERP & Meta inspector into the existing right-hand Pulse Engine sidebar
   useEffect(() => {
@@ -327,96 +256,106 @@ export function OverviewVisualDocCanvas({
     />
   );
 
-  const studioActionButtons = (
+  const autoSeoCount = c.selectedCount > 0 ? c.selectedCount : c.displayRows.length;
+  const autoSeoLabel = `Auto SEO (${autoSeoCount})`;
+  const publishLabel = row?.status === "uploading" ? "Publishing..." : "Publish";
+  const syncLabel = "Sync";
+
+  const studioTitleActions = !isBulkGeneratorStudio ? (
     <>
-      {!isBulkGeneratorStudio && hasRow ? (
-        <Button
-          variant="quiet"
-          type="button"
-          disabled={busy}
-          onClick={() => void c.handleScrapeRow(rowIndex)}
-          title="Re-scrape live WordPress HTML & ACF fields"
-        >
-          <RefreshCw className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
-          <span>Sync</span>
-        </Button>
-      ) : null}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            size="icon"
+            variant="tool"
+            icon={RefreshCw}
+            type="button"
+            disabled={busy || !hasRow}
+            onClick={() => void c.handleScrapeRow(rowIndex)}
+            aria-label={syncLabel}
+            reserved={!hasRow}
+          />
+        </TooltipTrigger>
+        <TooltipContent>{syncLabel}</TooltipContent>
+      </Tooltip>
 
-      {!isBulkGeneratorStudio && hasRow && row ? (
-        <Button
-          variant="quiet"
-          type="button"
-          disabled={busy}
-          onClick={handleAutoSeo}
-          title="Execute Auto SEO pipeline (chains all selected posts if multiple are selected)"
-        >
-          <Sparkles className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
-          <span className="break-words">{c.selectedCount > 1 ? `Auto SEO (${c.selectedCount})` : "Auto SEO"}</span>
-        </Button>
-      ) : null}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            size="icon"
+            variant="run"
+            icon={Sparkles}
+            type="button"
+            disabled={busy || c.displayRows.length === 0}
+            onClick={handleAutoSeo}
+            aria-label={autoSeoLabel}
+            reserved={c.displayRows.length === 0}
+          />
+        </TooltipTrigger>
+        <TooltipContent>{autoSeoLabel}</TooltipContent>
+      </Tooltip>
 
-      {bulkGeneratorStudioActions ? (
-        (() => {
-          const a = bulkGeneratorStudioActions;
-          const publishing = a.stage === "publish" && row?.status === "uploading";
-          const running = a.running || publishing;
-          const label =
-            a.stage === "publish"
-              ? publishing
-                ? "Publishing"
-                : "Publish"
-              : running
-                ? a.stage === "ideas"
-                  ? "Curating"
-                  : "Generating"
-                : a.stage === "approve"
-                  ? "Approve"
-                  : a.stage === "ideas"
-                    ? "Ideas"
-                    : "Generate";
-
-          return (
-            <ActionButton
-              states={STUDIO_ACTION_STATES}
-              state={label}
-              icon={Play}
-              disabled={
-                running || (a.stage === "publish" ? !hasRow || !row : busy || !a.canRun)
-              }
-              onClick={() => {
-                if (a.stage === "publish") {
-                  if (!row) return;
-                  void c.handleUpdateWordPressForRow(row, { rowIndex });
-                  return;
-                }
-                a.onRun();
-              }}
-            />
-          );
-        })()
-      ) : null}
-
-      {!bulkGeneratorStudioActions ? (
-        <Button
-          variant="quiet"
-          type="button"
-          disabled={busy || !hasRow || !row || row?.status === "uploading"}
-          onClick={() => {
-            if (!row) return;
-            void c.handleUpdateWordPressForRow(row, { rowIndex });
-          }}
-          title="Publish staged meta, prose, and FAQs to WordPress"
-        >
-          {row?.status === "uploading" ? (
-            null
-          ) : (
-            <Upload className="h-3.5 w-3.5 shrink-0" aria-hidden />
-          )}
-          <span className="break-words">{row?.status === "uploading" ? "Publishing..." : "Publish"}</span>
-        </Button>
-      ) : null}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            size="icon"
+            variant="tool"
+            icon={Upload}
+            type="button"
+            disabled={busy || !hasRow || !row || row?.status === "uploading"}
+            onClick={() => {
+              if (!row) return;
+              void c.handleUpdateWordPressForRow(row, { rowIndex });
+            }}
+            aria-label={publishLabel}
+            reserved={!hasRow}
+          />
+        </TooltipTrigger>
+        <TooltipContent>{publishLabel}</TooltipContent>
+      </Tooltip>
     </>
-  );
+  ) : null;
+
+  const studioActionButtons = bulkGeneratorStudioActions ? (
+    (() => {
+      const a = bulkGeneratorStudioActions;
+      const publishing = a.stage === "publish" && row?.status === "uploading";
+      const running = a.running || publishing;
+      const label =
+        a.stage === "publish"
+          ? publishing
+            ? "Publishing"
+            : "Publish"
+          : running
+            ? a.stage === "ideas"
+              ? "Curating"
+              : "Generating"
+            : a.stage === "approve"
+              ? "Approve"
+              : a.stage === "ideas"
+                ? "Ideas"
+                : "Generate";
+
+      return (
+        <ActionButton
+          states={STUDIO_ACTION_STATES}
+          state={label}
+          icon={Play}
+          disabled={
+            running || (a.stage === "publish" ? !hasRow || !row : busy || !a.canRun)
+          }
+          onClick={() => {
+            if (a.stage === "publish") {
+              if (!row) return;
+              void c.handleUpdateWordPressForRow(row, { rowIndex });
+              return;
+            }
+            a.onRun();
+          }}
+        />
+      );
+    })()
+  ) : null;
 
   return (
     <div className="flex h-full min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden bg-black font-sans text-base text-white">
@@ -426,19 +365,39 @@ export function OverviewVisualDocCanvas({
         onStudioEditorModeChange={onStudioEditorModeChange}
         bulkWorkspaceBusy={bulkWorkspaceBusy}
         activeUrl={row?.url ?? null}
-        publicUrl={row ? bulkStudioRowPublicUrl(row, c.site?.siteUrl) : (c.site?.siteUrl ?? null)}
+        publicUrl={(() => {
+          if (!row) return c.site?.siteUrl ?? null;
+          const path = overviewStudioUrlBoxLabel({
+            pathLabel: bulkStudioRowPathLabel(row) || overviewRowUrlPathLabel(row.url) || row.url,
+            sitemapSource: c.sitemapSource,
+          });
+          const base = c.site?.siteUrl?.trim();
+          if (base && path.startsWith("/")) {
+            try {
+              const withProto = /^https?:\/\//i.test(base) ? base : `https://${base}`;
+              return `${new URL(withProto).origin.replace(/\/$/, "")}${path}`;
+            } catch {
+              /* fall through */
+            }
+          }
+          return bulkStudioRowPublicUrl(row, c.site?.siteUrl);
+        })()}
         titleUrlOptimizing={bulkTitleUrlOptimizing}
         urlDisplayLabel={
           bulkTitleUrlOptimizing
             ? null
-            : row
-              ? (bulkStudioRowPathLabel(row) || overviewRowUrlPathLabel(row.url) || row.url)
-              : (c.site?.siteUrl ?? null)
+            : overviewStudioUrlBoxLabel({
+                pathLabel: row
+                  ? bulkStudioRowPathLabel(row) || overviewRowUrlPathLabel(row.url) || row.url
+                  : "/",
+                sitemapSource: c.sitemapSource,
+              })
         }
         siteUrl={c.site?.siteUrl ?? null}
         promptLogFile={promptLogFile}
-        filters={bulkGeneratorBand2Toolbar}
-        actions={studioActionButtons}
+        titleActions={studioTitleActions}
+        filters={isBulkGeneratorStudio ? bulkGeneratorBand2Toolbar : undefined}
+        actions={studioActionButtons || undefined}
         busy={bandBusy}
         drawerContent={drawerBody}
         detailsPanelId={
@@ -464,6 +423,17 @@ export function OverviewVisualDocCanvas({
                 ? "Select a row from the left list to open it in the studio editor."
                 : "Select an article from the Left Sitemap Dock to open it in the Visual Document Studio."}
             </p>
+          </div>
+        ) : c.overviewSitemapLoadBusy || c.displayRows.length === 0 ? (
+          <div className="relative min-h-0 flex-1 overflow-hidden bg-black">
+            <ContentOptimizerSplashOverlay
+              visible
+              statusText={
+                c.overviewSitemapLoadBusy ? "Refreshing post list" : "Loading post list"
+              }
+              statusVisual="writing"
+              ariaLabel="Loading Visual Document Studio"
+            />
           </div>
         ) : (
           <div className="min-h-0 flex-1 bg-black" aria-hidden />

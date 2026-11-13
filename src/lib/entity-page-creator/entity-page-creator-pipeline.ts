@@ -247,8 +247,8 @@ export async function hydrateEntityPageRows(args: {
     throw new Error("WordPress site URL is required.");
   }
 
-  args.onProgress?.({ phase: "Loading site inventory and GSC cache" });
-  const warm = await ensureEntitySiteWarmCache(args.site, { requireGsc: true });
+  args.onProgress?.({ phase: "Loading site inventory and GSC" });
+  const warm = await ensureEntitySiteWarmCache(args.site, { force: true, requireGsc: true });
   if (warm.error) {
     throw new Error(warm.error);
   }

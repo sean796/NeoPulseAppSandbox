@@ -25,7 +25,14 @@ import { useTeam } from "@/contexts/TeamContext";
 import { AgentRunCard } from "./AgentRunCard";
 import { AgentRunsBucketSelect } from "./AgentRunsBucketSelect";
 import { AgentRunsHeaderSiteFilter } from "./AgentRunsHeaderSiteFilter";
+import {
+  agentRunsBucketSelectSlotProps,
+  agentRunsPickerRowStyle,
+} from "@/components/agent-runs/agent-runs-bucket-select-width";
 import { Button } from "@/ui";
+
+const BUCKET_SELECT_SLOT = agentRunsBucketSelectSlotProps();
+const PICKER_ROW_STYLE = agentRunsPickerRowStyle();
 
 function preferredRunIdInBucket(bucket: AgentRunBucketGroup | undefined): number | null {
   if (!bucket || bucket.runs.length === 0) return null;
@@ -255,29 +262,41 @@ export function AgentRunsPanel() {
           <div className="agent-runs-list">
             <div className="agent-runs-site-picker">
               {showPickerBand ? (
-                <div className="agent-runs-site-picker-row">
+                <div className="agent-runs-site-picker-row" style={PICKER_ROW_STYLE}>
                   <AgentRunsHeaderSiteFilter
                     value={resolvedSiteFilter}
                     options={siteFilterOptions}
                     onChange={handleSiteFilterChange}
                   />
+                  <span className="agent-runs-site-picker-row__divider" aria-hidden />
+                  {/* Always mounted: zero CLS when switching All clients ↔ site. */}
                   {!isAllClientsFilter && selectedClient && activeBucketKey ? (
-                    <>
-                      <span className="agent-runs-site-picker-row__divider" aria-hidden />
-                      <AgentRunsBucketSelect
-                        buckets={selectedClient.buckets}
-                        value={activeBucketKey}
-                        onChange={(key) => selectBucket(selectedClient.siteId, key)}
-                        className="agent-runs-site-picker-row__tabs"
-                      />
-                    </>
-                  ) : null}
-                  {showAllLogsDownload ? (
+                    <AgentRunsBucketSelect
+                      buckets={selectedClient.buckets}
+                      value={activeBucketKey}
+                      onChange={(key) => selectBucket(selectedClient.siteId, key)}
+                      className="agent-runs-site-picker-row__tabs"
+                    />
+                  ) : (
+                    <span
+                      className={`agent-runs-bucket-select-slot agent-runs-site-picker-row__tabs flex-none self-center ${BUCKET_SELECT_SLOT.className}`}
+                      style={BUCKET_SELECT_SLOT.style}
+                      aria-hidden
+                    />
+                  )}
+                  <span className="agent-runs-site-picker-row__logs">
                     <Button
                       variant="quiet"
                       type="button"
-                      title={`Download all client logs (${allLogsCount})`}
+                      reserved={!showAllLogsDownload}
+                      disabled={!showAllLogsDownload}
+                      title={
+                        showAllLogsDownload
+                          ? `Download all client logs (${allLogsCount})`
+                          : undefined
+                      }
                       onClick={() => {
+                        if (!showAllLogsDownload) return;
                         if (isAllClientsFilter) {
                           void downloadAgentRunsShareBundle(
                             activeTeam?.id ?? null,
@@ -300,7 +319,7 @@ export function AgentRunsPanel() {
                       <Download className="h-3.5 w-3.5 shrink-0" aria-hidden />
                       All logs ({allLogsCount})
                     </Button>
-                  ) : null}
+                  </span>
                 </div>
               ) : null}
             </div>

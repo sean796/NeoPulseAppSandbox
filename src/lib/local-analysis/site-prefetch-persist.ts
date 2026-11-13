@@ -211,7 +211,7 @@ export function bundleToPersisted(bundle: EntitySiteWarmBundle): PersistedSitePr
     gsc: bundle.gsc,
     counts: bundle.counts,
     bulkInventoryRows: bundle.bulkInventoryRows ?? [],
-    error: bundle.error,
+    // Never persist GSC/warm failures. Errors must die with the in-memory attempt.
   };
 }
 
@@ -256,6 +256,7 @@ export async function readSitePrefetchPersist(
 }
 
 export async function writeSitePrefetchPersist(bundle: EntitySiteWarmBundle): Promise<void> {
+  // Skip pure failure shells. Successful inventory/GSC rows persist without any error field.
   if (bundle.error && bundle.counts.inventoryTotal === 0 && bundle.counts.gscQueries === 0) {
     return;
   }

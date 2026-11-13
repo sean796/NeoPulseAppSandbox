@@ -94,6 +94,16 @@ export async function postOpenRouterAppChat(args: {
   const requestBody = buildOpenRouterAppChatRequestBody({ ...args, model: effectiveModel });
   const payloadStr = JSON.stringify(requestBody);
   const openRouterStart = Date.now();
+  const promptChars = Array.isArray(requestBody.messages)
+    ? requestBody.messages.reduce(
+        (n: number, m: { content?: unknown }) =>
+          n + (typeof m.content === "string" ? m.content.length : JSON.stringify(m.content ?? "").length),
+        0,
+      )
+    : String(requestBody.system ?? "").length + String(requestBody.user ?? "").length;
+  logger.llm(
+    `[LLM] call -> ${effectiveModel} | prompt ${promptChars} chars | maxTokens ${args.maxTokens ?? "default"} | temp ${args.temperature ?? "default"}${args.responseFormat ? " | JSON output" : ""}`,
+  );
   const traceInputs = promptTraceInputs(args);
   const traceSchema = args.responseFormat?.type === "json_schema" ? args.responseFormat.json_schema.name : null;
   const recordTrace = (finishReason: string, response: string, servedModel: string | null = null) =>
@@ -118,6 +128,7 @@ export async function postOpenRouterAppChat(args: {
     });
         // Rate-limit Retry-After or backoff
         if (response.status === 429 && attempt < 3) {
+          logger.warn(`[LLM] 429 rate limit from ${effectiveModel}, retrying (attempt ${attempt + 1}/3)...`);
           await new Promise((resolve) => setTimeout(resolve, 2000 * attempt));
           continue;
         }
@@ -125,6 +136,7 @@ export async function postOpenRouterAppChat(args: {
           attempt < 3 &&
           (response.status === 502 || response.status === 503 || response.status === 504)
         ) {
+          logger.warn(`[LLM] ${response.status} from ${effectiveModel}, retrying (attempt ${attempt + 1}/3)...`);
           await new Promise((resolve) => setTimeout(resolve, 1500 * attempt));
           continue;
         }
@@ -165,10 +177,8 @@ export async function postOpenRouterAppChat(args: {
     const errorMsg =
       (typeof data.error === "string" ? data.error : data.error?.message) ||
       `OpenRouter error (${response.status})`;
-    logger.error(
-      `%c[OpenRouter API] ❌ Error (${response.status}):`,
-      "color: #ff4444; font-weight: bold;",
-      errorMsg,
+    logger.llmFail(
+      `[LLM] FAILED <- ${effectiveModel} | HTTP ${response.status} | ${((Date.now() - openRouterStart) / 1000).toFixed(1)}s | ${errorMsg}`,
     );
     recordTrace(`error ${response.status}`, errorMsg);
     throw new Error(errorMsg);
@@ -235,6 +245,16 @@ export async function postOpenRouterAppChat(args: {
         ? (data.raw as { model: string }).model
         : null;
   recordTrace(data.finishReason ?? "stop", content, servedModel);
+  const usageRaw =
+    data.raw && typeof data.raw === "object"
+      ? (data.raw as { usage?: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number } }).usage
+      : undefined;
+  const tokenNote = usageRaw
+    ? ` | tokens in ${usageRaw.prompt_tokens ?? "?"} / out ${usageRaw.completion_tokens ?? "?"} / total ${usageRaw.total_tokens ?? "?"}`
+    : "";
+  logger.llmSuccess(
+    `[LLM] done <- ${servedModel ?? effectiveModel} | reply ${content.length} chars | finish ${data.finishReason ?? "?"} | ${((Date.now() - openRouterStart) / 1000).toFixed(1)}s${tokenNote}`,
+  );
   return {
     raw: data.raw ?? data,
     content,
@@ -272,6 +292,7 @@ export async function streamOpenRouterAppChat(args: {
     });
   const log = (event: string, data?: unknown) => logger.debug(`[video:openrouter-stream] ${event}`, data ?? "");
   log("request sent", { model: args.model, maxTokens: args.maxTokens, messages: args.messages.length, reasoning: args.reasoning?.effort });
+  logger.llm(`[LLM] stream -> ${args.model} | ${args.messages.length} messages | maxTokens ${args.maxTokens ?? "default"}`);
   const response = await fetch(openRouterChatCompletionUrl(), {
     method: "POST",
     credentials: "include",
@@ -350,6 +371,9 @@ export async function streamOpenRouterAppChat(args: {
     throw error;
   }
   recordTrace(acc.finishReason ?? "stop", acc.content);
+  logger.llmSuccess(
+    `[LLM] stream done <- ${acc.servedModel ?? args.model} | reply ${acc.content.length} chars | finish ${acc.finishReason ?? "?"} | ${((Date.now() - startedAt) / 1000).toFixed(1)}s`,
+  );
   log("stream closed", {
     seconds: Math.round((Date.now() - startedAt) / 1000),
     lines: acc.lines,

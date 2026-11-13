@@ -129,6 +129,8 @@ class Neo_Pulse_App_Loader {
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/ga/class-ga-route-handlers.php';
 
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/organic-dashboard/class-organic-dashboard-semrush.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/organic-dashboard/class-organic-dashboard-ndus-leads.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/organic-dashboard/class-organic-dashboard-gmb-leads.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/organic-dashboard/class-organic-dashboard-bundle.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/organic-dashboard/class-organic-dashboard-reporting-highlights.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/organic-dashboard/class-organic-dashboard-client-report-share.php';
@@ -140,6 +142,7 @@ class Neo_Pulse_App_Loader {
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/gmb/class-gmb-performance.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/gmb/class-gmb-posts-api.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/gmb/class-gmb-posts.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/gmb/class-gmb-categories.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/gmb/class-gmb-route-handlers.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/google-ads/class-google-ads-oauth.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/google-ads/class-google-ads-tokens.php';
@@ -319,6 +322,7 @@ class Neo_Pulse_App_Loader {
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/seo/class-seo-route-handlers.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/agent-library/class-agent-library-route-handlers.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/changelog/class-changelog-route-handlers.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/careers/class-careers-route-handlers.php';
 
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/vertical-benchmark/class-vertical-benchmark-taxonomy.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/vertical-benchmark/class-vertical-benchmark-client-tag.php';
@@ -345,6 +349,7 @@ class Neo_Pulse_App_Loader {
 		require_once $wp . 'class-wp-connection.php';
 		require_once $wp . 'class-wp-sitemap.php';
 		require_once $wp . 'class-wp-inventory-collector.php';
+		require_once $wp . 'class-wp-inventory-neo-mcp.php';
 		require_once $wp . 'class-wp-posts-inventory.php';
 		require_once $wp . 'class-wp-post-content.php';
 		require_once $wp . 'class-wp-url-resolver.php';
@@ -355,6 +360,7 @@ class Neo_Pulse_App_Loader {
 		require_once $wp . 'class-wp-pulse-assist.php';
 		require_once $wp . 'class-wp-post-fields-by-url.php';
 		require_once $wp . 'class-wp-post-field-keys-discovery.php';
+		require_once $wp . 'class-neo-mcp-client.php';
 		require_once $wp . 'class-wp-editorial-counts.php';
 		require_once $wp . 'class-wp-overview-seo-item.php';
 		require_once $wp . 'class-wp-meta.php';

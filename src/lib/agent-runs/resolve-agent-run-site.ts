@@ -2,7 +2,7 @@ import type { WordPressSite } from "@/components/integrations/types";
 import {
   fetchWordPressSitesMirror,
   getStoredSites,
-  restoreSitesFromServerMirrorIfEmpty,
+  loadSitesFromServerAlways,
 } from "@/components/integrations/storage";
 import { fetchAgentRun } from "@/lib/agent-runs-api";
 import type { AgentRun } from "@/lib/agent-runs-types";
@@ -165,7 +165,7 @@ export async function loadSitesForAgentRun(
   const pool = mergeSitePool(sites);
   if (poolHasAgentRunSite(run, pool)) return pool;
 
-  const restored = await restoreSitesFromServerMirrorIfEmpty();
+  const restored = await loadSitesFromServerAlways();
   const afterRestore = mergeSitePool([...pool, ...restored]);
   if (poolHasAgentRunSite(run, afterRestore)) return afterRestore;
 

@@ -37,7 +37,7 @@ function makeRow(): OverviewRow {
   };
 }
 
-describe("runOverviewResearchForRow sequential harness", () => {
+describe("runOverviewResearchForRow overlapped harness waves", () => {
   beforeEach(() => {
     vi.resetModules();
     mockFetchOptionalDataForSeoSerp.mockReset();
@@ -146,15 +146,61 @@ describe("runOverviewResearchForRow sequential harness", () => {
     expect(mockFetchLlmAuditOpenRouter).toHaveBeenCalledTimes(1);
     expect(harness.filter((h) => h.phase === "done").length).toBe(7);
   });
+
+  it("runs LLM audit after SERP completes so PAA is available", async () => {
+    let serpDone = false;
+    mockFetchOptionalDataForSeoSerp.mockImplementation(async () => {
+      await new Promise((r) => setTimeout(r, 20));
+      serpDone = true;
+      return { storedFile: null, serpMcpJson: null, serpError: "DFS unavailable" };
+    });
+    mockFetchLlmAuditOpenRouter.mockImplementation(async () => {
+      expect(serpDone).toBe(true);
+      return {
+        llmAudit: {
+          siteUrl: "https://example.com/solar-installer",
+          location: "United States",
+          focusKeyword: "solar installer",
+          platforms: [
+            {
+              platform: "chat_gpt",
+              label: "Seed: solar installer",
+              model_name: "openai/gpt-4o-mini",
+              status: "ok",
+              responseText: "Solar installer research summary.",
+            },
+          ],
+        },
+      };
+    });
+    mockResolveSerpDumpJsonForBrief.mockResolvedValue({
+      serpDumpJson: { tasks: [] },
+      loadSummary: "No DataForSEO SERP dump; OpenRouter LLM audit used for SERP research",
+    });
+
+    const { runOverviewResearchForRow } = await import("@/lib/overview/overview-research-row");
+    const result = await runOverviewResearchForRow({
+      row: makeRow(),
+      rowIndex: 3,
+      site: undefined,
+      gscQuickWinsFile: null,
+      serpDumpUrl: (f) => `https://api.test/serp/${f}`,
+      skipGsc: true,
+      silent: true,
+    });
+    expect(result.patch?.seoResearch).toContain('"focusKeyword": "solar installer"');
+  });
 });
 
 describe("overview research row source contract", () => {
-  it("uses sequential steps without parallel SERP wave in the row runner", () => {
+  it("overlaps independent SERP/GSC then audit/dump/GSC-context waves", () => {
     const src = readFileSync(rowPath, "utf8");
     expect(src).toContain("fetchOptionalDataForSeoSerp");
     expect(src).toContain("runOpenRouterLlmAuditStep");
+    expect(src).toContain("Promise.all");
+    expect(src).toContain("Wave A");
+    expect(src).toContain("Wave B");
     expect(src).not.toContain("runSerpAndLlmAuditParallel");
-    expect(src).not.toContain("Promise.all");
     expect(RESEARCH_HARNESS_SECTION_TITLES).toHaveLength(7);
   });
 });

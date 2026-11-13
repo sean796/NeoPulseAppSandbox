@@ -14,7 +14,6 @@ class Neo_Pulse_App_Gsc_Service_Account {
 	const SCOPE_READONLY = 'https://www.googleapis.com/auth/webmasters.readonly';
 	const SCOPE_FULL     = 'https://www.googleapis.com/auth/webmasters';
 	const TOKEN_TTL              = 3000;
-	const PROPERTY_CACHE_TTL     = 900;
 	const EMAIL_FALLBACK         = 'neopulse@neopulse-505422.iam.gserviceaccount.com';
 
 	public static function service_account_email(): string {
@@ -221,12 +220,7 @@ class Neo_Pulse_App_Gsc_Service_Account {
 			return $empty;
 		}
 
-		$cache_key = 'neo-pulse_app_gsc_prop_' . md5( $requested );
-		$cached    = get_transient( $cache_key );
-		if ( is_array( $cached ) && ! empty( $cached['match'] ) ) {
-			return $cached;
-		}
-
+		// Always live sites.list. Do not cache matches: newly granted GSC access must show up immediately.
 		$sites = self::list_sites();
 		if ( is_wp_error( $sites ) ) {
 			$empty['listError'] = $sites->get_error_message();
@@ -246,13 +240,11 @@ class Neo_Pulse_App_Gsc_Service_Account {
 				continue;
 			}
 			if ( self::property_domain( $raw ) === $requested ) {
-				$body = array(
+				return array(
 					'match'              => $raw,
 					'accessibleSiteUrls' => $accessible,
 					'requestedDomain'    => $requested,
 				);
-				set_transient( $cache_key, $body, self::PROPERTY_CACHE_TTL );
-				return $body;
 			}
 		}
 

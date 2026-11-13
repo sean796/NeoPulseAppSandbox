@@ -63,6 +63,9 @@ export const SitePropertyFormFields: React.FC<SitePropertyFormFieldsProps> = ({
   className = "",
   layout = "accordion",
   settingsSubSectionId = "profile",
+  onSettingsSubSectionChange,
+  onDeleteProperty,
+  onTogglePropertyEnabled,
 }) => {
   const hc = helpClass(chrome);
   const sh = strongHelpClass(chrome);
@@ -158,6 +161,8 @@ export const SitePropertyFormFields: React.FC<SitePropertyFormFieldsProps> = ({
     onFormSemrushSiteAuditProjectIdChange, onFormSemrushPositionTrackingProjectIdChange, onFormSemrushPositionTrackingCampaignIdChange, onFormEditorialCountsPeriodStartYmdChange, onFormOptimizationPackageChange,
     onFormEditorialContentPackageChange, onFormEditorialPublishTimeLocalChange, onFormBenchmarkCustomTagChange, onFormPrimaryLocalKeywordChange, onFormClientLogoUrlChange, onFormClientLogoBoxThemeChange,
     onFormProfileTagsChange, onFormServiceCityChange, onFormServiceStateChange, onFormServiceCountryChange, serviceAreaSite, onPatchSite, patchSiteId, semrushActionsDisabled, className, layout, settingsSubSectionId,
+    onSettingsSubSectionChange,
+    onDeleteProperty, onTogglePropertyEnabled,
     hc, sh, semrushMatching, semrushBusy, canPatchSemrush, handleMatchSemrushProject, handlePushSemrushId, handleCopySiteId, persistServiceArea, applyServiceCountry, applyServiceState,
   };
 

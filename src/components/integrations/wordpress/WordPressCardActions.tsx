@@ -2,10 +2,14 @@ import React from "react";
 import { TestTube, Map, Network, Database, CheckCircle2, XCircle, BarChart3, Building2, Download } from "lucide-react";
 import { getCyberpunkTextClasses } from "./cyberpunk-theme";
 import { cn } from "@/lib/utils";
-import { PROFILE_CARD, PROFILE_CARD_HEAD, PROFILE_CARD_TITLE } from "@/components/hosting/site-profile/site-profile-theme";
 import { Button } from "@/ui";
 import type { ConnectionAction, WordPressCardActionsProps } from "./wordpress-card-actions-types";
 import { useWordPressCardActions } from "./use-wordpress-card-actions";
+import {
+  PROPERTIES_DIAGNOSTICS_ICON_CLASS,
+  PROPERTIES_DIAGNOSTICS_STRIP_CLASS,
+  PROPERTIES_DIAGNOSTICS_TOOL_CLASS,
+} from "./wordpress-properties-surfaces";
 
 export const WordPressCardActions: React.FC<WordPressCardActionsProps> = ({
   site,
@@ -154,59 +158,76 @@ export const WordPressCardActions: React.FC<WordPressCardActionsProps> = ({
 
   if (isProfileCard) {
     return (
-      <section className={PROFILE_CARD} aria-label="Connections">
-        <div className={PROFILE_CARD_HEAD}>
-          <h2 className={PROFILE_CARD_TITLE}>Connections</h2>
-        </div>
-        <div className="grid grid-cols-2">
+      <div className="flex flex-col">
+        <div className={PROPERTIES_DIAGNOSTICS_STRIP_CLASS}>
           {connectionActions.map((action) => (
-            <Button
+            <button
+              type="button"
               key={action.key}
-              onClick={action.onClick}
-              disabled={action.disabled}
+              className={cn("group", PROPERTIES_DIAGNOSTICS_TOOL_CLASS, action.className)}
+              onClick={() => {
+                if (action.disabled) return;
+                action.onClick();
+              }}
+              aria-disabled={action.disabled || undefined}
               title={action.title}
+              style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
             >
-              <span className="flex h-4 w-4 shrink-0 items-center justify-center text-muted-foreground [&>svg]:h-4 [&>svg]:w-4">
+              <span
+                className={PROPERTIES_DIAGNOSTICS_ICON_CLASS}
+                aria-hidden
+                style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
+              >
                 {action.icon}
               </span>
-              <span className="min-w-0 break-words">{action.label}</span>
-            </Button>
+              <span
+                className="min-w-0 truncate text-white"
+                style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
+              >
+                {action.label}
+              </span>
+            </button>
           ))}
         </div>
 
-        {neoFieldsTestResult ? (
-          <div
-            className={cn(
-              "px-5 py-3 text-base",
-              neoFieldsTestResult.success ? "bg-primary/12" : "bg-ui-danger/12",
-            )}
-          >
-            {neoFieldsTestResult.success ? (
-              <div className="space-y-1.5">
-                <div className="font-medium text-white">
-                  <CheckCircle2 className="mr-1 inline h-4 w-4" aria-hidden />
-                  ACF REST API Configured Correctly
-                </div>
-                {neoFieldsTestResult.dateModifierSet && neoFieldsTestResult.postId ? (
-                  <div className="text-base text-primary">
-                    Set date_modifier on post {neoFieldsTestResult.postId}
-                  </div>
-                ) : null}
+        <div
+          className={cn(
+            "min-h-0 px-4 py-3 text-base",
+            neoFieldsTestResult
+              ? neoFieldsTestResult.success
+                ? "bg-primary/12"
+                : "bg-ui-danger/12"
+              : "invisible",
+          )}
+          aria-hidden={!neoFieldsTestResult}
+        >
+          {neoFieldsTestResult?.success ? (
+            <div className="space-y-1.5">
+              <div className="font-medium text-white">
+                <CheckCircle2 className="mr-1 inline h-4 w-4" aria-hidden />
+                ACF REST API Configured Correctly
               </div>
-            ) : (
-              <div className="space-y-2">
-                <div className="font-medium text-ui-danger-hover">
-                  <XCircle className="mr-1 inline h-4 w-4" aria-hidden />
-                  ACF REST API Not Configured
+              {neoFieldsTestResult.dateModifierSet && neoFieldsTestResult.postId ? (
+                <div className="text-base text-primary">
+                  Set date_modifier on post {neoFieldsTestResult.postId}
                 </div>
-                {neoFieldsTestResult.error ? (
-                  <div className="text-base text-ui-danger-hover/80">{neoFieldsTestResult.error}</div>
-                ) : null}
+              ) : null}
+            </div>
+          ) : neoFieldsTestResult ? (
+            <div className="space-y-2">
+              <div className="font-medium text-ui-danger-hover">
+                <XCircle className="mr-1 inline h-4 w-4" aria-hidden />
+                ACF REST API Not Configured
               </div>
-            )}
-          </div>
-        ) : null}
-      </section>
+              {neoFieldsTestResult.error ? (
+                <div className="text-base text-ui-danger-hover/80">{neoFieldsTestResult.error}</div>
+              ) : null}
+            </div>
+          ) : (
+            <span className="text-base text-white/50"> </span>
+          )}
+        </div>
+      </div>
     );
   }
 

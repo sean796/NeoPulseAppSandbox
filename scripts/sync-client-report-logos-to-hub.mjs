@@ -60,6 +60,12 @@ export const CLIENT_LOGO_PLAN = [
   { id: "wp-1791924906059-14", name: "Superior Tent Rentals", box: "black", url: "https://superiortentrentals.com/wp-content/uploads/2025/07/Superior-Tent-Rentals-Logo-Dark.svg" },
   { id: "wp-1791924906059-15", name: "Tailored Interiors", box: "white", url: "https://tailoredinteriors.ca/wp-content/uploads/2026/03/tailored-logo_Final-03_edited-1.webp" },
   { id: "wp-1791924906059-16", name: "You Junk It... I Dump It", box: "black", url: "https://youjunkit.ca/wp-content/uploads/2024/08/YJI-mobile.png" },
+  {
+    id: "wp-1791924906059-17",
+    name: "Custom Shades of London",
+    box: "white",
+    url: "https://www.customshadesoflondon.ca/wp-content/uploads/2026/10/CSOO-Favicon-300x300.png",
+  },
 ];
 
 const MIME_BY_EXT = { png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", webp: "image/webp", gif: "image/gif", svg: "image/svg+xml" };

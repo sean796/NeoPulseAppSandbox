@@ -39,6 +39,7 @@ import { editorialPackageScheduleFieldsForSite } from "@/lib/bulk/editorial-bulk
 import type { MetaBulkMicroSnapshot } from "@/components/overview/overview-bulk-micro-progress-helpers";
 import type { ContentOptimizerSectionId } from "@/components/content-optimizer/content-optimizer-sections";
 import type { ReactNode } from "react";
+import { importStudioLoadSplashStep } from "@/components/keyword-research/bulk/bulk-compose-splash-visibility";
 
 
 export function BulkGeneratorOverviewTabContent({
@@ -133,27 +134,6 @@ export function BulkGeneratorOverviewTabContent({
       setShowingStudioModeScreen(false);
     }
   }, [bindings.isProcessing]);
-
-  const prevImportedFileNameRef = useRef<string | null>(null);
-  const prevCsvFileNameRef = useRef<string | null>(null);
-
-  // CSV / blog-import: show dock rows after a file is newly uploaded
-  useEffect(() => {
-    if (variant === "blog-import") {
-      if (
-        bulkGeneratorDock.importedFileName &&
-        bulkGeneratorDock.importedFileName !== prevImportedFileNameRef.current
-      ) {
-        prevImportedFileNameRef.current = bulkGeneratorDock.importedFileName;
-        setShowingStudioModeScreen(false);
-      }
-    } else if (variant === "csv") {
-      if (bulkGeneratorDock.csvFileName) {
-        prevCsvFileNameRef.current = bulkGeneratorDock.csvFileName;
-        setShowingStudioModeScreen(false);
-      }
-    }
-  }, [variant, bulkGeneratorDock.importedFileName, bulkGeneratorDock.csvFileName]);
 
   useEffect(() => {
     if (variant !== "csv" && variant !== "blog-import") return;
@@ -325,6 +305,27 @@ export function BulkGeneratorOverviewTabContent({
     siteName: site?.name || undefined,
   });
 
+  const importLoadBusy =
+    Boolean(bulkGeneratorDock.importParsing) ||
+    Boolean(bulkGeneratorDock.csvLoading) ||
+    Boolean(bulkGeneratorDock.csvEnrichingTitlesUrls);
+  const hasImportFile = Boolean(
+    bulkGeneratorDock.importedFileName || bulkGeneratorDock.csvFileName,
+  );
+  const importSplashStep = importStudioLoadSplashStep({
+    importParsing: Boolean(bulkGeneratorDock.importParsing),
+    csvLoading: Boolean(bulkGeneratorDock.csvLoading),
+    csvEnrichingTitlesUrls: Boolean(bulkGeneratorDock.csvEnrichingTitlesUrls),
+    hasImportFile,
+  });
+  const importSplashStatus = useBulkSplashAiStatus({
+    // Hold state stays literal "Waiting for approval" (no AI rewrite).
+    active: importLoadBusy,
+    latestStep: importSplashStep || "Waiting for approval",
+    articleTitle: bulkGeneratorDock.importedFileName || bulkGeneratorDock.csvFileName || undefined,
+    siteName: site?.name || undefined,
+  });
+
   const canGenerateContent = useMemo(() => {
     if (bulkWorkspaceBusy) return false;
     if (studioEditorMode === "press-release") return false;
@@ -399,6 +400,10 @@ export function BulkGeneratorOverviewTabContent({
       canRun: canGenerateContent,
       onRun: () => {
         setShowingStudioModeScreen(false);
+        const firstUrl = ctrl.displayRows[0]?.url;
+        if (firstUrl && !ctrl.expandedPageUrl) {
+          ctrl.setExpandedPageUrl(firstUrl);
+        }
         void bindings.handleStartProcessing();
       },
     };
@@ -411,6 +416,7 @@ export function BulkGeneratorOverviewTabContent({
     bulkWorkspaceBusy,
     activeRowPublishable,
     canGenerateContent,
+    ctrl,
   ]);
 
   const handleSelectStudioEditorMode = (nextMode: StudioEditorModeId) => {
@@ -457,6 +463,8 @@ export function BulkGeneratorOverviewTabContent({
       bulkSplashStatusVisual={bulkSplashStatus.visual}
       ideasSplashStatusText={ideasSplashStatus.status}
       ideasSplashStatusVisual={ideasSplashStatus.visual}
+      importSplashStatusText={importSplashStatus.status}
+      importSplashStatusVisual={importSplashStatus.visual}
       bulkGeneratorStudioActions={bulkGeneratorStudioActions}
       promptLogFile={promptLogFile}
       handleSelectStudioEditorMode={handleSelectStudioEditorMode}

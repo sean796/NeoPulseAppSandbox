@@ -55,6 +55,8 @@ export function OrganicClientReportExportDocument({
     showKeywordSection,
     showHighlightsSection,
     showGoogleAdsSection,
+    showSeoLeadsSection,
+    showGmbLeadsSection,
     showLocalGridSection,
     localGridSection,
     localGridSections,
@@ -63,6 +65,10 @@ export function OrganicClientReportExportDocument({
     googleAdsNarrative,
     googleAdsDeckRows,
     googleAdsLoadError,
+    seoLeadsDeckRows,
+    seoLeadsLoadError,
+    gmbLeadsDeckRows,
+    gmbLeadsLoadError,
     periodProgressTables,
     clientLogoUrl,
     clientLogoBoxTheme,
@@ -120,6 +126,7 @@ export function OrganicClientReportExportDocument({
   if (showSemrushSection) totalPages += 1;
   if (showHighlightsSection) totalPages += 1;
   if (showLocalGridSection) totalPages += 1;
+  if (showSeoLeadsSection || showGmbLeadsSection) totalPages += 1;
   if (showGoogleAdsSection) totalPages += 1;
 
   return (
@@ -152,6 +159,42 @@ export function OrganicClientReportExportDocument({
             pdfExport={pdfExport}
           />
         </section>
+
+        {showSeoLeadsSection ? (
+          <ExportSection title="Organic Website Leads" pdfExport={pdfExport}>
+            {seoLeadsLoadError ? (
+              <p className={EXPORT_BODY_MUTED_CLASS}>{seoLeadsLoadError}</p>
+            ) : null}
+            {seoLeadsDeckRows.length > 0 ? (
+              <ExportMetricStack
+                rows={seoLeadsDeckRows}
+                showCompare={showCompare}
+                comparePeriodLabel={comparePeriodLabel}
+                primaryPeriodLabel={primaryPeriodLabel}
+                metricColumnLabel="Leads"
+                valueColumnLabel="Amount"
+              />
+            ) : null}
+          </ExportSection>
+        ) : null}
+
+        {showGmbLeadsSection ? (
+          <ExportSection title="Google My Business Leads" pdfExport={pdfExport}>
+            {gmbLeadsLoadError ? (
+              <p className={EXPORT_BODY_MUTED_CLASS}>{gmbLeadsLoadError}</p>
+            ) : null}
+            {!gmbLeadsLoadError && gmbLeadsDeckRows.length > 0 ? (
+              <ExportMetricStack
+                rows={gmbLeadsDeckRows}
+                showCompare={showCompare}
+                comparePeriodLabel={comparePeriodLabel}
+                primaryPeriodLabel={primaryPeriodLabel}
+                metricColumnLabel="Leads"
+                valueColumnLabel="Amount"
+              />
+            ) : null}
+          </ExportSection>
+        ) : null}
 
         {showPerformanceSection ? (
           <ExportSection

@@ -53,7 +53,9 @@ export type AiseoAfterRowWriteParams = {
   rowFiles?: OverviewAiseoGeneratedFile[];
 };
 
-export type AiseoAfterRowWriteFn = (params: AiseoAfterRowWriteParams) => Promise<void>;
+export type AiseoAfterRowWriteFn = (
+  params: AiseoAfterRowWriteParams,
+) => Promise<OverviewAiseoRowWpUploadResult | void>;
 
 export type UploadAiseoRowAfterWriteDeps = {
   site: WordPressSite;

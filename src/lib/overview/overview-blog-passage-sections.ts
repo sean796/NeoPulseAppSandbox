@@ -7,7 +7,6 @@ import {
   findH2OpenPositions,
 } from "@/lib/overview/overview-blog-overview-prepend";
 import { plainTextFromH2InnerHtml } from "@/lib/overview/overview-blog-headers-extract";
-import { assertNoForbiddenWordViolations } from "@/lib/content-word-blocklist";
 import {
   normalizeSectionProseHtml,
   prosePlainText,
@@ -23,9 +22,43 @@ import {
   AISEO_FULL_REWRITE_BODY_OUTPUT_CONTRACT,
   AISEO_FULL_REWRITE_HEADING_OUTPUT_CONTRACT,
   AISEO_FULL_REWRITE_SYSTEM_RULE,
-  assertAiseoBodyRewriteChanged,
-  assertAiseoHeadingRewriteChanged,
 } from "@/lib/content-optimization/aiseo-full-rewrite-contract";
+import {
+  llmAuditSummaryFromSeoResearchBrief,
+  parseSeoResearchBrief,
+} from "@/lib/content-optimization/seo-research-brief-for-optimize";
+import { firstPartyAuthorityBlockFromBrief } from "@/lib/content-optimization/first-party-authority-prompt";
+
+function formatPassageResearchBriefGrounding(
+  seoResearchBrief?: string,
+  researchReadingDigest?: string,
+): string {
+  const reading = researchReadingDigest?.trim();
+  const raw = seoResearchBrief?.trim();
+  if (!reading && !raw) return "";
+  const parts: string[] = [
+    "RESEARCH BRIEF GROUNDING (mandatory): use searcher intent, angles, and concrete specifics from the blocks below. Do not invent stats, products, or claims that contradict this brief.",
+  ];
+  if (reading) {
+    parts.push(reading);
+  }
+  if (raw) {
+    const brief = parseSeoResearchBrief(raw);
+    if (brief) {
+      const llmAuditSummary = llmAuditSummaryFromSeoResearchBrief(raw);
+      if (llmAuditSummary) {
+        parts.push(`--- SEO RESEARCH (LLM audit facts) ---\n${llmAuditSummary}`);
+      }
+      const firstPartyAuthorityBlock = firstPartyAuthorityBlockFromBrief(brief, "");
+      if (firstPartyAuthorityBlock?.trim()) {
+        parts.push(firstPartyAuthorityBlock.trim());
+      }
+    } else if (!reading) {
+      parts.push(raw.slice(0, 2500));
+    }
+  }
+  return parts.join("\n\n");
+}
 
 export type BlogPassageSection = {
   id: string;
@@ -48,6 +81,23 @@ function escapeHtmlText(text: string): string {
     .replace(/>/g, "&gt;");
 }
 
+function extractLegacySectionFactScope(bodyHtml: string): string {
+  const plain = prosePlainText(bodyHtml);
+  if (!plain) return "(empty section)";
+  const stripped = plain.replace(/\s+/g, " ").trim();
+  const sentences = stripped
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (sentences.length <= 1) {
+    return stripped.slice(0, 600);
+  }
+  return sentences
+    .slice(0, 10)
+    .map((s, i) => `Fact ${i + 1}: ${s}`)
+    .join("\n");
+}
+
 /**
  * Split core article HTML (after Answer/Overview and before trailing FAQ) into discrete H2 sections
  * for passage-level editing and optimization.
@@ -66,6 +116,7 @@ export function splitHtmlBodyIntoH2PassageSections(html: string): ParsedBlogPass
   const leadingHtml = src.slice(0, positions[0]!).trim();
   const sections: BlogPassageSection[] = [];
   const low = src.toLowerCase();
+  const usedIds = new Set<string>();
 
   for (let i = 0; i < positions.length; i += 1) {
     const openAt = positions[i]!;
@@ -73,7 +124,7 @@ export function splitHtmlBodyIntoH2PassageSections(html: string): ParsedBlogPass
     const gt = src.indexOf(">", openAt);
     if (gt === -1 || gt >= nextOpenAt) continue;
 
-    const h2OpenTag = src.slice(openAt, gt + 1);
+    const h2OpenTagRaw = src.slice(openAt, gt + 1);
     const closeAt = low.indexOf("</h2>", gt + 1);
     if (closeAt === -1 || closeAt >= nextOpenAt) continue;
 
@@ -82,13 +133,20 @@ export function splitHtmlBodyIntoH2PassageSections(html: string): ParsedBlogPass
     const bodyStart = closeAt + "</h2>".length;
     const bodyHtml = src.slice(bodyStart, nextOpenAt).trim();
 
-    const idMatch = /\bid\s*=\s*["']([^"']+)["']/i.exec(h2OpenTag);
-    const id = idMatch?.[1]?.trim() || `passage-h2-${i}`;
+    const idMatch = /\bid\s*=\s*["']([^"']+)["']/i.exec(h2OpenTagRaw);
+    const id = allocateUniquePassageAnchorId(
+      title || `passage-h2-${i}`,
+      usedIds,
+      idMatch?.[1]?.trim(),
+    );
+    const openWithId = /\bid\s*=/i.test(h2OpenTagRaw)
+      ? h2OpenTagRaw.replace(/\bid\s*=\s*["'][^"']*["']/i, `id="${id}"`)
+      : `<h2 id="${id}">`;
 
     sections.push({
       id,
       index: i,
-      h2OpenTag,
+      h2OpenTag: openWithId,
       title,
       bodyHtml,
     });
@@ -97,8 +155,36 @@ export function splitHtmlBodyIntoH2PassageSections(html: string): ParsedBlogPass
   return { leadingHtml, sections };
 }
 
-export function buildH2OpenTagForTitle(title: string): string {
-  const anchorId = headingTitleToHarnessAnchorId(title);
+/** Allocate a stable H2 id from a title, appending -2/-3 when the slug is already taken. */
+export function allocateUniquePassageAnchorId(
+  title: string,
+  usedIds: Set<string>,
+  preferredId?: string,
+): string {
+  const base =
+    (preferredId?.trim() || headingTitleToHarnessAnchorId(title) || "passage-h2").replace(
+      /-\d+$/,
+      "",
+    ) || "passage-h2";
+  let anchorId = preferredId?.trim() || headingTitleToHarnessAnchorId(title) || base;
+  if (!anchorId) anchorId = base;
+  if (!usedIds.has(anchorId)) {
+    usedIds.add(anchorId);
+    return anchorId;
+  }
+  let n = 2;
+  while (usedIds.has(`${base}-${n}`)) n += 1;
+  const next = `${base}-${n}`;
+  usedIds.add(next);
+  return next;
+}
+
+export function buildH2OpenTagForTitle(title: string, usedIds?: Set<string>): string {
+  if (!usedIds) {
+    const anchorId = headingTitleToHarnessAnchorId(title);
+    return `<h2 id="${anchorId}">`;
+  }
+  const anchorId = allocateUniquePassageAnchorId(title, usedIds);
   return `<h2 id="${anchorId}">`;
 }
 
@@ -111,8 +197,12 @@ export function stitchHtmlBodyFromH2PassageSections(doc: ParsedBlogPassageDocume
     parts.push(doc.leadingHtml.trim());
   }
 
+  const usedIds = new Set<string>();
   for (const sec of doc.sections) {
-    const openTag = sec.h2OpenTag.trim() || buildH2OpenTagForTitle(sec.title);
+    const preferred =
+      /\bid\s*=\s*["']([^"']+)["']/i.exec(sec.h2OpenTag)?.[1]?.trim() || sec.id;
+    const uniqueId = allocateUniquePassageAnchorId(sec.title, usedIds, preferred);
+    const openTag = `<h2 id="${uniqueId}">`;
     const headingLine = `${openTag}${escapeHtmlText(sec.title.trim())}</h2>`;
     const body = sec.bodyHtml.trim();
     parts.push(body ? `${headingLine}\n${body}` : headingLine);
@@ -162,6 +252,8 @@ export async function rewriteBlogPassageSection(args: {
   articleTitle: string;
   focusKeyword: string;
   seoResearchBrief?: string;
+  /** Research-model read of the existing brief (Auto SEO Reading Data). */
+  researchReadingDigest?: string;
   siteId?: string | null;
   siteUrl?: string;
   pageUrl?: string;
@@ -176,6 +268,7 @@ export async function rewriteBlogPassageSection(args: {
     articleTitle,
     focusKeyword,
     seoResearchBrief,
+    researchReadingDigest,
     siteId,
     siteUrl,
     pageUrl,
@@ -216,6 +309,7 @@ export async function rewriteBlogPassageSection(args: {
       "You are a Pulse Engine AISEO Passage Heading Architect.",
       AISEO_FULL_REWRITE_SYSTEM_RULE,
       "Author a brand-new, specific, search-intent-aligned H2 heading from scratch that replaces the legacy heading and is distinct from sibling H2s.",
+      "HARD UNIQUENESS: the new title MUST NOT match any sibling H2 heading (case-insensitive). Never reuse another section's title or a near-identical paraphrase of one.",
       'Return JSON only: {"title":"..."}. Plain text only, Title Case, no HTML tags or colons.',
     ].join(" ");
 
@@ -223,7 +317,7 @@ export async function rewriteBlogPassageSection(args: {
       `Article title: ${articleTitle || "(untitled)"}`,
       `Focus keyword: ${focusKeyword || "(none)"}`,
       businessName ? `Business name: ${businessName}` : "",
-      `Sibling H2 headings: ${siblingTitles.filter(Boolean).join(" | ") || "(none)"}`,
+      `Sibling H2 headings (MUST NOT reuse any of these): ${siblingTitles.filter(Boolean).join(" | ") || "(none)"}`,
       `Legacy H2 heading to replace: ${section.title}`,
       `Section topic reference:\n${section.bodyHtml.slice(0, 1200)}`,
       AISEO_FULL_REWRITE_HEADING_OUTPUT_CONTRACT,
@@ -251,11 +345,9 @@ export async function rewriteBlogPassageSection(args: {
       throw new Error("Heading rewrite returned empty title in JSON.");
     }
     const title = rawTitle;
-    assertNoForbiddenWordViolations(title, "Heading rewrite");
     if (!title.trim()) {
       throw new Error("Heading rewrite title was empty.");
     }
-    assertAiseoHeadingRewriteChanged(section.title, title);
     return {
       title,
       bodyHtml: section.bodyHtml,
@@ -274,7 +366,9 @@ export async function rewriteBlogPassageSection(args: {
           "Structure the new section cleanly using semantic HTML (<p>, <ul>, <ol>, <table>, <h3>, <blockquote>): break up dense or run-on blocks into clear paragraphs, scannable bullet/numbered lists, or comparison tables where appropriate while preserving core facts.",
           "MANDATORY INTERNAL LINKS (1 to 3 per section): weave 1 to 3 contextual <a href=\"...\">anchor</a> links in bodyHtml using URLs from SITEMAP INTERNAL LINK TARGETS (prioritizing [PRODUCT / PAGE] URLs over [BLOG POST] URLs, never entity/service-area URLs). Front-load links in the opening clause / first half of sentences; never dump links at the end of a paragraph or list them standalone.",
           "TRADEMARKS & COPYRIGHTS: always include official ® / ™ / © symbols on proprietary product lines, automation systems, and brand names in both prose and link anchor text where applicable from the research brief and manufacturer standards.",
-          "Obey the WORD BLACKLIST in the user message (no em dashes, no banned words).",
+          "HARD WORD BANS (rejection gate): NEVER write 'our team', 'our experts', 'our professionals', 'when it comes to', 'whether you're looking', 'rest assured', 'peace of mind', 'delve', 'leverage', 'crucial', 'vital', 'navigate', 'comprehensive', 'seamless', 'seamlessly', 'elevate', 'utilize', or any em-dash/en-dash. Refer to the business directly by name or as 'we' / 'our installers' / 'our specialists', never 'our team'.",
+          "ZERO PHRASE REUSE: Do NOT reuse any 4-word sequence from the legacy section facts.",
+          "RESEARCH GROUNDING: when RESEARCH BRIEF GROUNDING is provided, every concrete claim, product, and angle must align with those LLM-audit and first-party facts.",
         ].join(" ")
       : [
           "You are a Pulse Engine AISEO Section & Heading Architect.",
@@ -282,24 +376,30 @@ export async function rewriteBlogPassageSection(args: {
           "Author a brand-new H2 heading (Title Case, plain text, no colons) and a complete from-scratch replacement for the section body for passage-level ranking, AI Overviews citation clarity, and factual specificity.",
           'Return JSON only: {"title":"...","bodyHtml":"..."}.',
           "Do NOT include the outer <h2> tag inside bodyHtml.",
+          "HARD UNIQUENESS: the new title MUST NOT match any sibling H2 heading (case-insensitive). Never reuse another section's title or a near-identical paraphrase of one.",
           "Discard the legacy sentence order and paragraph structure completely. Never do a sentence-by-sentence synonym swap.",
           "Structure the new section cleanly using semantic HTML (<p>, <ul>, <ol>, <table>, <h3>, <blockquote>): break up dense or run-on blocks into clear paragraphs, scannable bullet/numbered lists, or comparison tables where appropriate while preserving core facts.",
           "MANDATORY INTERNAL LINKS (1 to 3 per section): weave 1 to 3 contextual <a href=\"...\">anchor</a> links in bodyHtml using URLs from SITEMAP INTERNAL LINK TARGETS (prioritizing [PRODUCT / PAGE] URLs over [BLOG POST] URLs, never entity/service-area URLs). Front-load links in the opening clause / first half of sentences; never dump links at the end of a paragraph or list them standalone.",
           "TRADEMARKS & COPYRIGHTS: always include official ® / ™ / © symbols on proprietary product lines, automation systems, and brand names in both prose and link anchor text where applicable from the research brief and manufacturer standards.",
-          "Obey the WORD BLACKLIST in the user message (no em dashes, no banned words).",
+          "HARD WORD BANS (rejection gate): NEVER write 'our team', 'our experts', 'our professionals', 'when it comes to', 'whether you're looking', 'rest assured', 'peace of mind', 'delve', 'leverage', 'crucial', 'vital', 'navigate', 'comprehensive', 'seamless', 'seamlessly', 'elevate', 'utilize', or any em-dash/en-dash. Refer to the business directly by name or as 'we' / 'our installers' / 'our specialists', never 'our team'.",
+          "ZERO PHRASE REUSE: Do NOT reuse any 4-word sequence from the legacy section facts.",
+          "RESEARCH GROUNDING: when RESEARCH BRIEF GROUNDING is provided, every concrete claim, product, and angle must align with those LLM-audit and first-party facts.",
         ].join(" ");
+
+  const researchGrounding = formatPassageResearchBriefGrounding(
+    seoResearchBrief,
+    researchReadingDigest,
+  );
 
   const user = [
     `Article title: ${articleTitle || "(untitled)"}`,
     `Focus keyword: ${focusKeyword || "(none)"}`,
-    businessName ? `Business name: ${businessName}` : "",
-    `Sibling H2 headings (do not duplicate): ${siblingTitles.filter(Boolean).join(" | ") || "(none)"}`,
+    businessName ? `Business name: ${businessName} (refer to ${businessName} by name or "we", NEVER "our team" or "our experts")` : "",
+    `Sibling H2 headings (MUST NOT reuse any of these): ${siblingTitles.filter(Boolean).join(" | ") || "(none)"}`,
     `Legacy H2 heading to replace: ${section.title}`,
-    `LEGACY SECTION REFERENCE (extract core facts and topic scope only; do NOT paraphrase sentence-by-sentence, do NOT copy sentence order, and do NOT keep run-on formatting; write the section from scratch):\n${section.bodyHtml}`,
+    `SECTION FACT & TOPIC SCOPE (write a brand-new section covering these facts with completely new sentence structures, formatting, and wording; do NOT copy any 4-word phrase from below):\n${extractLegacySectionFactScope(section.bodyHtml)}`,
     lockedLinksBlock,
-    seoResearchBrief?.trim()
-      ? `RESEARCH BRIEF CONTEXT (use searcher intent, angles, and specifics from here):\n${seoResearchBrief.trim().slice(0, 2500)}`
-      : "",
+    researchGrounding,
     mode === "copy"
       ? 'Return JSON only: {"bodyHtml":"..."}'
       : 'Return JSON only: {"title":"...","bodyHtml":"..."}',
@@ -337,11 +437,9 @@ export async function rewriteBlogPassageSection(args: {
     throw new Error("Passage rewrite returned empty bodyHtml in JSON.");
   }
   const bodyHtml = normalizeSectionProseHtml(rawBody);
-  assertNoForbiddenWordViolations(bodyHtml, "Passage rewrite");
   if (!prosePlainText(bodyHtml).trim()) {
     throw new Error("Passage rewrite bodyHtml was empty after normalize.");
   }
-  assertAiseoBodyRewriteChanged(section.bodyHtml, bodyHtml);
 
   let title = section.title;
   if (mode === "both") {
@@ -350,11 +448,9 @@ export async function rewriteBlogPassageSection(args: {
       throw new Error("Passage rewrite returned empty title in JSON.");
     }
     const nextTitle = rawTitle.trim();
-    assertNoForbiddenWordViolations(nextTitle, "Passage rewrite title");
     if (!nextTitle) {
       throw new Error("Passage rewrite title was empty.");
     }
-    assertAiseoHeadingRewriteChanged(section.title, nextTitle);
     title = nextTitle;
   }
 

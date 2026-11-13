@@ -210,6 +210,14 @@ All colors MUST be HSL.
     color: #ffffff !important;
   }
 
+  /** Properties Studio section menu (Overview / Functions Updater / …) — pure white, never muted. */
+  .properties-section-nav-btn,
+  .properties-section-nav-btn:hover,
+  .properties-section-nav-btn:focus,
+  .properties-section-nav-btn[data-active="true"] {
+    color: #ffffff !important;
+  }
+
   .neo-pulse-title-lime {
     color: hsl(var(--foreground));
   }
@@ -363,6 +371,18 @@ All colors MUST be HSL.
   /** Embedded manager tab scroll: reserve gutter so Assist/Agents open does not shift main content */
   .neo-pulse-embedded-tab-scroller {
     scrollbar-gutter: stable;
+  }
+
+  /** Dashboard Properties list: keep vertical scrollbar lane visible (Windows + WebKit). */
+  .neo-pulse-properties-list-scroll {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+  }
+
+  /** Dock toolbar: left matches row pad; right flush with scrollbar outer edge. */
+  .neo-pulse-properties-dock-head {
+    padding-inline-start: 0.625rem;
+    padding-inline-end: 0;
   }
 
   body {
@@ -713,4 +733,38 @@ All colors MUST be HSL.
   body.overview-revisions-printing .no-print {
     display: none !important;
   }
+}
+
+/**
+ * Properties left sidebar: ALL text pure white forever (toolbar, headers, rows, idle, active).
+ * Unlayered so Tailwind zinc/muted utilities cannot win. Lime active = background only.
+ */
+.properties-dock,
+.properties-dock *,
+.properties-dock *::before,
+.properties-dock *::after,
+.properties-dock input,
+.properties-dock input::placeholder {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/**
+ * Properties Overview: labels, values, and diagnostic actions stay pure white
+ * (including when the site is Disabled — never opacity-wash to grey).
+ * Exclude primary CTAs (black text on lime).
+ */
+.properties-overview,
+.properties-overview :is(a, span, p, div, h2, dt, dd, svg),
+.properties-overview button:not(.bg-primary),
+.properties-overview button:not(.bg-primary):disabled,
+.properties-overview button:not(.bg-primary):disabled :is(span, svg) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.properties-overview button:disabled:not(.bg-primary) {
+  opacity: 1 !important;
 }

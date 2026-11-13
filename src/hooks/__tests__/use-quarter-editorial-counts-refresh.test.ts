@@ -3,6 +3,7 @@ import type { WordPressSite } from "@/components/integrations/types";
 import { resolveEditorialCountsRangeForDashboard } from "@/lib/quarter-bounds";
 import { buildQuarterTilesForRefresh } from "@/hooks/use-quarter-editorial-counts";
 import { postsStripLoading } from "@/lib/quarter-editorial-count-display";
+import { propertyMetricsLoadingClusterClass } from "@/components/integrations/wordpress/wordpress-site-list-metrics";
 import type { QuarterEditorialTileStats } from "@/lib/wordpress-api/types";
 
 function mockSite(id: string): WordPressSite {
@@ -50,7 +51,7 @@ describe("buildQuarterTilesForRefresh", () => {
     expect(tile.entityConfigured).toBe(true);
   });
 
-  it("uses a loading placeholder with SAP configured when there is nothing to preserve, and drops removed sites", () => {
+  it("uses a loading placeholder when there is nothing to preserve, and drops removed sites", () => {
     const site = mockSite("s1");
     const prev: Record<string, QuarterEditorialTileStats> = {
       gone: {
@@ -68,8 +69,15 @@ describe("buildQuarterTilesForRefresh", () => {
     const tiles = buildQuarterTilesForRefresh([site], prev, resolveRange, now);
     expect(tiles.gone).toBeUndefined();
     expect(tiles.s1.loading).toBe(true);
-    expect(tiles.s1.postsScheduled).toBeNull();
-    expect(tiles.s1.entityScheduled).toBeNull();
+    expect(tiles.s1.postsScheduled).toBe(0);
+    expect(tiles.s1.entityScheduled).toBe(0);
     expect(tiles.s1.entityConfigured).toBe(true);
+  });
+});
+
+describe("propertyMetricsLoadingClusterClass", () => {
+  it("matches posts+entity width so the row splash does not CLS the row", () => {
+    expect(propertyMetricsLoadingClusterClass("compact")).toContain("7.5rem");
+    expect(propertyMetricsLoadingClusterClass("standard")).toContain("8.5rem");
   });
 });

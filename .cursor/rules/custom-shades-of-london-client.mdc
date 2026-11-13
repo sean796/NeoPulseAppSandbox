@@ -1,0 +1,39 @@
+---
+description: Custom Shades of London portfolio client (Standard, service-area CPT, WordPress API)
+alwaysApply: true
+---
+
+# Custom Shades of London (portfolio client)
+
+Neo Digital client **Custom Shades of London** (`https://www.customshadesoflondon.ca/`, Integrations property name **Custom Shades of London**):
+
+## Brand and market
+
+- Use exactly **Custom Shades of London** in client-facing copy, titles, meta, headings, FAQs, schema, and reports.
+- Primary market: **London and Exeter, Ontario** (not Edmonton or other blind clients in the portfolio).
+- Do not rename, normalize, or post-process the business name.
+
+## Editorial package
+
+- **Standard** tier: 2 blogs and 4 SAP (`service-area`) posts per month (`editorial-content-package.ts` name map).
+
+## WordPress and entities
+
+- Local landing pages use the **`service-area`** post type (WordPress admin label **Service Areas**, REST base `service-area`), **not** `location` / Locations.
+- Set Integrations **entity sitemap** to `https://www.customshadesoflondon.ca/service-area-sitemap.xml`.
+- Treat service-area rows as the SAP / entity program (bulk upload endpoint derives from the `service-area` post type and entity sitemap).
+- Do **not** use `location-sitemap.xml` or the Locations CPT for SAP / Import Studio / entity uploads.
+- Main sitemap index: `https://www.customshadesoflondon.ca/sitemap_index.xml` (Rank Math).
+
+## WordPress API access (no Neo MCP for now)
+
+- Do **not** use Neo MCP for this property until the user asks to add it.
+- WordPress work goes through **NEO Pulse server-side** paths: Integrations saved credentials and `src/lib/wordpress-api/*` (browser calls `backendApiUrl` / `/api/*` only).
+- REST reference on this site: `https://www.customshadesoflondon.ca/wp-json/`; SAP content at `wp/v2/service-area`.
+- Agents: use shell scripts, server handlers, or the Pulse app API layer with this property connected in Integrations, not a direct client-side `fetch` to `customshadesoflondon.ca`.
+
+## Integrations hygiene
+
+- Canonical production URL: `https://www.customshadesoflondon.ca/`
+- Benchmark vertical default: **Window treatments**
+- When editing master instructions or generation prompts for this property, preserve **Custom Shades of London** as the canonical public name and keep geo framing Ontario-local.

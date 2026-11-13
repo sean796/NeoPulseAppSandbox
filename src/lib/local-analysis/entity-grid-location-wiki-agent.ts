@@ -5,6 +5,7 @@ export {
   combineKeywordWithFullEntity,
   cycleItemsForRowCount,
   isDirectionalCompassPlaceLabel,
+  maxClustersForBudget,
   neighbourhoodPicksFromWikiPool,
   pickNeighbourhoodEntitiesForCluster,
 } from "./entity-neighbourhood-picker";
@@ -13,6 +14,7 @@ export type {
   PickNeighbourhoodEntitiesOptions,
 } from "./entity-neighbourhood-picker";
 export {
+  fillDistinctNeighbourhoodSlotsForBucket,
   resolveNeighbourhoodSapSlotsForLayout,
   resolveNeighbourhoodWikiOnly,
 } from "./entity-cluster-wiki-slots";

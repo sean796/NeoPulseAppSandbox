@@ -11,7 +11,7 @@ import { isOrganicSkippedBlock } from "@/lib/organic-dashboard/organic-dashboard
 
 const ORGANIC_DASHBOARD_CLIENT_TIMEOUT_MS = 120_000;
 
-type OrganicDashboardPart = "ga4" | "gsc" | "semrush" | "googleAds";
+type OrganicDashboardPart = "ga4" | "gsc" | "semrush" | "googleAds" | "ndusLeads" | "gmbLeads";
 
 export class OrganicDashboardFetchPartUnsupportedError extends Error {
   readonly code = "ORGANIC_FETCH_PART_UNSUPPORTED";
@@ -84,6 +84,26 @@ export function mergeOrganicDashboardBundleParts(
     return undefined;
   };
 
+  const ndusLeadsPick = (): OrganicDashboardBundleResponse["ndusLeads"] => {
+    for (const part of parts) {
+      const block = part.ndusLeads;
+      if (block !== undefined && !isPartialRequestStub(block)) {
+        return block;
+      }
+    }
+    return undefined;
+  };
+
+  const gmbLeadsPick = (): OrganicDashboardBundleResponse["gmbLeads"] => {
+    for (const part of parts) {
+      const block = part.gmbLeads;
+      if (block !== undefined && !isPartialRequestStub(block)) {
+        return block;
+      }
+    }
+    return undefined;
+  };
+
   const googleAdsSource = (): OrganicDashboardSourceStatus | undefined => {
     for (const part of parts) {
       const status = part.sources?.googleAds;
@@ -100,6 +120,38 @@ export function mergeOrganicDashboardBundleParts(
     return undefined;
   };
 
+  const ndusLeadsSource = (): OrganicDashboardSourceStatus | undefined => {
+    for (const part of parts) {
+      const status = part.sources?.ndusLeads;
+      if (status && status !== "skipped") {
+        return status;
+      }
+    }
+    for (const part of parts) {
+      const status = part.sources?.ndusLeads;
+      if (status) {
+        return status;
+      }
+    }
+    return undefined;
+  };
+
+  const gmbLeadsSource = (): OrganicDashboardSourceStatus | undefined => {
+    for (const part of parts) {
+      const status = part.sources?.gmbLeads;
+      if (status && status !== "skipped") {
+        return status;
+      }
+    }
+    for (const part of parts) {
+      const status = part.sources?.gmbLeads;
+      if (status) {
+        return status;
+      }
+    }
+    return undefined;
+  };
+
   return {
     success: true,
     meta,
@@ -107,11 +159,15 @@ export function mergeOrganicDashboardBundleParts(
     gsc: pick("gsc"),
     semrush: pick("semrush"),
     googleAds: googleAdsPick(),
+    ndusLeads: ndusLeadsPick(),
+    gmbLeads: gmbLeadsPick(),
     sources: {
       ga4: sourceFromParts("ga4") ?? "skipped",
       gsc: sourceFromParts("gsc") ?? "skipped",
       semrush: sourceFromParts("semrush") ?? "skipped",
       googleAds: googleAdsSource() ?? "skipped",
+      ndusLeads: ndusLeadsSource() ?? "skipped",
+      gmbLeads: gmbLeadsSource() ?? "skipped",
     },
   };
 }
@@ -185,6 +241,8 @@ async function fetchOrganicDashboardViaParts(
     fetchOrganicDashboardPart(params, "gsc", signal),
     fetchOrganicDashboardPart(params, "semrush", signal),
     fetchOrganicDashboardPart(params, "googleAds", signal),
+    fetchOrganicDashboardPart(params, "ndusLeads", signal),
+    fetchOrganicDashboardPart(params, "gmbLeads", signal),
   ]);
   return mergeOrganicDashboardBundleParts(parts);
 }

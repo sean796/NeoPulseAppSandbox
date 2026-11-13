@@ -32,6 +32,7 @@ import {
   applyWorkflowBinding,
   type StartRunOptions,
 } from "@/contexts/agent-runs-provider-helpers";
+import { trackStartedAgentRun } from "@/lib/task-manager/adapt-agent-run";
 import type { useWordPressSites } from "@/hooks/use-wordpress-sites";
 
 type UseAgentRunsStartRunParams = {
@@ -89,6 +90,7 @@ export function useAgentRunsStartRun({
         if (options?.openSidebar !== false) {
           openSidebar(result.run.id);
         }
+        trackStartedAgentRun(run);
         if (agentRunIsServerExecution(run)) {
           void advanceServerAgentRun(payload.teamId, run, sites)
             .then((latest) => {

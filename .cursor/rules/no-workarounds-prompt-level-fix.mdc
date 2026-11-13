@@ -49,8 +49,9 @@ Every plan that touches model behavior must include a **Prompt-level strategy** 
 
 ## When code changes are allowed
 
-- Validation and parsing of model output (typed, schema-shaped).
-- Fail-fast errors when output does not match contract.
+- Validation and parsing of model output (typed, schema-shaped, non-empty).
+- Fail-fast errors when output is empty or fails JSON/schema parsing.
+- **Never block or discard content over style/word heuristics:** Do **not** throw post-generation errors that reject or skip a rewritten section, title, meta, or FAQ because a word/phrase from the blocklist appeared (`assertNoForbiddenWordViolations`) or because of n-gram / phrase-overlap thresholds (`assertAiseoBodyRewriteChanged`, `assertNotSynonymSwap`). Enforce writing style and rewrite depth in the **prompt**; once valid non-empty JSON/HTML is returned, commit it.
 - Tool implementations the prompt is allowed to call.
 - Not allowed: code that rewrites or replaces model output to mimic a fix the prompt should have caused.
 

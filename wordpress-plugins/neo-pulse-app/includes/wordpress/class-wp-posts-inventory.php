@@ -378,6 +378,8 @@ class Neo_Pulse_App_Wp_Posts_Inventory {
 		$large_site     = false;
 		$inventory_auto = ( isset( $body['inventorySizing'] ) && $body['inventorySizing'] === 'auto' );
 
+		$prefer_neo_mcp = ! empty( $body['preferNeoMcp'] );
+
 		foreach ( $cols as $coll ) {
 			$rest = ( $coll === 'pages' ) ? 'pages' : ( ( $coll === 'posts' ) ? 'posts' : $coll );
 			$max  = null;
@@ -387,18 +389,39 @@ class Neo_Pulse_App_Wp_Posts_Inventory {
 					break;
 				}
 			}
-			$result = Neo_Pulse_App_Wp_Inventory_Collector::collect(
-				$normalized,
-				(string) $body['username'],
-				(string) $body['appPassword'],
-				$rest,
-				! empty( $body['includeContent'] ),
-				! empty( $body['includeRawPostFields'] ),
-				! empty( $body['includePageHeading'] ),
-				'publish',
-				$include_ids ? $include_ids : null,
-				$max
-			);
+			if ( $prefer_neo_mcp ) {
+				$result = Neo_Pulse_App_Wp_Inventory_Neo_Mcp::collect(
+					$normalized,
+					(string) $body['username'],
+					(string) $body['appPassword'],
+					$rest,
+					! empty( $body['includeContent'] ),
+					! empty( $body['includePageHeading'] ),
+					'publish'
+				);
+				if ( empty( $result['ok'] ) ) {
+					return array(
+						502,
+						array(
+							'error'  => isset( $result['error'] ) ? (string) $result['error'] : 'Neo MCP inventory failed',
+							'source' => 'neo-mcp',
+						),
+					);
+				}
+			} else {
+				$result = Neo_Pulse_App_Wp_Inventory_Collector::collect(
+					$normalized,
+					(string) $body['username'],
+					(string) $body['appPassword'],
+					$rest,
+					! empty( $body['includeContent'] ),
+					! empty( $body['includeRawPostFields'] ),
+					! empty( $body['includePageHeading'] ),
+					'publish',
+					$include_ids ? $include_ids : null,
+					$max
+				);
+			}
 			if ( empty( $result['ok'] ) ) {
 				$errors[ $coll ] = $result['error'];
 				continue;
@@ -415,11 +438,33 @@ class Neo_Pulse_App_Wp_Posts_Inventory {
 				$rows[]            = $row;
 			}
 			if ( ! empty( $body['includeScheduled'] ) && ! $include_ids ) {
-				$future = Neo_Pulse_App_Wp_Inventory_Collector::collect( $normalized, (string) $body['username'], (string) $body['appPassword'], $rest, ! empty( $body['includeContent'] ), ! empty( $body['includeRawPostFields'] ), ! empty( $body['includePageHeading'] ), 'future', null, null );
-				if ( empty( $future['ok'] ) ) {
-					$errors[ $coll . '_future' ] = $future['error'];
-				} else {
+				if ( $prefer_neo_mcp ) {
+					$future = Neo_Pulse_App_Wp_Inventory_Neo_Mcp::collect(
+						$normalized,
+						(string) $body['username'],
+						(string) $body['appPassword'],
+						$rest,
+						! empty( $body['includeContent'] ),
+						! empty( $body['includePageHeading'] ),
+						'future'
+					);
+					if ( empty( $future['ok'] ) ) {
+						return array(
+							502,
+							array(
+								'error'  => isset( $future['error'] ) ? (string) $future['error'] : 'Neo MCP scheduled inventory failed',
+								'source' => 'neo-mcp',
+							),
+						);
+					}
 					$rows = Neo_Pulse_App_Wp_Inventory_Collector::merge_rows_by_id_with_collection( $rows, $future['rows'], $coll );
+				} else {
+					$future = Neo_Pulse_App_Wp_Inventory_Collector::collect( $normalized, (string) $body['username'], (string) $body['appPassword'], $rest, ! empty( $body['includeContent'] ), ! empty( $body['includeRawPostFields'] ), ! empty( $body['includePageHeading'] ), 'future', null, null );
+					if ( empty( $future['ok'] ) ) {
+						$errors[ $coll . '_future' ] = $future['error'];
+					} else {
+						$rows = Neo_Pulse_App_Wp_Inventory_Collector::merge_rows_by_id_with_collection( $rows, $future['rows'], $coll );
+					}
 				}
 			}
 		}
@@ -429,6 +474,9 @@ class Neo_Pulse_App_Wp_Posts_Inventory {
 			'rows'  => $rows,
 			'total' => count( $rows ),
 		);
+		if ( $prefer_neo_mcp ) {
+			$payload['source'] = 'neo-mcp';
+		}
 		if ( $errors ) {
 			$payload['errors'] = $errors;
 		}

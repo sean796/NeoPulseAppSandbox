@@ -41,13 +41,20 @@ describe('Decision Agent Settings & Category', () => {
     (globalThis as unknown as { window: unknown }).window = { localStorage: mem };
   });
 
-  it('defaults decisionModel to liquid/d1.1 in DEFAULT_SETTINGS', () => {
-    expect(DEFAULT_SETTINGS.decisionModel).toBe('liquid/d1.1');
+  it('defaults decisionModel to liquid/lfm-2.5-24b-a2b in DEFAULT_SETTINGS', () => {
+    expect(DEFAULT_SETTINGS.decisionModel).toBe('liquid/lfm-2.5-24b-a2b');
   });
 
   it('reads global decision agent model default when storage is empty', () => {
-    expect(readGlobalDecisionAgentModel()).toBe('liquid/d1.1');
-    expect(getDecisionModel()).toBe('liquid/d1.1');
+    expect(readGlobalDecisionAgentModel()).toBe('liquid/lfm-2.5-24b-a2b');
+    expect(getDecisionModel()).toBe('liquid/lfm-2.5-24b-a2b');
+  });
+
+  it('migrates a stored retired liquid/d1.1 decision model to the listed replacement', () => {
+    writeGlobalDecisionAgentModel('liquid/d1.1');
+    expect(readGlobalDecisionAgentModel()).toBe('liquid/lfm-2.5-24b-a2b');
+    expect(getDecisionModel()).toBe('liquid/lfm-2.5-24b-a2b');
+    expect(localStorage.getItem('neo-pulse-agent-decision-model')).toBe('liquid/lfm-2.5-24b-a2b');
   });
 
   it('persists and retrieves updated global decision agent model', () => {
@@ -64,11 +71,20 @@ describe('Decision Agent Settings & Category', () => {
     );
     expect(getDecisionModel(siteId)).toBe('google/gemini-2.5-flash-lite');
     // Global remains unaffected
-    expect(getDecisionModel()).toBe('liquid/d1.1');
+    expect(getDecisionModel()).toBe('liquid/lfm-2.5-24b-a2b');
+  });
+
+  it('migrates a retired per-site liquid/d1.1 override to the listed replacement', () => {
+    const siteId = 'test-site-retired';
+    localStorage.setItem(
+      `optimization_settings_${siteId}`,
+      JSON.stringify({ decisionModel: 'liquid/d1.1' }),
+    );
+    expect(getDecisionModel(siteId)).toBe('liquid/lfm-2.5-24b-a2b');
   });
 
   it('resolves model for decision agent category', () => {
-    expect(resolveModelForAgentCategory('decision')).toBe('liquid/d1.1');
+    expect(resolveModelForAgentCategory('decision')).toBe('liquid/lfm-2.5-24b-a2b');
     writeGlobalDecisionAgentModel('deepseek/deepseek-v4.1-flash');
     expect(resolveModelForAgentCategory('decision')).toBe('deepseek/deepseek-v4.1-flash');
   });

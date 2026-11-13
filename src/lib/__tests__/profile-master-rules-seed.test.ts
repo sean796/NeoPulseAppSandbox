@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { WORDPRESS_SITES_STORAGE_KEY } from "@/components/integrations/types";
+import { setServerHarnessSitesOverride } from "@/components/integrations/storage";
+import type { WordPressSite } from "@/components/integrations/types";
 import {
   KWB_BRAND_RULE_CONTENT,
   PROFILE_BRAND_NAMING_FILENAME,
@@ -10,12 +11,31 @@ import {
   getMasterInstructionsPayload,
 } from "../master-instructions-storage";
 
+function siteRow(
+  id: string,
+  name: string,
+  siteUrl: string,
+  extra: Partial<WordPressSite> = {},
+): WordPressSite {
+  return {
+    id,
+    name,
+    siteUrl,
+    username: "user",
+    appPassword: "pass",
+    connectedAt: 1,
+    enabled: true,
+    ...extra,
+  };
+}
+
 describe("KWB profile master rules", () => {
   const siteId = "test-kwb-profile-master-rules";
   const lsStore = new Map<string, string>();
 
   beforeEach(() => {
     lsStore.clear();
+    setServerHarnessSitesOverride(null);
     const storage = {
       getItem: (key: string) => lsStore.get(key) ?? null,
       setItem: (key: string, value: string) => {
@@ -31,15 +51,13 @@ describe("KWB profile master rules", () => {
   });
 
   afterEach(() => {
+    setServerHarnessSitesOverride(null);
     clearMasterInstructionsTestCache();
     vi.unstubAllGlobals();
   });
 
   function seedKwbSite(name = "KWB", siteUrl = "https://kwbllp.com/") {
-    lsStore.set(
-      WORDPRESS_SITES_STORAGE_KEY,
-      JSON.stringify([{ id: siteId, name, siteUrl, enabled: true }]),
-    );
+    setServerHarnessSitesOverride([siteRow(siteId, name, siteUrl)]);
   }
 
   it("adds KWB brand naming rule when master rules load for kwbllp.com", () => {
@@ -93,10 +111,7 @@ describe("KWB profile master rules", () => {
   });
 
   it("skips non-KWB sites", () => {
-    lsStore.set(
-      WORDPRESS_SITES_STORAGE_KEY,
-      JSON.stringify([{ id: siteId, name: "Example Co", siteUrl: "https://example.com/", enabled: true }]),
-    );
+    setServerHarnessSitesOverride([siteRow(siteId, "Example Co", "https://example.com/")]);
     const payload = getMasterInstructionsPayload(siteId);
     expect(payload.sources).toHaveLength(0);
   });
@@ -108,6 +123,7 @@ describe("Shutter Spot profile master rules", () => {
 
   beforeEach(() => {
     lsStore.clear();
+    setServerHarnessSitesOverride(null);
     const storage = {
       getItem: (key: string) => lsStore.get(key) ?? null,
       setItem: (key: string, value: string) => {
@@ -123,6 +139,7 @@ describe("Shutter Spot profile master rules", () => {
   });
 
   afterEach(() => {
+    setServerHarnessSitesOverride(null);
     clearMasterInstructionsTestCache();
     vi.unstubAllGlobals();
   });
@@ -132,10 +149,7 @@ describe("Shutter Spot profile master rules", () => {
     siteUrl = "https://shutterspot.com/",
     googleAdsCustomerId = "745-406-1453",
   ) {
-    lsStore.set(
-      WORDPRESS_SITES_STORAGE_KEY,
-      JSON.stringify([{ id: siteId, name, siteUrl, googleAdsCustomerId, enabled: true }]),
-    );
+    setServerHarnessSitesOverride([siteRow(siteId, name, siteUrl, { googleAdsCustomerId })]);
   }
 
   it("adds Shutter Spot brand naming rule when master rules load for shutterspot.com", () => {

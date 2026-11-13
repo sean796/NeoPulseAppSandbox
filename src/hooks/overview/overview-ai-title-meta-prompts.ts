@@ -51,18 +51,16 @@ export function createOverviewTitleOptimizer(deps: OverviewTitleMetaDeps) {
         const defaultTitleRules = `Rules
 - 50-60 characters
 - ${TITLE_CASE_RULE}
-- Include the focus keyword phrase once with the same words, spacing, and hyphens as below. Keep word order; always Title Case every word in the title (never copy lowercase keyword casing). Do NOT add words to it, do NOT normalize, slugify, or rephrase it.
+- **Grammar first**: write one readable English headline. Never paste a raw focus keyword, URL slug, or keyword+business mash as the subject of the title.
 - ${TITLE_KEYWORD_WEAVING_RULE}
 - ${TITLE_ANTI_CLICKBAIT_RULE}
-- **NO COLONS** in this title. Never use a topic-then-subtitle structure. Write one flowing headline joined with natural connecting words ("and", "for", "vs", "without", "how", "what", "why", "when"), or end with "?". This overrides any colon allowance above.
-- Do NOT prepend business name, site name, company name, or distributor name (e.g. never start with "EJH Distribution", "Acme Co", or "SiteName | …"). Output ONLY the page topic title - no "Brand | Topic" pattern and no leading brand before the real subject.
-- Do NOT force the keyword into the middle of a phrase where it sounds unnatural.
-- If focus keyword is empty, infer the main keyword from the URL.
-- NO brand or site name at the beginning of the title
-- Natural language
+- **NO COLONS** in this title. Never use a topic-then-subtitle structure. Write one flowing headline joined with natural connecting words ("and", "for", "vs", "without", "how", "what", "why", "when"), or end with "?".
+- Do NOT prepend business name, site name, company name, or distributor name. Output ONLY the page topic title - no "Brand | Topic" pattern.
+- If focus keyword is empty or looks like a slug/query dump, infer the reader decision from the URL and page content, then write a clean headline about that decision. Never paste slug words in order.
+- NO brand or site name jammed into the middle of the topic phrase.
 - ${TITLE_WELL_KNOWN_ACRONYMS_RULE}`;
 
-        const prompt = `Create a neutral, specific SEO title.
+        const prompt = `Create a neutral, specific, grammatically correct SEO title.
 
 ${titleMode === "sap" ? sapTitleRules : defaultTitleRules}
 ${
@@ -71,7 +69,7 @@ ${
 `
     : ""
 }
-Focus keyword (${titleMode === "sap" ? "intent signal for product + place - rewrite into a near-me headline in full Title Case" : "MUST appear once with same words and spacing; Title Case every word in the title even if this line is lowercase"})
+Focus keyword (topic signal only - weave into a grammatical Title Case headline; never paste as an unbroken slug or business-name mash)
 ${focusKeyword?.trim() || "(none)"}
 
 FAQ content (use as context only – do NOT simply echo questions)
@@ -93,11 +91,11 @@ ${url}
 Existing title (replace completely - do NOT return this exact title; author a fresh, distinct SEO title)
 ${existingTitle}
 
-Return only the new title text with no quotes. Every word must be Title Case.`;
+Return only the new title text with no quotes. Every word must be Title Case. The title must read as natural English.`;
 
         const systemPrompt = hasBrief
-          ? `You are a senior SEO content title specialist. Write a brand-new, accurate, neutral title from scratch in full Title Case (every word capitalized) that is distinct from the existing title. A structured JSON SEO content brief is provided - use it as the main signal for searcher intent and angles while following all title rules. ${TITLE_CASE_RULE}`
-          : `You are a senior SEO content title specialist. Write a brand-new, accurate, neutral title from scratch in full Title Case (every word capitalized) that is distinct from the existing title. ${TITLE_CASE_RULE}`;
+          ? `You are a senior SEO content title specialist. Write a brand-new, grammatically correct, neutral Title Case headline that a human editor would publish. Never paste a raw keyword or URL slug as the title spine. A structured JSON SEO content brief is provided - use it for intent while following all title rules. ${TITLE_CASE_RULE}`
+          : `You are a senior SEO content title specialist. Write a brand-new, grammatically correct, neutral Title Case headline that a human editor would publish. Never paste a raw keyword or URL slug as the title spine. ${TITLE_CASE_RULE}`;
         const raw = await runCompletion(systemPrompt, prompt, options?.signal);
         return raw || null;
       } catch (err) {

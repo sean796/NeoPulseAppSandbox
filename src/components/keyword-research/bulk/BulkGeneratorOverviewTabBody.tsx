@@ -19,6 +19,7 @@ import type { ContentOptimizerSectionId } from "@/components/content-optimizer/c
 import type { OverviewRow } from "@/components/overview/overview-meta-row-types";
 import type { useOverviewTabController } from "@/hooks/overview/use-overview-tab-controller";
 import type { useBulkGeneratorOverviewRowSync } from "@/hooks/bulk/use-bulk-generator-overview-row-sync";
+import { bulkComposeSplashVisible } from "@/components/keyword-research/bulk/bulk-compose-splash-visibility";
 
 type BulkGeneratorOverviewTabBodyProps = {
   bindings: BulkGeneratorWorkspaceBindings;
@@ -53,6 +54,8 @@ type BulkGeneratorOverviewTabBodyProps = {
   bulkSplashStatusVisual?: import("@/lib/bulk/bulk-splash-status-agent").BulkSplashVisualKind;
   ideasSplashStatusText?: string;
   ideasSplashStatusVisual?: import("@/lib/bulk/bulk-splash-status-agent").BulkSplashVisualKind;
+  importSplashStatusText?: string;
+  importSplashStatusVisual?: import("@/lib/bulk/bulk-splash-status-agent").BulkSplashVisualKind;
   bulkGeneratorStudioActions: BulkGeneratorStudioAction | undefined;
   promptLogFile: { name: string; content: string; mimeType: string } | null;
   handleSelectStudioEditorMode: (nextMode: StudioEditorModeId) => void;
@@ -91,6 +94,8 @@ export function BulkGeneratorOverviewTabBody({
   bulkSplashStatusVisual,
   ideasSplashStatusText,
   ideasSplashStatusVisual,
+  importSplashStatusText,
+  importSplashStatusVisual,
   bulkGeneratorStudioActions,
   promptLogFile,
   handleSelectStudioEditorMode,
@@ -102,7 +107,7 @@ export function BulkGeneratorOverviewTabBody({
       !activeRow ||
       ((studioEditorMode === "prompt" || studioEditorMode === "vertical-benchmarks") &&
         (!bindings.hasGeneratedChecklist || showingStudioModeScreen)) ||
-      (studioEditorMode === "csv" &&
+      (studioEditorMode === "blog-import" &&
         (!(bulkGeneratorDock.csvFileName || bulkGeneratorDock.importedFileName) ||
           showingStudioModeScreen)));
 
@@ -122,7 +127,6 @@ export function BulkGeneratorOverviewTabBody({
         }
         csvFileName={bulkGeneratorDock.csvFileName}
         onPickCsvFile={(file, importRaw) => {
-          setShowingStudioModeScreen(false);
           bulkGeneratorDock.onPickCsvFile?.(file, importRaw);
         }}
         csvParsing={bulkGeneratorDock.csvLoading}
@@ -194,14 +198,29 @@ export function BulkGeneratorOverviewTabBody({
             bulkTitleUrlOptimizing={Boolean(bulkGeneratorDock.csvEnrichingTitlesUrls)}
             bulkSplashStatusText={bulkSplashStatusText}
             bulkSplashStatusVisual={bulkSplashStatusVisual}
-            composeSplashVisible={
-              showModeComposeScreen &&
-              studioEditorMode === "prompt" &&
-              (bindings.isGeneratingChecklist ||
-                (bindings.hasGeneratedChecklist && bindings.filesByRow.size === 0))
+            composeSplashVisible={bulkComposeSplashVisible({
+              showModeComposeScreen,
+              studioEditorMode,
+              isGeneratingChecklist: bindings.isGeneratingChecklist,
+              hasGeneratedChecklist: bindings.hasGeneratedChecklist,
+              filesByRowEmpty: bindings.filesByRow.size === 0,
+              importParsing: Boolean(bulkGeneratorDock.importParsing),
+              csvLoading: Boolean(bulkGeneratorDock.csvLoading),
+              csvEnrichingTitlesUrls: Boolean(bulkGeneratorDock.csvEnrichingTitlesUrls),
+              hasImportFile: Boolean(
+                bulkGeneratorDock.csvFileName || bulkGeneratorDock.importedFileName,
+              ),
+            })}
+            composeSplashStatusText={
+              studioEditorMode === "blog-import"
+                ? importSplashStatusText
+                : ideasSplashStatusText
             }
-            composeSplashStatusText={ideasSplashStatusText}
-            composeSplashStatusVisual={ideasSplashStatusVisual}
+            composeSplashStatusVisual={
+              studioEditorMode === "blog-import"
+                ? importSplashStatusVisual
+                : ideasSplashStatusVisual
+            }
           />
         )
       }

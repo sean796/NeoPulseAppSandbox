@@ -123,6 +123,51 @@ export type OrganicDashboardGoogleAdsPayload =
   | OrganicDashboardGoogleAdsSuccess
   | OrganicDashboardSkippedBlock;
 
+export type OrganicDashboardNdusLeadsPeriod = {
+  leads: number;
+  spam: number;
+  by_source: Record<string, number>;
+  by_form: Record<string, number>;
+};
+
+export type OrganicDashboardNdusLeadsSuccess = {
+  success: true;
+  siteId?: string;
+  siteName?: string;
+  siteUrl?: string;
+  organicOnly?: boolean;
+  primary: OrganicDashboardNdusLeadsPeriod;
+  compare?: OrganicDashboardNdusLeadsPeriod;
+  labels?: Record<string, string>;
+  from?: string;
+  to?: string;
+  compareFrom?: string;
+  compareTo?: string;
+};
+
+export type OrganicDashboardNdusLeadsPayload =
+  | OrganicDashboardNdusLeadsSuccess
+  | OrganicDashboardSkippedBlock;
+
+export type OrganicDashboardGmbLeadsPeriod = {
+  calls: number;
+  chat: number;
+  directions: number;
+  websiteClicks: number;
+};
+
+export type OrganicDashboardGmbLeadsSuccess = {
+  success: true;
+  locationId?: string;
+  primary: OrganicDashboardGmbLeadsPeriod;
+  compare?: OrganicDashboardGmbLeadsPeriod;
+  apiWarning?: string;
+};
+
+export type OrganicDashboardGmbLeadsPayload =
+  | OrganicDashboardGmbLeadsSuccess
+  | OrganicDashboardSkippedBlock;
+
 export type OrganicDashboardSemrushStats = {
   success?: boolean;
   database?: string;
@@ -157,12 +202,16 @@ export type OrganicDashboardBundleResponse = {
   gscHistorical?: OrganicDashboardGscHistorical | OrganicDashboardSkippedBlock;
   semrush?: OrganicDashboardSemrushStats | OrganicDashboardSkippedBlock;
   googleAds?: OrganicDashboardGoogleAdsPayload;
+  ndusLeads?: OrganicDashboardNdusLeadsPayload;
+  gmbLeads?: OrganicDashboardGmbLeadsPayload;
   sources?: {
     ga4: OrganicDashboardSourceStatus;
     gsc: OrganicDashboardSourceStatus;
     gscHistorical?: OrganicDashboardSourceStatus;
     semrush?: OrganicDashboardSourceStatus;
     googleAds?: OrganicDashboardSourceStatus;
+    ndusLeads?: OrganicDashboardSourceStatus;
+    gmbLeads?: OrganicDashboardSourceStatus;
   };
 };
 
@@ -171,6 +220,8 @@ export type OrganicDashboardFetchParams = {
   ga4PropertyId: string;
   /** 10-digit Google Ads customer ID when set on the property. */
   googleAdsCustomerId?: string;
+  /** Google Business Profile location id from Integrations. */
+  gbpLocationId?: string;
   semrushDatabase?: string;
   /** Semrush SEO project id (Site Audit / PT hub); used for dashboard link + server context. */
   semrushProjectId?: string;

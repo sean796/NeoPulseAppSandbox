@@ -12,24 +12,27 @@ function site(id: string, enabled = true): WordPressSite {
 }
 
 describe("resolveOrganicDashboardSite", () => {
-  it("uses URL id when it matches an enabled property", () => {
+  it("uses URL id when it matches a connected property", () => {
     const sites = [site("a"), site("b")];
     expect(resolveOrganicDashboardSite(sites, "b", "a")?.id).toBe("b");
   });
 
-  it("falls back to active property when URL id is stale", () => {
+  it("uses active property when URL id is missing or stale", () => {
     const sites = [site("blind"), site("dm")];
+    expect(resolveOrganicDashboardSite(sites, undefined, "dm")?.id).toBe("dm");
     expect(resolveOrganicDashboardSite(sites, "wp-old-id", "dm")?.id).toBe("dm");
   });
 
-  it("falls back to first enabled property when URL and active are missing", () => {
-    const sites = [site("first"), site("second")];
-    expect(resolveOrganicDashboardSite(sites, "missing", null)?.id).toBe("first");
+  it("honors the active site even when enabled is false", () => {
+    const sites = [site("blind", false), site("custom", true)];
+    expect(resolveOrganicDashboardSite(sites, undefined, "blind")?.id).toBe("blind");
+    expect(resolveOrganicDashboardSite(sites, "blind", "blind")?.id).toBe("blind");
   });
 
-  it("skips disabled properties and falls back to another enabled site", () => {
-    const sites = [site("off", false), site("on")];
-    expect(resolveOrganicDashboardSite(sites, "off", "off")?.id).toBe("on");
-    expect(resolveOrganicDashboardSite(sites, "missing", "off")?.id).toBe("on");
+  it("does not fall back to another property", () => {
+    const sites = [site("first"), site("second")];
+    expect(resolveOrganicDashboardSite(sites, "missing", null)).toBeUndefined();
+    expect(resolveOrganicDashboardSite(sites, "missing", "gone")).toBeUndefined();
+    expect(resolveOrganicDashboardSite(sites, undefined, null)).toBeUndefined();
   });
 });

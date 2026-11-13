@@ -162,12 +162,18 @@ export function ExportMetricStack({
   showCompare,
   comparePeriodLabel,
   primaryPeriodLabel,
+  metricColumnLabel,
+  valueColumnLabel,
 }: {
   groupTitle?: string;
   rows: DeckSummaryRow[];
   showCompare: boolean;
   comparePeriodLabel: string;
   primaryPeriodLabel: string;
+  /** Optional override for the left header (default: Metric / What We Measure). */
+  metricColumnLabel?: string;
+  /** Optional override for the primary value header (default: period label). */
+  valueColumnLabel?: string;
 }) {
   if (rows.length === 0) return null;
   const hasCompareData =
@@ -179,20 +185,22 @@ export function ExportMetricStack({
         r.earlier.trim() !== "—" &&
         r.delta.deltaPercent != null,
     );
+  const metricHeader = metricColumnLabel?.trim() || formatOwnerReportMetricLabel("Metric");
+  const valueHeader = valueColumnLabel?.trim() || primaryPeriodLabel;
   return (
     <div className="organic-client-report-export__metric-stack">
       <table className={EXPORT_METRIC_TABLE_CLASS}>
         <thead>
           <tr>
-            <th scope="col">{formatOwnerReportMetricLabel("Metric")}</th>
+            <th scope="col">{metricHeader}</th>
             {hasCompareData ? (
               <>
                 <th scope="col">{comparePeriodLabel}</th>
                 <th scope="col">{formatOwnerReportMetricLabel("Change")}</th>
-                <th scope="col">{primaryPeriodLabel}</th>
+                <th scope="col">{valueHeader}</th>
               </>
             ) : (
-              <th scope="col">{primaryPeriodLabel}</th>
+              <th scope="col">{valueHeader}</th>
             )}
           </tr>
         </thead>

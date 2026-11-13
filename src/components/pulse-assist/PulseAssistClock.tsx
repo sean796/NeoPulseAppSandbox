@@ -21,11 +21,9 @@ export function PulseAssistClock({ className }: PulseAssistClockProps) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button
-          size="icon" icon={Clock}
-          variant="quiet"
-          aria-label={tooltip}
-        ></Button>
+        <span className={cn("inline-flex", className)}>
+          <Button size="icon" icon={Clock} variant="tool" aria-label={tooltip} />
+        </span>
       </TooltipTrigger>
       <TooltipContent side="bottom" className="max-w-none text-base">
         {tooltip}

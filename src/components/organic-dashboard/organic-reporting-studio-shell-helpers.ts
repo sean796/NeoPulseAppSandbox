@@ -4,6 +4,7 @@ import type {
   Ga4ReportingDateHarness,
 } from "@/components/research/reporting/Ga4ReportingDateRangePopover-types";
 import type { OrganicClientReportContent } from "@/lib/organic-dashboard/organic-client-report-content";
+import type { BulkSplashVisualKind } from "@/lib/bulk/bulk-splash-status-agent";
 
 export const LEFT_DOCK_WIDTH_KEY = "neo-pulse:organic-reporting-left-dock-width:v1";
 export const LEFT_DOCK_DEFAULT_WIDTH = 320;
@@ -60,6 +61,8 @@ export type OrganicReportingStudioShellProps = {
   dateRangePopoverOpen: boolean;
   onDateRangePopoverOpenChange: (open: boolean) => void;
   splashVisible: boolean;
+  splashStatusText?: string;
+  splashStatusVisual?: BulkSplashVisualKind;
   busy: boolean;
   activeStatusText: string;
   reportContent: OrganicClientReportContent | null;

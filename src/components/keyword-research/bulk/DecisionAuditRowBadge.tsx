@@ -58,7 +58,7 @@ export const DecisionAuditRowBadge: React.FC<DecisionAuditRowBadgeProps> = ({
       </TooltipTrigger>
       <TooltipContent side="top" className="max-w-xs bg-zinc-900 border border-zinc-700 p-2.5 text-xs text-zinc-200">
         <div className="font-semibold text-white mb-1 flex items-center justify-between">
-          <span>Decision Model (Liquid d1.1)</span>
+          <span>Decision Model (Liquid LFM2.5)</span>
           <span className="capitalize text-base text-zinc-400">{audit.verdict.replace('_', ' ')}</span>
         </div>
         <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-base font-mono text-zinc-300">

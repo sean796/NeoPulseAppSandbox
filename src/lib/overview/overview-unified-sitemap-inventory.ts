@@ -239,9 +239,14 @@ export async function fetchUnifiedOverviewSitemapInventory(
     includeContent?: boolean;
     includePageHeading?: boolean;
     includeScheduled?: boolean;
+    preferNeoMcp?: boolean;
+    collections?: string[];
   },
 ): Promise<UnifiedOverviewInventoryResult> {
-  const collections = mergeOverviewInventoryCollections(site);
+  const collections =
+    options?.collections?.length && options.collections.length
+      ? options.collections
+      : mergeOverviewInventoryCollections(site);
 
   let restRows: OverviewInventoryRow[] = [];
   const bulkErrors: Record<string, string> = {};
@@ -252,6 +257,7 @@ export async function fetchUnifiedOverviewSitemapInventory(
         includeContent: options?.includeContent === true,
         includePageHeading: options?.includePageHeading === true,
         includeScheduled: options?.includeScheduled === true,
+        preferNeoMcp: options?.preferNeoMcp === true,
         collections,
       });
       restRows = (bulk.rows ?? []) as OverviewInventoryRow[];
@@ -261,6 +267,10 @@ export async function fetchUnifiedOverviewSitemapInventory(
       bulkErrors._bulk =
         err instanceof Error ? err.message : "WordPress bulk inventory request failed";
     }
+  }
+
+  if (options?.preferNeoMcp === true && bulkErrors._bulk) {
+    throw new Error(bulkErrors._bulk);
   }
 
   const bySource = splitOverviewInventoryRowsBySource(site, restRows);

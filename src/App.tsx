@@ -20,6 +20,7 @@ import HuddlePopupPage from "./pages/HuddlePopupPage";
 import OrganicDashboardPage from "./pages/OrganicDashboardPage";
 import OrganicClientReportPreviewPage from "./pages/OrganicClientReportPreviewPage";
 import HostingManagerPage from "./pages/manager/HostingManagerPage";
+import CareerApplyPage from "./pages/CareerApplyPage";
 import { WordPressSitesProvider } from "@/hooks/use-wordpress-sites";
 import { SitesHydrate } from "@/components/integrations/SitesHydrate";
 import { ActiveWordPressSiteProvider } from "@/contexts/ActiveWordPressSiteProvider";
@@ -84,6 +85,14 @@ const App = () => {
                         element={
                           <div className="flex h-dvh max-h-dvh min-h-0 flex-1 flex-col overflow-hidden">
                             <Register />
+                          </div>
+                        }
+                      />
+                      <Route
+                        path="/apply"
+                        element={
+                          <div className="flex h-dvh max-h-dvh min-h-0 flex-1 flex-col overflow-hidden">
+                            <CareerApplyPage />
                           </div>
                         }
                       />

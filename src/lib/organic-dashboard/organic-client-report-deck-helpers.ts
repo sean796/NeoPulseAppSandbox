@@ -2,6 +2,12 @@ import type {
   OrganicDashboardViewModel,
   OrganicGscMetricDelta,
 } from "@/lib/organic-dashboard/organic-dashboard-view-model";
+import {
+  GMB_LEAD_LABELS,
+  GMB_LEAD_METRIC_KEYS,
+  formatGmbMetricValue,
+  gmbMetricDelta,
+} from "@/lib/organic-dashboard/organic-dashboard-gmb-leads";
 
 export {
   expandClientReportNarrativeParagraphs,
@@ -164,6 +170,42 @@ export function buildGoogleAdsDeckSummaryRows(
       delta: showCompare ? s.clicksDelta : emptyDelta,
     },
   ];
+}
+
+export function buildNdusLeadsDeckSummaryRows(
+  viewModel: OrganicDashboardViewModel,
+  showCompare: boolean,
+): DeckSummaryRow[] {
+  if (!viewModel.hasNdusLeads || !viewModel.ndusLeadsSummary) return [];
+  const emptyDelta = { deltaPercent: null, deltaPositive: null };
+  const s = viewModel.ndusLeadsSummary;
+  return [
+    {
+      label: "Organic Website Leads",
+      earlier: s.compareLeadsLabel,
+      later: s.leadsLabel,
+      delta: showCompare ? s.leadsDelta : emptyDelta,
+    },
+  ];
+}
+
+export function buildGmbLeadsDeckSummaryRows(
+  viewModel: OrganicDashboardViewModel,
+  showCompare: boolean,
+): DeckSummaryRow[] {
+  if (!viewModel.hasGmbLeads || !viewModel.gmbLeadsSummary) return [];
+  const emptyDelta = { deltaPercent: null, deltaPositive: null };
+  const s = viewModel.gmbLeadsSummary;
+  return GMB_LEAD_METRIC_KEYS.map((key) => {
+    const current = s.primary[key];
+    const previous = showCompare && s.compare ? s.compare[key] : null;
+    return {
+      label: GMB_LEAD_LABELS[key],
+      earlier: previous == null ? "—" : formatGmbMetricValue(previous),
+      later: formatGmbMetricValue(current),
+      delta: showCompare ? gmbMetricDelta(current, previous) : emptyDelta,
+    };
+  });
 }
 
 export function buildSemrushDeckSummaryRows(

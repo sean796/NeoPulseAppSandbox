@@ -112,11 +112,11 @@ The PureStride Compact features an ultra-quiet 2.5 HP brushless motor that stays
             <GitFork className="h-5 w-5 text-indigo-400" />
             <h2 className="text-lg font-bold text-white tracking-wide">Editorial Decision Tree &amp; Checker</h2>
             <Badge variant="outline" className="border-indigo-400/40 text-indigo-300 bg-indigo-500/10 text-xs">
-              Liquid d1.1 + Gemini Pipeline
+              Liquid LFM2.5 + Gemini Pipeline
             </Badge>
           </div>
           <p className="mt-1 text-sm text-zinc-300">
-            Liquid d1.1 handles rapid classification, quality gates, and fix routing. Gemini executes targeted content edits.
+            Liquid LFM2.5 handles rapid classification, quality gates, and fix routing. Gemini executes targeted content edits.
           </p>
         </div>
       </div>

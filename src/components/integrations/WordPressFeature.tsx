@@ -17,19 +17,27 @@ import {
 } from "./storage";
 import { cn } from "@/lib/utils";
 import { useWordPressOptimization } from "@/contexts/wordpress-optimization-context";
-import { useRegisterPropertiesDashboardToolbar } from "@/components/manager/dashboard/PropertiesDashboardChromeContext";
+import { PropertiesWorkspaceToolbar } from "@/components/manager/dashboard/PropertiesWorkspaceToolbar";
+import { PropertiesStudioHeader } from "./wordpress/PropertiesStudioHeader";
+import { PROPERTIES_DOCK_CLASS, PROPERTIES_EMPTY } from "./wordpress/wordpress-properties-surfaces";
 import { useWordPressFeatureForm } from "./use-wordpress-feature-form";
 import { useWordPressFeatureActions } from "./use-wordpress-feature-actions";
-import { WordPressFeatureToolbarActions } from "./WordPressFeatureToolbarActions";
+import type { ManagerSettingsClusterId } from "@/components/manager/manager-settings-cluster";
 
 interface WordPressFeatureProps {
   onEntityGeneration?: (site: WordPressSite, sitemapUrl: string) => void;
   isGeneratingEntities?: Record<string, boolean>;
+  activeDashboardSection?: ManagerSettingsClusterId;
+  onDashboardSectionChange?: (id: ManagerSettingsClusterId) => void;
+  visibleDashboardSectionIds?: readonly ManagerSettingsClusterId[];
 }
 
 export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
   onEntityGeneration,
   isGeneratingEntities = {},
+  activeDashboardSection,
+  onDashboardSectionChange,
+  visibleDashboardSectionIds,
 }) => {
   // Site management hook
   const {
@@ -89,6 +97,7 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
     bySiteId: quarterStatsBySite,
     refreshAllQuarterCounts,
     isRefreshingAllQuarterCounts,
+    countsBatchPending,
     selectedMonthKey: editorialSelectedMonthKey,
     setSelectedMonthKey: setEditorialSelectedMonthKey,
     monthOptions: editorialMonthOptions,
@@ -109,15 +118,16 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
   );
   const credentialedSiteCount = credentialedSites.length;
 
-  /** Quarter editorial (sparkle) counts finished loading for every credentialed property. */
+  /** Editorial counts finished for every credentialed property (and no batch refresh in flight). */
   const quarterStatsAllLoaded = useMemo(
     () =>
+      !countsBatchPending &&
       credentialedSites.length > 0 &&
       credentialedSites.every((s) => {
         const q = quarterStatsBySite[s.id];
         return Boolean(q && !q.loading);
       }),
-    [credentialedSites, quarterStatsBySite],
+    [credentialedSites, quarterStatsBySite, countsBatchPending],
   );
 
   const quarterStatsFingerprint = useMemo(
@@ -167,8 +177,7 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
     setFormProfileTags, setFormServiceCity, setFormServiceState, setFormServiceCountry,
     profileSite, profileSiteId, profileSectionId,
     setProfileSectionId, settingsSubSectionId, setSettingsSubSectionId,
-    selectedSiteIds, filteredSites, tierFilteredSites, handleSelectAll, handleDeleteSelected,
-    handleSiteSelectedChange, openProfile, closeProfile, handleAddSite, handleEditSite, handleSaveSiteClick,
+    filteredSites, tierFilteredSites, openProfile, handleAddSite, handleEditSite, handleSaveSiteClick,
   } = useWordPressFeatureForm({
     sites,
     editorialPackageFilter,
@@ -184,8 +193,6 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
     isExtractingNAPAndGraph,
     handleExportAllSitesCsv,
     handleExtractNAPAndLinkGraph,
-    isBulkGmbNamesBusy,
-    handleBulkApplyGmbDisplayNames,
   } = useWordPressFeatureActions({
     user,
     sites,
@@ -202,7 +209,10 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
       editingSite={editingSite}
       layout="modalFlat"
       settingsSubSectionId={settingsSubSectionId}
+      onSettingsSubSectionChange={setSettingsSubSectionId}
       hideSave
+      onDeleteProperty={() => handleDeleteSite(profileSite.id)}
+      onTogglePropertyEnabled={() => handleToggleEnabled(profileSite)}
       formName={formName}
       formSiteUrl={formSiteUrl}
       formProductionSiteUrl={formProductionSiteUrl}
@@ -257,162 +267,153 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
     />
   ) : null;
 
-  const selectedCount = selectedSiteIds.size;
-  const allSelected = tierFilteredSites.length > 0 && selectedCount === tierFilteredSites.length;
-  const selectAllChecked: boolean | "indeterminate" =
-    allSelected ? true : selectedCount > 0 ? "indeterminate" : false;
+  const displaySite = profileSite ?? tierFilteredSites[0] ?? null;
 
-  const trailingToolbarActions = useMemo(
-    () => (
-      <WordPressFeatureToolbarActions
-        editorialPackageFilter={editorialPackageFilter}
-        setEditorialPackageFilter={setEditorialPackageFilter}
-        editorialMonthOptions={editorialMonthOptions}
-        editorialSelectedMonthKey={editorialSelectedMonthKey}
-        setEditorialSelectedMonthKey={setEditorialSelectedMonthKey}
-        credentialedSiteCount={credentialedSiteCount}
-        isRefreshingAllQuarterCounts={isRefreshingAllQuarterCounts}
-        isRefreshingAllOptimizationCounts={isRefreshingAllOptimizationCounts}
-        refreshAllQuarterCounts={refreshAllQuarterCounts}
-        refreshAllOptimizationCounts={refreshAllOptimizationCounts}
-        handleExportAllSitesCsv={handleExportAllSitesCsv}
-        sitesCount={sites.length}
-        handleAddSite={handleAddSite}
-        setBulkImportDialogOpen={setBulkImportDialogOpen}
-      />
-    ),
-    [
-      credentialedSiteCount,
-      editorialPackageFilter,
-      editorialMonthOptions,
-      editorialSelectedMonthKey,
-      setEditorialSelectedMonthKey,
-      isRefreshingAllQuarterCounts,
-      isRefreshingAllOptimizationCounts,
-      refreshAllOptimizationCounts,
-      refreshAllQuarterCounts,
-      handleExportAllSitesCsv,
-      sites.length,
-      handleAddSite,
-    ],
-  );
-
-  const propertiesToolbarState = useMemo(
-    () => ({
-      sitesCount: sites.length,
-      siteSearchQuery,
-      onSearchChange: setSiteSearchQuery,
-      selectAllChecked,
-      onSelectAll: sites.length > 0 ? handleSelectAll : undefined,
-      selectedCount,
-      onDeleteSelected: selectedCount > 0 ? handleDeleteSelected : undefined,
-      showGbpBulk: Boolean(handlePatchSite),
-      isBulkGmbNamesBusy,
-      onBulkApplyGmbDisplayNames: handleBulkApplyGmbDisplayNames,
-      trailingActions: trailingToolbarActions,
-    }),
-    [
-      sites.length,
-      siteSearchQuery,
-      selectAllChecked,
-      handleSelectAll,
-      selectedCount,
-      handleDeleteSelected,
-      handlePatchSite,
-      isBulkGmbNamesBusy,
-      handleBulkApplyGmbDisplayNames,
-      trailingToolbarActions,
-    ],
-  );
-
-  useRegisterPropertiesDashboardToolbar(propertiesToolbarState);
+  // Auto-select first visible property once for the Studio right pane (no roster reload storm).
+  const autoOpenedTierKeyRef = useRef("");
+  useEffect(() => {
+    if (tierFilteredSites.length === 0) return;
+    if (profileSiteId && tierFilteredSites.some((s) => s.id === profileSiteId)) return;
+    const key = tierFilteredSites.map((s) => s.id).join("|");
+    if (autoOpenedTierKeyRef.current === key) return;
+    autoOpenedTierKeyRef.current = key;
+    openProfile(tierFilteredSites[0].id);
+  }, [tierFilteredSites, profileSiteId, openProfile]);
 
   return (
-    <div className={cn(PROPERTIES_SHELL, "flex min-h-0 flex-1 flex-col")}>
-      {profileSite ? (
-        <PropertyProfilePage
-          site={profileSite}
-          onBack={closeProfile}
-          activeSectionId={profileSectionId}
-          onActiveSectionChange={setProfileSectionId}
-          settingsSubSectionId={settingsSubSectionId}
-          onSettingsSubSectionChange={setSettingsSubSectionId}
-          siteSettingsPanel={profileSettingsPanel}
-          isTesting={isTesting === profileSite.id}
-          isDetecting={isDetecting === profileSite.id}
-          isFetchingScheduled={isFetchingScheduled === profileSite.id}
-          isScrapingSitemap={isScrapingSitemap}
-          isGeneratingEntities={isGeneratingEntities}
-          isIndexingSitemap={isIndexingSitemap}
-          isLoadingCalendar={isLoadingCalendar}
-          isExtractingNAPAndGraph={Boolean(isExtractingNAPAndGraph[profileSite.id])}
-          onTest={() => handleTestConnection(profileSite)}
-          onDetect={() => handleDetectSitemaps(profileSite)}
-          onScrapeChildSitemap={(url) => handleScrapeChildSitemap(profileSite, url)}
-          onEntityGeneration={
-            onEntityGeneration ? (sitemapUrl) => onEntityGeneration(profileSite, sitemapUrl) : undefined
-          }
-          onSetEntitySitemap={(sitemapUrl) => handleSetEntitySitemap(profileSite, sitemapUrl)}
-          onSetCompetitorEntitySitemap={(sitemapUrl) => handleSetCompetitorEntitySitemap(profileSite, sitemapUrl)}
-          onToggleChildSitemapDisabled={(childSitemapUrl) => handleToggleChildSitemapDisabled(profileSite, childSitemapUrl)}
-          onAppendManualChildSitemap={(url) => handleAppendManualChildSitemap(profileSite, url)}
-          onAddCustomSitemapTagLabel={(label) => handleAddCustomSitemapTagLabel(profileSite, label)}
-          onToggleChildSystemRole={(childUrl, role) => handleToggleChildSystemRole(profileSite, childUrl, role)}
-          onToggleChildCustomTag={(childUrl, label) => handleToggleChildCustomTag(profileSite, childUrl, label)}
-          onIndexSitemap={(url) => handleIndexSitemap(profileSite, url)}
-          onLoadCalendarPosts={(sitemapUrl) => handleLoadCalendarPosts(profileSite, sitemapUrl)}
-          onExtractNAPAndGraph={() => void handleExtractNAPAndLinkGraph(profileSite)}
-          getScrapingKey={getScrapingKey}
-          onPatchSite={handlePatchSite}
-          onSaveProperty={handleSaveSiteClick}
-        />
-      ) : (
-      <div className="flex min-h-0 flex-1 flex-col">
-      <WordPressSiteList
-        sites={sites}
-        filteredSites={tierFilteredSites}
-        editorialPackageFilter={editorialPackageFilter}
-        siteSearchQuery={siteSearchQuery}
-        onSearchChange={setSiteSearchQuery}
-        onOpenProfile={(site) => openProfile(site.id)}
-        isTesting={isTesting}
-        isDetecting={isDetecting}
-        isFetchingScheduled={isFetchingScheduled}
-        isScrapingSitemap={isScrapingSitemap}
-        isIndexingSitemap={isIndexingSitemap}
-        isGeneratingEntities={isGeneratingEntities}
-        isExtractingNAPAndGraph={isExtractingNAPAndGraph}
-        isLoadingCalendar={isLoadingCalendar}
-        onTest={handleTestConnection}
-        onToggleEnabled={handleToggleEnabled}
-        onConnectSite={handleConnectSite}
-        onDetect={handleDetectSitemaps}
-        onEdit={handleEditSite}
-        onDelete={handleDeleteSite}
-        onScrapeChildSitemap={handleScrapeChildSitemap}
-        onIndexSitemap={handleIndexSitemap}
-        onEntityGeneration={onEntityGeneration}
-        onSetEntitySitemap={handleSetEntitySitemap}
-        onSetCompetitorEntitySitemap={handleSetCompetitorEntitySitemap}
-        onToggleChildSitemapDisabled={handleToggleChildSitemapDisabled}
-        onAppendManualChildSitemap={handleAppendManualChildSitemap}
-        onLoadCalendarPosts={handleLoadCalendarPosts}
-        onExtractNAPAndGraph={handleExtractNAPAndLinkGraph}
-        getScrapingKey={getScrapingKey}
-        selectedSiteIds={selectedSiteIds}
-        onSelectAll={handleSelectAll}
-        onSiteSelectedChange={handleSiteSelectedChange}
-        onDeleteSelected={handleDeleteSelected}
-        onPatchSite={handlePatchSite}
-        quarterStatsBySite={quarterStatsBySite}
-        optimizationStatsBySite={optimizationStatsBySite}
-        editorialSelectedMonthKey={editorialSelectedMonthKey}
-        editorialMonthOptions={editorialMonthOptions}
-        onEditorialMonthChange={setEditorialSelectedMonthKey}
-        propertyRowDisplay="compact"
-      />
+    <div className={cn(PROPERTIES_SHELL, "flex h-full min-h-0 flex-1 flex-col overflow-hidden")}>
+      <div className="flex h-full min-h-0 flex-1 flex-row overflow-hidden">
+        <aside
+          className={PROPERTIES_DOCK_CLASS}
+          aria-label="Properties list"
+          style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
+        >
+          <PropertiesWorkspaceToolbar
+            siteSearchQuery={siteSearchQuery}
+            onSearchChange={setSiteSearchQuery}
+            editorialPackageFilter={editorialPackageFilter}
+            setEditorialPackageFilter={setEditorialPackageFilter}
+            editorialMonthOptions={editorialMonthOptions}
+            editorialSelectedMonthKey={editorialSelectedMonthKey}
+            setEditorialSelectedMonthKey={setEditorialSelectedMonthKey}
+            credentialedSiteCount={credentialedSiteCount}
+            isRefreshingAllQuarterCounts={isRefreshingAllQuarterCounts}
+            isRefreshingAllOptimizationCounts={isRefreshingAllOptimizationCounts}
+            refreshAllQuarterCounts={refreshAllQuarterCounts}
+            refreshAllOptimizationCounts={refreshAllOptimizationCounts}
+            sitesCount={sites.length}
+            onExportAllSitesCsv={handleExportAllSitesCsv}
+            onBulkImport={() => setBulkImportDialogOpen(true)}
+            onAddSite={handleAddSite}
+          />
+          <WordPressSiteList
+            sites={sites}
+            filteredSites={tierFilteredSites}
+            editorialPackageFilter={editorialPackageFilter}
+            siteSearchQuery={siteSearchQuery}
+            onSearchChange={setSiteSearchQuery}
+            onOpenProfile={(site) => openProfile(site.id)}
+            isTesting={isTesting}
+            isDetecting={isDetecting}
+            isFetchingScheduled={isFetchingScheduled}
+            isScrapingSitemap={isScrapingSitemap}
+            isIndexingSitemap={isIndexingSitemap}
+            isGeneratingEntities={isGeneratingEntities}
+            isExtractingNAPAndGraph={isExtractingNAPAndGraph}
+            isLoadingCalendar={isLoadingCalendar}
+            onTest={handleTestConnection}
+            onToggleEnabled={handleToggleEnabled}
+            onConnectSite={handleConnectSite}
+            onDetect={handleDetectSitemaps}
+            onEdit={handleEditSite}
+            onDelete={handleDeleteSite}
+            onScrapeChildSitemap={handleScrapeChildSitemap}
+            onIndexSitemap={handleIndexSitemap}
+            onEntityGeneration={onEntityGeneration}
+            onSetEntitySitemap={handleSetEntitySitemap}
+            onSetCompetitorEntitySitemap={handleSetCompetitorEntitySitemap}
+            onToggleChildSitemapDisabled={handleToggleChildSitemapDisabled}
+            onAppendManualChildSitemap={handleAppendManualChildSitemap}
+            onLoadCalendarPosts={handleLoadCalendarPosts}
+            onExtractNAPAndGraph={handleExtractNAPAndLinkGraph}
+            getScrapingKey={getScrapingKey}
+            onPatchSite={handlePatchSite}
+            quarterStatsBySite={quarterStatsBySite}
+            optimizationStatsBySite={optimizationStatsBySite}
+            countsBatchPending={countsBatchPending}
+            editorialSelectedMonthKey={editorialSelectedMonthKey}
+            editorialMonthOptions={editorialMonthOptions}
+            onEditorialMonthChange={setEditorialSelectedMonthKey}
+            propertyRowDisplay="compact"
+            layout="dock"
+            activeSiteId={displaySite?.id}
+          />
+        </aside>
+        <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-zinc-950">
+          <PropertiesStudioHeader
+            activeSection={activeDashboardSection}
+            onSectionChange={onDashboardSectionChange}
+            visibleSectionIds={visibleDashboardSectionIds}
+            showPropertyNav={Boolean(displaySite)}
+            profileSectionId={profileSectionId}
+            onProfileSectionChange={setProfileSectionId}
+            settingsSubSectionId={settingsSubSectionId}
+            onSettingsSubSectionChange={setSettingsSubSectionId}
+            onSaveProperty={handleSaveSiteClick}
+          />
+          {displaySite ? (
+            <PropertyProfilePage
+              site={displaySite}
+              activeSectionId={profileSectionId}
+              onActiveSectionChange={setProfileSectionId}
+              settingsSubSectionId={settingsSubSectionId}
+              onSettingsSubSectionChange={setSettingsSubSectionId}
+              siteSettingsPanel={profileSettingsPanel}
+              isTesting={isTesting === displaySite.id}
+              isDetecting={isDetecting === displaySite.id}
+              isFetchingScheduled={isFetchingScheduled === displaySite.id}
+              isScrapingSitemap={isScrapingSitemap}
+              isGeneratingEntities={isGeneratingEntities}
+              isIndexingSitemap={isIndexingSitemap}
+              isLoadingCalendar={isLoadingCalendar}
+              isExtractingNAPAndGraph={Boolean(isExtractingNAPAndGraph[displaySite.id])}
+              onTest={() => handleTestConnection(displaySite)}
+              onDetect={() => handleDetectSitemaps(displaySite)}
+              onScrapeChildSitemap={(url) => handleScrapeChildSitemap(displaySite, url)}
+              onEntityGeneration={
+                onEntityGeneration ? (sitemapUrl) => onEntityGeneration(displaySite, sitemapUrl) : undefined
+              }
+              onSetEntitySitemap={(sitemapUrl) => handleSetEntitySitemap(displaySite, sitemapUrl)}
+              onSetCompetitorEntitySitemap={(sitemapUrl) => handleSetCompetitorEntitySitemap(displaySite, sitemapUrl)}
+              onToggleChildSitemapDisabled={(childSitemapUrl) => handleToggleChildSitemapDisabled(displaySite, childSitemapUrl)}
+              onAppendManualChildSitemap={(url) => handleAppendManualChildSitemap(displaySite, url)}
+              onAddCustomSitemapTagLabel={(label) => handleAddCustomSitemapTagLabel(displaySite, label)}
+              onToggleChildSystemRole={(childUrl, role) => handleToggleChildSystemRole(displaySite, childUrl, role)}
+              onToggleChildCustomTag={(childUrl, label) => handleToggleChildCustomTag(displaySite, childUrl, label)}
+              onIndexSitemap={(url) => handleIndexSitemap(displaySite, url)}
+              onLoadCalendarPosts={(sitemapUrl) => handleLoadCalendarPosts(displaySite, sitemapUrl)}
+              onExtractNAPAndGraph={() => void handleExtractNAPAndLinkGraph(displaySite)}
+              getScrapingKey={getScrapingKey}
+              onPatchSite={handlePatchSite}
+              onSaveProperty={handleSaveSiteClick}
+              onOpenSettingsProfile={() => {
+                setProfileSectionId("site-settings");
+                setSettingsSubSectionId("profile");
+              }}
+            />
+          ) : (
+            <div className="flex min-h-0 flex-1 flex-col px-3 pt-3">
+              <div className={PROPERTIES_EMPTY}>
+                <p className="text-base text-foreground">
+                  {sites.length === 0
+                    ? "No WordPress sites connected. Use Add Site to connect your first property."
+                    : "No properties match the current filter."}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-      )}
 
       {/* Bulk Import Clients Dialog */}
       <BulkImportClientsDialog

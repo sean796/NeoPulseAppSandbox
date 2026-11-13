@@ -206,12 +206,11 @@ export function resolveRowSitemapType(
   row: Pick<CSVRow, "sitemap_type" | "entity">,
   fallback: BulkRowSitemapType,
 ): BulkRowSitemapType {
-  const requested: BulkRowSitemapType =
-    siteMode === "post"
-      ? "post"
-      : siteMode === "entity"
-        ? "entity"
-        : (row.sitemap_type ?? fallback);
+  // Left-dock SAP / entity mode always uploads as entity CPT (service-area), even when the CSV
+  // entity cell is empty. Empty-entity demotion to blog posts is only for custom/mixed mode.
+  if (siteMode === "post") return "post";
+  if (siteMode === "entity") return "entity";
+  const requested: BulkRowSitemapType = row.sitemap_type ?? fallback;
   return resolveUploadSitemapType(requested, row.entity);
 }
 

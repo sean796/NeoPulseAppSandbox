@@ -1,6 +1,6 @@
 const CONTEXT_LIMIT = 2_000_000;
 const RESERVED_FOR_INPUT = 200_000;
-const MAX_OUTPUT_TOKENS = 65_536;
+const MAX_OUTPUT_TOKENS = 200_000;
 
 export type OpenRouterChatMessage = {
   role: "system" | "user" | "assistant";

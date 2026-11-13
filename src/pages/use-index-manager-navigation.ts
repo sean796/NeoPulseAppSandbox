@@ -34,6 +34,10 @@ import { NEO_PULSE_OPEN_MASTER_RULES_EVENT } from "@/lib/open-master-rules-setti
 import { isApiTabPath } from "@/lib/api-docs/api-docs-route";
 import { isPulseForgePath, parsePulseForgeRoute, setPulseForgeRoute } from "@/lib/pulse-forge/pulse-forge-route";
 import { isPulseHostPath } from "@/lib/hosting/pulse-host-route";
+import {
+  parseOverviewClientNameFromSearch,
+  resolveSiteIdByClientName,
+} from "@/lib/task-manager/overview-restore";
 
 type AgentRunOptimizerScopeApi = ReturnType<typeof useAgentRunOptimizerScope>;
 
@@ -219,6 +223,15 @@ export function useIndexManagerNavigation({
   useLayoutEffect(() => {
     void syncAgentRunScopeFromPath();
   }, [syncAgentRunScopeFromPath]);
+
+  // Task deep links: ?client=In%20the%20Shade switches the connected Integrations site by name.
+  useEffect(() => {
+    const clientName = parseOverviewClientNameFromSearch(location.search);
+    if (!clientName) return;
+    const siteId = resolveSiteIdByClientName(sites, clientName);
+    if (!siteId || siteId === activeWordPressSiteId) return;
+    setActiveWordPressSiteId(siteId);
+  }, [location.search, sites, activeWordPressSiteId, setActiveWordPressSiteId]);
 
   useEffect(() => {
     registerAgentRunOptimizerNavigation({

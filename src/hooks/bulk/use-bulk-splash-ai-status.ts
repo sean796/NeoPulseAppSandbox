@@ -6,9 +6,49 @@ import {
 import { logger } from "@/lib/logger";
 
 export const BULK_SPLASH_STARTER_STATUS: BulkSplashStatus = {
-  status: "Getting the workshop warmed up",
-  visual: "generic",
+  status: "Optimizing content",
+  visual: "writing",
 };
+
+export function defaultSplashStatusForStep(step: string): BulkSplashStatus {
+  const s = step.trim().toLowerCase();
+  if (!s) return BULK_SPLASH_STARTER_STATUS;
+  if (s.includes("upload") || s.includes("publish")) {
+    return { status: "Uploading to WordPress", visual: "publish" };
+  }
+  // Blog Ideas Studio only. Content checklist / blueprint steps must NOT use this line.
+  if (
+    s.includes("blog idea") ||
+    s.includes("blog ideas") ||
+    s.includes("generating blog ideas") ||
+    (s.includes("curating") && s.includes("idea") && !s.includes("checklist"))
+  ) {
+    return { status: "Curating blog post ideas", visual: "ideas" };
+  }
+  if (s.includes("approval") || s.includes("waiting for")) {
+    return { status: "Waiting for approval", visual: "writing" };
+  }
+  if (s.includes("audit") || s.includes("research brief") || s.includes("serp")) {
+    return { status: step.trim(), visual: "audit" };
+  }
+  if (s.includes("title") || s.includes("url") || s.includes("meta")) {
+    return { status: step.trim(), visual: "meta" };
+  }
+  if (
+    s.includes("csv") ||
+    s.includes("reading") ||
+    s.includes("parsing") ||
+    s.includes("draft") ||
+    s.includes("checklist") ||
+    s.includes("blueprint")
+  ) {
+    return { status: step.trim(), visual: "writing" };
+  }
+  if (s.includes("sync") || s.includes("scrap") || s.includes("load")) {
+    return { status: step.trim(), visual: "writing" };
+  }
+  return { status: step.trim() || "Optimizing content", visual: "writing" };
+}
 
 type UseBulkSplashAiStatusArgs = {
   /** True while a bulk post generation run is in flight. */
@@ -34,18 +74,19 @@ export function useBulkSplashAiStatus({
   keyword,
   siteName,
 }: UseBulkSplashAiStatusArgs): BulkSplashStatus {
-  const [statusPair, setStatusPair] = useState<BulkSplashStatus>(BULK_SPLASH_STARTER_STATUS);
+  const step = latestStep.trim();
+  const [statusPair, setStatusPair] = useState<BulkSplashStatus>(() =>
+    defaultSplashStatusForStep(step),
+  );
   const cacheRef = useRef(new Map<string, BulkSplashStatus>());
   const sequenceRef = useRef(0);
   const abortRef = useRef<AbortController | null>(null);
-
-  const step = latestStep.trim();
 
   useEffect(() => {
     if (!active) {
       abortRef.current?.abort();
       sequenceRef.current += 1;
-      setStatusPair(BULK_SPLASH_STARTER_STATUS);
+      setStatusPair(defaultSplashStatusForStep(step));
       return;
     }
     if (!step) return;
@@ -56,6 +97,8 @@ export function useBulkSplashAiStatus({
       setStatusPair(cached);
       return;
     }
+
+    setStatusPair(defaultSplashStatusForStep(step));
 
     const sequence = ++sequenceRef.current;
     abortRef.current?.abort();

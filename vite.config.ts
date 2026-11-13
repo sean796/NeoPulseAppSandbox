@@ -6,6 +6,7 @@ import { componentTagger } from "lovable-tagger";
 import { localDominatorDevExportPlugin } from "./scripts/vite-local-dominator-export-plugin.mjs";
 import { localWpApiProxyPlugin } from "./scripts/vite-local-wp-api-proxy-plugin.mjs";
 import { entityMapsPuppeteerDevPlugin } from "./scripts/vite-entity-maps-puppeteer-plugin.mjs";
+import { sitesBootstrapPlugin } from "./scripts/vite-sites-bootstrap-plugin.mjs";
 
 const require = createRequire(import.meta.url);
 const { resolveDevApiTarget, isLocalWpProxyTarget } = require("./scripts/resolve-dev-api-target.cjs");
@@ -164,6 +165,10 @@ export default defineConfig(({ mode, command }) => {
     server: {
       host: "::",
       port: 8080,
+      watch: {
+        // Scratch / restore dumps must not full-reload the browser mid-edit.
+        ignored: ["**/scratch/**", "**/agent-transcripts/**", "**/.cursor/**"],
+      },
     },
     plugins: [
       react(),
@@ -203,6 +208,7 @@ export default defineConfig(({ mode, command }) => {
         },
       } satisfies Plugin,
       isDev && componentTagger(),
+      sitesBootstrapPlugin(repoRoot),
       isDevServer && entityMapsPuppeteerDevPlugin(),
       isDevServer && localDominatorDevExportPlugin(),
       isDevServer && localWpApiProxyPlugin(),

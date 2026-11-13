@@ -6,6 +6,7 @@ import { TeamSeatManagerPanel } from "@/components/manager/teams/TeamSeatManager
 import { TeamInvitePanel } from "@/components/manager/teams/TeamInvitePanel";
 import { TeamPendingInvitesPanel } from "@/components/manager/teams/TeamPendingInvitesPanel";
 import { TeamMailTestPanel } from "@/components/manager/teams/TeamMailTestPanel";
+import { CareerSubmissionsAdminPanel } from "@/components/careers/CareerSubmissionsAdminPanel";
 import { useTeam } from "@/contexts/TeamContext";
 
 export function TeamsSettingsContent() {
@@ -28,6 +29,7 @@ export function TeamsSettingsContent() {
           <TeamPendingInvitesPanel />
         </>
       ) : null}
+      <CareerSubmissionsAdminPanel />
     </div>
   );
 }

@@ -404,6 +404,82 @@ class Neo_Pulse_App_Gmb_Posts_Api {
 	}
 
 	/**
+	 * Resolve Business Information resource `locations/{id}` from an optional GBP id and/or site URL/name.
+	 *
+	 * @return string|WP_Error locations/{numericId}
+	 */
+	public static function resolve_business_info_location(
+		string $access_token,
+		string $raw_location,
+		string $site_name = '',
+		string $site_url = ''
+	) {
+		$raw = trim( $raw_location );
+		if ( $raw !== '' ) {
+			$normalized = self::normalize_location_id( $raw );
+			if ( $normalized !== '' ) {
+				return 'locations/' . $normalized;
+			}
+			$parent = self::resolve_location_parent( $access_token, $raw, $site_name, $site_url );
+			if ( is_wp_error( $parent ) ) {
+				return $parent;
+			}
+			$from_parent = self::normalize_location_id( $parent );
+			if ( $from_parent !== '' ) {
+				return 'locations/' . $from_parent;
+			}
+		}
+
+		if ( $site_url === '' && $site_name === '' ) {
+			return new WP_Error( 'neo-pulse_gmb_no_location', 'GBP location ID or site URL is required.' );
+		}
+
+		$accounts = self::list_account_names( $access_token );
+		if ( ! $accounts ) {
+			return new WP_Error( 'neo-pulse_gmb_no_account', 'No Google Business Profile accounts found.' );
+		}
+		$records = self::list_all_location_records( $access_token, $accounts );
+		if ( ! $records ) {
+			return new WP_Error( 'neo-pulse_gmb_location_not_found', 'No GBP locations in the connected account.' );
+		}
+
+		if ( $site_url !== '' ) {
+			$by_website = self::match_locations_by_site_url( $records, $site_url );
+			if ( count( $by_website ) === 1 ) {
+				$id = self::normalize_location_id( $by_website[0] );
+				if ( $id !== '' ) {
+					return 'locations/' . $id;
+				}
+			}
+		}
+
+		if ( $site_name !== '' ) {
+			$by_title = self::match_locations_by_site_name( $records, $site_name );
+			if ( count( $by_title ) === 1 ) {
+				$id = self::normalize_location_id( $by_title[0] );
+				if ( $id !== '' ) {
+					return 'locations/' . $id;
+				}
+			}
+			if ( count( $by_title ) > 1 && $site_url !== '' ) {
+				$by_both = self::match_locations_by_site_url( $records, $site_url );
+				$overlap = array_values( array_intersect( $by_title, $by_both ) );
+				if ( count( $overlap ) === 1 ) {
+					$id = self::normalize_location_id( $overlap[0] );
+					if ( $id !== '' ) {
+						return 'locations/' . $id;
+					}
+				}
+			}
+		}
+
+		return new WP_Error(
+			'neo-pulse_gmb_location_not_found',
+			'Could not match a GBP location for this site. Connect Google Business and ensure the listing website matches the property URL.'
+		);
+	}
+
+	/**
 	 * @param array<string,mixed> $body
 	 */
 	private static function location_id_from_body( array $body ): string {

@@ -125,7 +125,8 @@
 }
 
 .pulse-assist-root--docked .pulse-assist-shortcut-rail {
-  background-color: hsl(var(--primary));
+  background-color: #09090b;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .pulse-assist-root button.pulse-assist-launcher {
@@ -174,17 +175,18 @@
   max-width: var(--neo-pulse-shortcut-rail-width);
   min-height: 72px;
   padding: 12px 8px 14px;
-  background-color: hsl(var(--primary));
-  color: #000;
+  background-color: transparent;
+  color: #a1a1aa;
   box-shadow: none;
   border-left-color: transparent;
 }
 
 .pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked button.pulse-assist-launcher.pulse-assist-launcher--docked:hover,
-.pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked button.pulse-assist-launcher.pulse-assist-launcher--docked:focus-visible {
+.pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked button.pulse-assist-launcher.pulse-assist-launcher--docked:focus-visible,
+.pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked button.pulse-assist-launcher.pulse-assist-launcher--docked[aria-expanded="true"] {
   transform: none;
-  background-color: hsl(var(--primary) / 0.88);
-  color: #000;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: hsl(var(--primary));
   box-shadow: none;
   border-left-color: transparent;
 }
@@ -192,7 +194,13 @@
 .pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked .pulse-assist-launcher-brand__spark,
 .pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked .pulse-assist-launcher-brand__label,
 .pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked .agent-runs-launcher-brand__icon,
-.pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked .agent-runs-launcher-brand__label,
+.pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked .agent-runs-launcher-brand__label {
+  color: #a1a1aa;
+  fill: none;
+  stroke: currentColor;
+  filter: none;
+}
+
 .pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked button.pulse-assist-launcher.pulse-assist-launcher--docked:hover .pulse-assist-launcher-brand__spark,
 .pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked button.pulse-assist-launcher.pulse-assist-launcher--docked:hover .pulse-assist-launcher-brand__label,
 .pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked button.pulse-assist-launcher.pulse-assist-launcher--docked:hover .agent-runs-launcher-brand__icon,
@@ -200,8 +208,12 @@
 .pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked button.pulse-assist-launcher.pulse-assist-launcher--docked:focus-visible .pulse-assist-launcher-brand__spark,
 .pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked button.pulse-assist-launcher.pulse-assist-launcher--docked:focus-visible .pulse-assist-launcher-brand__label,
 .pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked button.pulse-assist-launcher.pulse-assist-launcher--docked:focus-visible .agent-runs-launcher-brand__icon,
-.pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked button.pulse-assist-launcher.pulse-assist-launcher--docked:focus-visible .agent-runs-launcher-brand__label {
-  color: #000;
+.pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked button.pulse-assist-launcher.pulse-assist-launcher--docked:focus-visible .agent-runs-launcher-brand__label,
+.pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked button.pulse-assist-launcher.pulse-assist-launcher--docked[aria-expanded="true"] .pulse-assist-launcher-brand__spark,
+.pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked button.pulse-assist-launcher.pulse-assist-launcher--docked[aria-expanded="true"] .pulse-assist-launcher-brand__label,
+.pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked button.pulse-assist-launcher.pulse-assist-launcher--docked[aria-expanded="true"] .agent-runs-launcher-brand__icon,
+.pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked button.pulse-assist-launcher.pulse-assist-launcher--docked[aria-expanded="true"] .agent-runs-launcher-brand__label {
+  color: hsl(var(--primary));
   fill: none;
   stroke: currentColor;
   filter: none;

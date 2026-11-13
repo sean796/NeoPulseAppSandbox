@@ -72,6 +72,7 @@ export async function runAutoSeoMetaAndFaqFinale(args: {
       await handleAiTitleRow(rowIndex, initialRow, { skipOptimizeTitleLoading: true });
       const updatedRow = getRow() ?? initialRow;
       const titleAfter = (updatedRow.aiTitle || updatedRow.title || "").trim();
+      logger.success(`[Auto SEO] SEO Title optimized: "${titleAfter}" (${titleAfter.length} chars) for ${pageUrl}`);
       recordOverviewStudioTextRevision({
         pageUrl,
         stepLabel: "SEO Title",
@@ -89,6 +90,7 @@ export async function runAutoSeoMetaAndFaqFinale(args: {
       await handleAiMetaRow(rowIndex, initialRow, { skipOptimizeMetaLoading: true });
       const updatedRow = getRow() ?? initialRow;
       const metaAfter = (updatedRow.aiMeta || updatedRow.metaDescription || "").trim();
+      logger.success(`[Auto SEO] Meta Description optimized (${metaAfter.length} chars): "${metaAfter}" for ${pageUrl}`);
       recordOverviewStudioTextRevision({
         pageUrl,
         stepLabel: "Meta Description",
@@ -115,6 +117,7 @@ export async function runAutoSeoMetaAndFaqFinale(args: {
         after?.faq?.trim() ||
         extractFaqFromPostHtml(after?.postContentOptimized || after?.postContent || "") ||
         "";
+      logger.success(`[Auto SEO] FAQs optimized (${faqAfter.length} chars) for ${pageUrl}`);
       recordOverviewStudioTextRevision({
         pageUrl,
         stepLabel: "FAQs",

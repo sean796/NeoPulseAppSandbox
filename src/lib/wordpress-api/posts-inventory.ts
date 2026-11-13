@@ -116,6 +116,8 @@ export async function getSiteInventoryBulk(
     includeIds?: number[];
     /** When true, include the raw ACF object on each row (context=edit). */
     includeRawPostFields?: boolean;
+    /** Live Neo MCP inventory only. No WordPress REST fallback. */
+    preferNeoMcp?: boolean;
   },
 ): Promise<SiteInventoryBulkResponse> {
   const url = backendApiUrl("/wordpress/get-site-inventory-bulk");
@@ -135,6 +137,7 @@ export async function getSiteInventoryBulk(
         includePageHeading: Boolean(options?.includePageHeading),
         includeScheduled: Boolean(options?.includeScheduled),
         includeRawPostFields: Boolean(options?.includeRawPostFields),
+        preferNeoMcp: Boolean(options?.preferNeoMcp),
         inventorySizing: options?.inventorySizing,
         maxRowsPerCollection: options?.maxRowsPerCollection,
         ...(includeIds.length ? { includeIds } : {}),

@@ -20,7 +20,7 @@ export interface WordPressCardActionsProps {
   onPatchSite?: (siteId: string, patch: Partial<WordPressSite>) => void;
   /** Embedded property panel on black: white labels, flat section chrome. */
   tone?: "card" | "propertyBlack";
-  /** `profileCard`: host-style Connections card for the property profile page. */
+  /** `profileCard`: Studio Overview diagnostics grid (flat well). */
   layout?: "default" | "profileCard";
 }
 

@@ -1,37 +1,42 @@
-import { PROFILE_NAV, PROFILE_NAV_BTN } from "@/components/hosting/site-profile/site-profile-theme";
-import { cn } from "@/lib/utils";
-import { PROPERTY_SETTINGS_SUB_SECTIONS, type PropertySettingsSubSectionId } from "./property-settings-types";
+import type { ReactNode } from "react";
 import type { WordPressSiteAdminSectionId } from "./WordPressSiteAdminLayout";
-import { Button } from "@/ui";
+import {
+  PROPERTIES_SECTION_NAV_BTN_CLASS,
+  PROPERTIES_SECTION_NAV_CLASS,
+} from "./wordpress-properties-surfaces";
 
 export type PropertyProfileNavProps = {
   sections: { id: WordPressSiteAdminSectionId; label: string }[];
   activeSectionId: WordPressSiteAdminSectionId;
-  settingsSubSectionId: PropertySettingsSubSectionId;
   onSectionChange: (id: WordPressSiteAdminSectionId) => void;
-  onSettingsSubSectionChange: (id: PropertySettingsSubSectionId) => void;
+  /** Optional trailing slot (e.g. Save) — same h-11 row as the Properties dropdown. */
+  endSlot?: ReactNode;
 };
 
-export function PropertyProfileNav({ sections, activeSectionId, settingsSubSectionId, onSectionChange, onSettingsSubSectionChange }: PropertyProfileNavProps) {
+/** Horizontal property section links for the Studio header (inline with Properties dropdown). */
+export function PropertyProfileNav({
+  sections,
+  activeSectionId,
+  onSectionChange,
+  endSlot,
+}: PropertyProfileNavProps) {
   return (
-    <nav className={PROFILE_NAV} aria-label="Property sections">
-      {sections.map((section) => (
-        <Button variant="quiet" key={section.id} data-active={section.id === activeSectionId} onClick={() => onSectionChange(section.id)}>
-          {section.label}
-        </Button>
-      ))}
-      {activeSectionId === "site-settings"
-        ? PROPERTY_SETTINGS_SUB_SECTIONS.map((sub) => (
-            <Button
-              variant="quiet"
-              key={sub.id}
-              data-active={sub.id === settingsSubSectionId}
-              onClick={() => onSettingsSubSectionChange(sub.id)}
-            >
-              {sub.label}
-            </Button>
-          ))
-        : null}
+    <nav className={PROPERTIES_SECTION_NAV_CLASS} aria-label="Property sections">
+      <div className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
+        {sections.map((section) => (
+          <button
+            type="button"
+            key={section.id}
+            className={PROPERTIES_SECTION_NAV_BTN_CLASS}
+            style={{ color: "#ffffff" }}
+            data-active={section.id === activeSectionId}
+            onClick={() => onSectionChange(section.id)}
+          >
+            {section.label}
+          </button>
+        ))}
+      </div>
+      {endSlot ? <div className="ml-auto flex shrink-0 items-center pl-2">{endSlot}</div> : null}
     </nav>
   );
 }

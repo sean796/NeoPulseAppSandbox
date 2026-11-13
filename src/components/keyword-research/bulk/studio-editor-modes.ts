@@ -2,8 +2,8 @@ import type { BlogGeneratorSectionId } from "@/components/blog-generator/blog-ge
 
 export type StudioEditorModeId =
   | "prompt"
+  | "blog-import"
   | "vertical-benchmarks"
-  | "csv"
   | "press-release";
 
 export type StudioEditorModeOption = {
@@ -13,8 +13,8 @@ export type StudioEditorModeOption = {
 
 export const STUDIO_EDITOR_MODE_OPTIONS: readonly StudioEditorModeOption[] = [
   { id: "prompt", label: "Blog Ideas Studio" },
+  { id: "blog-import", label: "Import Studio" },
   { id: "vertical-benchmarks", label: "Industry Verticals Studio" },
-  { id: "csv", label: "Import Studio" },
   { id: "press-release", label: "Press Release Studio" },
 ] as const;
 
@@ -28,10 +28,10 @@ export function readStoredStudioEditorMode(
   activeSection?: BlogGeneratorSectionId,
 ): StudioEditorModeId {
   if (activeSection === "bulk-press-release") return "press-release";
-  if (activeSection === "bulk-csv" || activeSection === "bulk-blog-import") return "csv";
+  if (activeSection === "bulk-csv" || activeSection === "bulk-blog-import") return "blog-import";
   try {
     const raw = sessionStorage.getItem(STUDIO_EDITOR_MODE_STORAGE_KEY);
-    if (raw === "blog-import") return "csv";
+    if (raw === "csv") return "blog-import";
     if (raw && isStudioEditorModeId(raw)) {
       return raw;
     }

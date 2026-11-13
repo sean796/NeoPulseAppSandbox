@@ -19,6 +19,12 @@ declare module "*.php?raw" {
   export default content;
 }
 
+declare module "virtual:neo-pulse-sites-bootstrap" {
+  import type { WordPressSite } from "@/components/integrations/types";
+  export const BOOTSTRAP_SITES: WordPressSite[];
+  export const BOOTSTRAP_SOURCE: string | null;
+}
+
 interface ImportMetaEnv {
   /** Full git SHA when built on Render/Vercel (see vite.config.ts). */
   readonly VITE_DEPLOY_GIT_SHA?: string;

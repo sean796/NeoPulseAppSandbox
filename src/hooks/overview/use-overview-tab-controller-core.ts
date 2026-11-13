@@ -40,7 +40,7 @@ export function useOverviewTabControllerCore(props: OverviewTabContentProps) {
   const aiseoUploadAfterRowWrite = useCallback<AiseoAfterRowWriteFn>(
     async (params) => {
       if (!site?.id) return;
-      await uploadAiseoRowAfterWrite(
+      return await uploadAiseoRowAfterWrite(
         {
           site,
           rowsRef: base.rowsRef,

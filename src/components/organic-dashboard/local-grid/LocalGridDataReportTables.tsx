@@ -6,15 +6,19 @@ import {
   ORGANIC_DASHBOARD_SECTION_PANEL_CLASS,
   ORGANIC_DASHBOARD_SECTION_TITLE_CLASS,
 } from "@/components/organic-dashboard/organic-dashboard-styles";
+import type { WordPressSite } from "@/components/integrations/types";
 import type {
   LocalGridAggregatedView,
   LocalGridBusinessIdentity,
   LocalGridDistanceMeasure,
 } from "@/lib/local-grid-studio/local-grid-types";
 import { cn } from "@/lib/utils";
+import { GbpConnectGoogleBusinessButton } from "@/components/gbp-post/GbpConnectGoogleBusinessButton";
+import { writeGbpCategories } from "@/lib/gbp-post/gbp-categories-api";
 import { Button, Field } from "@/ui";
 
 export type LocalGridDataReportTablesProps = {
+  site: WordPressSite;
   view: LocalGridAggregatedView;
   keyword: string;
   scanDateLabel: string;
@@ -26,6 +30,7 @@ export type LocalGridDataReportTablesProps = {
 };
 
 export function LocalGridDataReportTables({
+  site,
   view,
   keyword,
   scanDateLabel,
@@ -36,8 +41,50 @@ export function LocalGridDataReportTables({
   onFocusPin,
 }: LocalGridDataReportTablesProps) {
   const [competitorFilter, setCompetitorFilter] = useState("");
+  const [gbpWriting, setGbpWriting] = useState(false);
+  const [gbpStatus, setGbpStatus] = useState("");
+  const [gbpError, setGbpError] = useState("");
   const { activeBusiness, summary, competitors, evaluatedPins, categoryBenchmarks, top3AvgReviews, top3AvgRating } =
     view;
+
+  const onWriteGbpCategories = async () => {
+    if (gbpWriting) return;
+    setGbpWriting(true);
+    setGbpError("");
+    setGbpStatus("Writing categories to GBP…");
+    try {
+      const gbpLocationId =
+        site.gbpLocationId?.trim() ||
+        activeBusiness.placeId?.trim() ||
+        activeBusiness.cid?.trim() ||
+        "";
+      const result = await writeGbpCategories({
+        gbpLocationId,
+        siteName: site.name ?? "",
+        siteUrl: site.siteUrl ?? "",
+        keyword,
+        categoryBenchmarks: categoryBenchmarks.map((c) => ({
+          category: c.category,
+          top3SharePct: c.top3SharePct,
+        })),
+        competitorCategoryHints: competitors.slice(0, 8).map((c) => ({
+          primary: c.primaryCategory,
+          secondary: c.secondaryCategories,
+        })),
+      });
+      const primaryLabel =
+        result.written.primary?.displayName || result.proposed.primary.displayName || "primary";
+      const extraCount = result.written.additional.length;
+      setGbpStatus(
+        `Wrote ${primaryLabel}` + (extraCount > 0 ? ` + ${extraCount} additional` : "") + " to GBP.",
+      );
+    } catch (err) {
+      setGbpStatus("");
+      setGbpError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setGbpWriting(false);
+    }
+  };
 
   const filteredCompetitors = useMemo(() => {
     const q = competitorFilter.trim().toLowerCase();
@@ -113,9 +160,29 @@ export function LocalGridDataReportTables({
 
         {categoryBenchmarks.length > 0 ? (
           <div className="overflow-x-auto pt-2">
-            <div className="mb-2 flex items-center gap-2 text-base font-medium text-white">
-              <Layers className="h-4 w-4 text-primary" aria-hidden />
-              <span>Primary Category Dominance Across Grid</span>
+            <div className="mb-2 flex min-h-9 flex-wrap items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2 text-base font-medium text-white">
+                <Layers className="h-4 w-4 shrink-0 text-primary" aria-hidden />
+                <span className="truncate">Primary Category Dominance Across Grid</span>
+              </div>
+              <div className="flex min-h-8 shrink-0 flex-wrap items-center justify-end gap-2">
+                <span
+                  className={`max-w-[18rem] truncate text-base tabular-nums ${gbpError ? "text-destructive" : "text-muted-foreground"}`}
+                  title={gbpError || gbpStatus}
+                >
+                  {gbpError || gbpStatus || "\u00a0"}
+                </span>
+                <GbpConnectGoogleBusinessButton label="Log in to Google Business" />
+                <Button
+                  variant="run"
+                  className="h-8"
+                  disabled={gbpWriting}
+                  title="Write recommended GBP categories from this grid"
+                  onClick={() => void onWriteGbpCategories()}
+                >
+                  {gbpWriting ? "Writing…" : "Apply GBP categories"}
+                </Button>
+              </div>
             </div>
             <table className="w-full min-w-[36rem] text-base">
               <thead>

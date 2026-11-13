@@ -98,7 +98,7 @@ export function useLocalGridPanel(
     () => seededFromPersist?.scanSize ?? "7x7",
   );
   const [shape, setShape] = useState<LocalGridShape>(() => seededFromPersist?.shape ?? "circle");
-  const [distance, setDistance] = useState<number>(() => seededFromPersist?.distance ?? 3);
+  const [distance, setDistance] = useState<number>(() => seededFromPersist?.distance ?? 1);
   const [distanceMeasure, setDistanceMeasure] = useState<LocalGridDistanceMeasure>(
     () => seededFromPersist?.distanceMeasure ?? "mile",
   );
@@ -195,6 +195,9 @@ export function useLocalGridPanel(
 
   const runGridScan = useCallback(
     async (overrideSize?: LocalGridScanSize, reuseExisting = false) => {
+      // Run stays on the map: never leave pins buried under the report overlay.
+      setReportDrawerOpen(false);
+      setEditMode(false);
       await runLocalGridPanelScan(
         {
           scanSize, keyword, centerLat, centerLng, shape, distance, distanceMeasure,

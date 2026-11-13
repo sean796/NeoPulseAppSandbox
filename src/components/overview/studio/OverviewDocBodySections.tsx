@@ -130,9 +130,9 @@ export function OverviewDocPassageSections({
           })
         ) : parsedPassageDoc.sections.length > 0 ? (
           parsedPassageDoc.sections.map((sec, secIdx) => {
-            const isHeaderRunning = rewritingPassageKey === `${sec.id}:header`;
-            const isCopyRunning = rewritingPassageKey === `${sec.id}:copy`;
-            const isBothRunning = rewritingPassageKey === `${sec.id}:both`;
+            const isHeaderRunning = rewritingPassageKey === `h2-${secIdx}:header`;
+            const isCopyRunning = rewritingPassageKey === `h2-${secIdx}:copy`;
+            const isBothRunning = rewritingPassageKey === `h2-${secIdx}:both`;
             const isPassageActive =
               isHeaderRunning ||
               isCopyRunning ||
@@ -143,7 +143,7 @@ export function OverviewDocPassageSections({
 
             return (
               <div
-                key={sec.id || secIdx}
+                key={`passage-${secIdx}`}
                 id={`studio-sec-h2-${secIdx}`}
                 className={cn(
                   "group flex scroll-mt-6 flex-col gap-2 border-b border-white/10 pb-6 last:border-b-0",

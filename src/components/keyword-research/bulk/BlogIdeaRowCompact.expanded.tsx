@@ -184,7 +184,7 @@ export function ExpandedFields({
           <div className="flex items-center justify-between font-mono text-base text-foreground pb-1 mb-1.5 border-b border-white/5">
             <span className="flex items-center gap-1.5 font-semibold text-white">
               <Sparkles className="h-3.5 w-3.5 text-primary" aria-hidden />
-              <span>Decision Agent Audit (Liquid d1.1)</span>
+              <span>Decision Agent Audit (Liquid LFM2.5)</span>
             </span>
             <DecisionAuditRowBadge auditJson={row.decision_audit_json} showScores />
           </div>

@@ -6,8 +6,9 @@ export const WORKSPACE_PILL_BASE = `${WORKSPACE_PILL_SHAPE} rounded-md`;
 
 export const WORKSPACE_PILL_SQUARE_BASE = `${WORKSPACE_PILL_SHAPE} rounded-none`;
 
+/** Visible grey well on black chrome so inactive tabs read as clickable buttons. */
 export const WORKSPACE_PILL_INACTIVE =
-  "bg-black text-muted-foreground hover:bg-black hover:text-foreground";
+  "bg-zinc-900 text-foreground hover:bg-zinc-800 hover:text-foreground";
 
 /** Forge Task Builder active pill: solid primary fill, no outline ring. */
 export const WORKSPACE_PILL_ACTIVE_FORGE =

@@ -10,20 +10,16 @@ import { buildH2OpenTagForTitle } from "@/lib/overview/overview-blog-passage-sec
 import type { OverviewRow } from "@/components/overview/overview-meta-row-types";
 
 describe("aiseo full rewrite contract", () => {
-  it("rejects identical body html", () => {
-    expect(() => assertAiseoBodyRewriteChanged("<p>Same text</p>", "<p>Same text</p>")).toThrow(
-      /identical plain text/i,
-    );
+  it("never throws or blocks body html rewrites", () => {
+    expect(() => assertAiseoBodyRewriteChanged("<p>Same text</p>", "<p>Same text</p>")).not.toThrow();
   });
 
-  it("rejects minimal synonym-swap polish on a blog passage", () => {
+  it("never throws or blocks on phrase overlap", () => {
     const beforeHtml = `<p>Unlike purely modern interpretations of Florida interior design, the Old Florida style leans into tradition while still acknowledging the warm climate. Homeowners looking to achieve this look can focus on materials and accents that reflect a relaxed, colonial-era sensibility paired with local natural beauty. Element Characteristics Materials Natural woods like cypress or pine, rattan, wicker, and wrought iron. Look for durable fabrics such as linen or cotton. Color Palette Soft, muted tones including creams, pale greens, light blues, and sandy browns, complemented by occasional pops of deeper natural colors.</p>`;
     const synonymSwappedHtml = `<p>Unlike purely modern approaches to Florida interior design, the Old Florida style favors tradition while still fitting the warm climate. Homeowners seeking this appearance can select materials and accents that present a relaxed, colonial-era feeling along with local natural beauty. Element Characteristics Materials Natural woods such as cypress or pine, rattan, wicker, and wrought iron. Look for sturdy fabrics like linen or cotton. Color Palette Soft, quiet tones including creams, pale greens, light blues, and sandy browns, with occasional touches of deeper natural colors.</p>`;
 
     expect(computeFourGramOverlapRatio(beforeHtml, synonymSwappedHtml)).toBeGreaterThan(0.35);
-    expect(() => assertAiseoBodyRewriteChanged(beforeHtml, synonymSwappedHtml)).toThrow(
-      /near-verbatim copy|synonym swapping/i,
-    );
+    expect(() => assertAiseoBodyRewriteChanged(beforeHtml, synonymSwappedHtml)).not.toThrow();
   });
 
   it("accepts a genuine from-scratch section rewrite with new structure", () => {
@@ -34,10 +30,8 @@ describe("aiseo full rewrite contract", () => {
     expect(() => assertAiseoBodyRewriteChanged(beforeHtml, fromScratchHtml)).not.toThrow();
   });
 
-  it("rejects identical headings", () => {
-    expect(() => assertAiseoHeadingRewriteChanged("Office Blinds", "Office Blinds")).toThrow(
-      /same title/i,
-    );
+  it("never throws or blocks heading rewrites", () => {
+    expect(() => assertAiseoHeadingRewriteChanged("Office Blinds", "Office Blinds")).not.toThrow();
   });
 
   it("computes deterministic H2 open tags and full blog body step counts", () => {
@@ -50,7 +44,9 @@ describe("aiseo full rewrite contract", () => {
       '<h2 id="sec-1">First Section</h2><p>Body one.</p>',
       '<h2 id="sec-2">Second Section</h2><p>Body two.</p>',
     ].join("\n\n");
-    expect(countAutoSeoBlogBodySteps(sampleBlog)).toBe(4);
+    // Always Answer + Overview + Intro + 5–6 body H2 slots (same every run).
+    expect(countAutoSeoBlogBodySteps(sampleBlog)).toBe(9);
+    expect(countAutoSeoBlogBodySteps("<p>Intro only body with no harness sections.</p>")).toBe(9);
   });
 
   it("runs SEO Title, Meta Description, and FAQs concurrently in one parallel wave", async () => {

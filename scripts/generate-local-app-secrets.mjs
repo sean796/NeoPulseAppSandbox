@@ -129,8 +129,12 @@ function main() {
   const local = loadLocalConfig();
   const siteUrl = String(local.siteUrl || "https://neopulse.local").replace(/\/+$/, "");
   const frontendUrl = String(local.viteDevUrl || "http://localhost:8080/").replace(/(?<!\/)$/, "/");
-  const googleMcpRedirectUri = `${frontendUrl.replace(/\/+$/, "")}/api/google-mcp/callback`;
-  const googleAdsRedirectUri = `${frontendUrl.replace(/\/+$/, "")}/api/google-ads/callback`;
+  const viteOrigin = frontendUrl.replace(/\/+$/, "");
+  const googleMcpRedirectUri = `${viteOrigin}/api/google-mcp/callback`;
+  const googleAdsRedirectUri = `${viteOrigin}/api/google-ads/callback`;
+  // GMB must use the Vite origin (localhost:8080), same as Ads/MCP. Google rejects
+  // https://neopulse.local as an OAuth redirect (self-signed / non-public host).
+  const gmbRedirectUri = `${viteOrigin}/api/gmb/callback`;
 
   const gscJson = resolveGscServiceAccountJson(dotenv);
   const openRouterKey = resolveOpenRouterApiKey(dotenv, local);
@@ -191,7 +195,7 @@ function main() {
     `\tdefine( 'NEO_PULSE_APP_GMB_CLIENT_SECRET', ${phpString(pick(dotenv, "NEO_PULSE_APP_GMB_CLIENT_SECRET", "GMB_CLIENT_SECRET"))} );`,
     "}",
     `if ( ! defined( 'NEO_PULSE_APP_GMB_REDIRECT_URI' ) ) {`,
-    `\tdefine( 'NEO_PULSE_APP_GMB_REDIRECT_URI', ${phpString(`${siteUrl}/api/gmb/callback`)} );`,
+    `\tdefine( 'NEO_PULSE_APP_GMB_REDIRECT_URI', ${phpString(gmbRedirectUri)} );`,
     "}",
     `if ( ! defined( 'NEO_PULSE_APP_GOOGLE_MCP_REDIRECT_URI' ) ) {`,
     `\tdefine( 'NEO_PULSE_APP_GOOGLE_MCP_REDIRECT_URI', ${phpString(googleMcpRedirectUri)} );`,

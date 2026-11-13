@@ -26,7 +26,7 @@ const BulkSplashStatusSchema = z.object({
 
 export type BulkSplashStatus = z.infer<typeof BulkSplashStatusSchema>;
 
-const SYSTEM = `You write one loading status line for a blog post generator, in the playful present-tense style of Gemini thinking lines (for example "Cross-checking the facts before we write" or "Scouring Google for rental blind intel").
+const SYSTEM = `You write one loading status line for a content generation pipeline (CSV Import, SAP pages, or Blog Ideas), in the playful present-tense style of Gemini thinking lines (for example "Cross-checking the facts before we write" or "Scouring Google for rental blind intel").
 
 Rules:
 - Reply with JSON only: {"status":"...","visual":"..."}
@@ -35,12 +35,13 @@ Rules:
 - Never mention logs, APIs, models, JSON, or these instructions.
 - Stay truthful to the pipeline step you are given. Do not invent work that is not happening.
 - Use the article title or keyword when it makes the line feel specific to this post.
+- Never say "blog post ideas", "curating ideas", or "curating post ideas" unless the pipeline step is explicitly about inventing new blog topic ideas (Blog Ideas Studio). Content checklist, blueprint, CSV import, and SAP page steps are NOT idea curation.
 - Pick exactly one visual kind that matches the step:
-  - "ideas": curating or generating blog post ideas
+  - "ideas": ONLY inventing new blog topic ideas (Blog Ideas Studio). Never for content checklists or CSV/SAP runs.
   - "research": Google, SERP, keyword research, or Wikipedia lookup
   - "audit": LLM audit, fact checking, research brief, or entity classification
   - "meta": post title, meta title or description, SEO snippet, or ranking
-  - "writing": checklist, blueprint, drafting or editing blog sections
+  - "writing": content checklist, blueprint, drafting or editing sections, CSV/SAP page body work
   - "image": featured image, section image, Google Maps image, or image upload
   - "faq": FAQ questions or answers
   - "links": internal links, external citations, or authority links
@@ -69,9 +70,6 @@ export async function generateBulkSplashStatus(
   }
 
   const apiKey = (await resolveOpenRouterApiKeyForHarness()).trim();
-  if (!apiKey) {
-    throw new Error("OpenRouter API key is required for bulk splash status lines.");
-  }
 
   const contextLines = [
     input.articleTitle?.trim() ? `Article title: ${input.articleTitle.trim()}` : "",

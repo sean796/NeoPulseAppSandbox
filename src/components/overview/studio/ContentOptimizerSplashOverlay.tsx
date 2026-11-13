@@ -8,6 +8,8 @@ export type ContentOptimizerSplashOverlayProps = {
   statusText?: string;
   /** Placeholder graphic paired with the AI status line. */
   statusVisual?: BulkSplashVisualKind;
+  /** Accessible name for the loading overlay (defaults to Content Optimizer). */
+  ariaLabel?: string;
 };
 
 /**
@@ -18,6 +20,7 @@ export function ContentOptimizerSplashOverlay({
   visible,
   statusText,
   statusVisual,
+  ariaLabel = "Loading Content Optimizer",
 }: ContentOptimizerSplashOverlayProps) {
   const [mounted, setMounted] = useState(visible);
   const [faded, setFaded] = useState(false);
@@ -43,7 +46,7 @@ export function ContentOptimizerSplashOverlay({
       }`}
       role="status"
       aria-live="polite"
-      aria-label="Loading Content Optimizer"
+      aria-label={ariaLabel}
     >
       <style>{`
         @keyframes neoPulseSplashBreathe {

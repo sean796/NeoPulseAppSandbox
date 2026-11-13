@@ -86,8 +86,8 @@ class Neo_Pulse_App_Gmb_Performance {
 		$compare_start_date = (string) $body['compareStartDate'];
 		$compare_end_date   = (string) $body['compareEndDate'];
 
-		$current_period     = array( 'calls' => 0, 'directions' => 0, 'websiteClicks' => 0 );
-		$comparison_period  = array( 'calls' => 0, 'directions' => 0, 'websiteClicks' => 0 );
+		$current_period     = array( 'calls' => 0, 'chat' => 0, 'directions' => 0, 'websiteClicks' => 0 );
+		$comparison_period  = array( 'calls' => 0, 'chat' => 0, 'directions' => 0, 'websiteClicks' => 0 );
 		$first_api_error    = null;
 
 		foreach ( $location_ids as $location_id ) {
@@ -121,10 +121,12 @@ class Neo_Pulse_App_Gmb_Performance {
 
 			$cur_sums  = is_array( $cur['sums'] ) ? $cur['sums'] : array();
 			$comp_sums = is_array( $comp['sums'] ) ? $comp['sums'] : array();
-			$current_period['calls']          += (int) ( $cur_sums['calls'] ?? 0 );
-			$current_period['directions']     += (int) ( $cur_sums['directions'] ?? 0 );
-			$current_period['websiteClicks']  += (int) ( $cur_sums['websiteClicks'] ?? 0 );
+			$current_period['calls']         += (int) ( $cur_sums['calls'] ?? 0 );
+			$current_period['chat']          += (int) ( $cur_sums['chat'] ?? 0 );
+			$current_period['directions']    += (int) ( $cur_sums['directions'] ?? 0 );
+			$current_period['websiteClicks'] += (int) ( $cur_sums['websiteClicks'] ?? 0 );
 			$comparison_period['calls']         += (int) ( $comp_sums['calls'] ?? 0 );
+			$comparison_period['chat']          += (int) ( $comp_sums['chat'] ?? 0 );
 			$comparison_period['directions']    += (int) ( $comp_sums['directions'] ?? 0 );
 			$comparison_period['websiteClicks'] += (int) ( $comp_sums['websiteClicks'] ?? 0 );
 		}
@@ -166,7 +168,12 @@ class Neo_Pulse_App_Gmb_Performance {
 		$url         = self::PERFORMANCE_BASE . '/' . rawurlencode( $location_id ) . ':' . self::PERFORMANCE_METHOD;
 
 		$params = array(
-			'dailyMetrics'                    => array( 'CALL_CLICKS', 'BUSINESS_DIRECTION_REQUESTS', 'WEBSITE_CLICKS' ),
+			'dailyMetrics'                    => array(
+				'CALL_CLICKS',
+				'BUSINESS_CONVERSATIONS',
+				'BUSINESS_DIRECTION_REQUESTS',
+				'WEBSITE_CLICKS',
+			),
 			'dailyRange.start_date.year'      => $start_parts['year'],
 			'dailyRange.start_date.month'     => $start_parts['month'],
 			'dailyRange.start_date.day'       => $start_parts['day'],
@@ -197,7 +204,7 @@ class Neo_Pulse_App_Gmb_Performance {
 
 		if ( is_wp_error( $response ) ) {
 			return array(
-				'sums'     => array( 'calls' => 0, 'directions' => 0, 'websiteClicks' => 0 ),
+				'sums'     => array( 'calls' => 0, 'chat' => 0, 'directions' => 0, 'websiteClicks' => 0 ),
 				'apiError' => $response->get_error_message(),
 			);
 		}
@@ -217,16 +224,17 @@ class Neo_Pulse_App_Gmb_Performance {
 				? (string) $data['error']['message']
 				: ( is_array( $data ) && ! empty( $data['error']['code'] ) ? (string) $data['error']['code'] : 'HTTP ' . $code );
 			return array(
-				'sums'     => array( 'calls' => 0, 'directions' => 0, 'websiteClicks' => 0 ),
+				'sums'     => array( 'calls' => 0, 'chat' => 0, 'directions' => 0, 'websiteClicks' => 0 ),
 				'apiError' => $msg,
 			);
 		}
 
-		$sums = array( 'calls' => 0, 'directions' => 0, 'websiteClicks' => 0 );
+		$sums = array( 'calls' => 0, 'chat' => 0, 'directions' => 0, 'websiteClicks' => 0 );
 		$map  = array(
-			'CALL_CLICKS'                  => 'calls',
-			'BUSINESS_DIRECTION_REQUESTS'  => 'directions',
-			'WEBSITE_CLICKS'               => 'websiteClicks',
+			'CALL_CLICKS'                 => 'calls',
+			'BUSINESS_CONVERSATIONS'      => 'chat',
+			'BUSINESS_DIRECTION_REQUESTS' => 'directions',
+			'WEBSITE_CLICKS'              => 'websiteClicks',
 		);
 
 		$multi = is_array( $data ) && ! empty( $data['multiDailyMetricTimeSeries'] ) && is_array( $data['multiDailyMetricTimeSeries'] )

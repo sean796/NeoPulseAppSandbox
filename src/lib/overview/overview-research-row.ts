@@ -77,12 +77,17 @@ export async function runOverviewResearchForRow(
   let briefText = "";
 
   try {
-    // Step 0: DataForSEO SERP (optional; never aborts row)
+    // Wave A: SERP and GSC filename are independent (Blog Ideas / Opt style fan-out)
     emitHarnessSection(input, 0, "start");
-    const serpResult = await fetchOptionalDataForSeoSerp({
-      keyword,
-      site: input.site,
-    });
+    const [serpResult, gscFilenameResult] = await Promise.all([
+      fetchOptionalDataForSeoSerp({
+        keyword,
+        site: input.site,
+      }),
+      skipGsc
+        ? Promise.resolve(null as string | null)
+        : resolveGscFilenameForRow(input, harnessSummaries),
+    ]);
     storedFile = serpResult.storedFile;
     serpMcpJson = serpResult.serpMcpJson;
     if (storedFile) {
@@ -100,33 +105,48 @@ export async function runOverviewResearchForRow(
         "DataForSEO SERP unavailable; OpenRouter LLM audit used for SERP research";
       emitHarnessError(input, 0, serpMsg, harnessSummaries);
     }
-
-    // Step 1: GSC CSV
     gscFilename = skipGsc
       ? emitGscCsvDone(input, null, harnessSummaries)
-      : await resolveGscFilenameForRow(input, harnessSummaries);
+      : gscFilenameResult;
 
-    // Step 2: OpenRouter LLM audit (required for brief)
+    // Wave B: audit (needs SERP PAA), dump load (needs SERP), GSC context (needs GSC) in parallel
     const serpPeopleAlsoAsk = serpPeopleAlsoAskFromMcp(
       serpMcpJson as Record<string, unknown> | null | undefined,
     );
-    const llmStep = await runOpenRouterLlmAuditStep(
-      input,
-      keyword,
-      pageUrl,
-      harnessSummaries,
-      serpPeopleAlsoAsk,
-    );
+    emitHarnessSection(input, 3, "start");
+
+    const [llmStep, serpLoad, gscContextResult] = await Promise.all([
+      runOpenRouterLlmAuditStep(
+        input,
+        keyword,
+        pageUrl,
+        harnessSummaries,
+        serpPeopleAlsoAsk,
+      ),
+      resolveSerpDumpJsonForBrief({
+        storedFile,
+        serpMcpJson,
+        serpDumpUrl,
+      }),
+      (async (): Promise<{ queries: string[]; pageUrl: string }> => {
+        if (skipGsc) {
+          emitHarnessSection(input, 4, "start");
+          return emitGscQuickWinsNoData(input, harnessSummaries);
+        }
+        if (hasValidGscDumpFilename(gscFilename)) {
+          return runGscQuickWinsContextStep(
+            input,
+            gscFilename!,
+            pageUrl,
+            harnessSummaries,
+          );
+        }
+        emitHarnessSection(input, 4, "start");
+        return emitGscQuickWinsNoData(input, harnessSummaries);
+      })(),
+    ]);
     llmAudit = llmStep.llmAudit;
     queryFanout = llmStep.queryFanout;
-
-    // Step 3: SERP dump load
-    emitHarnessSection(input, 3, "start");
-    const serpLoad = await resolveSerpDumpJsonForBrief({
-      storedFile,
-      serpMcpJson,
-      serpDumpUrl,
-    });
     serpDumpJson = serpLoad.serpDumpJson;
     harnessSummaries["SERP dump load"] = serpLoad.loadSummary;
     emitHarnessSection(input, 3, "done", serpLoad.loadSummary);
@@ -137,22 +157,7 @@ export async function runOverviewResearchForRow(
     if (!serpInlineAfterLoad && Object.keys(serpDumpJson).length > 0) {
       emitResearchArtifact(input, keyword, "dataforseo-serp", serpDumpJson);
     }
-
-    // Step 4: GSC quick-wins context (after GSC filename is known)
-    if (skipGsc) {
-      emitHarnessSection(input, 4, "start");
-      gscContext = emitGscQuickWinsNoData(input, harnessSummaries);
-    } else if (hasValidGscDumpFilename(gscFilename)) {
-      gscContext = await runGscQuickWinsContextStep(
-        input,
-        gscFilename!,
-        pageUrl,
-        harnessSummaries,
-      );
-    } else {
-      emitHarnessSection(input, 4, "start");
-      gscContext = emitGscQuickWinsNoData(input, harnessSummaries);
-    }
+    gscContext = gscContextResult;
     emitResearchArtifact(input, keyword, "gsc-quick-wins-context", gscContext);
 
     // Step 5: Brief merge

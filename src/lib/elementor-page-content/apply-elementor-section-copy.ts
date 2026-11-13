@@ -3,8 +3,6 @@ import {
   AISEO_FULL_REWRITE_BODY_OUTPUT_CONTRACT,
   AISEO_FULL_REWRITE_HEADING_OUTPUT_CONTRACT,
   AISEO_FULL_REWRITE_SYSTEM_RULE,
-  assertAiseoBodyRewriteChanged,
-  assertAiseoHeadingRewriteChanged,
 } from "@/lib/content-optimization/aiseo-full-rewrite-contract";
 import {
   applyBodyHtmlToBand,
@@ -182,7 +180,6 @@ async function generateSectionCopy(args: {
     if (!rawTitle) {
       throw new Error("Elementor heading optimize returned empty title in JSON.");
     }
-    assertAiseoHeadingRewriteChanged(section.title?.trim() || "", rawTitle);
     return { title: rawTitle };
   }
 
@@ -246,7 +243,6 @@ async function generateSectionCopy(args: {
       : bodyHtml;
   }
 
-  assertAiseoBodyRewriteChanged(beforeBodyForCompare, bodyHtml);
   return { bodyHtml };
 }
 

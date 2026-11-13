@@ -1,9 +1,16 @@
+import { z } from "zod";
 import type { WordPressSite } from "@/components/integrations/types";
 import { logger } from "@/lib/logger";
 import { headingTitleToHarnessAnchorId } from "@/lib/bulk/harness-section-anchor-ids";
+import { MAX_CHECKLIST_ITEMS_BLOG } from "@/lib/content-generation/article-length-policy";
+import { AISEO_FULL_REWRITE_SYSTEM_RULE } from "@/lib/content-optimization/aiseo-full-rewrite-contract";
+import { UNIQUE_DYNAMIC_BODY_H2_RULE } from "@/lib/content-optimization/harness-heading-titles";
+import { parseAssistantJsonObject } from "@/lib/competitor-research/competitor-report-json-parse";
 import {
   normalizeSectionProseHtml,
+  prosePlainText,
 } from "@/lib/elementor-page-content/extract-text-editor-prose";
+import { callAgentCategoryOpenRouterChat } from "@/lib/openrouter-agent-category-api";
 import { resolveOpenRouterApiKeyForHarness } from "@/lib/openrouter-api-key-resolve";
 import { getBlogModel } from "@/lib/optimization-settings-storage";
 import { stripTrailingFaqSection } from "@/lib/overview/overview-blog-faq-append";
@@ -16,16 +23,13 @@ import {
   stripLeadingOverviewSection,
 } from "@/lib/overview/overview-blog-overview-prepend";
 import {
-  buildH2OpenTagForTitle,
-  rewriteBlogLeadSectionBlock,
+  allocateUniquePassageAnchorId,
   rewriteBlogPassageSection,
-  splitHtmlBodyIntoH2PassageSections,
   stitchHtmlBodyFromH2PassageSections,
   stitchOverviewBlogPostHtml,
+  type BlogPassageSection,
 } from "@/lib/overview/overview-blog-passage-sections";
-import {
-  extractAllSectionLinkRowsFromHtml,
-} from "@/lib/overview/overview-blog-links-extract";
+import { extractAllSectionLinkRowsFromHtml } from "@/lib/overview/overview-blog-links-extract";
 import {
   rankFuzzyMoneyPageLinksForAnswer,
   rankFuzzySitemapLinksForSection,
@@ -35,17 +39,12 @@ import { recordOverviewStudioRevision } from "@/lib/overview/record-overview-stu
 import type { OverviewSitemapSource } from "@/lib/overview/overview-sitemap-source";
 import { normalizePageUrlKey } from "@/lib/sitemap-optimizer/normalize-page-url";
 
-export function countAutoSeoBlogBodySteps(sourceHtml: string): number {
-  const ansBefore = extractAnswerSectionHtml(sourceHtml);
-  const ovBefore = extractOverviewSectionHtml(sourceHtml);
-  const withoutLead = stripLeadingOverviewSection(stripLeadingAnswerSection(sourceHtml));
-  const coreOnly = stripTrailingFaqSection(withoutLead);
-  const parsedBlog = splitHtmlBodyIntoH2PassageSections(coreOnly);
-  const hasIntro = Boolean(parsedBlog.leadingHtml.trim());
-  const sectionCount = parsedBlog.sections.length;
-  const hasAnswer = sectionCount > 0 || Boolean(ansBefore.trim());
-  const hasOverview = sectionCount > 0 || Boolean(ovBefore.trim());
-  return (hasAnswer ? 1 : 0) + (hasOverview ? 1 : 0) + (hasIntro ? 1 : 0) + sectionCount;
+const BODY_H2_MIN = 5;
+const BODY_H2_MAX = MAX_CHECKLIST_ITEMS_BLOG;
+
+/** Always Answer + Overview + Intro + 5–6 body H2s. */
+export function countAutoSeoBlogBodySteps(_sourceHtml?: string): number {
+  return 1 + 1 + 1 + BODY_H2_MAX;
 }
 
 export interface RunAutoSeoBlogBodyRewriteArgs {
@@ -53,6 +52,7 @@ export interface RunAutoSeoBlogBodyRewriteArgs {
   articleTitle: string;
   focusKeyword: string;
   seoResearchBrief?: string;
+  researchReadingDigest?: string;
   site?: WordPressSite | null;
   pageUrl: string;
   sitemapSource?: OverviewSitemapSource;
@@ -62,6 +62,123 @@ export interface RunAutoSeoBlogBodyRewriteArgs {
   onCommitHtml: (html: string, h2Titles: string[]) => void;
 }
 
+const OutlineSchema = z.object({
+  titles: z.array(z.string()).min(BODY_H2_MIN).max(BODY_H2_MAX),
+});
+
+const IntroSchema = z.object({
+  bodyHtml: z.string(),
+});
+
+async function planBodyH2Titles(args: {
+  articleTitle: string;
+  focusKeyword: string;
+  legacyCoreHtml: string;
+  seoResearchBrief?: string;
+  researchReadingDigest?: string;
+  siteId?: string | null;
+  businessName?: string;
+  apiKey?: string;
+}): Promise<string[]> {
+  const legacyPlain = prosePlainText(args.legacyCoreHtml).trim().slice(0, 6000);
+  const { content } = await callAgentCategoryOpenRouterChat({
+    category: "blog",
+    siteId: args.siteId,
+    apiKey: args.apiKey,
+    system: [
+      "You plan the full Auto SEO blog body outline.",
+      `Return exactly ${BODY_H2_MIN}-${BODY_H2_MAX} unique body H2 titles.`,
+      UNIQUE_DYNAMIC_BODY_H2_RULE,
+      "Title Case, 3-14 words, no colons, no Answer/Overview/FAQ/Introduction.",
+      "Include exactly one real-world / local homeowner example style H2.",
+      'JSON only: {"titles":["..."]}',
+    ].join(" "),
+    user: [
+      `Article title: ${args.articleTitle || "(untitled)"}`,
+      `Focus keyword: ${args.focusKeyword || "(none)"}`,
+      args.businessName ? `Business: ${args.businessName}` : "",
+      args.seoResearchBrief?.trim()
+        ? `Research:\n${args.seoResearchBrief.trim().slice(0, 4000)}`
+        : "",
+      args.researchReadingDigest?.trim()
+        ? `Digest:\n${args.researchReadingDigest.trim().slice(0, 3000)}`
+        : "",
+      `Legacy body facts:\n${legacyPlain || "(none)"}`,
+      `Return ${BODY_H2_MIN}-${BODY_H2_MAX} titles now.`,
+    ]
+      .filter(Boolean)
+      .join("\n\n"),
+    temperature: 0.45,
+    maxTokens: 2048,
+    responseFormat: { type: "json_object" },
+    useMasterInstructions: true,
+    useWordBlacklist: true,
+  });
+
+  const titles = OutlineSchema.parse(parseAssistantJsonObject(content)).titles.map((t) =>
+    t.trim(),
+  );
+  if (titles.some((t) => !t)) {
+    throw new Error("Auto SEO outline returned an empty H2 title.");
+  }
+  const keys = titles.map((t) => t.toLowerCase());
+  if (new Set(keys).size !== keys.length) {
+    throw new Error("Auto SEO outline returned duplicate H2 titles.");
+  }
+  return titles;
+}
+
+async function rewriteIntroHtml(args: {
+  legacyCoreHtml: string;
+  articleTitle: string;
+  focusKeyword: string;
+  siblingTitles: string[];
+  siteId?: string | null;
+  businessName?: string;
+  seoResearchBrief?: string;
+  researchReadingDigest?: string;
+  apiKey?: string;
+}): Promise<string> {
+  const legacyPlain = prosePlainText(args.legacyCoreHtml).trim().slice(0, 4000);
+  const { content } = await callAgentCategoryOpenRouterChat({
+    category: "blog",
+    siteId: args.siteId,
+    apiKey: args.apiKey,
+    system: [
+      "You write the Auto SEO article introduction.",
+      AISEO_FULL_REWRITE_SYSTEM_RULE,
+      "Output 1-2 <p> paragraphs only. No <h2>. Do not cover body H2 topics in depth.",
+      'JSON only: {"bodyHtml":"..."}',
+    ].join(" "),
+    user: [
+      `Article title: ${args.articleTitle || "(untitled)"}`,
+      `Focus keyword: ${args.focusKeyword || "(none)"}`,
+      args.businessName ? `Business: ${args.businessName}` : "",
+      `Following H2s: ${args.siblingTitles.join(" | ")}`,
+      `Legacy facts:\n${legacyPlain || "(none)"}`,
+      'Return {"bodyHtml":"<p>...</p>"}',
+    ]
+      .filter(Boolean)
+      .join("\n\n"),
+    temperature: 0.55,
+    maxTokens: 1024,
+    responseFormat: { type: "json_object" },
+    useMasterInstructions: true,
+    useWordBlacklist: true,
+  });
+  const bodyHtml = normalizeSectionProseHtml(
+    IntroSchema.parse(parseAssistantJsonObject(content)).bodyHtml,
+  );
+  if (!prosePlainText(bodyHtml).trim()) {
+    throw new Error("Auto SEO intro rewrite returned empty bodyHtml.");
+  }
+  return bodyHtml;
+}
+
+/**
+ * One Auto SEO body path every time: plan 5–6 H2s, then rewrite Answer + Overview +
+ * Intro + every body section from scratch. No thin-body skips.
+ */
 export async function runAutoSeoBlogBodyRewrite(
   args: RunAutoSeoBlogBodyRewriteArgs,
 ): Promise<{ html: string; h2Titles: string[]; trailingFaq: string }> {
@@ -70,6 +187,7 @@ export async function runAutoSeoBlogBodyRewrite(
     articleTitle,
     focusKeyword,
     seoResearchBrief,
+    researchReadingDigest,
     site,
     pageUrl,
     sitemapSource,
@@ -87,15 +205,44 @@ export async function runAutoSeoBlogBodyRewrite(
     withoutLead.length > coreOnly.length
       ? withoutLead.slice(coreOnly.length).trim()
       : "";
-  const parsedBlog = splitHtmlBodyIntoH2PassageSections(coreOnly);
+  const legacyCoreHtml = coreOnly.trim();
+  if (!legacyCoreHtml) {
+    throw new Error(`Auto SEO requires article body HTML for ${pageUrl}.`);
+  }
+
+  const totalBodySteps = countAutoSeoBlogBodySteps();
+  let stepCursor = 0;
+  const apiKey = await resolveOpenRouterApiKeyForHarness();
+
+  const plannedTitles = await planBodyH2Titles({
+    articleTitle,
+    focusKeyword,
+    legacyCoreHtml,
+    seoResearchBrief,
+    researchReadingDigest,
+    siteId: site?.id ?? null,
+    businessName: site?.name,
+    apiKey,
+  });
+  if (!shouldContinue()) {
+    return { html: sourceHtml, h2Titles: plannedTitles, trailingFaq };
+  }
+
+  const usedIds = new Set<string>();
+  const workingSections: BlogPassageSection[] = plannedTitles.map((title, i) => {
+    const id = allocateUniquePassageAnchorId(title, usedIds);
+    return {
+      id,
+      index: i,
+      h2OpenTag: `<h2 id="${id}">`,
+      title,
+      bodyHtml: legacyCoreHtml,
+    };
+  });
 
   let ansHtml = ansBefore;
   let ovHtml = ovBefore;
-  let leadingHtml = parsedBlog.leadingHtml;
-  const workingSections = [...parsedBlog.sections];
-
-  const totalBodySteps = countAutoSeoBlogBodySteps(sourceHtml);
-  let stepCursor = 0;
+  let leadingHtml = "";
 
   const sitemapLinkPool = await resolveSitemapFuzzyLinkPool({
     site,
@@ -115,10 +262,12 @@ export async function runAutoSeoBlogBodyRewrite(
     articleTitle,
     focusKeyword,
     seoResearchBrief,
+    researchReadingDigest,
     siteId: site?.id ?? null,
     siteUrl: site?.siteUrl,
     pageUrl,
     businessName: site?.name,
+    apiKey,
   };
 
   const commitCurrent = () => {
@@ -134,20 +283,14 @@ export async function runAutoSeoBlogBodyRewrite(
     return { html, h2Titles };
   };
 
-  const hasAnswer = workingSections.length > 0 || Boolean(ansBefore.trim());
-  const hasOverview = workingSections.length > 0 || Boolean(ovBefore.trim());
-  const hasIntroStep = Boolean(leadingHtml.trim());
-
-  const answerMoneyPages = hasAnswer
-    ? rankFuzzyMoneyPageLinksForAnswer({
-        pool: sitemapLinkPool,
-        articleTitle,
-        focusKeyword,
-        bodyH2Titles: workingSections.map((s) => s.title),
-        pageUrl,
-        limit: 6,
-      })
-    : [];
+  const answerMoneyPages = rankFuzzyMoneyPageLinksForAnswer({
+    pool: sitemapLinkPool,
+    articleTitle,
+    focusKeyword,
+    bodyH2Titles: workingSections.map((s) => s.title),
+    pageUrl,
+    limit: 6,
+  });
   const topAnswerMoneyHref = answerMoneyPages[0]?.url;
   if (topAnswerMoneyHref && !topAnswerMoneyHref.startsWith("#")) {
     const k = normalizePageUrlKey(topAnswerMoneyHref);
@@ -155,11 +298,10 @@ export async function runAutoSeoBlogBodyRewrite(
   }
 
   const preassignedSectionCandidates = workingSections.map((sec) => {
-    if (!sec.bodyHtml.trim()) return [];
     const candidates = rankFuzzySitemapLinksForSection({
       pool: sitemapLinkPool,
       sectionTitle: sec.title,
-      sectionBodyHtml: sec.bodyHtml,
+      sectionBodyHtml: legacyCoreHtml,
       articleTitle,
       focusKeyword,
       pageUrl,
@@ -174,186 +316,165 @@ export async function runAutoSeoBlogBodyRewrite(
     return candidates;
   });
 
-  const initialCoreHtml = stitchHtmlBodyFromH2PassageSections({
-    leadingHtml,
-    sections: workingSections,
+  const outlineCore = stitchHtmlBodyFromH2PassageSections({
+    leadingHtml: "",
+    sections: workingSections.map((sec) => ({
+      ...sec,
+      bodyHtml: "<p>Body section.</p>",
+    })),
   });
-  const introBefore = leadingHtml;
 
-  // Launch Answer, Overview, Introduction, and every H2 section in parallel
-  const answerTask = hasAnswer
-    ? (async () => {
-        if (!shouldContinue()) return null;
-        stepCursor += 1;
-        onStepProgress?.(stepCursor, totalBodySteps, "Answer");
-        try {
-          if (workingSections.length > 0) {
-            const apiKey = await resolveOpenRouterApiKeyForHarness();
-            const model = getBlogModel(site?.id);
-            const ansRes = await generateAndPrependAnswerHtml({
-              sourceHtml: initialCoreHtml,
-              articleTitle,
-              focusKeyword,
-              pageUrl,
-              connectedSite: site ? { name: site.name, siteUrl: site.siteUrl } : undefined,
-              site: site ?? undefined,
-              pageKind: sitemapSource === "sap" ? "entity" : "post",
-              seoResearchBrief,
-              previousAnswerHtml: ansBefore,
-              moneyPageCandidates: answerMoneyPages,
-              apiKey,
-              model,
-            });
-            return ansRes.answerHtml;
-          }
-          return await rewriteBlogLeadSectionBlock(ansBefore, {
-            ...passageRewriteCtx,
-            siblingTitles: [],
-            sitemapLinkCandidates: answerMoneyPages,
-          });
-        } catch (err) {
-          logger.warn("[Auto SEO] Answer section warning for", pageUrl, err);
-          return null;
-        }
-      })()
-    : Promise.resolve(null);
+  logger.start(
+    `[Auto SEO] Full rewrite ${pageUrl}: Answer + Overview + Intro + ${workingSections.length} H2s`,
+  );
 
-  const overviewTask = hasOverview
-    ? (async () => {
-        if (!shouldContinue()) return null;
-        stepCursor += 1;
-        onStepProgress?.(stepCursor, totalBodySteps, "Overview");
-        try {
-          if (workingSections.length > 0) {
-            const apiKey = await resolveOpenRouterApiKeyForHarness();
-            const model = getBlogModel(site?.id);
-            const ovRes = await generateAndPrependOverviewHtml({
-              sourceHtml: initialCoreHtml,
-              articleTitle,
-              focusKeyword,
-              pageUrl,
-              connectedSite: site ? { name: site.name, siteUrl: site.siteUrl } : undefined,
-              site: site ?? undefined,
-              pageKind: sitemapSource === "sap" ? "entity" : "post",
-              seoResearchBrief,
-              pregeneratedAnswerHtml: ansBefore.trim() || `<h2 id="answer">Answer</h2><p>${focusKeyword || articleTitle}</p>`,
-              apiKey,
-              model,
-            });
-            return ovRes ? extractOverviewSectionHtml(ovRes.html) : null;
-          }
-          return await rewriteBlogLeadSectionBlock(ovBefore, {
-            ...passageRewriteCtx,
-            siblingTitles: [],
-          });
-        } catch (err) {
-          logger.warn("[Auto SEO] Overview section warning for", pageUrl, err);
-          return null;
-        }
-      })()
-    : Promise.resolve(null);
+  const answerTask = (async () => {
+    if (!shouldContinue()) return null;
+    stepCursor += 1;
+    onStepProgress?.(stepCursor, totalBodySteps, "Answer");
+    const ansRes = await generateAndPrependAnswerHtml({
+      sourceHtml: outlineCore,
+      articleTitle,
+      focusKeyword,
+      pageUrl,
+      connectedSite: site ? { name: site.name, siteUrl: site.siteUrl } : undefined,
+      site: site ?? undefined,
+      pageKind: sitemapSource === "sap" ? "entity" : "post",
+      seoResearchBrief,
+      previousAnswerHtml: ansBefore,
+      moneyPageCandidates: answerMoneyPages,
+      apiKey,
+      model: getBlogModel(site?.id),
+    });
+    logger.success(`[Auto SEO] Answer rewritten (${ansRes.answerHtml.length} chars) for ${pageUrl}`);
+    return ansRes.answerHtml;
+  })();
 
-  const introTask = hasIntroStep
-    ? (async () => {
-        if (!shouldContinue()) return null;
-        stepCursor += 1;
-        onStepProgress?.(stepCursor, totalBodySteps, "Introduction");
-        try {
-          return await rewriteBlogLeadSectionBlock(introBefore, {
-            ...passageRewriteCtx,
-            siblingTitles: workingSections.map((s) => s.title),
-          });
-        } catch (err) {
-          logger.warn("[Auto SEO] Intro lead warning for", pageUrl, err);
-          return null;
-        }
-      })()
-    : Promise.resolve(null);
+  const overviewTask = (async () => {
+    if (!shouldContinue()) return null;
+    stepCursor += 1;
+    onStepProgress?.(stepCursor, totalBodySteps, "Overview");
+    const ovRes = await generateAndPrependOverviewHtml({
+      sourceHtml: outlineCore,
+      articleTitle,
+      focusKeyword,
+      pageUrl,
+      connectedSite: site ? { name: site.name, siteUrl: site.siteUrl } : undefined,
+      site: site ?? undefined,
+      pageKind: sitemapSource === "sap" ? "entity" : "post",
+      seoResearchBrief,
+      pregeneratedAnswerHtml:
+        ansBefore.trim() ||
+        `<h2 id="answer">Answer</h2><p>${focusKeyword || articleTitle}</p>`,
+      apiKey,
+      model: getBlogModel(site?.id),
+    });
+    const extractedOv = ovRes ? extractOverviewSectionHtml(ovRes.html) : null;
+    if (!extractedOv?.trim()) {
+      throw new Error(`Auto SEO Overview empty for ${pageUrl}`);
+    }
+    logger.success(`[Auto SEO] Overview rewritten (${extractedOv.length} chars) for ${pageUrl}`);
+    return extractedOv;
+  })();
+
+  const introTask = (async () => {
+    if (!shouldContinue()) return null;
+    stepCursor += 1;
+    onStepProgress?.(stepCursor, totalBodySteps, "Introduction");
+    const intro = await rewriteIntroHtml({
+      legacyCoreHtml,
+      articleTitle,
+      focusKeyword,
+      siblingTitles: workingSections.map((s) => s.title),
+      siteId: site?.id ?? null,
+      businessName: site?.name,
+      seoResearchBrief,
+      researchReadingDigest,
+      apiKey,
+    });
+    logger.success(`[Auto SEO] Intro rewritten (${intro.length} chars) for ${pageUrl}`);
+    return intro;
+  })();
 
   const sectionTasks = workingSections.map((sec, sIdx) =>
     (async () => {
       if (!shouldContinue()) return null;
       stepCursor += 1;
-      onStepProgress?.(
-        stepCursor,
-        totalBodySteps,
-        sec.title?.trim() || `Section ${sIdx + 1}`,
+      onStepProgress?.(stepCursor, totalBodySteps, sec.title || `Section ${sIdx + 1}`);
+      const rewritten = await rewriteBlogPassageSection({
+        mode: "both",
+        section: sec,
+        siblingTitles: workingSections.filter((_, i) => i !== sIdx).map((s) => s.title),
+        ...passageRewriteCtx,
+        sitemapLinkCandidates: preassignedSectionCandidates[sIdx] ?? [],
+      });
+      logger.success(
+        `[Auto SEO] H2 ${sIdx + 1}/${workingSections.length}: "${sec.title}" -> "${rewritten.title}"`,
       );
-      if (!sec.bodyHtml.trim()) return null;
-      try {
-        const rewritten = await rewriteBlogPassageSection({
-          mode: "both",
-          section: sec,
-          siblingTitles: workingSections
-            .filter((_, i) => i !== sIdx)
-            .map((s) => s.title),
-          ...passageRewriteCtx,
-          sitemapLinkCandidates: preassignedSectionCandidates[sIdx] ?? [],
-        });
-        return { sIdx, sec, rewritten };
-      } catch (err) {
-        logger.warn(
-          `[Auto SEO] Blog section ${sIdx + 1} (${sec.title}) warning for ${pageUrl}:`,
-          err,
-        );
-        return null;
-      }
+      return { sIdx, sec, rewritten };
     })(),
   );
 
-  const [rewrittenAnswer, rewrittenOverview, rewrittenIntro, ...rewrittenSectionResults] =
-    await Promise.all([
-      answerTask,
-      overviewTask,
-      introTask,
-      ...sectionTasks,
-    ]);
+  const [rewrittenAnswer, rewrittenOverview, rewrittenIntro, ...sectionResults] =
+    await Promise.all([answerTask, overviewTask, introTask, ...sectionTasks]);
 
-  if (!shouldContinue()) {
-    return { ...commitCurrent(), trailingFaq };
-  }
+  if (!shouldContinue()) return { ...commitCurrent(), trailingFaq };
 
-  if (rewrittenAnswer != null && rewrittenAnswer.trim()) {
-    ansHtml = rewrittenAnswer;
-    recordUsedLinksFromHtml(ansHtml);
-    recordOverviewStudioRevision({
-      pageUrl,
-      stepLabel: "Answer",
-      runId: revisionRunId,
-      beforeHtml: ansBefore,
-      afterHtml: ansHtml,
-    });
-  }
+  if (!rewrittenAnswer?.trim()) throw new Error(`Auto SEO Answer empty for ${pageUrl}`);
+  ansHtml = rewrittenAnswer;
+  recordUsedLinksFromHtml(ansHtml);
+  recordOverviewStudioRevision({
+    pageUrl,
+    stepLabel: "Answer",
+    runId: revisionRunId,
+    beforeHtml: ansBefore,
+    afterHtml: ansHtml,
+  });
 
-  if (rewrittenOverview != null && rewrittenOverview.trim()) {
-    ovHtml = rewrittenOverview;
-  }
+  if (!rewrittenOverview?.trim()) throw new Error(`Auto SEO Overview empty for ${pageUrl}`);
+  ovHtml = rewrittenOverview;
 
-  if (rewrittenIntro != null) {
-    leadingHtml = rewrittenIntro;
-    recordOverviewStudioRevision({
-      pageUrl,
-      stepLabel: "Introduction",
-      runId: revisionRunId,
-      beforeHtml: introBefore,
-      afterHtml: leadingHtml,
-    });
-  }
+  if (!rewrittenIntro?.trim()) throw new Error(`Auto SEO Intro empty for ${pageUrl}`);
+  leadingHtml = rewrittenIntro;
+  recordOverviewStudioRevision({
+    pageUrl,
+    stepLabel: "Introduction",
+    runId: revisionRunId,
+    beforeHtml: legacyCoreHtml.slice(0, 2000),
+    afterHtml: leadingHtml,
+  });
 
-  for (const res of rewrittenSectionResults) {
-    if (!res) continue;
+  const usedPassageIds = new Set<string>();
+  for (const res of sectionResults) {
+    if (!res) throw new Error(`Auto SEO section missing for ${pageUrl}`);
     const { sIdx, sec, rewritten } = res;
     const oldAnchorIds = new Set(
       [sec.id, headingTitleToHarnessAnchorId(sec.title)].filter(Boolean),
     );
-    const beforeSectionHtml = `${sec.h2OpenTag.trim() || "<h2>"}${sec.title.trim()}</h2>\n${sec.bodyHtml.trim()}`;
-    const nextTitle = (rewritten.title || sec.title).trim();
+    let nextTitle = (rewritten.title || sec.title).trim();
     const nextBody = normalizeSectionProseHtml(rewritten.bodyHtml);
+    if (!prosePlainText(nextBody).trim()) {
+      throw new Error(`Auto SEO section ${sIdx + 1} empty body for ${pageUrl}`);
+    }
     recordUsedLinksFromHtml(nextBody);
-    const nextH2OpenTag = buildH2OpenTagForTitle(nextTitle);
-    const nextId = headingTitleToHarnessAnchorId(nextTitle);
-    const afterSectionHtml = `${nextH2OpenTag}${nextTitle}</h2>\n${nextBody}`;
 
+    const taken = workingSections
+      .map((s, i) => (i === sIdx ? "" : s.title.trim().toLowerCase()))
+      .filter(Boolean);
+    if (nextTitle && taken.includes(nextTitle.toLowerCase())) {
+      const unique = await rewriteBlogPassageSection({
+        mode: "header",
+        section: { ...sec, title: nextTitle, bodyHtml: nextBody },
+        siblingTitles: workingSections
+          .map((s, i) => (i === sIdx ? "" : s.title))
+          .filter(Boolean),
+        ...passageRewriteCtx,
+      });
+      if (unique.title?.trim()) nextTitle = unique.title.trim();
+    }
+
+    const nextId = allocateUniquePassageAnchorId(nextTitle, usedPassageIds);
+    const nextH2OpenTag = `<h2 id="${nextId}">`;
     if (ovHtml && nextId) {
       for (const oldAnchorId of oldAnchorIds) {
         if (oldAnchorId && oldAnchorId !== nextId) {
@@ -371,8 +492,8 @@ export async function runAutoSeoBlogBodyRewrite(
       stepLabel: nextTitle || `Section ${sIdx + 1}`,
       sectionTitle: nextTitle || undefined,
       runId: revisionRunId,
-      beforeHtml: beforeSectionHtml,
-      afterHtml: afterSectionHtml,
+      beforeHtml: `${sec.h2OpenTag}${sec.title}</h2>\n${sec.bodyHtml.slice(0, 1500)}`,
+      afterHtml: `${nextH2OpenTag}${nextTitle}</h2>\n${nextBody}`,
     });
     workingSections[sIdx] = {
       ...sec,
@@ -383,15 +504,13 @@ export async function runAutoSeoBlogBodyRewrite(
     };
   }
 
-  if (rewrittenOverview != null && ovHtml.trim()) {
-    recordOverviewStudioRevision({
-      pageUrl,
-      stepLabel: "Overview",
-      runId: revisionRunId,
-      beforeHtml: ovBefore,
-      afterHtml: ovHtml,
-    });
-  }
+  recordOverviewStudioRevision({
+    pageUrl,
+    stepLabel: "Overview",
+    runId: revisionRunId,
+    beforeHtml: ovBefore,
+    afterHtml: ovHtml,
+  });
 
   return { ...commitCurrent(), trailingFaq };
 }

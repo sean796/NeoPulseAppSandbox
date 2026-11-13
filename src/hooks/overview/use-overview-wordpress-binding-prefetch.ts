@@ -52,6 +52,7 @@ export async function runPrefetchOverviewInventory(
     source?: OverviewSitemapSource;
     silent?: boolean;
     forceRefresh?: boolean;
+    preferNeoMcp?: boolean;
   },
 ): Promise<{ ok: boolean; count: number; error?: string; csvReady?: boolean; urls?: string[] }> {
   const {
@@ -80,14 +81,16 @@ export async function runPrefetchOverviewInventory(
       !inventoryCacheHasContent(cachedEntry!.mergedRows));
 
   if (options?.forceRefresh === true) {
-    for (const bucket of ["pages", "posts", "sap"] as const) {
+    const buckets: OverviewSitemapSource[] = options?.source
+      ? [options.source]
+      : ["pages", "posts", "sap"];
+    for (const bucket of buckets) {
       inventoryCacheByKeyRef.current.delete(inventoryCacheMapKey(site.id, bucket));
     }
   }
 
-  // Always try warm seed first. Force refresh used to skip this and re-walk WP, which
-  // raced the warm recrawl and returned empty SAP buckets (empty Content Opt grid).
-  {
+  // Force refresh never paints warm/session inventory. Live pull only.
+  if (!forceRefresh) {
     let seeded = seedOverviewInventoryCacheFromPrefetch(site, inventoryCacheByKeyRef.current);
     if (!seeded) {
       await ensureEntitySiteWarmInventory(site);
@@ -121,9 +124,7 @@ export async function runPrefetchOverviewInventory(
         }
       }
     }
-  }
 
-  if (!forceRefresh) {
     if (cachedEntry?.siteId === site.id && cachedEntry.mergedRows.length > 0) {
       const hasContent = inventoryCacheHasContent(cachedEntry.mergedRows);
       const hasMetadata = inventoryRowsHaveMetadata(cachedEntry.mergedRows);
@@ -145,7 +146,11 @@ export async function runPrefetchOverviewInventory(
     }
   }
 
-  const inflightKey = `${site.id}:unified`;
+  const collectionsKey = (options?.collections ?? []).join(",") || "all";
+  const inflightKey = `${site.id}:unified:${options?.preferNeoMcp === true ? "neo-mcp" : "rest"}:${includeContent ? "body" : "meta"}:${collectionsKey}`;
+  if (forceRefresh) {
+    prefetchInflightRef.current.delete(inflightKey);
+  }
   let inflight = prefetchInflightRef.current.get(inflightKey);
   if (!inflight) {
     inflight = (async () => {
@@ -161,12 +166,18 @@ export async function runPrefetchOverviewInventory(
     const unified = await fetchUnifiedOverviewSitemapInventory(site, {
       includeContent,
       includePageHeading,
+      preferNeoMcp: options?.preferNeoMcp === true,
+      collections: options?.collections,
     });
 
     const bucketSources: OverviewSitemapSource[] = ["pages", "posts", "sap"];
     const allMerged: OverviewInventoryRow[] = [];
     for (const bucket of bucketSources) {
       const mergedRows = unified.bySource[bucket] ?? [];
+      if (!mergedRows.length && options?.collections?.length) {
+        // Scoped refresh: leave other buckets untouched.
+        continue;
+      }
       allMerged.push(...mergedRows);
       const snapshot = buildOverviewInventorySnapshotFromRows(mergedRows, site.siteUrl);
       const entry: CachedInventory = {

@@ -140,6 +140,8 @@ async function resolveCurrentCount(
 
   const monthRange = getLocalCalendarMonthAfterBeforeForMonthKey(monthKey);
   const entitySitemapUrlForFetch = isEntitySitemapDisabled(site) ? undefined : site.entitySitemapUrl;
+  const children = site.sitemaps?.childSitemaps ?? [];
+  const postSitemapUrl = children.find((u) => /post-sitemap(?:\d+)?\.xml/i.test(u?.trim() ?? ""));
   const counts = await fetchQuarterEditorialCounts({
     siteUrl: site.siteUrl,
     username: site.username,
@@ -147,7 +149,10 @@ async function resolveCurrentCount(
     after: monthRange.after,
     before: monthRange.before,
     entitySitemapUrl: entitySitemapUrlForFetch,
+    postSitemapUrl,
     manualEndpoint: site.manualEndpoint,
+    childSitemaps: site.sitemaps?.childSitemaps,
+    sitemapEndpoints: site.sitemaps?.endpoints,
   });
 
   if (!counts.ok) {

@@ -2,6 +2,7 @@ export type RowStatus =
   | "idle"
   | "scraping"
   | "uploading"
+  | "optimizing"
   | "ai-title"
   | "ai-meta"
   | "ai-url"

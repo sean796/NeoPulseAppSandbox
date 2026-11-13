@@ -233,8 +233,8 @@ export function OrganicSemrushSection({
         >
           {CHART_METRIC_DEFS.map((metric) => {
             const on = activeSeries.has(metric.id);
-            const value = summary?.[metric.summaryKey] ?? "â€”";
-            const compareValue = summary?.[metric.compareKey] ?? "â€”";
+            const value = summary?.[metric.summaryKey] ?? "-";
+            const compareValue = summary?.[metric.compareKey] ?? "-";
             const delta = summary?.[metric.deltaKey] ?? { deltaPercent: null, deltaPositive: null };
             return (
               <SwatchButton
@@ -260,8 +260,8 @@ export function OrganicSemrushSection({
           })}
           {showBrandedTiles
             ? BRANDED_TILE_DEFS.map((metric) => {
-                const value = summary?.[metric.summaryKey] ?? "â€”";
-                const compareValue = summary?.[metric.compareKey] ?? "â€”";
+                const value = summary?.[metric.summaryKey] ?? "-";
+                const compareValue = summary?.[metric.compareKey] ?? "-";
                 const delta = summary?.[metric.deltaKey] ?? { deltaPercent: null, deltaPositive: null };
                 return (
                   <div
@@ -349,7 +349,7 @@ export function OrganicSemrushSection({
         </div>
       ) : (
         <div ref={boxRef} className="px-4 pb-2 text-base text-muted-foreground tabular-nums">
-          {summary ? "â€”" : "No Semrush data for this property"}
+          {summary ? "-" : "No Semrush data for this property"}
         </div>
       )}
 
@@ -393,7 +393,7 @@ export function OrganicSemrushSection({
           </div>
         ) : (
           <p className="px-4 pb-4 pt-2 text-base text-muted-foreground">
-            {summary ? "No keywords returned for this domain." : "â€”"}
+            {summary ? "No keywords returned for this domain." : "-"}
           </p>
         )}
       </div>

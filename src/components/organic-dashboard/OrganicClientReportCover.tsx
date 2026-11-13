@@ -241,7 +241,7 @@ export function OrganicClientReportCover({
               {name}
             </p>
             <p className="organic-client-report-export__cover-byline">
-              {url ? <span className="text-muted-foreground">{url}</span> : null}
+              {url ? <span className="text-[#09090b]">{url}</span> : null}
               {url && periodLine ? <span> • </span> : null}
               {periodLine ? (
                 <span className="font-semibold text-[#84bd00]">{periodLine}</span>

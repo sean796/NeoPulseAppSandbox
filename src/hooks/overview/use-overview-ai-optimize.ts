@@ -3,7 +3,7 @@ import { streamChatCompletion, type Message } from "@/lib/api";
 import { resolveOpenRouterApiKeyForHarness } from "@/lib/openrouter-api-key-resolve";
 import { enforceExactFocusKeyword } from "@/lib/overview/enforce-exact-focus-keyword";
 export { enforceExactFocusKeyword } from "@/lib/overview/enforce-exact-focus-keyword";
-import { appendUniversalContentRulesToSystemPrompt, assertNoForbiddenWordViolations } from "@/lib/content-word-blocklist";
+import { appendUniversalContentRulesToSystemPrompt } from "@/lib/content-word-blocklist";
 import { appendMasterInstructionsToSystemPrompt, ensureMasterInstructionsInMemory } from "@/lib/master-instructions-storage";
 import { runContentKeywordsBatch, runEntityKeywordsBatch, type OverviewKeywordCatalogRow } from "@/lib/overview/overview-keyword-batch-agent";
 import { runAiAllMetaBatch } from "@/lib/overview/overview-ai-all-meta-batch-agent";
@@ -186,7 +186,6 @@ export function useOverviewAiOptimize(options: UseOverviewAiOptions): UseOvervie
       });
 
       const finalRaw = (result.trim() || completion?.content?.trim() || "").trim();
-      assertNoForbiddenWordViolations(finalRaw, "Overview optimize output");
       const cleaned = finalRaw;
       return cleaned;
     },

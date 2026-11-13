@@ -33,6 +33,7 @@ import type { PromptBulkSitemapInventoryLink } from "@/lib/bulk/prompt-bulk-site
 import { revokeBulkSitemapInventoryLinks } from "@/lib/bulk/bulk-sitemap-inventory-session";
 import { mergeGscQueriesWithInventoryFallback } from "@/lib/local-analysis/entity-gsc-inventory-fallback";
 import {
+  clearEntitySiteWarmCache,
   ensureEntitySiteWarmCache,
   gscAllQueriesFromWarmBundle,
   type EntitySiteWarmBundle,
@@ -156,7 +157,9 @@ export function useLocalGridEntityPrep(deps: UseLocalGridEntityPrepDeps) {
 
   const loadSitePrepAndGsc = useCallback(async () => {
     const siteUrl = sitePublicUrl;
-    const warm = await ensureEntitySiteWarmCache(site, { requireGsc: true });
+    // Drop memory + IDB warm for this site so a prior GSC miss cannot block Entities.
+    clearEntitySiteWarmCache(site.id);
+    const warm = await ensureEntitySiteWarmCache(site, { force: true, requireGsc: true });
     if (warm.error) {
       throw new Error(warm.error);
     }

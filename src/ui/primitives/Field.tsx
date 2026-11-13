@@ -6,6 +6,8 @@ import { UI_FIELD } from "@/ui/tokens";
 const FIELD_SIZE = {
   /** Fills the remaining row width. */
   grow: "w-full min-w-0 flex-1 px-2",
+  /** Fills the remaining row width with left room for a leading search icon. */
+  search: "w-full min-w-0 flex-1 pl-7 pr-2",
   /** Fills the row, never narrower than 10rem (keyword, location, title). */
   keyword: "w-full min-w-[10rem] flex-1 px-2",
   /** Website URL: fills up to a readable width, monospace. */

@@ -27,6 +27,7 @@ function sanitizeFileSlug(text: string): string {
 }
 
 const ROW_STATUS_LABELS: Partial<Record<RowStatus, { label: string; pct: number }>> = {
+  optimizing: { label: "Optimizing content", pct: 55 },
   uploading: { label: "Uploading to WordPress", pct: 90 },
   "research-faq": { label: "SERP Research Brief (DataForSEO + GSC)", pct: 25 },
   "ai-focus-kw": { label: "Deriving Focus Keyword", pct: 40 },
@@ -150,7 +151,8 @@ export function useOverviewStudioDrawerSteps({
       isActive:
         row.status === "research-faq" ||
         (busy && runKind === "research") ||
-        batchActiveStepLabel === "SERP Research Brief",
+        batchActiveStepLabel === "SERP Research Brief" ||
+        batchActiveStepLabel === "Reading Data",
       isDone: Boolean(row.seoResearch?.trim() || serpBriefDownload),
       downloadFile: serpBriefDownload,
     });

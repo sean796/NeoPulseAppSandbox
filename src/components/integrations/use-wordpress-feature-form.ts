@@ -11,7 +11,6 @@ import type { WordPressSite } from "./types";
 import {
   fetchAndPersistMissingClientLogos,
   getStoredSites,
-  mergeServerGbpLocationIdsIntoLocalSites,
 } from "./storage";
 
 type WordPressSitesApi = ReturnType<typeof useWordPressSites>;
@@ -149,22 +148,27 @@ export function useWordPressFeatureForm({
     (siteId: string, sectionId?: WordPressSiteAdminSectionId) => {
       const site = sites.find((s) => s.id === siteId);
       if (!site) return;
+      const alreadyOpen = profileSiteId === siteId;
       setProfileSiteId(siteId);
       setProfileSectionId(sectionId ?? "overview");
       setSettingsSubSectionId("profile");
+      // Studio dock switches sites constantly — never reload the roster on every click
+      // (reload + empty flash clears profileSiteId and re-opens forever → black screen).
+      if (alreadyOpen) {
+        populateFormFromSite(site);
+        return;
+      }
+      populateFormFromSite(site);
       void (async () => {
-        await mergeServerGbpLocationIdsIntoLocalSites();
-        reloadSitesFromStorage();
-        let fresh = getStoredSites().find((s) => s.id === siteId) ?? site;
-        if (!fresh.clientLogoUrl?.trim()) {
-          await fetchAndPersistMissingClientLogos([fresh]);
+        if (!site.clientLogoUrl?.trim()) {
+          await fetchAndPersistMissingClientLogos([site]);
           reloadSitesFromStorage();
-          fresh = getStoredSites().find((s) => s.id === siteId) ?? fresh;
+          const fresh = getStoredSites().find((s) => s.id === siteId) ?? site;
+          populateFormFromSite(fresh);
         }
-        populateFormFromSite(fresh);
       })();
     },
-    [sites, reloadSitesFromStorage, populateFormFromSite],
+    [sites, profileSiteId, reloadSitesFromStorage, populateFormFromSite],
   );
 
   const closeProfile = useCallback(() => {

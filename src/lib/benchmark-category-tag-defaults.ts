@@ -7,6 +7,7 @@ export const BENCHMARK_CATEGORY_TAG_BY_HOST_LABEL: Record<string, string> = {
   blindmagic: "Window treatments",
   blindmagic1stg: "Window treatments",
   blindswest: "Window treatments",
+  customshadesoflondon: "Window treatments",
   dminteriorsanddesign: "Window treatments",
   eliteshadings: "Window treatments",
   intheshadeflorida: "Window treatments",

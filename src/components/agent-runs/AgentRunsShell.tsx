@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { readSidebarPanel, writeSidebarOpen, type SidebarPanel } from "@/lib/pulse-assist/storage";
 import { AgentRunsContextProvider } from "@/contexts/AgentRunsContextProvider";
+import { TaskManagerProvider } from "@/contexts/TaskManagerProvider";
 import { DetailsDockProvider } from "@/components/pulse-assist/details-dock";
 import { useDefaultAgentRunHarnesses } from "@/lib/agent-runs/use-default-agent-run-harnesses";
 
@@ -37,7 +38,9 @@ export function AgentRunsShell({ children }: AgentRunsShellProps) {
       setSidebarPanel={setSidebarPanel}
     >
       <AgentRunsHarnessBootstrap />
-      <DetailsDockProvider>{children}</DetailsDockProvider>
+      <TaskManagerProvider>
+        <DetailsDockProvider>{children}</DetailsDockProvider>
+      </TaskManagerProvider>
     </AgentRunsContextProvider>
   );
 }

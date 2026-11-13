@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 class Neo_Pulse_App_Organic_Dashboard_Bundle {
 
 	/** @var list<string> */
-	private const FETCH_PARTS = array( 'ga4', 'gsc', 'semrush', 'googleAds' );
+	private const FETCH_PARTS = array( 'ga4', 'gsc', 'semrush', 'googleAds', 'ndusLeads', 'gmbLeads' );
 
 	/**
 	 * @param array<string,mixed> $body
@@ -87,12 +87,16 @@ class Neo_Pulse_App_Organic_Dashboard_Bundle {
 			'gsc'       => 'skipped',
 			'semrush'   => 'skipped',
 			'googleAds' => 'skipped',
+			'ndusLeads' => 'skipped',
+			'gmbLeads'  => 'skipped',
 		);
 
 		$ga4_payload        = $stub;
 		$gsc_payload        = $stub;
 		$semrush_payload    = $stub;
 		$google_ads_payload = $stub;
+		$ndus_leads_payload = $stub;
+		$gmb_leads_payload  = $stub;
 		$gsc_property       = null;
 
 		if ( $part === 'ga4' ) {
@@ -112,6 +116,14 @@ class Neo_Pulse_App_Organic_Dashboard_Bundle {
 			$ads_result            = self::resolve_google_ads_source( $context );
 			$google_ads_payload    = $ads_result['payload'];
 			$sources['googleAds'] = $ads_result['status'];
+		} elseif ( $part === 'ndusLeads' ) {
+			$ndus_result          = Neo_Pulse_App_Organic_Dashboard_Ndus_Leads::resolve( $context );
+			$ndus_leads_payload   = $ndus_result['payload'];
+			$sources['ndusLeads'] = $ndus_result['status'];
+		} elseif ( $part === 'gmbLeads' ) {
+			$gmb_result          = Neo_Pulse_App_Organic_Dashboard_Gmb_Leads::resolve( $context );
+			$gmb_leads_payload   = $gmb_result['payload'];
+			$sources['gmbLeads'] = $gmb_result['status'];
 		}
 
 		return array(
@@ -123,6 +135,8 @@ class Neo_Pulse_App_Organic_Dashboard_Bundle {
 				'gsc'       => $gsc_payload,
 				'semrush'   => $semrush_payload,
 				'googleAds' => $google_ads_payload,
+				'ndusLeads' => $ndus_leads_payload,
+				'gmbLeads'  => $gmb_leads_payload,
 				'sources'   => $sources,
 				'part'      => $part,
 			),

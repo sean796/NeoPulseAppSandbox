@@ -9,9 +9,10 @@ import {
   type ReactNode,
 } from "react";
 import {
+  ensureSitesLoadedFromServer,
   getStoredSites,
+  hasSitesServerHydrated,
   restoreOriginalPropertyNamesOnce,
-  restoreSitesFromServerMirrorIfEmpty,
 } from "@/components/integrations/storage";
 import { type WordPressSite } from "@/components/integrations/types";
 import { wordpressSiteMenuDisplayName } from "@/lib/wordpress-site-display-name";
@@ -19,6 +20,11 @@ import { useWordPressSiteCrud } from "./wordpress-sites/use-wordpress-site-crud"
 import { useWordPressConnectionAndSitemaps } from "./wordpress-sites/use-wordpress-connection-and-sitemaps";
 import { useWordPressSitemapOperations } from "./wordpress-sites/use-wordpress-sitemap-operations";
 import { useWordPressScheduledCalendar } from "./wordpress-sites/use-wordpress-scheduled-calendar";
+
+// Start server roster fetch as soon as the app loads this hook module (before first paint when possible).
+if (typeof window !== "undefined") {
+  void ensureSitesLoadedFromServer();
+}
 
 /** Default list order: site name A-Z (case-insensitive), then URL, then id. */
 function compareWordPressSitesByDisplayName(a: WordPressSite, b: WordPressSite): number {
@@ -39,6 +45,8 @@ function sortWordPressSitesByDisplayName(list: WordPressSite[]): WordPressSite[]
 
 function useWordPressSitesState() {
   const [sites, setSites] = useState<WordPressSite[]>(() => getStoredSites());
+  // Bootstrap embeds sites.json into the bundle — ready on first paint when present.
+  const [sitesReady, setSitesReady] = useState(() => getStoredSites().length > 0 || hasSitesServerHydrated());
   const [isTesting, setIsTesting] = useState<string | null>(null);
   const [isDetecting, setIsDetecting] = useState<string | null>(null);
   const [isFetchingScheduled, setIsFetchingScheduled] = useState<string | null>(null);
@@ -53,12 +61,19 @@ function useWordPressSitesState() {
   );
 
   useEffect(() => {
-    void restoreOriginalPropertyNamesOnce().then((restored) => {
-      if (restored) setSites(getStoredSites());
-    });
-    void restoreSitesFromServerMirrorIfEmpty().then((restored) => {
-      if (restored.length > 0) setSites(restored);
-    });
+    let cancelled = false;
+    void (async () => {
+      // Quiet revalidate from live API; never clear the painted bootstrap list first.
+      const loaded = await ensureSitesLoadedFromServer();
+      if (cancelled) return;
+      if (loaded.length > 0) setSites(loaded);
+      setSitesReady(true);
+      const restoredNames = await restoreOriginalPropertyNamesOnce();
+      if (!cancelled && restoredNames) setSites(getStoredSites());
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const reloadSitesFromStorage = useCallback(() => {
@@ -84,6 +99,7 @@ function useWordPressSitesState() {
 
   return {
     sites: sitesSortedByName,
+    sitesReady,
     setSites,
     isTesting,
     isDetecting,

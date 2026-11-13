@@ -71,15 +71,33 @@ export async function resolveAiseoHarnessSourceHtml(args: {
     site: WordPressSite | null,
     url: string,
   ) => OverviewInventoryUrlMatch | undefined;
-}): Promise<{ html: string; liveHtml?: string; cachedHtml: string }> {
+}): Promise<{
+  html: string;
+  liveHtml?: string;
+  cachedHtml: string;
+  postId?: number;
+  postType?: string;
+}> {
+  const invMatch = args.getInventoryMatchForUrl(args.site, args.row.url?.trim() ?? "");
+  const invPostId =
+    invMatch?.row?.id != null && Number.isFinite(invMatch.row.id) && invMatch.row.id > 0
+      ? invMatch.row.id
+      : undefined;
+  const invPostType = invMatch?.subtype;
   const cachedHtml = resolveAiseoHarnessSourceHtmlFromCache(args).trim();
   if (cachedHtml && !isTruncatedAiseoSourceBody(cachedHtml)) {
-    return { html: cachedHtml, cachedHtml };
+    return { html: cachedHtml, cachedHtml, postId: invPostId, postType: invPostType };
   }
-  const invMatch = args.getInventoryMatchForUrl(args.site, args.row.url?.trim() ?? "");
-  const liveHtml = await fetchLiveWordPressPostBodyForRow(args.site, args.row, invMatch);
+  const liveRes = await fetchLiveWordPressPostForRow(args.site, args.row, invMatch);
+  const liveHtml = liveRes?.html;
   const html = pickBestAiseoSourceHtml(cachedHtml, liveHtml).trim();
-  return { html, liveHtml, cachedHtml };
+  return {
+    html,
+    liveHtml,
+    cachedHtml,
+    postId: liveRes?.postId ?? invPostId,
+    postType: liveRes?.postType ?? invPostType,
+  };
 }
 
 /** Score bodies by non-FAQ article H2 count, then length (full blog beats Answer-only cache). */
@@ -132,12 +150,12 @@ function postSlugFromOverviewUrl(url: string): string | undefined {
   }
 }
 
-/** Live WordPress `content.raw` for one row (server route; same path for every row). */
-export async function fetchLiveWordPressPostBodyForRow(
+/** Live WordPress `content.raw` + resolved post ID for one row (server route; same path for every row). */
+export async function fetchLiveWordPressPostForRow(
   site: WordPressSite,
   row: OverviewRow,
   invMatch?: OverviewInventoryUrlMatch,
-): Promise<string | undefined> {
+): Promise<{ html?: string; postId?: number; postType?: string } | undefined> {
   const siteUrl = site.siteUrl?.trim();
   const username = site.username?.trim();
   const appPassword = site.appPassword?.trim();
@@ -166,8 +184,27 @@ export async function fetchLiveWordPressPostBodyForRow(
     const post = result.posts?.[0];
     if (!post) return undefined;
     const html = (post.fullData?.content?.raw || post.content || "").trim();
-    return html || undefined;
+    const resolvedId =
+      typeof post.id === "number" && Number.isFinite(post.id) && post.id > 0
+        ? post.id
+        : postId;
+    const resolvedType = post.postTypeSubtype || post.postTypeEndpoint || subtype;
+    return {
+      html: html || undefined,
+      postId: resolvedId,
+      postType: resolvedType,
+    };
   } catch {
     return undefined;
   }
+}
+
+/** Live WordPress `content.raw` for one row (server route; same path for every row). */
+export async function fetchLiveWordPressPostBodyForRow(
+  site: WordPressSite,
+  row: OverviewRow,
+  invMatch?: OverviewInventoryUrlMatch,
+): Promise<string | undefined> {
+  const res = await fetchLiveWordPressPostForRow(site, row, invMatch);
+  return res?.html;
 }

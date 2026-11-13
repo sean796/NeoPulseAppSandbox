@@ -136,9 +136,10 @@ export function LocalGridMapToolbar({
 
         <FilterRow align="end">
           <Button
-            variant="run"
+            variant="tool"
             icon={Box}
             title="Open Local Grid Data Report"
+            disabled={!hasScan}
             onClick={onScrollToReport}
           >
             Analyze

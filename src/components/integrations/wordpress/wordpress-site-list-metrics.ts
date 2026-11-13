@@ -18,9 +18,9 @@ export function nextEditorialPeriodTooltipText(isoExclusiveEnd: string): string 
 /** Metric cells in a row; flush black bar, no gaps between count frames. */
 export const PROPERTY_METRICS_CLUSTER_CLASS = "inline-flex shrink-0 items-stretch gap-0";
 
-/** Fixed width for 2-digit counts so columns align across rows. */
+/** Fixed width for ratio counts (e.g. 12/12) so columns never shift; right-aligned for dock stacks. */
 export const PROPERTY_METRIC_COUNT_SLOT_CLASS =
-  "inline-block min-w-[1.5rem] text-center tabular-nums";
+  "inline-block w-[2.75rem] min-w-[2.75rem] max-w-[2.75rem] text-right tabular-nums";
 
 export function propertyMetricCellClass(compact: boolean): string {
   return getPropertyListRowBlackMetricFrameClass(compact);
@@ -36,6 +36,14 @@ export function propertyMetricCellWidths(rowDisplay: WordPressPropertyRowDisplay
   };
 }
 
+/** Posts + entity widths combined — loading mark must match loaded posts+entity cells (no CLS). */
+export function propertyMetricsLoadingClusterClass(rowDisplay: WordPressPropertyRowDisplay): string {
+  // Compact posts+ent = 3.75+3.75=7.5rem; standard = 4.25+4.25=8.5rem
+  return rowDisplay === "compact"
+    ? "!box-border !min-h-9 !h-9 !min-w-[7.5rem] !w-[7.5rem] max-w-[7.5rem]"
+    : "!box-border !min-h-10 !h-10 !min-w-[8.5rem] !w-[8.5rem] max-w-[8.5rem]";
+}
+
 export function quarterPairTotalForStrip(
   a: number | null,
   b: number | null,
@@ -49,8 +57,8 @@ export function quarterPairTotalForStrip(
   return a + b;
 }
 
-export function formatQuarterCountCell(n: number | null, loading: boolean): string {
-  if (loading && (n === null || !Number.isFinite(n))) return "â€”";
+export function formatQuarterCountCell(n: number | null, _loading: boolean): string {
+  // Always show a number — never blank/dash placeholders.
   if (typeof n === "number" && Number.isFinite(n)) return String(n);
   return "0";
 }
@@ -58,9 +66,8 @@ export function formatQuarterCountCell(n: number | null, loading: boolean): stri
 export function formatScheduledVsQuota(
   total: number | null,
   quota: number,
-  loading: boolean,
+  _loading: boolean,
 ): string {
-  if (loading && total === null) return "â€”";
   const n = typeof total === "number" && Number.isFinite(total) ? total : 0;
   return `${n}/${quota}`;
 }

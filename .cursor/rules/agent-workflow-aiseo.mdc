@@ -29,3 +29,9 @@ Act as a **senior software engineer** and **AI SEO (AISEO)** expert: align work 
 ## Organization
 
 - Write **plans and code semantically**: intention-revealing names, one main responsibility per module, obvious data flow, and consistent project patterns.
+
+## Content optimization & generation: prompt-guided, never post-generation rejection gates
+
+- **Never block or discard generated sections**: When the user runs Auto SEO, Optimize, or any content generation/rewrite pipeline, **every section must complete and commit**.
+- **Forbidden**: Post-generation assertion gates that throw and discard a rewritten section, title, meta description, or FAQ because a banned word/phrase appeared (`assertNoForbiddenWordViolations`) or because an n-gram / phrase-overlap ratio exceeded a threshold (`assertAiseoBodyRewriteChanged`, `assertNotSynonymSwap`, `assertAiseoHeadingRewriteChanged`).
+- **Guide in the prompt, accept the output**: Style rules, word blocklists, and from-scratch rewrite instructions belong in the **OpenRouter system/user prompts only**. Once the model returns non-empty valid JSON/HTML, commit the result. Future code audits and refactors must **never** re-introduce throwing word-blocklist or phrase-overlap assertions into optimization or generation pipelines.

@@ -6,7 +6,8 @@ import {
   Square,
 } from "lucide-react";
 import { ContentOptimizerSplashOverlay } from "@/components/overview/studio/ContentOptimizerSplashOverlay";
-import { OverviewStudioGeneratedFilesBand } from "@/components/overview/studio/OverviewStudioGeneratedFilesBand";
+import { EXPORT_PAGE_CLASS } from "@/components/organic-dashboard/organic-client-report-export-theme";
+import { DetailsDockPortal } from "@/components/pulse-assist/details-dock";
 import {
   CONTENT_OPTIMIZER_ACTIVE_ROW_TEXT_CLASS,
   CONTENT_OPTIMIZER_SQUARE_CONTROLS_CLASS,
@@ -37,6 +38,8 @@ export function OrganicReportingStudioShell({
   dateRangePopoverOpen,
   onDateRangePopoverOpenChange,
   splashVisible,
+  splashStatusText,
+  splashStatusVisual,
   busy,
   activeStatusText,
   reportContent,
@@ -152,8 +155,45 @@ export function OrganicReportingStudioShell({
     [siteName],
   );
 
+  const handleDownloadAll = useCallback(() => {
+    readyFiles.forEach((f, idx) => {
+      setTimeout(() => triggerBlobDownload(f), idx * 200);
+    });
+    notify.success(NOTIFY_CSV_DOWNLOADED);
+  }, [readyFiles]);
+
   const drawerContent = (
     <div className="flex flex-col">
+      {activeStatusText.trim() ? (
+        <p
+          className={cn(
+            "border-b border-white/10 px-4 py-2.5 text-base",
+            busy ? CONTENT_OPTIMIZER_ACTIVE_ROW_TEXT_CLASS : "text-muted-foreground",
+          )}
+          role="status"
+          aria-live="polite"
+        >
+          {activeStatusText}
+        </p>
+      ) : null}
+      <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-2 text-base text-muted-foreground">
+        <span className="tabular-nums">
+          <span className={cn(busy ? CONTENT_OPTIMIZER_ACTIVE_ROW_TEXT_CLASS : "text-white")}>
+            {readyCount}
+          </span>
+          /{outlineItems.length} ready
+        </span>
+        {readyFiles.length > 0 ? (
+          <Button
+            size="icon"
+            icon={Download}
+            variant="quiet"
+            title="Download all files"
+            aria-label="Download all files"
+            onClick={handleDownloadAll}
+          />
+        ) : null}
+      </div>
       <ul className="flex flex-col divide-y divide-white/5">
         {outlineItems.map((step, idx) => {
           const canDownload = Boolean(step.downloadFile);
@@ -201,14 +241,7 @@ export function OrganicReportingStudioShell({
         "flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden bg-background",
       )}
     >
-      <div className="relative flex h-full min-h-0 w-full flex-1 flex-row overflow-hidden bg-black">
-        <ContentOptimizerSplashOverlay visible={splashVisible} />
-        <div
-          className={cn(
-            "flex h-full min-h-0 w-full flex-1 flex-row overflow-hidden",
-            splashVisible && "invisible pointer-events-none",
-          )}
-        >
+      <div className="flex h-full min-h-0 w-full flex-1 flex-row overflow-hidden bg-black">
         {/* Left Studio Dock */}
         <OrganicReportingStudioLeftDock
           dockWidth={dockWidth}
@@ -295,46 +328,53 @@ export function OrganicReportingStudioShell({
                   </Button>
                 </div>
               </div>
-
-              <OverviewStudioGeneratedFilesBand
-                busy={busy}
-                activeHeadlineText={activeStatusText}
-                displayStepCurrent={readyCount}
-                totalStepCount={outlineItems.length}
-                allReadyFiles={readyFiles}
-                detailsPanelId="organic-reporting-generated-files-panel"
-                drawerContent={drawerContent}
-                endRailTitle="Report sections & artifacts"
-              />
             </header>
 
-            {/* Studio Document Canvas Body */}
-            <div
-              ref={scrollContainerRef}
-              className="min-h-0 flex-1 overflow-y-auto bg-ui-field/40 px-4 py-6 sm:px-8"
-            >
-              {reportContent ? (
+            {/* Studio Document Canvas Body (OPT-style black splash scoped here only) */}
+            <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-black">
+              <ContentOptimizerSplashOverlay
+                visible={splashVisible}
+                statusText={splashStatusText}
+                statusVisual={splashStatusVisual}
+                ariaLabel="Loading performance report"
+              />
+              <div
+                ref={scrollContainerRef}
+                className={cn(
+                  "min-h-0 flex-1 overflow-y-auto overscroll-y-contain bg-ui-field/40 px-4 py-6 sm:px-8",
+                  splashVisible && "invisible pointer-events-none",
+                )}
+              >
                 <div className="mx-auto w-full max-w-[52rem]">
-                  <OrganicClientReportExportDocument
-                    content={reportContent}
-                    highlightsLoading={highlightsLoading}
-                    localGridNarrativeLoading={localGridNarrativeLoading}
-                    highlightsError={highlightsError}
-                    onToggleLogoBoxTheme={onToggleLogoBoxTheme}
-                  />
+                  {reportContent ? (
+                    <OrganicClientReportExportDocument
+                      content={reportContent}
+                      highlightsLoading={highlightsLoading}
+                      localGridNarrativeLoading={localGridNarrativeLoading}
+                      highlightsError={highlightsError}
+                      onToggleLogoBoxTheme={onToggleLogoBoxTheme}
+                    />
+                  ) : reportIdleMessage ? (
+                    <div
+                      className={cn(
+                        EXPORT_PAGE_CLASS,
+                        "flex min-h-[16rem] flex-col items-center justify-center gap-2 text-center",
+                      )}
+                    >
+                      <p className="text-base text-[#b91c1c]">{reportIdleMessage}</p>
+                    </div>
+                  ) : (
+                    <div className="min-h-[12rem]" aria-hidden />
+                  )}
                 </div>
-              ) : reportIdleMessage ? (
-                <div className="mx-auto flex min-h-[12rem] w-full max-w-[52rem] flex-col items-center justify-center gap-2 px-4 text-center text-base text-muted-foreground">
-                  <p>{reportIdleMessage}</p>
-                </div>
-              ) : (
-                <div className="min-h-0 flex-1" aria-hidden />
-              )}
+              </div>
             </div>
           </div>
         </div>
-        </div>
       </div>
+      <DetailsDockPortal id="organic-reporting-generated-files-panel">
+        {drawerContent}
+      </DetailsDockPortal>
     </div>
   );
 }

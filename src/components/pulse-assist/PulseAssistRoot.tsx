@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useAgentRunsContext } from "@/contexts/use-agent-runs-context";
 import { usePulseAssistContext } from "@/contexts/pulse-assist-context";
 import { AgentRunsPanel } from "@/components/agent-runs/AgentRunsPanel";
+import { TaskManagerPanel } from "@/components/task-manager/TaskManagerPanel";
 import { PulseAssistChatPanel } from "./PulseAssistChatPanel";
 import { PulseEngineInspectorPanel } from "./PulseEngineInspectorPanel";
 import { PulseAssistSidebarShell } from "./PulseAssistSidebarShell";
@@ -55,6 +56,8 @@ export function PulseAssistRoot({ layout = "overlay" }: PulseAssistRootProps) {
     >
       {sidebarPanel === "details" && showDetails ? (
         <div ref={detailsDock?.setTarget} className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-black" />
+      ) : sidebarPanel === "tasks" ? (
+        <TaskManagerPanel />
       ) : sidebarPanel === "agents" ? (
         <AgentRunsPanel />
       ) : sidebarPanel === "seo" && showSeo ? (

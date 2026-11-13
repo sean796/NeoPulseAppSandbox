@@ -15,6 +15,7 @@ export type SitePropertyEditPanelProps = SitePropertyFormFieldsProps & {
   onSave: () => void;
   hideSave?: boolean;
   settingsSubSectionId?: PropertySettingsSubSectionId;
+  onSettingsSubSectionChange?: (id: PropertySettingsSubSectionId) => void;
 };
 
 function findServerRow(site: WordPressSite, rows: WordPressSite[]): WordPressSite | undefined {
@@ -31,6 +32,7 @@ export const SitePropertyEditPanel: React.FC<SitePropertyEditPanelProps> = ({
   onSave,
   hideSave = false,
   settingsSubSectionId,
+  onSettingsSubSectionChange,
   layout,
   formGbpLocationId,
   formGa4PropertyId,
@@ -111,6 +113,7 @@ export const SitePropertyEditPanel: React.FC<SitePropertyEditPanelProps> = ({
             {...formProps}
             layout={layout}
             settingsSubSectionId={settingsSubSectionId}
+            onSettingsSubSectionChange={onSettingsSubSectionChange}
             formGbpLocationId={formGbpLocationId}
             formGa4PropertyId={formGa4PropertyId}
             formGoogleAdsCustomerId={formGoogleAdsCustomerId}

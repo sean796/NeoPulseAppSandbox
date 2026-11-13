@@ -309,33 +309,24 @@ describe("sanitizeForbiddenWordsInChecklistItem", () => {
 });
 
 describe("assertNoForbiddenWordViolations", () => {
-  it("throws a visible error listing violations instead of rewriting copy", () => {
+  it("never throws or blocks generated copy", () => {
     const html =
       "<h2>5 New PST Categories</h2><p>Understanding these reforms is crucial for businesses to comply.</p>";
-    expect(() => assertNoForbiddenWordViolations(html, "Article body")).toThrow(
-      /failed the word blocklist check/,
-    );
-    expect(() => assertNoForbiddenWordViolations(html, "Article body")).toThrow(/crucial/);
+    expect(() => assertNoForbiddenWordViolations(html, "Article body")).not.toThrow();
   });
 
-  it("throws on forbidden heading titles", () => {
-    const html = "<h2>Understanding the 5 New PST Categories</h2><p>Body text.</p>";
-    expect(() => assertNoForbiddenWordViolations(html)).toThrow(/forbidden heading/);
+  it("never throws on headings or punctuation", () => {
+    const html = "<h2>Understanding the 5 New PST Categories</h2><p>Fast service \u2014 booked today.</p>";
+    expect(() => assertNoForbiddenWordViolations(html)).not.toThrow();
   });
 
-  it("throws on em dash punctuation", () => {
-    expect(() => assertNoForbiddenWordViolations("<p>Fast service \u2014 booked today.</p>")).toThrow(
-      /em dash or en dash/,
-    );
-  });
-
-  it("passes clean copy and still flags we-often-find", () => {
+  it("passes clean copy while listForbiddenWordViolations still inspects text", () => {
     const keep = "<p>We recommend cellular shades when west glass overheats.</p>";
     expect(() => assertNoForbiddenWordViolations(keep)).not.toThrow();
     expect(listForbiddenWordViolations(keep)).toEqual([]);
     const hollow = "<p>We often find that homeowners prefer cellular shades.</p>";
     expect(listForbiddenWordViolations(hollow)).toContain("banned phrase: we often find");
-    expect(() => assertNoForbiddenWordViolations(hollow)).toThrow(/we often find/);
+    expect(() => assertNoForbiddenWordViolations(hollow)).not.toThrow();
   });
 });
 

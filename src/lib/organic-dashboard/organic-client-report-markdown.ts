@@ -195,6 +195,12 @@ export function serializeOrganicClientReportMarkdown(content: OrganicClientRepor
     googleAdsDeckRows,
     googleAdsLoadError,
     showGoogleAdsSection,
+    showSeoLeadsSection,
+    seoLeadsDeckRows,
+    seoLeadsLoadError,
+    showGmbLeadsSection,
+    gmbLeadsDeckRows,
+    gmbLeadsLoadError,
     showPerformanceSection,
     showSemrushSection,
     showKeywordSection,
@@ -230,6 +236,29 @@ export function serializeOrganicClientReportMarkdown(content: OrganicClientRepor
     blocks.push("");
   }
 
+  if (showSeoLeadsSection) {
+    blocks.push("## Organic Website Leads", "");
+    if (seoLeadsLoadError) {
+      blocks.push(seoLeadsLoadError, "");
+    }
+    if (seoLeadsDeckRows.length > 0) {
+      blocks.push(metricRowsMarkdown(seoLeadsDeckRows, showCompare, comparePeriodLabel, primaryPeriodLabel), "");
+    }
+  }
+
+  if (showGmbLeadsSection) {
+    blocks.push("## Google My Business Leads", "");
+    if (gmbLeadsLoadError) {
+      blocks.push(gmbLeadsLoadError, "");
+    }
+    if (!gmbLeadsLoadError && gmbLeadsDeckRows.length > 0) {
+      blocks.push(
+        metricRowsMarkdown(gmbLeadsDeckRows, showCompare, comparePeriodLabel, primaryPeriodLabel),
+        "",
+      );
+    }
+  }
+
   if (showPerformanceSection) {
     blocks.push("## Performance summary", "");
     if (performanceNarrative.length > 0) {
@@ -244,7 +273,7 @@ export function serializeOrganicClientReportMarkdown(content: OrganicClientRepor
     if (periodProgressTables?.gsc) {
       blocks.push(periodProgressTableMarkdown(periodProgressTables.gsc), "");
     }
-    blocks.push("### Website traffic (GA4)", "");
+    blocks.push("### Website traffic (Google Analytics)", "");
     blocks.push(metricRowsMarkdown(traffic, showCompare, comparePeriodLabel, primaryPeriodLabel), "");
     blocks.push("### Search visibility (GSC)", "");
     blocks.push(metricRowsMarkdown(search, showCompare, comparePeriodLabel, primaryPeriodLabel), "");

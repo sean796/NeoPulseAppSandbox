@@ -21,7 +21,7 @@ import {
 } from "@/lib/master-instructions-openrouter-summarize";
 import { loadApiKey } from "@/lib/api";
 
-import { Button, FileInput, RowButton, Progress } from "@/ui";
+import { Button, FileInput, RowButton, Progress, SelectField } from "@/ui";
 
 const COPY = "font-sans text-base text-white";
 
@@ -57,6 +57,10 @@ interface MasterInstructionsSectionProps {
   siteUrl?: string;
   siteName?: string;
   disabled?: boolean;
+  /** `dropdown` fits the property screen: file picker, preview, pencil-gated add/remove. */
+  layout?: "page" | "dropdown";
+  /** When layout is dropdown, pencil turns on add/remove. */
+  editing?: boolean;
 }
 
 export const MasterInstructionsSection: React.FC<MasterInstructionsSectionProps> = ({
@@ -64,11 +68,14 @@ export const MasterInstructionsSection: React.FC<MasterInstructionsSectionProps>
   siteUrl = "",
   siteName = "",
   disabled = false,
+  layout = "page",
+  editing = false,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const dragDepthRef = useRef(0);
   const [sources, setSources] = useState<MasterInstructionSource[]>([]);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [busy, setBusy] = useState(false);
   const [summarizingPhase, setSummarizingPhase] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -285,6 +292,104 @@ export const MasterInstructionsSection: React.FC<MasterInstructionsSectionProps>
   const combinedPreview = sources
     .map((s) => `=== FILE: ${s.name} ===\n${s.content}`)
     .join("\n\n");
+
+  const safeIndex = sources.length === 0 ? 0 : Math.min(selectedIndex, sources.length - 1);
+  const selectedSource = sources[safeIndex];
+
+  if (layout === "dropdown") {
+    const fileText = selectedSource?.content?.trim() ?? "";
+    return (
+      <div
+        className={`flex min-h-0 flex-1 flex-col gap-2 ${COPY}`}
+        onDragEnter={onDropZoneDragEnter}
+        onDragLeave={onDropZoneDragLeave}
+        onDragOver={onDropZoneDragOver}
+        onDrop={onDropZoneDrop}
+      >
+        <FileInput
+          ref={inputRef}
+          accept=".txt,.md,.markdown,.docx,.pdf,application/pdf"
+          multiple
+          onChange={onFileChange}
+          disabled={disabled || busy}
+          tabIndex={-1}
+        />
+        {sources.length > 1 ? (
+          <div className="flex shrink-0 items-center gap-2">
+            <div className="min-w-0 flex-1">
+              <SelectField
+                placeholder="File"
+                width="full"
+                disabled={disabled}
+                value={String(safeIndex)}
+                options={sources.map((source, index) => ({ value: String(index), label: source.name }))}
+                onValueChange={(value) => setSelectedIndex(Number(value))}
+              />
+            </div>
+            {editing ? (
+              <Button
+                type="button"
+                variant="quiet"
+                disabled={disabled || busy}
+                aria-label="Remove file"
+                onClick={() => removeAt(safeIndex)}
+              >
+                <Trash2 className="h-4 w-4" aria-hidden />
+              </Button>
+            ) : null}
+          </div>
+        ) : selectedSource ? (
+          <div className="flex shrink-0 items-center justify-between gap-2">
+            <span className="min-w-0 truncate text-base text-white">{selectedSource.name}</span>
+            {editing ? (
+              <Button
+                type="button"
+                variant="quiet"
+                disabled={disabled || busy}
+                aria-label="Remove file"
+                onClick={() => removeAt(safeIndex)}
+              >
+                <Trash2 className="h-4 w-4" aria-hidden />
+              </Button>
+            ) : null}
+          </div>
+        ) : null}
+        <div
+          role="button"
+          tabIndex={disabled || busy ? -1 : 0}
+          aria-label="Drop master rule files here or press Enter to browse"
+          onClick={() => {
+            if (!fileText) onPickFiles();
+          }}
+          onKeyDown={(e) => {
+            if (fileText || disabled || busy) return;
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onPickFiles();
+            }
+          }}
+          className={`flex min-h-0 flex-1 flex-col overflow-hidden bg-black p-2 ${
+            isDragging ? "ring-2 ring-primary" : ""
+          } ${fileText ? "" : "cursor-pointer items-center justify-center"}`}
+        >
+          {busy ? (
+            <span className="text-base text-white">
+              {summarizingPhase ? "Extracting nested triples…" : "Reading file…"}
+            </span>
+          ) : fileText ? (
+            <pre className={`min-h-0 flex-1 overflow-auto whitespace-pre-wrap break-words leading-snug ${COPY}`}>
+              {selectedSource?.content}
+            </pre>
+          ) : (
+            <>
+              <Upload className="h-5 w-5 text-white" aria-hidden />
+              <span className="text-base text-white">Drop files</span>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`space-y-4 ${COPY}`}>

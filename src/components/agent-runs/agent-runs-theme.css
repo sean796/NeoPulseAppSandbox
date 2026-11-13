@@ -233,6 +233,7 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  background: var(--pulse-assist-surface, hsl(0 0% 6%));
 }
 
 .agent-runs-empty {
@@ -347,24 +348,82 @@
 
 .agent-runs-site-picker-row .agent-runs-bucket-select-slot {
   display: block;
-  flex: 0 0 auto;
+  flex: 0 0 var(--agent-runs-picker-control-width, 17.25rem) !important;
   align-self: center;
+  width: var(--agent-runs-picker-control-width, 17.25rem) !important;
+  min-width: var(--agent-runs-picker-control-width, 17.25rem) !important;
+  max-width: var(--agent-runs-picker-control-width, 17.25rem) !important;
   height: 2rem;
   min-height: 2rem;
   max-height: 2rem;
   overflow: hidden;
+  /* Width: same CSS var as client filter (Tasks + Agents). */
+  box-sizing: border-box;
+}
+
+/* Greyscale wells only — never primary green (Tasks + Agents share this). */
+.agent-runs-site-picker-row .agent-runs-bucket-select-slot button[role="combobox"],
+.agent-runs-site-picker-row .agent-runs-header-site-filter,
+.agent-runs-site-picker-row .agent-runs-client-header__site-filter,
+.agent-runs-site-picker-row__logs > button {
+  background: hsl(var(--ui-field)) !important;
+  color: hsl(var(--foreground)) !important;
+  font-weight: 500;
+  box-shadow: none;
+}
+
+.agent-runs-site-picker-row .agent-runs-bucket-select-slot button[role="combobox"]:hover,
+.agent-runs-site-picker-row .agent-runs-header-site-filter:hover,
+.agent-runs-site-picker-row .agent-runs-client-header__site-filter:hover,
+.agent-runs-site-picker-row__logs > button:hover:not(:disabled) {
+  background: hsl(var(--ui-field-hover)) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 .agent-runs-site-picker-row .agent-runs-bucket-select-slot button[role="combobox"] {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
   height: 2rem;
   min-height: 2rem;
   max-height: 2rem;
   padding-top: 0;
   padding-bottom: 0;
+  box-sizing: border-box;
+}
+
+.agent-runs-site-picker-row .agent-runs-bucket-select-slot button[role="combobox"] span,
+.agent-runs-site-picker-row .agent-runs-header-site-filter span,
+.agent-runs-site-picker-row .agent-runs-client-header__site-filter span {
+  color: hsl(var(--foreground)) !important;
+}
+
+.agent-runs-site-picker-row .agent-runs-bucket-select-slot button[role="combobox"] svg,
+.agent-runs-site-picker-row .agent-runs-header-site-filter svg,
+.agent-runs-site-picker-row .agent-runs-client-header__site-filter svg,
+.agent-runs-site-picker-row__logs > button svg {
+  color: hsl(var(--muted-foreground)) !important;
+  opacity: 1 !important;
 }
 
 .agent-runs-site-picker-row__logs {
   margin-left: auto;
+  display: inline-flex;
+  height: 2rem;
+  min-width: 7.5rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.agent-runs-site-picker-row__logs > button {
+  height: 2rem;
+  min-height: 2rem;
+}
+
+.agent-runs-site-picker-row__logs > button[aria-hidden="true"] {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .agent-runs-bucket-tab--has-active {
@@ -376,29 +435,28 @@
   flex-shrink: 0;
 }
 
-.agent-runs-header-site-filter {
-  width: auto;
-  min-width: 0;
-  max-width: 12rem;
-  flex: 0 1 auto;
+/* Fixed site slot: same width as kind/bucket (Tasks + Agents, zero CLS). */
+.agent-runs-header-site-filter,
+.agent-runs-site-picker-row .agent-runs-header-site-filter,
+.agent-runs-site-picker-row .agent-runs-client-header__site-filter {
+  width: var(--agent-runs-picker-control-width, 17.25rem) !important;
+  min-width: var(--agent-runs-picker-control-width, 17.25rem) !important;
+  max-width: var(--agent-runs-picker-control-width, 17.25rem) !important;
+  flex: 0 0 var(--agent-runs-picker-control-width, 17.25rem) !important;
   min-height: 2rem;
   height: 2rem;
   padding: 0 0.625rem;
-  background: #000;
-  font-weight: 600;
   overflow: hidden;
+  justify-content: space-between;
+  box-sizing: border-box;
 }
 
 .agent-runs-header-site-filter span {
   min-width: 0;
+  flex: 1 1 auto;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.agent-runs-header-site-filter:hover {
-  background: hsl(var(--primary));
-  color: #000;
 }
 
 .agent-runs-site-filter-panel {
@@ -429,14 +487,14 @@
 
 .agent-runs-site-filter-panel .client-site-filter-panel__item.agent-runs-site-filter-panel__item--active,
 .agent-runs-site-filter-panel .client-site-filter-panel__item.agent-runs-site-filter-panel__item--active span {
-  background: hsl(var(--primary));
-  color: #000;
+  background: #27272a;
+  color: hsl(var(--foreground));
 }
 
 .agent-runs-site-filter-panel .client-site-filter-panel__item:hover:not(.agent-runs-site-filter-panel__item--active),
 .agent-runs-site-filter-panel .client-site-filter-panel__item:hover:not(.agent-runs-site-filter-panel__item--active) span {
-  background: hsl(var(--primary));
-  color: #000;
+  background: #3f3f46;
+  color: hsl(var(--foreground));
 }
 
 .agent-runs-client-header--site-only {
@@ -445,17 +503,9 @@
 }
 
 .agent-runs-client-header__site-filter {
-  max-width: 12rem;
   min-height: 2rem;
   height: 2rem;
   padding: 0 0.625rem;
-  background: #000;
-  font-weight: 600;
-}
-
-.agent-runs-client-header__site-filter:hover {
-  background: transparent;
-  color: hsl(var(--primary));
 }
 
 .agent-runs-client-header {
@@ -632,6 +682,11 @@
   line-height: 1.5rem;
   text-align: left;
   overflow-wrap: anywhere;
+}
+
+/* Tasks: stacked status lines under the title (step / % / post). */
+.agent-runs-card__hint.flex {
+  min-height: auto;
 }
 
 .agent-runs-card__drawer {

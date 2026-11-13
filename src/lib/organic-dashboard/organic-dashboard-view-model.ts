@@ -8,6 +8,17 @@ import {
   formatGoogleAdsLoadError,
   readOrganicGoogleAdsPayload,
 } from "@/lib/organic-dashboard/organic-dashboard-google-ads";
+import {
+  buildNdusLeadsSummary,
+  buildNdusLeadsTable,
+  formatNdusLeadsLoadError,
+  readOrganicNdusLeadsPayload,
+} from "@/lib/organic-dashboard/organic-dashboard-ndus-leads";
+import {
+  buildGmbLeadsSummary,
+  formatGmbLeadsLoadError,
+  readOrganicGmbLeadsPayload,
+} from "@/lib/organic-dashboard/organic-dashboard-gmb-leads";
 import { isOrganicSkippedBlock } from "@/lib/organic-dashboard/organic-dashboard-types";
 import { formatComparePeriodLabel } from "@/lib/reporting/reporting-date-presets";
 import {
@@ -107,6 +118,29 @@ export function buildOrganicDashboardViewModel(
     : null;
   const hasGoogleAds = !!googleAdsSummary;
 
+  const ndusLeadsRaw = data?.ndusLeads;
+  const ndusLeadsRead = readOrganicNdusLeadsPayload(ndusLeadsRaw);
+  const ndusLeadsParsed = ndusLeadsRead.ok ? ndusLeadsRead.data : null;
+  const ndusLeadsLoadError = ndusLeadsRead.ok
+    ? null
+    : formatNdusLeadsLoadError(ndusLeadsRaw);
+  const ndusLeadsSummary = ndusLeadsParsed
+    ? buildNdusLeadsSummary(ndusLeadsParsed, showCompare)
+    : null;
+  const ndusLeadsTable = buildNdusLeadsTable(ndusLeadsSummary, showCompare);
+  const hasNdusLeads = !!ndusLeadsSummary;
+
+  const gmbLeadsRaw = data?.gmbLeads;
+  const gmbLeadsRead = readOrganicGmbLeadsPayload(gmbLeadsRaw);
+  const gmbLeadsParsed = gmbLeadsRead.ok ? gmbLeadsRead.data : null;
+  const gmbLeadsLoadError = gmbLeadsRead.ok
+    ? null
+    : formatGmbLeadsLoadError(gmbLeadsRaw);
+  const gmbLeadsSummary = gmbLeadsParsed
+    ? buildGmbLeadsSummary(gmbLeadsParsed, showCompare)
+    : null;
+  const hasGmbLeads = !!gmbLeadsSummary;
+
   const periodTotalColumnLabel =
     options?.periodTotalColumnLabel ??
     (periodLabels.primary !== "Current period" ? periodLabels.primary : "Total");
@@ -143,6 +177,13 @@ export function buildOrganicDashboardViewModel(
     googleAdsLoadError,
     googleAdsBudgetPacing,
     hasGoogleAds,
+    ndusLeadsSummary,
+    ndusLeadsTable,
+    ndusLeadsLoadError,
+    hasNdusLeads,
+    gmbLeadsSummary,
+    gmbLeadsLoadError,
+    hasGmbLeads,
   };
   const periodProgressTables = buildOrganicPeriodProgressTables(
     ga4,
@@ -200,6 +241,17 @@ export function normalizeOrganicDashboardViewModelForDeck(raw: unknown): Organic
     googleAdsBudgetPacing:
       r.googleAdsBudgetPacing !== undefined ? r.googleAdsBudgetPacing : defaults.googleAdsBudgetPacing,
     hasGoogleAds: typeof r.hasGoogleAds === "boolean" ? r.hasGoogleAds : defaults.hasGoogleAds,
+    ndusLeadsSummary:
+      r.ndusLeadsSummary !== undefined ? r.ndusLeadsSummary : defaults.ndusLeadsSummary,
+    ndusLeadsTable: Array.isArray(r.ndusLeadsTable) ? r.ndusLeadsTable : defaults.ndusLeadsTable,
+    ndusLeadsLoadError:
+      r.ndusLeadsLoadError !== undefined ? r.ndusLeadsLoadError : defaults.ndusLeadsLoadError,
+    hasNdusLeads: typeof r.hasNdusLeads === "boolean" ? r.hasNdusLeads : defaults.hasNdusLeads,
+    gmbLeadsSummary:
+      r.gmbLeadsSummary !== undefined ? r.gmbLeadsSummary : defaults.gmbLeadsSummary,
+    gmbLeadsLoadError:
+      r.gmbLeadsLoadError !== undefined ? r.gmbLeadsLoadError : defaults.gmbLeadsLoadError,
+    hasGmbLeads: typeof r.hasGmbLeads === "boolean" ? r.hasGmbLeads : defaults.hasGmbLeads,
     reportStructure:
       r.reportStructure === "period_progress" || r.reportStructure === "compare"
         ? r.reportStructure

@@ -181,6 +181,27 @@ describe("generateAndPrependOverviewHtml", () => {
       }),
     ).rejects.toThrow(/Answer section could not be generated/);
   });
+
+  it("generates Overview for intro-only bodies with no H2 sections", async () => {
+    vi.mocked(callOpenRouterChatCompletion).mockResolvedValue({
+      raw: null,
+      content: `<h2>Overview</h2><p>Lead.</p><ul><li><strong>Scope</strong>: intro topics.</li><li><strong>Fit</strong>: room needs.</li><li><strong>Next</strong>: consult.</li><li><strong>Care</strong>: maintain.</li></ul>`,
+    });
+
+    const result = await generateAndPrependOverviewHtml({
+      sourceHtml: `<p>Intro only article prose about window coverings for London homes.</p>`,
+      articleTitle: "Window Coverings Guide",
+      focusKeyword: "window coverings",
+      apiKey: "test-key",
+      connectedSite: { name: "Acme Plumbing", siteUrl: "https://example.com" },
+      pregeneratedAnswerHtml: `<h2 id="answer">Answer</h2><p>Direct answer one. Direct answer two.</p>`,
+    });
+
+    expect(result).not.toBeNull();
+    expect(result?.html).toContain("Overview");
+    expect(result?.html).toContain("Intro only article prose");
+    expect(result?.bodyH2Titles).toEqual([]);
+  });
 });
 
 describe("answer-only prepend stitch", () => {

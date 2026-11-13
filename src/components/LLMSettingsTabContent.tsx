@@ -408,7 +408,7 @@ export const LLMSettingsTabContent: React.FC<LLMSettingsTabContentProps> = ({
           <DashboardAgentModelSelect
             tile
             label="Decision agent"
-            description="Liquid d1.1 checker, quality gate batches, score rubrics, and fix routing."
+            description="Liquid checker, quality gate batches, score rubrics, and fix routing."
             value={decisionModel}
             presets={DECISION_AGENT_MODEL_PRESETS}
             onChange={onDecisionModelChange}

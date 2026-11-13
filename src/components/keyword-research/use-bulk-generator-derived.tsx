@@ -117,7 +117,7 @@ export function useBulkGeneratorDerived({
   }, [bulkBindings, postDestination, workspaceBusy]);
 
   const studioVariant =
-    studioEditorMode === "csv"
+    studioEditorMode === "blog-import"
       ? importedFileName
         ? ("blog-import" as const)
         : ("csv" as const)

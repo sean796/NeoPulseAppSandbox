@@ -1,7 +1,6 @@
 import { LayoutDashboard } from "lucide-react";
 import { UnifiedWorkspaceChrome } from "@/components/shared/UnifiedWorkspaceChrome";
 import { DashboardSectionPills } from "@/components/manager/dashboard/DashboardSectionPills";
-import { DashboardToolbar } from "@/components/manager/dashboard/DashboardToolbar";
 import type { ManagerSettingsClusterId } from "@/components/manager/manager-settings-cluster";
 
 export type DashboardWorkspaceHeaderProps = {
@@ -26,7 +25,7 @@ export function DashboardWorkspaceHeader({
           sectionOrder={visibleSectionIds}
         />
       }
-      toolbar={<DashboardToolbar activeSection={activeSection} />}
+      toolbar={<div className="flex min-w-0 flex-1" />}
       workspaceBusy={false}
       progressBand="empty"
     />

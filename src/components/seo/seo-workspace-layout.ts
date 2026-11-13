@@ -14,3 +14,7 @@ export const SEO_WORKSPACE_HEADER_CLASS = "relative z-30 shrink-0";
 
 export const SEO_WORKSPACE_BODY_SCROLL_CLASS =
   "neo-pulse-manager-tab-scroll h-0 min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain";
+
+/** Dashboard Properties: list owns scroll; body stays fixed height (visible scrollbar on list). */
+export const SEO_WORKSPACE_BODY_FILL_CLASS =
+  "flex h-0 min-h-0 flex-1 flex-col overflow-hidden";

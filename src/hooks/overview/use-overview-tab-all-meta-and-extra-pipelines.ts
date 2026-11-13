@@ -172,17 +172,6 @@ export function useOverviewTabAllMetaAndExtraPipelines({
       if (!base) return;
 
       let snapshot: OverviewRow = { ...base };
-      let ranResearch = false;
-      if (
-        !snapshot.focusKeyword?.trim() ||
-        !snapshot.seoResearch?.trim() ||
-        needsOverviewResearchRefresh(snapshot, snapshot.focusKeyword ?? "")
-      ) {
-        ranResearch = true;
-        const researchPatch = await handleDataForSeoResearch(index, { silent: true });
-        if (researchPatch === null) return;
-        snapshot = { ...snapshot, ...researchPatch };
-      }
 
       if (!overviewTitleOptimizationExcluded(snapshot)) {
         const titlePatch = await handleAiTitleRow(index, snapshot);
@@ -197,13 +186,12 @@ export function useOverviewTabAllMetaAndExtraPipelines({
       await handleAiFaqRowAll(index, snapshot, { silentToast: true, skipFaqLoading: true });
 
       const parts: string[] = [];
-      if (ranResearch) parts.push("research");
       if (!overviewTitleOptimizationExcluded(snapshot)) parts.push("title");
       parts.push("meta");
       parts.push("FAQ");
       notify.success(notifyOptimizeAllSerpFinishedX(parts.join(", ")));
     },
-    [rows, handleDataForSeoResearch, handleAiTitleRow, handleAiMetaRow, handleAiFaqRowAll],
+    [rows, handleAiTitleRow, handleAiMetaRow, handleAiFaqRowAll],
   );
 
   const handleAiAllMetaRow = useCallback(

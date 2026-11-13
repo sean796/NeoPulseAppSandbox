@@ -27,6 +27,24 @@ import type { WordPressSite } from "@/components/integrations/types";
 import type { OverviewTabContentProps } from "@/components/overview/overview-tab/overview-tab-content-types";
 import type { useWordPressOptimization } from "@/contexts/wordpress-optimization-context";
 import { useOverviewWordPressBinding } from "@/hooks/overview/use-overview-wordpress-binding";
+import {
+  consumeOverviewTaskRestoreIntent,
+  OVERVIEW_TASK_RESTORE_EVENT,
+  parseOverviewSourceFromPath,
+  peekOverviewTaskRestoreIntent,
+  type OverviewTaskRestoreIntent,
+} from "@/lib/task-manager/overview-restore";
+
+function peekInitialSitemapSource(
+  studioRowSource: OverviewTabContentProps["studioRowSource"],
+): OverviewSitemapSource {
+  if (studioRowSource === "bulk-generator") return "posts";
+  if (typeof window !== "undefined") {
+    const fromUrl = parseOverviewSourceFromPath(window.location.pathname, window.location.search);
+    if (fromUrl) return fromUrl;
+  }
+  return "pages";
+}
 
 export function useOverviewTabRowsCore({
   site,
@@ -43,12 +61,22 @@ export function useOverviewTabRowsCore({
   opt: ReturnType<typeof useWordPressOptimization>;
   isMultiRowBulkActive: () => boolean;
 }) {
+  const initialSourceRef = useRef<OverviewSitemapSource | null>(null);
+  if (initialSourceRef.current == null) {
+    let source = peekInitialSitemapSource(studioRowSource);
+    if (studioRowSource !== "bulk-generator" && typeof window !== "undefined") {
+      const intent = consumeOverviewTaskRestoreIntent();
+      if (intent?.sitemapSource) source = intent.sitemapSource;
+    }
+    initialSourceRef.current = source;
+  }
   const [sitemapSource, setSitemapSource] = useState<OverviewSitemapSource>(
-    studioRowSource === "bulk-generator" ? "posts" : "pages",
+    () => initialSourceRef.current ?? "pages",
   );
   const [rows, setRows] = useState<OverviewRow[]>(() => {
     if (studioRowSource === "bulk-generator") return [];
-    const initial = loadCachedOverviewRows(site, "pages");
+    const source = initialSourceRef.current ?? "pages";
+    const initial = loadCachedOverviewRows(site, source);
     const frame1 = {
       siteId: site?.id,
       siteName: site?.name,
@@ -74,8 +102,26 @@ export function useOverviewTabRowsCore({
   const [expandedResearchBriefUrl, setExpandedResearchBriefUrl] = useState<string | null>(null);
   const [expandedPageUrl, setExpandedPageUrlState] = useState<string | null>(() => {
     if (studioRowSource === "bulk-generator") return null;
-    return resolveOverviewStudioActiveUrlForPaint(site, "pages");
+    return resolveOverviewStudioActiveUrlForPaint(site, initialSourceRef.current ?? "pages");
   });
+
+  useEffect(() => {
+    if (studioRowSource === "bulk-generator") return;
+    const applyRestore = (intent: OverviewTaskRestoreIntent | null) => {
+      if (!intent?.sitemapSource) return;
+      if (intent.sitemapSource === sitemapSourceRef.current) return;
+      setSitemapSource(intent.sitemapSource);
+    };
+    const onRestore = (event: Event) => {
+      const detail = (event as CustomEvent<OverviewTaskRestoreIntent>).detail;
+      applyRestore(detail ?? null);
+    };
+    window.addEventListener(OVERVIEW_TASK_RESTORE_EVENT, onRestore as EventListener);
+    applyRestore(consumeOverviewTaskRestoreIntent());
+    return () => {
+      window.removeEventListener(OVERVIEW_TASK_RESTORE_EVENT, onRestore as EventListener);
+    };
+  }, [studioRowSource]);
   const setExpandedPageUrl = useCallback(
     (next: string | null) => {
       setExpandedPageUrlState(next);
@@ -170,6 +216,7 @@ export function useOverviewTabRowsCore({
       }
     }
   }, [opt.bulkOptimizationState, opt.isOptimizingContent, site, bulkBatchKey, setRows, bindings, isMultiRowBulkActive]);
+  const prevSiteIdForSourceRef = useRef<string | undefined>(undefined);
   useEffect(() => {
     if (studioRowSource === "bulk-generator") {
       if (site && !isOverviewSapSourceAvailable(site)) {
@@ -178,22 +225,61 @@ export function useOverviewTabRowsCore({
       return;
     }
     if (!site?.id) {
+      prevSiteIdForSourceRef.current = undefined;
       setSitemapSource("pages");
       return;
     }
-    setSitemapSource("pages");
+    const siteChanged = prevSiteIdForSourceRef.current !== site.id;
+    const prevId = prevSiteIdForSourceRef.current;
+    prevSiteIdForSourceRef.current = site.id;
+    if (!siteChanged) return;
+
+    // Never wipe URL/task restore (e.g. ?source=posts) back to Pages.
+    const fromUrl =
+      typeof window !== "undefined"
+        ? parseOverviewSourceFromPath(window.location.pathname, window.location.search)
+        : null;
+    if (fromUrl) {
+      setSitemapSource(fromUrl);
+      return;
+    }
+    const intent = peekOverviewTaskRestoreIntent();
+    if (intent?.sitemapSource) {
+      setSitemapSource(intent.sitemapSource);
+      return;
+    }
+    // Switching clients with no source in the URL defaults to Pages.
+    // First paint already used peekInitialSitemapSource; skip that overwrite.
+    if (prevId != null) {
+      setSitemapSource("pages");
+    }
   }, [site?.id, site?.sitemaps?.mainSitemapUrl, studioRowSource, site]);
+  const prevRowsSiteIdRef = useRef(site?.id);
   useLayoutEffect(() => {
     if (!site?.id || studioRowSource === "bulk-generator") return;
+    const siteChanged = prevRowsSiteIdRef.current !== site.id;
+    prevRowsSiteIdRef.current = site.id;
     const cachedRows = loadCachedOverviewRows(site, sitemapSource);
     if (cachedRows.length) {
       setRows(cachedRows);
       setExpandedPageUrlState((prev) => {
-        if (prev && cachedRows.some((r) => normalizePageUrlKey(r.url) === normalizePageUrlKey(prev))) {
+        if (
+          !siteChanged &&
+          prev &&
+          cachedRows.some((r) => normalizePageUrlKey(r.url) === normalizePageUrlKey(prev))
+        ) {
           return prev;
         }
         return resolveOverviewStudioActiveUrlForPaint(site, sitemapSource);
       });
+    } else if (siteChanged) {
+      // Client switched and the new client has no cached rows yet: drop the
+      // previous client's rows and open doc immediately so nothing from the
+      // old client can be shown, optimized, or uploaded under the new one.
+      // The sitemap load effect then fetches the new client's rows.
+      setRows([]);
+      rowsRef.current = [];
+      setExpandedPageUrlState(resolveOverviewStudioActiveUrlForPaint(site, sitemapSource));
     }
     activateInventoryCacheForSource(site.id, sitemapSource);
   }, [site?.id, sitemapSource, activateInventoryCacheForSource, studioRowSource, site]);

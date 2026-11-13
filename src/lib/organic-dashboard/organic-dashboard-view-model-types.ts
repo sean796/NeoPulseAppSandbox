@@ -4,6 +4,11 @@ import type {
   OrganicGoogleAdsSummary,
   OrganicGoogleAdsTableRow,
 } from "@/lib/organic-dashboard/organic-dashboard-google-ads";
+import type {
+  OrganicNdusLeadsSummary,
+  OrganicNdusLeadsTableRow,
+} from "@/lib/organic-dashboard/organic-dashboard-ndus-leads";
+import type { OrganicGmbLeadsSummary } from "@/lib/organic-dashboard/organic-dashboard-gmb-leads";
 import type { OrganicPeriodProgressTables } from "@/lib/organic-dashboard/organic-dashboard-period-progress";
 
 export type OrganicGa4TableRow = {
@@ -113,6 +118,13 @@ export type OrganicDashboardViewModel = {
   googleAdsLoadError: string | null;
   googleAdsBudgetPacing: OrganicGoogleAdsBudgetPacingDisplay | null;
   hasGoogleAds: boolean;
+  ndusLeadsSummary: OrganicNdusLeadsSummary | null;
+  ndusLeadsTable: OrganicNdusLeadsTableRow[];
+  ndusLeadsLoadError: string | null;
+  hasNdusLeads: boolean;
+  gmbLeadsSummary: OrganicGmbLeadsSummary | null;
+  gmbLeadsLoadError: string | null;
+  hasGmbLeads: boolean;
 };
 
 export type OrganicDashboardViewModelOptions = {

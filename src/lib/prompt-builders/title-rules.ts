@@ -30,14 +30,16 @@ export const HARNESS_HEADING_TITLE_CASE_RULE = `**Body H2/H3 Title Case (mandato
 
 /** Natural front-load and single-mention keyword discipline for all title agents. */
 export const TITLE_KEYWORD_WEAVING_RULE = `**Keyword weaving (mandatory)**:
-- WRITING KEYWORD (canonical punctuation when KEYWORD PUNCTUATION block applies) appears **exactly once** with the same words and word order. Casing in the title MUST be full Title Case (do not paste lowercase keyword casing).
-- **Grammar first**: the full title must read as one coherent, polished phrase written by a human editor. The keyword must perform a natural grammatical role inside that phrase.
-- **Front-load naturally**: open with the keyword woven into the first readable phrase (first ~5 words). Choose the title angle and sentence structure first, then integrate the keyword with natural connecting words.
-- Never paste the keyword as a standalone block and bolt a generic phrase, audience label, benefit fragment, or subtitle onto it. Rewrite the whole title until every word flows as one thought.
-- **No colons**: colons are **forbidden** in every title. Never \`[keyword/topic]: [subtitle]\`. Join with natural glue — "and", "for", "vs", "without", "how to", "what", "why", "when", or end with "?". One flowing headline only.
-- **Synthesis, not concatenation**: when multiple candidate titles exist, write one fresh headline from their intent; do not stitch candidate strings together.
-- **Good**: "Solar Panel Costs And What To Expect", "Solar Installation Cost Overview For Homeowners", "Blackout Blinds Benefits For Sleep", "How To Choose Between Roman Shades And Curtains"
-- **Bad**: "Solar Panel Costs: What To Expect For Your Home", "Solar Installation Cost: A Comprehensive Overview", "Smart Blinds Guide: Smart Blinds: A Complete Guide", "Cellular Shades Types: Cellular Shades: Types Explained"`;
+- **Grammar first (NON-NEGOTIABLE)**: the title must be one coherent English headline a human editor would publish. Every word must fit a natural grammatical role. If forcing the focus keyword as a contiguous block makes a nonsense subject or broken phrase, rewrite until it reads cleanly.
+- Focus keyword is a **topic signal**, not a paste block. Cover the same decision/product/place intent. You may reorder words and add natural glue ("How To", "Vs", "For", "In", "When To", "And") so the headline parses as English.
+- **Forbidden**: treating a jammed keyword or URL-slug phrase as a person/company subject (e.g. never "How Repair Or Replace Custom Shades Of London Solves…"). Separate the topic (repair vs replace window coverings) from the business name; do not mash them into one ungrammatical noun phrase.
+- **Forbidden**: pasting a long slug or raw query as the title spine. Never bolt "Solves / Has / Covers / Dilemma" onto a keyword dump.
+- Prefer a short decision headline (how to choose / vs / when to repair or replace) that a searcher can read aloud without stumbling.
+- Casing in the title MUST be full Title Case.
+- **No colons**: colons are **forbidden**. Never \`[keyword/topic]: [subtitle]\`. One flowing headline only.
+- **Synthesis, not concatenation**: write one fresh headline from intent; do not stitch keyword + subtitle + business name together.
+- **Good**: "When To Repair Or Replace Window Coverings", "Repair Vs Replace Window Coverings For London Homes", "How To Choose Between Roman Shades And Curtains"
+- **Bad**: "How Repair Or Replace Custom Shades Of London Solves Window Dilemmas", "Repair Or Replace Custom Shades Of London Has Your Window Covering Dilemma Covered", "Solar Panel Costs: What To Expect For Your Home"`;
 
 /** Editorial judgment for accurate, neutral, non-clickbait SEO titles. */
 export const TITLE_ANTI_CLICKBAIT_RULE = `**SEO editorial standard (mandatory)**:

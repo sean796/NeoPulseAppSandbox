@@ -29,6 +29,14 @@ export function ManagerDashboardShell({
 }: ManagerDashboardShellProps) {
   const activeContent = sections.find((section) => section.id === activeSection)?.content;
 
+  if (activeSection === "properties") {
+    return (
+      <div className="flex h-full min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden bg-background font-sans text-base">
+        {activeContent}
+      </div>
+    );
+  }
+
   return (
     <div className={cn(SEO_WORKSPACE_SHELL_CLASS, "font-sans text-base")}>
       <div className={SEO_WORKSPACE_HEADER_CLASS}>
@@ -38,7 +46,14 @@ export function ManagerDashboardShell({
           visibleSectionIds={visibleSectionIds}
         />
       </div>
-      <div className={cn(SEO_WORKSPACE_BODY_SCROLL_CLASS, CONTENT_OPTIMIZER_BODY_INSET_CLASS)}>
+      <div
+        className={cn(
+          activeSection === "properties"
+            ? SEO_WORKSPACE_BODY_FILL_CLASS
+            : SEO_WORKSPACE_BODY_SCROLL_CLASS,
+          CONTENT_OPTIMIZER_BODY_INSET_CLASS,
+        )}
+      >
         {activeContent}
       </div>
     </div>

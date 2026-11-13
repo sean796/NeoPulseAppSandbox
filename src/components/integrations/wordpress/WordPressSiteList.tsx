@@ -8,8 +8,15 @@ import type { OptimizationActivityTileStats, QuarterEditorialTileStats } from "@
 import { OPTIMIZATION_TILE_COUNTS_ENABLED } from "@/lib/wordpress-optimization-tile-counts";
 import type { WordPressPropertyRowDisplay } from "@/lib/wordpress-properties-row-display";
 import {
+  PROPERTIES_DOCK_ACTIVE_ROW_CLASS,
+  PROPERTIES_DOCK_COLUMN_HEADER_CLASS,
+  PROPERTIES_DOCK_COLUMN_HEADER_LABEL_CLASS,
+  PROPERTIES_DOCK_COLUMN_HEADER_METRIC_CLASS,
+  PROPERTIES_DOCK_ROW_CLASS,
   PROPERTIES_EMPTY,
+  PROPERTIES_LIST_SCROLL_CLASS,
   PROPERTIES_LIST_STACK,
+  propertiesDockRowStripeClass,
   propertiesRowOuterClass,
 } from "./wordpress-properties-surfaces";
 import {
@@ -66,11 +73,17 @@ interface WordPressSiteListProps {
   onPatchSite?: (siteId: string, patch: Partial<WordPressSite>) => void;
   quarterStatsBySite?: Record<string, QuarterEditorialTileStats>;
   optimizationStatsBySite?: Record<string, OptimizationActivityTileStats>;
+  /** True while Refresh (all months) is in flight — splash until every site settles. */
+  countsBatchPending?: boolean;
   editorialSelectedMonthKey?: string;
   editorialMonthOptions?: Array<{ key: string; label: string }>;
   onEditorialMonthChange?: (monthKey: string) => void;
   /** Visual density for property rows only (local preference). */
   propertyRowDisplay?: WordPressPropertyRowDisplay;
+  /** Studio dock layout: condensed two-line rows in a narrow left pane. */
+  layout?: "full" | "dock";
+  /** Site currently shown in the right pane (dock highlight). */
+  activeSiteId?: string;
 }
 
 export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
@@ -111,22 +124,44 @@ export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
   onPatchSite,
   quarterStatsBySite,
   optimizationStatsBySite,
+  countsBatchPending = false,
   editorialSelectedMonthKey,
   editorialMonthOptions,
   onEditorialMonthChange,
   propertyRowDisplay = "compact",
+  layout = "full",
+  activeSiteId,
 }) => {
+  const isDock = layout === "dock";
   const [canonicalRenameSite, setCanonicalRenameSite] = useState<WordPressSite | null>(null);
 
-  const renderPropertyRowTrailingControls = (site: WordPressSite) => {
+  const renderPropertyRowTrailingControls = (site: WordPressSite, dockActive = false) => {
+    const stop = (e: React.SyntheticEvent) => e.stopPropagation();
+    if (isDock) {
+      return (
+        <div className="flex min-w-0 shrink-0 items-center" onClick={stop} onPointerDown={stop}>
+          <QuarterEditorialCountsStrip
+            site={site}
+            stats={quarterStatsForSite(
+              site,
+              quarterStatsBySite,
+              editorialSelectedMonthKey ?? "",
+            )}
+            rowDisplay={propertyRowDisplay}
+            countsBatchPending={countsBatchPending}
+            variant="dock"
+            dockActive={dockActive}
+          />
+        </div>
+      );
+    }
     const compact = propertyRowDisplay === "compact";
     const mw = propertyMetricCellWidths(propertyRowDisplay);
     const metricCell = propertyMetricCellClass(compact);
-    const stop = (e: React.SyntheticEvent) => e.stopPropagation();
     return (
     <div className="flex min-w-0 shrink-0 items-stretch">
       <div
-        className={cn(PROPERTY_METRICS_CLUSTER_CLASS, "min-w-0")}
+        className={cn(PROPERTY_METRICS_CLUSTER_CLASS, "shrink-0")}
         onClick={stop}
         onPointerDown={stop}
       >
@@ -147,6 +182,7 @@ export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
             editorialSelectedMonthKey ?? "",
           )}
           rowDisplay={propertyRowDisplay}
+          countsBatchPending={countsBatchPending}
         />
       </div>
     </div>
@@ -155,7 +191,7 @@ export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
 
   if (sites.length === 0) {
     return (
-      <div className="mt-0 flex min-h-0 flex-1 flex-col">
+      <div className="mt-0 flex h-full min-h-0 flex-1 flex-col overflow-hidden">
         <div className={PROPERTIES_EMPTY}>
           <p className="text-lg text-foreground">No WordPress sites connected</p>
           <p className="mt-2 text-base text-foreground">
@@ -167,7 +203,7 @@ export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
   }
 
   return (
-    <div className="mt-0 flex min-h-0 flex-1 flex-col">
+    <div className="mt-0 flex h-full min-h-0 flex-1 flex-col overflow-hidden">
       <SiteDisplayNameDialog
         variant="canonical"
         open={Boolean(canonicalRenameSite)}
@@ -192,60 +228,124 @@ export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
           </p>
         </div>
       ) : (
-        <div className="neo-pulse-manager-tab-scroll flex min-h-0 flex-1 flex-col overflow-x-auto overflow-y-auto">
+        <div className={PROPERTIES_LIST_SCROLL_CLASS}>
+        {isDock ? (
+          <div
+            className={PROPERTIES_DOCK_COLUMN_HEADER_CLASS}
+            style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
+          >
+            <span
+              className={cn(PROPERTIES_DOCK_COLUMN_HEADER_LABEL_CLASS, "min-w-0 flex-1")}
+              style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
+            >
+              Name
+            </span>
+            <span className="inline-flex shrink-0 items-center gap-2">
+              <span
+                className={PROPERTIES_DOCK_COLUMN_HEADER_METRIC_CLASS}
+                style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
+              >
+                Entities
+              </span>
+              <span
+                className={PROPERTIES_DOCK_COLUMN_HEADER_METRIC_CLASS}
+                style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
+              >
+                Posts
+              </span>
+            </span>
+          </div>
+        ) : null}
         <div className={PROPERTIES_LIST_STACK}>
           {filteredSites.map((site, index) => {
             const rowSelected = selectedSiteIds?.has(site.id) ?? false;
+            const isActive = isDock && activeSiteId === site.id;
+
+            const checkbox =
+              !isDock && onSiteSelectedChange ? (
+                <div
+                  className="flex shrink-0 items-center justify-center pl-0.5"
+                  onClick={(e) => e.stopPropagation()}
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
+                  <Checkbox
+                    checked={rowSelected}
+                    onCheckedChange={(c) => onSiteSelectedChange(site.id, c === true)}
+                    className="border-border/60 data-[state=checked]:border-border data-[state=checked]:bg-ui-field-hover data-[state=checked]:text-muted-foreground"
+                    aria-label={`Select ${site.name}`}
+                  />
+                </div>
+              ) : null;
+
+            const tile = (
+              <CompactWordPressTile
+                variant="listRow"
+                site={site}
+                isTesting={isTesting === site.id}
+                isExpanded={false}
+                onToggle={() => onOpenProfile(site)}
+                onTest={() => onTest(site)}
+                onToggleEnabled={isDock ? undefined : () => onToggleEnabled(site)}
+                propertyRowDisplay={propertyRowDisplay}
+                listRowBlackActionChrome
+                dock={isDock}
+                dockActive={isActive}
+                onOpenProfile={() => onOpenProfile(site)}
+                onDelete={isDock ? undefined : () => onDelete(site.id)}
+                onApplyDisplayNameFromGmb={
+                  isDock || !onPatchSite
+                    ? undefined
+                    : (name) => onPatchSite(site.id, { name })
+                }
+                onEditCanonicalName={
+                  isDock || !onPatchSite
+                    ? undefined
+                    : () => setCanonicalRenameSite(site)
+                }
+              />
+            );
+
+            const metrics = (
+              <div
+                className={cn(
+                  "flex min-w-0 items-center",
+                  "shrink-0",
+                  !isDock && (propertyRowDisplay === "compact" ? "gap-2 sm:gap-2" : "gap-3 sm:gap-4"),
+                )}
+              >
+                {renderPropertyRowTrailingControls(site, isActive)}
+              </div>
+            );
 
             return (
               <div key={site.id} className="min-w-0 w-full">
                 <div
-                  className={propertiesRowOuterClass(
-                    propertyRowDisplay,
-                    index,
-                    rowSelected,
-                    true,
+                  className={cn(
+                    isDock
+                      ? cn(
+                          PROPERTIES_DOCK_ROW_CLASS,
+                          !isActive && propertiesDockRowStripeClass(index),
+                          isActive && PROPERTIES_DOCK_ACTIVE_ROW_CLASS,
+                        )
+                      : propertiesRowOuterClass(
+                          propertyRowDisplay,
+                          index,
+                          rowSelected,
+                          true,
+                        ),
                   )}
+                  style={
+                    isDock
+                      ? { color: "#ffffff", WebkitTextFillColor: "#ffffff" }
+                      : undefined
+                  }
+                  onClick={isDock ? () => onOpenProfile(site) : undefined}
                 >
-                  {onSiteSelectedChange ? (
-                    <div className="flex shrink-0 items-center justify-center pl-0.5">
-                      <Checkbox
-                        checked={rowSelected}
-                        onCheckedChange={(c) => onSiteSelectedChange(site.id, c === true)}
-                        className="border-border/60 data-[state=checked]:border-border data-[state=checked]:bg-ui-field-hover data-[state=checked]:text-muted-foreground"
-                        aria-label={`Select ${site.name}`}
-                      />
-                    </div>
-                  ) : null}
+                  {checkbox}
                   <div className="flex min-h-0 min-w-0 flex-1 items-center border-0 bg-transparent px-0 py-0">
-                    <CompactWordPressTile
-                      variant="listRow"
-                      site={site}
-                      isTesting={isTesting === site.id}
-                      isExpanded={false}
-                      onToggle={() => onOpenProfile(site)}
-                      onTest={() => onTest(site)}
-                      onToggleEnabled={() => onToggleEnabled(site)}
-                      propertyRowDisplay={propertyRowDisplay}
-                      listRowBlackActionChrome
-                      onOpenProfile={() => onOpenProfile(site)}
-                      onDelete={() => onDelete(site.id)}
-                      onApplyDisplayNameFromGmb={
-                        onPatchSite ? (name) => onPatchSite(site.id, { name }) : undefined
-                      }
-                      onEditCanonicalName={
-                        onPatchSite ? () => setCanonicalRenameSite(site) : undefined
-                      }
-                    />
+                    {tile}
                   </div>
-                  <div
-                    className={cn(
-                      "flex min-w-0 shrink-0 items-center",
-                      propertyRowDisplay === "compact" ? "gap-2 sm:gap-2" : "gap-3 sm:gap-4",
-                    )}
-                  >
-                    {renderPropertyRowTrailingControls(site)}
-                  </div>
+                  {metrics}
                 </div>
               </div>
             );

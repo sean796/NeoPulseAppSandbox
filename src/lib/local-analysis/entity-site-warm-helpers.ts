@@ -84,12 +84,13 @@ export function isUsableBundle(
   requireGsc = false,
 ): bundle is EntitySiteWarmBundle {
   if (!bundle || bundle.credentialsKey !== credKey) return false;
-  if (requireGsc && (bundle.error || (canWarmEntitySite(site) && bundle.counts.gscQueries === 0))) {
+  // Failed warms are never reusable. A prior GSC miss must not block a later live retry.
+  if (bundle.error) return false;
+  if (requireGsc && canWarmEntitySite(site) && bundle.counts.gscQueries === 0) {
     return false;
   }
   // Partial GSC-first commits can land with 0 URLs and no error; never treat that as ready for WP sites.
   if (bundle.counts.inventoryTotal > 0) return true;
-  if (bundle.error) return false;
   return !canWarmEntitySite(site) && bundle.counts.gscQueries > 0;
 }
 

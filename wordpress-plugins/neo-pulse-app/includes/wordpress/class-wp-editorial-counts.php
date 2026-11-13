@@ -29,6 +29,10 @@ class Neo_Pulse_App_Wp_Editorial_Counts {
 	}
 
 	/**
+	 * Monthly editorial counts via Neo MCP WP-CLI only.
+	 * Counts publish + future by post_date_gmt (never sitemap lastmod).
+	 * Pass `ranges: [{after,before},…]` to bucket every month from one remote list per status.
+	 *
 	 * @param array<string,mixed> $body Request body.
 	 * @return array{0:int,1:array<string,mixed>}
 	 */
@@ -36,14 +40,13 @@ class Neo_Pulse_App_Wp_Editorial_Counts {
 		$site_url     = isset( $body['siteUrl'] ) ? (string) $body['siteUrl'] : '';
 		$username     = isset( $body['username'] ) ? (string) $body['username'] : '';
 		$app_password = isset( $body['appPassword'] ) ? (string) $body['appPassword'] : '';
-		$after        = isset( $body['after'] ) ? (string) $body['after'] : '';
-		$before       = isset( $body['before'] ) ? (string) $body['before'] : '';
 
+		$ranges = self::normalize_count_ranges( $body );
 		if ( $site_url === '' || $username === '' || $app_password === '' ) {
 			return array( 400, self::quarter_error( 'Missing required fields: siteUrl, username, appPassword' ) );
 		}
-		if ( $after === '' || $before === '' ) {
-			return array( 400, self::quarter_error( 'Missing required fields: after, before (ISO8601 range for the quarter)' ) );
+		if ( empty( $ranges ) ) {
+			return array( 400, self::quarter_error( 'Missing required fields: after, before (or ranges[])' ) );
 		}
 
 		$normalized = Neo_Pulse_App_Wp_Url_Normalize::normalize_url( $site_url );
@@ -51,65 +54,338 @@ class Neo_Pulse_App_Wp_Editorial_Counts {
 			return array( 400, self::quarter_error( 'Invalid site URL format.' ) );
 		}
 
-		$secondary        = self::resolve_sap_collection( $body );
+		$mcp               = new Neo_Pulse_App_Neo_Mcp_Client( $normalized, $username, $app_password );
 		$entity_configured = true;
-		$warm              = Neo_Pulse_App_Wp_Rest_Client::warm_origin_session( $normalized );
-		$ctx               = array(
-			'normalized'   => $normalized,
-			'username'     => $username,
-			'app_password' => $app_password,
-			'cookie'       => $warm['cookie'],
-			'after'        => $after,
-			'before'       => $before,
-		);
+		// Pin strip = Service Areas CPT on every Neo Digital site (never location).
+		$entity_pt         = self::SAP_REST_COLLECTION;
 
-		$posts_rs = self::fetch_published_scheduled_pair( $ctx, 'posts' );
-		if ( empty( $posts_rs['ok'] ) ) {
-			if ( ! empty( $posts_rs['siteground'] ) ) {
-				return array( 502, self::quarter_error( (string) $posts_rs['error'], $entity_configured ) );
-			}
-			return array( 200, self::quarter_error( (string) $posts_rs['error'], $entity_configured ) );
+		$post_pub_ts = $mcp->list_post_date_timestamps_wp_cli( 'post', 'publish' );
+		if ( empty( $post_pub_ts['ok'] ) ) {
+			return array( 200, self::quarter_error( (string) $post_pub_ts['error'], $entity_configured ) );
+		}
+		$post_sched_ts = $mcp->list_post_date_timestamps_wp_cli( 'post', 'future' );
+		if ( empty( $post_sched_ts['ok'] ) ) {
+			return array( 200, self::quarter_error( (string) $post_sched_ts['error'], $entity_configured ) );
 		}
 
-		$entity_published        = null;
-		$entity_scheduled        = null;
-		$entity_counts_available = false;
+		$entity_counts_available = true;
+		$ent_pub = $mcp->list_post_date_timestamps_wp_cli( $entity_pt, 'publish' );
+		if ( empty( $ent_pub['ok'] ) ) {
+			$entity_pub_ts = array();
+		} else {
+			$entity_pub_ts = $ent_pub['timestamps'];
+		}
+		$ent_sched       = $mcp->list_post_date_timestamps_wp_cli( $entity_pt, 'future' );
+		$entity_sched_ts = empty( $ent_sched['ok'] ) ? array() : $ent_sched['timestamps'];
 
-		if ( $secondary ) {
-			$entity_rs = self::fetch_published_scheduled_pair( $ctx, $secondary );
-			if ( empty( $entity_rs['ok'] ) ) {
-				if ( isset( $entity_rs['error'] ) && $entity_rs['error'] === 'not_found' ) {
-					$entity_published        = 0;
-					$entity_scheduled        = 0;
-					$entity_counts_available = true;
-				} elseif ( ! empty( $entity_rs['siteground'] ) ) {
-					return array( 502, self::quarter_error( (string) $entity_rs['error'], $entity_configured ) );
-				}
-			} else {
-				$entity_published        = (int) $entity_rs['published'];
-				$entity_scheduled        = (int) $entity_rs['scheduled'];
-				$entity_counts_available = true;
+		$months = array();
+		foreach ( $ranges as $range ) {
+			$after     = $range['after'];
+			$before    = $range['before'];
+			$after_ts  = strtotime( trim( $after ) );
+			$before_ts = strtotime( trim( $before ) );
+			if ( ! $after_ts || ! $before_ts || $before_ts <= $after_ts ) {
+				return array( 200, self::quarter_error( 'Invalid after/before for month count', $entity_configured ) );
 			}
+			$posts_pub   = self::count_timestamps_in_range( $post_pub_ts['timestamps'], $after_ts, $before_ts );
+			$posts_sched = self::count_timestamps_in_range( $post_sched_ts['timestamps'], $after_ts, $before_ts );
+			$ent_pub_n   = self::count_timestamps_in_range( $entity_pub_ts, $after_ts, $before_ts );
+			$ent_sched_n = self::count_timestamps_in_range( $entity_sched_ts, $after_ts, $before_ts );
+			$months[]    = array(
+				'after'                 => $after,
+				'before'                => $before,
+				'postsPublished'        => $posts_pub,
+				'postsScheduled'        => $posts_sched,
+				'entityPublished'       => $ent_pub_n,
+				'entityScheduled'       => $ent_sched_n,
+				'entityConfigured'      => $entity_configured,
+				'entityCountsAvailable' => $entity_counts_available,
+				'published'             => $posts_pub + $ent_pub_n,
+				'scheduled'             => $posts_sched + $ent_sched_n,
+			);
 		}
 
-		$published_sum = (int) $posts_rs['published'] + ( $entity_counts_available ? (int) $entity_published : 0 );
-		$scheduled_sum = (int) $posts_rs['scheduled'] + ( $entity_counts_available ? (int) $entity_scheduled : 0 );
-
-		$out = array(
+		$first = $months[0];
+		$out   = array(
 			'ok'                    => true,
-			'postsPublished'        => (int) $posts_rs['published'],
-			'postsScheduled'        => (int) $posts_rs['scheduled'],
-			'entityPublished'       => $entity_published,
-			'entityScheduled'       => $entity_scheduled,
+			'postsPublished'        => (int) $first['postsPublished'],
+			'postsScheduled'        => (int) $first['postsScheduled'],
+			'entityPublished'       => (int) $first['entityPublished'],
+			'entityScheduled'       => (int) $first['entityScheduled'],
 			'entityConfigured'      => $entity_configured,
 			'entityCountsAvailable' => $entity_counts_available,
-			'published'             => $published_sum,
-			'scheduled'             => $scheduled_sum,
+			'published'             => (int) $first['published'],
+			'scheduled'             => (int) $first['scheduled'],
+			'source'                => 'neo-mcp-wp-cli',
+			'months'                => $months,
+			'entityCollection'      => self::SAP_REST_COLLECTION,
 		);
-		if ( $secondary ) {
-			$out['entityCollection'] = $secondary;
-		}
 		return array( 200, $out );
+	}
+
+	/**
+	 * @param array<string,mixed> $body Request body.
+	 * @return array<int,array{after:string,before:string}>
+	 */
+	private static function normalize_count_ranges( $body ) {
+		$out = array();
+		if ( isset( $body['ranges'] ) && is_array( $body['ranges'] ) ) {
+			foreach ( $body['ranges'] as $r ) {
+				if ( ! is_array( $r ) ) {
+					continue;
+				}
+				$after  = isset( $r['after'] ) ? trim( (string) $r['after'] ) : '';
+				$before = isset( $r['before'] ) ? trim( (string) $r['before'] ) : '';
+				if ( $after !== '' && $before !== '' ) {
+					$out[] = array( 'after' => $after, 'before' => $before );
+				}
+			}
+		}
+		if ( empty( $out ) ) {
+			$after  = isset( $body['after'] ) ? trim( (string) $body['after'] ) : '';
+			$before = isset( $body['before'] ) ? trim( (string) $body['before'] ) : '';
+			if ( $after !== '' && $before !== '' ) {
+				$out[] = array( 'after' => $after, 'before' => $before );
+			}
+		}
+		return $out;
+	}
+
+	/**
+	 * @param array<int,int> $timestamps Unix timestamps.
+	 * @param int            $after_ts Inclusive.
+	 * @param int            $before_ts Exclusive.
+	 * @return int
+	 */
+	private static function count_timestamps_in_range( $timestamps, $after_ts, $before_ts ) {
+		$count = 0;
+		foreach ( $timestamps as $ts ) {
+			$ts = (int) $ts;
+			if ( $ts >= $after_ts && $ts < $before_ts ) {
+				++$count;
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Scrape sitemap once and return every lastmod timestamp.
+	 *
+	 * @param Neo_Pulse_App_Neo_Mcp_Client $mcp Client.
+	 * @param string                       $sitemap_url Sitemap URL.
+	 * @return array{ok:bool,timestamps?:array<int,int>,error?:string}
+	 */
+	private static function collect_sitemap_lastmod_timestamps( $mcp, $sitemap_url ) {
+		$sitemap_url = trim( (string) $sitemap_url );
+		if ( $sitemap_url === '' ) {
+			return array( 'ok' => true, 'timestamps' => array() );
+		}
+		$fetched = self::neo_mcp_collect_sitemap_urlsets( $mcp, $sitemap_url, 0 );
+		if ( empty( $fetched['ok'] ) ) {
+			return array( 'ok' => false, 'error' => isset( $fetched['error'] ) ? (string) $fetched['error'] : 'Sitemap fetch failed' );
+		}
+		$timestamps = array();
+		foreach ( $fetched['bodies'] as $xml ) {
+			foreach ( self::extract_urlset_lastmod_timestamps( (string) $xml ) as $ts ) {
+				$timestamps[] = $ts;
+			}
+		}
+		return array( 'ok' => true, 'timestamps' => $timestamps );
+	}
+
+	/**
+	 * @param string $xml Urlset XML.
+	 * @return array<int,int>
+	 */
+	private static function extract_urlset_lastmod_timestamps( $xml ) {
+		$out = array();
+		if ( ! preg_match_all( '#<url>(.*?)</url>#is', $xml, $blocks ) ) {
+			return $out;
+		}
+		foreach ( $blocks[1] as $block ) {
+			if ( ! preg_match( '#<lastmod>\s*([^<]+)\s*</lastmod>#i', $block, $lm ) ) {
+				continue;
+			}
+			$raw = trim( html_entity_decode( (string) $lm[1], ENT_QUOTES | ENT_XML1, 'UTF-8' ) );
+			$ts  = strtotime( $raw );
+			if ( $ts ) {
+				$out[] = (int) $ts;
+			}
+		}
+		return $out;
+	}
+
+	/**
+	 * @param array<string,mixed> $body Request body.
+	 * @param string              $normalized Site origin.
+	 * @return string
+	 */
+	private static function resolve_post_sitemap_url( $body, $normalized ) {
+		if ( ! empty( $body['postSitemapUrl'] ) && is_string( $body['postSitemapUrl'] ) ) {
+			return trim( $body['postSitemapUrl'] );
+		}
+		$children = isset( $body['childSitemaps'] ) && is_array( $body['childSitemaps'] ) ? $body['childSitemaps'] : array();
+		foreach ( $children as $u ) {
+			$u = is_string( $u ) ? trim( $u ) : '';
+			if ( $u !== '' && preg_match( '#post-sitemap(?:\d+)?\.xml#i', $u ) ) {
+				return $u;
+			}
+		}
+		$endpoints = isset( $body['sitemapEndpoints'] ) && is_array( $body['sitemapEndpoints'] ) ? $body['sitemapEndpoints'] : array();
+		foreach ( $endpoints as $u => $role ) {
+			if ( is_string( $role ) && strtolower( $role ) === 'posts' && is_string( $u ) && $u !== '' ) {
+				return $u;
+			}
+		}
+		return untrailingslashit( $normalized ) . '/post-sitemap.xml';
+	}
+
+	/**
+	 * @param array<string,mixed> $body Request body.
+	 * @param string              $normalized Site origin.
+	 * @return string
+	 */
+	private static function resolve_entity_sitemap_url( $body, $normalized ) {
+		if ( ! empty( $body['entitySitemapUrl'] ) && is_string( $body['entitySitemapUrl'] ) ) {
+			return trim( $body['entitySitemapUrl'] );
+		}
+		$children = isset( $body['childSitemaps'] ) && is_array( $body['childSitemaps'] ) ? $body['childSitemaps'] : array();
+		foreach ( $children as $u ) {
+			$u = is_string( $u ) ? trim( $u ) : '';
+			if ( $u !== '' && preg_match( '#(location|service-area|service_area).*sitemap#i', $u ) ) {
+				return $u;
+			}
+		}
+		$endpoints = isset( $body['sitemapEndpoints'] ) && is_array( $body['sitemapEndpoints'] ) ? $body['sitemapEndpoints'] : array();
+		foreach ( $endpoints as $u => $role ) {
+			if ( ! is_string( $u ) || $u === '' ) {
+				continue;
+			}
+			$r = is_string( $role ) ? strtolower( $role ) : '';
+			if ( in_array( $r, array( 'location', 'service-area', 'service_area', 'entity' ), true ) ) {
+				return $u;
+			}
+		}
+		return '';
+	}
+
+	/**
+	 * @param array<string,mixed> $body Request body.
+	 * @param string              $secondary REST collection hint.
+	 * @return string
+	 */
+	private static function resolve_entity_post_type( $body, $secondary ) {
+		$manual = isset( $body['manualEndpoint'] ) ? trim( (string) $body['manualEndpoint'] ) : '';
+		if ( $manual !== '' ) {
+			return preg_replace( '/[^a-z0-9_-]/i', '', $manual ) ?: 'location';
+		}
+		$sec = preg_replace( '/[^a-z0-9_-]/i', '', (string) $secondary );
+		if ( $sec && $sec !== 'posts' && $sec !== 'pages' ) {
+			return $sec;
+		}
+		return 'location';
+	}
+
+	/**
+	 * Count urlset entries whose lastmod falls in [after, before) via Neo MCP sitemap fetch.
+	 *
+	 * @param Neo_Pulse_App_Neo_Mcp_Client $mcp Client.
+	 * @param string                       $sitemap_url Sitemap URL.
+	 * @param string                       $after_iso After ISO.
+	 * @param string                       $before_iso Before ISO.
+	 * @return array{ok:bool,count?:int,error?:string}
+	 */
+	private static function count_sitemap_published_in_range( $mcp, $sitemap_url, $after_iso, $before_iso ) {
+		$sitemap_url = trim( (string) $sitemap_url );
+		if ( $sitemap_url === '' ) {
+			return array( 'ok' => true, 'count' => 0 );
+		}
+
+		$after_ts  = strtotime( trim( $after_iso ) );
+		$before_ts = strtotime( trim( $before_iso ) );
+		if ( ! $after_ts || ! $before_ts || $before_ts <= $after_ts ) {
+			return array( 'ok' => false, 'error' => 'Invalid after/before for sitemap count' );
+		}
+
+		$fetched = self::neo_mcp_collect_sitemap_urlsets( $mcp, $sitemap_url, 0 );
+		if ( empty( $fetched['ok'] ) ) {
+			return array( 'ok' => false, 'error' => isset( $fetched['error'] ) ? (string) $fetched['error'] : 'Sitemap fetch failed' );
+		}
+
+		$count = 0;
+		foreach ( $fetched['bodies'] as $xml ) {
+			$count += self::count_urlset_lastmod_in_range( (string) $xml, $after_ts, $before_ts );
+		}
+		return array( 'ok' => true, 'count' => $count );
+	}
+
+	/**
+	 * @param Neo_Pulse_App_Neo_Mcp_Client $mcp Client.
+	 * @param string                       $sitemap_url URL.
+	 * @param int                          $depth Recursion depth.
+	 * @return array{ok:bool,bodies?:array<int,string>,error?:string}
+	 */
+	private static function neo_mcp_collect_sitemap_urlsets( $mcp, $sitemap_url, $depth ) {
+		if ( $depth > 3 ) {
+			return array( 'ok' => false, 'error' => 'Sitemap index too deep' );
+		}
+		$res = $mcp->fetch_url_body( $sitemap_url );
+		if ( empty( $res['ok'] ) ) {
+			return array( 'ok' => false, 'error' => isset( $res['error'] ) ? (string) $res['error'] : 'Sitemap fetch failed' );
+		}
+		$xml = isset( $res['body'] ) ? (string) $res['body'] : '';
+		if ( $xml === '' ) {
+			return array( 'ok' => false, 'error' => 'Empty sitemap body' );
+		}
+
+		if ( stripos( $xml, '<sitemapindex' ) !== false ) {
+			$bodies = array();
+			if ( preg_match_all( '#<sitemap>\s*<loc>\s*([^<]+)\s*</loc>#i', $xml, $m ) ) {
+				foreach ( $m[1] as $child ) {
+					$child = trim( html_entity_decode( (string) $child, ENT_QUOTES | ENT_XML1, 'UTF-8' ) );
+					if ( $child === '' ) {
+						continue;
+					}
+					$sub = self::neo_mcp_collect_sitemap_urlsets( $mcp, $child, $depth + 1 );
+					if ( empty( $sub['ok'] ) ) {
+						return $sub;
+					}
+					foreach ( $sub['bodies'] as $b ) {
+						$bodies[] = $b;
+					}
+				}
+			}
+			return array( 'ok' => true, 'bodies' => $bodies );
+		}
+
+		return array( 'ok' => true, 'bodies' => array( $xml ) );
+	}
+
+	/**
+	 * @param string $xml Urlset XML.
+	 * @param int    $after_ts Inclusive start unix.
+	 * @param int    $before_ts Exclusive end unix.
+	 * @return int
+	 */
+	private static function count_urlset_lastmod_in_range( $xml, $after_ts, $before_ts ) {
+		$count = 0;
+		if ( ! preg_match_all( '#<url>(.*?)</url>#is', $xml, $blocks ) ) {
+			return 0;
+		}
+		foreach ( $blocks[1] as $block ) {
+			if ( ! preg_match( '#<lastmod>\s*([^<]+)\s*</lastmod>#i', $block, $lm ) ) {
+				continue;
+			}
+			$raw = trim( html_entity_decode( (string) $lm[1], ENT_QUOTES | ENT_XML1, 'UTF-8' ) );
+			$ts  = strtotime( $raw );
+			if ( ! $ts ) {
+				continue;
+			}
+			if ( $ts >= $after_ts && $ts < $before_ts ) {
+				++$count;
+			}
+		}
+		return $count;
 	}
 
 	/**
@@ -194,83 +470,6 @@ class Neo_Pulse_App_Wp_Editorial_Counts {
 			$out['entityCollection'] = $secondary;
 		}
 		return array( 200, $out );
-	}
-
-	/**
-	 * @param array<string,mixed> $ctx Request context.
-	 * @param string              $collection REST collection.
-	 * @return array<string,mixed>
-	 */
-	private static function fetch_published_scheduled_pair( $ctx, $collection ) {
-		$pub = self::fetch_collection_status_total( $ctx, $collection, 'publish' );
-		if ( empty( $pub['ok'] ) ) {
-			return $pub;
-		}
-		$fut = self::fetch_collection_status_total( $ctx, $collection, 'future' );
-		if ( empty( $fut['ok'] ) ) {
-			return $fut;
-		}
-		return array(
-			'ok'        => true,
-			'published' => (int) $pub['total'],
-			'scheduled' => (int) $fut['total'],
-		);
-	}
-
-	/**
-	 * @param array<string,mixed> $ctx Request context.
-	 * @param string              $status Post status.
-	 * @return array<string,mixed>
-	 */
-	private static function fetch_collection_status_total( $ctx, $collection, $status ) {
-		$url  = $ctx['normalized'] . '/wp-json/wp/v2/' . rawurlencode( $collection );
-		$resp = Neo_Pulse_App_Wp_Rest_Client::request(
-			'GET',
-			$url,
-			$ctx['username'],
-			$ctx['app_password'],
-			array(
-				'timeout'      => 20,
-				'referer'      => $ctx['normalized'] . '/',
-				'cookie'       => $ctx['cookie'],
-				'content_type' => false,
-				'params'       => array(
-					'status'   => $status,
-					'after'    => $ctx['after'],
-					'before'   => $ctx['before'],
-					'per_page' => 1,
-					'page'     => 1,
-					'_fields'  => 'id',
-				),
-			)
-		);
-
-		if ( $resp['is_wp_error'] ) {
-			$msg = Neo_Pulse_App_Wp_Rest_Client::transport_error_message( $resp );
-			return array( 'ok' => false, 'error' => $msg ?: $resp['error'] );
-		}
-
-		$status_code = (int) $resp['status'];
-		if ( $status_code === 200 ) {
-			return array( 'ok' => true, 'total' => self::read_wp_total( $resp['headers'] ) );
-		}
-		if ( $status_code === 401 ) {
-			return array( 'ok' => false, 'error' => 'Authentication failed. Check username and application password.' );
-		}
-		if ( $status_code === 403 ) {
-			return array( 'ok' => false, 'error' => 'Access forbidden for this post type or status.' );
-		}
-		if ( $status_code === 404 ) {
-			return array( 'ok' => false, 'error' => 'not_found' );
-		}
-		if ( Neo_Pulse_App_Wp_Url_Normalize::rest_looks_like_siteground_captcha( $status_code, $resp['body'] ) ) {
-			return array(
-				'ok'         => false,
-				'error'      => Neo_Pulse_App_Wp_Url_Normalize::SITEGROUND_REST_BLOCKED_MESSAGE,
-				'siteground' => true,
-			);
-		}
-		return array( 'ok' => false, 'error' => 'WordPress API error: ' . $status_code );
 	}
 
 	/**
@@ -428,16 +627,6 @@ class Neo_Pulse_App_Wp_Editorial_Counts {
 		}
 		$sec = (int) floor( $ms / 1000 );
 		return gmdate( 'Y-m-d', $sec );
-	}
-
-	/**
-	 * @param array<string,string> $headers Response headers.
-	 * @return int
-	 */
-	private static function read_wp_total( $headers ) {
-		$raw = isset( $headers['x-wp-total'] ) ? $headers['x-wp-total'] : '0';
-		$n   = (int) $raw;
-		return $n >= 0 ? $n : 0;
 	}
 
 	/**

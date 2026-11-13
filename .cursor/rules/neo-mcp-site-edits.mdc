@@ -1,0 +1,68 @@
+---
+description: Use Neo MCP for live WordPress client site edits — site map, tools, and safety workflow
+alwaysApply: true
+---
+
+# Neo MCP for client site edits
+
+When the user asks to change, inspect, create, or fix anything on a **live client WordPress site** from the Neo Pulse Sites panel, use **Neo MCP for that site**. Do not invent another CMS path (SFTP-first, browser admin-only, or removed stacks) when Neo MCP is available.
+
+## Source of truth for which sites exist
+
+1. Pulse Sites list / seed: [`src/components/integrations/default-properties-seed.json`](src/components/integrations/default-properties-seed.json)
+2. Connectivity probe: `node scripts/neo-mcp-site-probe.mjs` (draft → verify → delete on every seed site in parallel)
+
+Auth for probes comes from each seed entry’s `username` + `appPassword`. Cursor MCP servers live in `~/.cursor/mcp.json` as `neo-mcp-<hostname-with-dots-as-hyphens>`.
+
+## Site → Neo MCP server
+
+| Site | Site URL | Cursor MCP name |
+|---|---|---|
+| Advance Blinds | https://advanceblindsanddrapery.com | `neo-mcp-advanceblindsanddrapery-com` |
+| Blind Magic | https://blindmagic.com | `neo-mcp-blindmagic-com` |
+| Blinds West | https://blindswest.ca | `neo-mcp-blindswest-ca` |
+| Custom Shades of London | https://www.customshadesoflondon.ca | `neo-mcp-customshadesoflondon-ca` |
+| DM Interiors | https://dminteriorsanddesign.com | `neo-mcp-dminteriorsanddesign-com` |
+| Elite Shutters & Shadings | https://eliteshadings.com | `neo-mcp-eliteshadings-com` |
+| In the Shade | https://intheshadeflorida.com | `neo-mcp-intheshadeflorida-com` |
+| Interiors by Laura | https://interiorsbylaura.com | `neo-mcp-interiorsbylaura-com` |
+| KWB | https://kwbllp.com | `neo-mcp-kwbllp-com` |
+| Lindsey Blinds | https://lindseyblindsetc.com | `neo-mcp-lindseyblindsetc-com` |
+| Neo Digital | https://neodigital.ca | `neo-mcp-neodigital-ca` |
+| Phoenix Painting | https://phoenixpainting.ca | `neo-mcp-phoenixpainting-ca` |
+| Posh Outdoors | https://posh-outdoors.com | `neo-mcp-posh-outdoors-com` |
+| Shutter Spot | https://shutterspot.com | `neo-mcp-shutterspot-com` |
+| Superior Blinds | https://superiorblinds.com | `neo-mcp-superiorblinds-com` |
+| Superior Tent Rentals | https://superiortentrentals.com | `neo-mcp-superiortentrentals-com` |
+| Tailored Interiors | https://tailoredinteriors.ca | `neo-mcp-tailoredinteriors-ca` |
+| You Junk It… I Dump It | https://youjunkit.ca | `neo-mcp-youjunkit-ca` |
+
+Namespace in Cursor tools is usually `user-<mcp-name>` (example: `user-neo-mcp-neodigital-ca`).
+
+Endpoint pattern: `https://<domain>/wp-json/neo-mcp/v1/mcp` with HTTP Basic (WordPress Application Password).
+
+## Required edit workflow
+
+1. **Confirm the site** by name from the table / seed. If the user says a brand name, map it — do not guess Blind Magic when they said Neo Digital.
+2. **Use that site’s Neo MCP tools only** for that job.
+3. Call `neo-mcp_site` → `info` first on unfamiliar work (licence, WP-CLI, file_writes, can_start_programs).
+4. Call a tool **with no operation** to get its catalog, then call with `{ "operation": "…", "arguments": { … } }`.
+5. Prefer owner tools when data is owned by them:
+   - Neo Pulse SEO / business / locations → `neo-pulse_read` / `neo-pulse_write`
+   - Neo Tools forms / previews → `neo-tools_read` / `neo-tools_write`
+   - Elementor trees → `neo-mcp_elementor` (not raw `_elementor_data` when the Elementor tool can do it)
+   - Generic WP → `neo-mcp_wp` / `neo-mcp_php` / `neo-mcp_files` / `neo-mcp_options` / `neo-mcp_db`
+6. For irreversible deletes, pass `confirm: true` only when required.
+7. After writes, verify (fetch page, `wp post get`, Elementor structure, or form presence). Use `neo-mcp_history` / undo when a change should be rolled back.
+8. Do **not** paste Application Passwords or Basic tokens into chat, commits, or docs.
+
+## Connectivity / auth failures
+
+- `needsAuth` / HTTP 401 → missing or bad Application Password in `mcp.json` (or empty `appPassword` in seed). Fix auth; do not “work around” with browser automation unless the user explicitly asks.
+- Plugin missing / not licensed → report that clearly; install/activate Neo MCP only with explicit approval.
+- WP Engine often disables `exec`; Neo MCP bundled WP-CLI still works — that is not a failed install.
+- If `initialize` hangs, cache-exclude `/wp-json/neo-mcp/*`.
+
+## Repo guide
+
+Human + agent details: [`docs/neo-mcp-site-edits.md`](docs/neo-mcp-site-edits.md)

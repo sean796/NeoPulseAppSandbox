@@ -18,6 +18,8 @@ import {
 import {
   buildGoogleAdsDeckSummaryRows,
   buildHeadlineSummaryRows,
+  buildNdusLeadsDeckSummaryRows,
+  buildGmbLeadsDeckSummaryRows,
   buildSemrushDeckSummaryRows,
   deckNarrativeText,
   deriveKeyTakeawaysFromSummary,
@@ -114,6 +116,12 @@ export type OrganicClientReportContent = {
   showPerformanceSection: boolean;
   showGoogleAdsSection: boolean;
   googleAdsLoadError: string | null;
+  seoLeadsDeckRows: DeckSummaryRow[];
+  showSeoLeadsSection: boolean;
+  seoLeadsLoadError: string | null;
+  gmbLeadsDeckRows: DeckSummaryRow[];
+  showGmbLeadsSection: boolean;
+  gmbLeadsLoadError: string | null;
   showSemrushSection: boolean;
   showKeywordSection: boolean;
   showHighlightsSection: boolean;
@@ -288,6 +296,8 @@ export function buildOrganicClientReportContent(input: OrganicClientReportDeckIn
     clicks: sanitizeClientReportMetricValue(q.clicks),
   }));
   const googleAdsDeckRows = sanitizeSummaryRows(buildGoogleAdsDeckSummaryRows(viewModel, showCompare));
+  const seoLeadsDeckRows = sanitizeSummaryRows(buildNdusLeadsDeckSummaryRows(viewModel, showCompare));
+  const gmbLeadsDeckRows = sanitizeSummaryRows(buildGmbLeadsDeckSummaryRows(viewModel, showCompare));
   const semrushDeckRows = sanitizeSummaryRows(buildSemrushDeckSummaryRows(viewModel, showCompare));
   const topSemrushKeywords = viewModel.semrushKeywords
     .filter((k) => {
@@ -391,6 +401,14 @@ export function buildOrganicClientReportContent(input: OrganicClientReportDeckIn
         googleAdsNarrative.length > 0 ||
         googleAdsOpportunities.length > 0),
     googleAdsLoadError: viewModel.googleAdsLoadError,
+    seoLeadsDeckRows,
+    showSeoLeadsSection: viewModel.hasNdusLeads && seoLeadsDeckRows.length > 0,
+    seoLeadsLoadError: viewModel.ndusLeadsLoadError,
+    gmbLeadsDeckRows,
+    showGmbLeadsSection:
+      (viewModel.hasGmbLeads && gmbLeadsDeckRows.length > 0) ||
+      Boolean(viewModel.gmbLeadsLoadError),
+    gmbLeadsLoadError: viewModel.gmbLeadsLoadError,
     showSemrushSection,
     showKeywordSection: false,
     showHighlightsSection: highlightStats.length > 0 || opportunities.length > 0,

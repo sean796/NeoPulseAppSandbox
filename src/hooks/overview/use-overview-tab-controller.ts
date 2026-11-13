@@ -80,7 +80,12 @@ export function useOverviewTabController(props: OverviewTabContentProps) {
     overviewSitemapLoadBusy: sitemapLoad.overviewSitemapLoadBusy,
     handleLoadSitemap: sitemapLoad.handleLoadSitemap,
     handleRefreshSitemap: () =>
-      sitemapLoad.handleLoadSitemap({ force: true, silent: false, applyToUi: true }),
+      sitemapLoad.handleLoadSitemap({
+        force: true,
+        silent: false,
+        applyToUi: true,
+        preferNeoMcp: true,
+      }),
     ...scrapeWp,
     ...aiCsv,
     ...kwDates,

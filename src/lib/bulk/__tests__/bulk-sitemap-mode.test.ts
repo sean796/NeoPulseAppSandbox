@@ -53,9 +53,10 @@ describe("resolveRowSitemapType", () => {
     expect(resolveRowSitemapType("entity", { sitemap_type: "post", entity: "Winkler" }, "post")).toBe("entity");
   });
 
-  it("never uses the entity sitemap when the entity cell is empty", () => {
-    expect(resolveRowSitemapType("entity", { sitemap_type: "entity" }, "entity")).toBe("post");
-    expect(resolveRowSitemapType("entity", { entity: "" }, "entity")).toBe("post");
+  it("keeps SAP / entity site mode even when the entity cell is empty", () => {
+    expect(resolveRowSitemapType("entity", { sitemap_type: "entity" }, "entity")).toBe("entity");
+    expect(resolveRowSitemapType("entity", { entity: "" }, "entity")).toBe("entity");
+    // Custom/mixed mode still demotes empty-entity rows to posts.
     expect(resolveRowSitemapType("custom", { sitemap_type: "entity" }, "entity")).toBe("post");
   });
 

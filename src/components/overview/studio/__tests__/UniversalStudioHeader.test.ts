@@ -72,22 +72,35 @@ describe("UniversalStudioHeader", () => {
     expect(html).toContain("min-w-[15rem]");
     expect(html).toContain("max-w-[15rem]");
 
-    // Live URL box has fixed width min/max
-    expect(html).toContain("min-w-[20rem]");
-    expect(html).toContain("max-w-[20rem]");
+    // Live URL box has fixed width min/max (wide enough for long paths, zero CLS)
+    expect(html).toContain("min-w-[36rem]");
+    expect(html).toContain("max-w-[36rem]");
 
   });
 
-  it("does not render any extra placeholder label in Band 2", () => {
+  it("omits Band 2 when filters and actions are empty", () => {
     const html = renderToStaticMarkup(
       createElement(UniversalStudioHeader, {
-        studioEditorMode: "csv",
+        studioEditorMode: "blog-import",
         onStudioEditorModeChange: () => {},
         activeUrl: "https://example.com",
       }),
     );
 
-    expect(html).toContain('id="universal-studio-band-2-filters"');
+    expect(html).not.toContain('id="universal-studio-band-2-filters"');
     expect(html).not.toContain("Document Optimization Controls");
+  });
+
+  it("renders Band 1 titleActions on the black bar right", () => {
+    const html = renderToStaticMarkup(
+      createElement(UniversalStudioHeader, {
+        activeUrl: "https://example.com/blog/x",
+        titleActions: createElement("button", { "aria-label": "Auto SEO (3)", type: "button" }, "seo"),
+      }),
+    );
+
+    expect(html).toContain('aria-label="Auto SEO (3)"');
+    expect(html).toContain("Visual Document Studio");
+    expect(html).not.toContain('id="universal-studio-band-2-filters"');
   });
 });

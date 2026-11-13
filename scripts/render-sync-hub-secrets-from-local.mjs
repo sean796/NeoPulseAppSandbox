@@ -181,16 +181,13 @@ async function buildHubEnvVars() {
     "NEO_PULSE_APP_GMB_CLIENT_SECRET",
     pick(merged, "NEO_PULSE_APP_GMB_CLIENT_SECRET", "GMB_CLIENT_SECRET"),
   );
+  // Never copy local/dev OAuth URIs onto Render (localhost breaks Connect Google Business).
   add(
     "NEO_PULSE_APP_GMB_REDIRECT_URI",
-    pick(merged, "NEO_PULSE_APP_GMB_REDIRECT_URI") ||
-      "https://pulse-host-wp-hub.onrender.com/api/gmb/callback",
+    "https://pulse-host-wp-hub.onrender.com/api/gmb/callback",
   );
-  add(
-    "NEO_PULSE_APP_FRONTEND_URL",
-    pick(merged, "NEO_PULSE_APP_FRONTEND_URL", "NEO_PULSE_FRONTEND_URL") ||
-      "https://neo-pulse-static.onrender.com/",
-  );
+  // Public Pulse UI on Render (app.neodigital.ca currently serves Lead Connector, not Pulse).
+  add("NEO_PULSE_APP_FRONTEND_URL", "https://neo-pulse-static.onrender.com/");
   add(
     "NEO_PULSE_APP_GOOGLE_ADS_MCC_ID",
     pick(merged, "NEO_PULSE_APP_GOOGLE_ADS_MCC_ID", "GOOGLE_ADS_MCC_ID") || "3937136350",

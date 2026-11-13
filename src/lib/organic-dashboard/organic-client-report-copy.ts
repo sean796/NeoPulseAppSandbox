@@ -138,17 +138,17 @@ export const CLIENT_REPORT_ACCORDION_COPY = {
 
 const OWNER_SECTION_HEADING_MAP: Record<string, OwnerReportCopyEntry> = {
   "performance summary": {
-    label: "GA4",
+    label: "Google Analytics",
     tooltip:
       "Monthly breakdown of shoppers visiting your website from Google and the actions they took.",
   },
   "website traffic (ga4) by month": {
-    label: "GA4",
+    label: "Google Analytics",
     tooltip:
       "People who visited your website from unpaid Google searches and the actions they took each month.",
   },
   "website traffic (ga4)": {
-    label: "GA4",
+    label: "Google Analytics",
     tooltip:
       "People who visited your website from unpaid Google searches and the actions they took.",
   },
@@ -207,9 +207,52 @@ const OWNER_SECTION_HEADING_MAP: Record<string, OwnerReportCopyEntry> = {
     tooltip:
       "Results from your paid Google Ads campaigns, including customer inquiries, cost per lead, and ad spend.",
   },
+  "seo leads": {
+    label: "Organic Website Leads",
+    tooltip: "Website form submissions from Google organic search for the selected period.",
+  },
+  "organic website leads": {
+    label: "Organic Website Leads",
+    tooltip: "Website form submissions from Google organic search for the selected period.",
+  },
+  "google my business leads": {
+    label: "Google My Business Leads",
+    tooltip:
+      "Calls, chat, directions, and website clicks from your Google Business Profile for the selected period.",
+  },
 };
 
 const OWNER_METRIC_LABEL_MAP: Record<string, OwnerReportCopyEntry> = {
+  "seo leads": {
+    label: "Organic Website Leads",
+    tooltip: "Form submissions from Google organic search for the selected period.",
+  },
+  "organic website leads": {
+    label: "Organic Website Leads",
+    tooltip: "Form submissions from Google organic search for the selected period.",
+  },
+  "google my business leads": {
+    label: "Google My Business Leads",
+    tooltip:
+      "Calls, chat, directions, and website clicks from your Google Business Profile.",
+  },
+  calls: {
+    label: "Calls",
+    tooltip: "Phone call clicks from your Google Business Profile listing.",
+  },
+  chat: {
+    label: "Chat",
+    tooltip: "Message conversations started from your Google Business Profile listing.",
+  },
+  directions: {
+    label: "Directions",
+    tooltip: "Direction requests from your Google Business Profile listing.",
+  },
+  "website clicks": {
+    label: "Website clicks",
+    tooltip: "Website clicks from your Google Business Profile listing.",
+  },
+
   "total users": {
     label: "Total Users",
     tooltip: "Total users who first found your website through Organic Search on Google.",

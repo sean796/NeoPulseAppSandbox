@@ -105,6 +105,8 @@ export function BulkPromptComposePanel({
   const [importRaw, setImportRaw] = useState(readImportStudioRawToggle);
   const fileZoneBusy = workspaceBusy || csvParsing || importParsing;
 
+  const isImportMode = studioMode === "blog-import";
+
   const routeFiles = useCallback(
     (files: File[]) => {
       if (files.length === 0) return;
@@ -181,8 +183,8 @@ export function BulkPromptComposePanel({
           <VerticalBenchmarkStudioComposeSection {...verticalBenchmark} />
         ) : null}
 
-        {/* MODE 2: Bulk CSV + Import Drafts Studio */}
-        {studioMode === "csv" ? (
+        {/* MODE 2: Import Studio (CSV + draft docs) */}
+        {isImportMode ? (
           <section className="flex flex-col gap-3">
             <SwitchField
               label="Raw"
@@ -246,7 +248,7 @@ export function BulkPromptComposePanel({
                       ? "Reading CSV"
                       : importParsing
                         ? "Parsing draft articles"
-                        : "Drop CSV, DOCX, MD, or other draft files here or click to browse"}
+                        : "Drop CSV, DOCX, MD, HTML, or TXT here or click to browse"}
                 </span>
                 {importedFileName || csvFileName ? (
                   <span className="text-base text-muted-foreground">{importedFileName || csvFileName}</span>
@@ -254,7 +256,7 @@ export function BulkPromptComposePanel({
               </div>
             </div>
             <input
-              id="bulk-csv-upload-input"
+              id="bulk-import-upload-input"
               ref={fileInputRef}
               type="file"
               multiple
@@ -268,7 +270,6 @@ export function BulkPromptComposePanel({
               }}
             />
 
-            {/* Slot 3: Secondary Parameters Grid */}
             <div className="grid w-full grid-cols-1 sm:grid-cols-2 gap-3">
               <Field
                 type="text"
