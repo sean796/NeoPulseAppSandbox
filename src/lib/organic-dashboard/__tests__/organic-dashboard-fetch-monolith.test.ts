@@ -79,6 +79,10 @@ describe("fetchOrganicDashboardBundle fetch-part 404", () => {
   });
 
   it("keeps other parts when one fetch-part returns Invalid or missing part", async () => {
+    const params: OrganicDashboardFetchParams = {
+      ...PARAMS,
+      gbpLocationId: "1234567890",
+    };
     const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       const url = String(input);
       const body = init?.body ? JSON.parse(String(init.body)) : {};
@@ -112,7 +116,7 @@ describe("fetchOrganicDashboardBundle fetch-part 404", () => {
     });
     vi.stubGlobal("fetch", fetchMock);
 
-    const data = await fetchOrganicDashboardBundle(PARAMS);
+    const data = await fetchOrganicDashboardBundle(params);
     expect(data.ga4).toMatchObject({ success: true });
     expect(data.gsc).toMatchObject({ success: true });
     expect(data.gmbLeads).toMatchObject({
