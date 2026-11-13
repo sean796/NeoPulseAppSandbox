@@ -1,9 +1,5 @@
-import { Sparkles } from "lucide-react";
 import { LLMSettingsTabContent } from "@/components/LLMSettingsTabContent";
-import {
-  DASHBOARD_SETTINGS_GROUP_CLASS,
-  DASHBOARD_SETTINGS_PANEL_CLASS,
-} from "@/components/manager/dashboard/dashboard-panel-styles";
+import { SETTINGS_STUDIO_PANEL_CLASS } from "@/components/manager/settings/settings-studio-surfaces";
 
 export type AiModelsSettingsContentProps = {
   researchModel: string;
@@ -32,38 +28,31 @@ export type AiModelsSettingsContentProps = {
 
 export function AiModelsSettingsContent(props: AiModelsSettingsContentProps) {
   return (
-    <div className={`${DASHBOARD_SETTINGS_PANEL_CLASS} space-y-4 text-white`}>
-      <div className="flex items-center gap-2">
-        <Sparkles className="h-5 w-5 text-white" aria-hidden />
-        <h2 className="text-base font-semibold text-white">AI &amp; Models</h2>
-      </div>
-
-      <div className={DASHBOARD_SETTINGS_GROUP_CLASS}>
-        <LLMSettingsTabContent
-          researchModel={props.researchModel}
-          onResearchModelChange={props.setResearchModel}
-          blogModel={props.blogModel}
-          onBlogModelChange={props.setBlogModel}
-          imageModel={props.imageModel}
-          onImageModelChange={props.setImageModel}
-          metaModel={props.metaModel}
-          onMetaModelChange={props.setMetaModel}
-          reportModel={props.reportModel}
-          onReportModelChange={props.setReportModel}
-          adsModel={props.adsModel}
-          onAdsModelChange={props.setAdsModel}
-          videoModel={props.videoModel}
-          onVideoModelChange={props.setVideoModel}
-          decisionModel={props.decisionModel}
-          onDecisionModelChange={props.setDecisionModel}
-          temperature={props.temperature}
-          onTemperatureChange={props.setTemperature}
-          maxTokens={props.maxTokens}
-          onMaxTokensChange={props.setMaxTokens}
-          topP={props.topP}
-          onTopPChange={props.setTopP}
-        />
-      </div>
-    </div>
+    <section className={SETTINGS_STUDIO_PANEL_CLASS} aria-label="AI and Models">
+      <LLMSettingsTabContent
+        researchModel={props.researchModel}
+        onResearchModelChange={props.setResearchModel}
+        blogModel={props.blogModel}
+        onBlogModelChange={props.setBlogModel}
+        imageModel={props.imageModel}
+        onImageModelChange={props.setImageModel}
+        metaModel={props.metaModel}
+        onMetaModelChange={props.setMetaModel}
+        reportModel={props.reportModel}
+        onReportModelChange={props.setReportModel}
+        adsModel={props.adsModel}
+        onAdsModelChange={props.setAdsModel}
+        videoModel={props.videoModel}
+        onVideoModelChange={props.setVideoModel}
+        decisionModel={props.decisionModel}
+        onDecisionModelChange={props.setDecisionModel}
+        temperature={props.temperature}
+        onTemperatureChange={props.setTemperature}
+        maxTokens={props.maxTokens}
+        onMaxTokensChange={props.setMaxTokens}
+        topP={props.topP}
+        onTopPChange={props.setTopP}
+      />
+    </section>
   );
 }

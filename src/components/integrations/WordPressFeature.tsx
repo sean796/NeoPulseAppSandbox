@@ -1,4 +1,5 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from "react";
+﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { PROPERTIES_SHELL } from "./wordpress/wordpress-properties-surfaces";
 import { useWordPressSites } from "@/hooks/use-wordpress-sites";
@@ -21,12 +22,16 @@ import {
   PropertiesDockFooterActions,
   PropertiesWorkspaceToolbar,
 } from "@/components/manager/dashboard/PropertiesWorkspaceToolbar";
-import { PropertiesStudioHeader } from "./wordpress/PropertiesStudioHeader";
 import { AddClientDockPanel } from "./wordpress/AddClientDockPanel";
 import { PROPERTIES_DOCK_CLASS, PROPERTIES_EMPTY } from "./wordpress/wordpress-properties-surfaces";
 import { useWordPressFeatureForm } from "./use-wordpress-feature-form";
 import { useWordPressFeatureActions } from "./use-wordpress-feature-actions";
 import type { ManagerSettingsClusterId } from "@/components/manager/manager-settings-cluster";
+import {
+  findSiteByDashboardSlug,
+  propertyDashboardPath,
+  propertySlugFromDashboardPath,
+} from "@/lib/properties/property-dashboard-slug";
 
 interface WordPressFeatureProps {
   onEntityGeneration?: (site: WordPressSite, sitemapUrl: string) => void;
@@ -43,6 +48,10 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
   onDashboardSectionChange,
   visibleDashboardSectionIds,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const propertySlug = propertySlugFromDashboardPath(location.pathname);
+
   // Site management hook
   const {
     sites,
@@ -276,20 +285,62 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
 
   const displaySite = profileSite ?? tierFilteredSites[0] ?? null;
 
+  const openProfileWithUrl = useCallback(
+    (siteId: string) => {
+      const site =
+        tierFilteredSites.find((s) => s.id === siteId) ?? sites.find((s) => s.id === siteId);
+      if (!site) return;
+      openProfile(siteId);
+      const isHomeFirst = tierFilteredSites[0]?.id === siteId;
+      const path = propertyDashboardPath(site, isHomeFirst);
+      if (location.pathname !== path) {
+        navigate(path);
+      }
+    },
+    [tierFilteredSites, sites, openProfile, location.pathname, navigate],
+  );
+
   useEffect(() => {
     setPropertyEditing(false);
   }, [displaySite?.id]);
 
-  // Auto-select first visible property once for the Studio right pane (no roster reload storm).
-  const autoOpenedTierKeyRef = useRef("");
+  /**
+   * URL ↔ profile sync:
+   * - /dashboard → first dock client only (home)
+   * - /dashboard/{slug} → matching client; unknown slug → home
+   */
   useEffect(() => {
     if (tierFilteredSites.length === 0) return;
-    if (profileSiteId && tierFilteredSites.some((s) => s.id === profileSiteId)) return;
-    const key = tierFilteredSites.map((s) => s.id).join("|");
-    if (autoOpenedTierKeyRef.current === key) return;
-    autoOpenedTierKeyRef.current = key;
-    openProfile(tierFilteredSites[0].id);
-  }, [tierFilteredSites, profileSiteId, openProfile]);
+    const first = tierFilteredSites[0];
+
+    if (propertySlug) {
+      const match =
+        findSiteByDashboardSlug(tierFilteredSites, propertySlug) ??
+        findSiteByDashboardSlug(sites, propertySlug);
+      if (!match) {
+        if (profileSiteId !== first.id) openProfile(first.id);
+        if (location.pathname !== "/dashboard") navigate("/dashboard", { replace: true });
+        return;
+      }
+      if (match.id === first.id) {
+        if (profileSiteId !== first.id) openProfile(first.id);
+        if (location.pathname !== "/dashboard") navigate("/dashboard", { replace: true });
+        return;
+      }
+      if (profileSiteId !== match.id) openProfile(match.id);
+      return;
+    }
+
+    if (profileSiteId !== first.id) openProfile(first.id);
+  }, [
+    propertySlug,
+    tierFilteredSites,
+    sites,
+    profileSiteId,
+    openProfile,
+    navigate,
+    location.pathname,
+  ]);
 
   return (
     <div className={cn(PROPERTIES_SHELL, "flex h-full min-h-0 flex-1 flex-col overflow-hidden")}>
@@ -319,7 +370,7 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
             editorialPackageFilter={editorialPackageFilter}
             siteSearchQuery={siteSearchQuery}
             onSearchChange={setSiteSearchQuery}
-            onOpenProfile={(site) => openProfile(site.id)}
+            onOpenProfile={(site) => openProfileWithUrl(site.id)}
             isTesting={isTesting}
             isDetecting={isDetecting}
             isFetchingScheduled={isFetchingScheduled}
@@ -379,19 +430,6 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
           />
         </aside>
         <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-zinc-950">
-          <PropertiesStudioHeader
-            activeSection={activeDashboardSection}
-            onSectionChange={onDashboardSectionChange}
-            visibleSectionIds={visibleDashboardSectionIds}
-            showPropertyNav={Boolean(displaySite)}
-            profileSectionId={profileSectionId}
-            onProfileSectionChange={setProfileSectionId}
-            settingsSubSectionId={settingsSubSectionId}
-            onSettingsSubSectionChange={setSettingsSubSectionId}
-            onSaveProperty={handleSaveSiteClick}
-            editing={propertyEditing}
-            onToggleEditing={() => setPropertyEditing((open) => !open)}
-          />
           {displaySite ? (
             <PropertyProfilePage
               site={displaySite}
@@ -427,7 +465,10 @@ export const WordPressFeature: React.FC<WordPressFeatureProps> = ({
               getScrapingKey={getScrapingKey}
               onPatchSite={handlePatchSite}
               onSaveProperty={handleSaveSiteClick}
+              onDeleteProperty={() => handleDeleteSite(displaySite.id)}
+              onLogoBoxThemeChange={setFormClientLogoBoxTheme}
               editing={propertyEditing}
+              onToggleEditing={() => setPropertyEditing((open) => !open)}
               onOpenSettingsProfile={() => {
                 setProfileSectionId("site-settings");
                 setSettingsSubSectionId("profile");

@@ -1,6 +1,16 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Plus, Trash2 } from "lucide-react";
-import { Button, Field, SelectField } from "@/ui";
+import { Pencil, Plus, Save, Trash2 } from "lucide-react";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Field,
+  SelectField,
+} from "@/ui";
 import type { WordPressSite } from "../types";
 import { propertyHostingLabel } from "./property-profile-view-model";
 import { WordPressCardActions } from "./WordPressCardActions";
@@ -39,13 +49,14 @@ import {
   PROPERTIES_OVERVIEW_CHIP_DOT_LITE_CLASS,
   PROPERTIES_OVERVIEW_CHIP_DOT_MUTED_CLASS,
   PROPERTIES_OVERVIEW_CHIP_DOT_OK_CLASS,
-  PROPERTIES_OVERVIEW_CHIP_EDITORIAL_SLOT,
   PROPERTIES_OVERVIEW_CHIP_LITE_CLASS,
   PROPERTIES_OVERVIEW_CHIP_MUTED_CLASS,
   PROPERTIES_OVERVIEW_DL_CLASS,
   PROPERTIES_OVERVIEW_DL_LABEL_CLASS,
   PROPERTIES_OVERVIEW_DL_ROW_CLASS,
   PROPERTIES_OVERVIEW_DL_VALUE_CLASS,
+  PROPERTIES_OVERVIEW_ACTION_PILL_CLASS,
+  PROPERTIES_OVERVIEW_IDENTITY_ACTIONS_CLASS,
   PROPERTIES_OVERVIEW_IDENTITY_CLASS,
   PROPERTIES_OVERVIEW_IDENTITY_NAME_CLASS,
   PROPERTIES_OVERVIEW_IDENTITY_PILLS_CLASS,
@@ -76,6 +87,11 @@ export type PropertyOverviewSectionProps = {
   sitemapPanel?: ReactNode;
   /** Single Studio Edit pencil controls every field on this screen. */
   editing?: boolean;
+  onToggleEditing?: () => void;
+  onSaveProperty?: () => void;
+  onDeleteProperty?: () => void;
+  /** Keep form logo-box theme aligned when overview swatches patch the live site. */
+  onLogoBoxThemeChange?: (theme: "black" | "white") => void;
 };
 
 function sitemapOptionLabel(url: string): string {
@@ -207,7 +223,13 @@ export function PropertyOverviewSection({
   onExtractNAPAndGraph,
   onPatchSite,
   editing = false,
+  onToggleEditing,
+  onSaveProperty,
+  onDeleteProperty,
+  onLogoBoxThemeChange,
 }: PropertyOverviewSectionProps) {
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const scheduled = site.scheduledPosts;
   const ga4 = site.ga4PropertyId?.trim() ?? "";
   const ads = site.googleAdsCustomerId?.trim() ?? "";
@@ -338,20 +360,70 @@ export function PropertyOverviewSection({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional edge trigger
   }, [editing]);
 
-  const workspacePanel = "h-auto";
+  const workspacePanel = "h-full min-h-0";
 
   return (
     <div className={PROPERTIES_OVERVIEW_STACK_CLASS}>
       <section className={cn(PROPERTIES_OVERVIEW_IDENTITY_CLASS, "h-[6.75rem] max-h-[6.75rem] overflow-hidden")} aria-label="Property">
-        <div
-          className={cn(
-            "flex h-14 w-36 shrink-0 items-center justify-center overflow-hidden bg-zinc-900",
-            logoTheme === "white" && "bg-white",
-          )}
-        >
-          {logoUrl ? (
-            <img src={logoUrl} alt="" className="max-h-12 max-w-[8rem] object-contain" />
-          ) : null}
+        <div className="flex h-14 shrink-0 items-center gap-1.5">
+          <div
+            className={cn(
+              "flex h-14 w-36 shrink-0 items-center justify-center overflow-hidden rounded-none border border-white/15",
+              logoTheme === "white" ? "bg-white" : "bg-black",
+            )}
+            aria-label={logoTheme === "white" ? "Logo box white" : "Logo box black"}
+          >
+            {logoUrl ? (
+              <img src={logoUrl} alt="" className="max-h-12 max-w-[8rem] object-contain" />
+            ) : (
+              <span
+                className={cn(
+                  "px-2 text-center text-base font-medium",
+                  logoTheme === "white" ? "text-black/50" : "text-white/40",
+                )}
+              >
+                No logo
+              </span>
+            )}
+          </div>
+          <div
+            className="flex h-14 w-5 shrink-0 flex-col justify-center gap-1"
+            role="group"
+            aria-label="Logo box theme"
+          >
+            <button
+              type="button"
+              className={cn(
+                "h-5 w-5 shrink-0 rounded-none border border-white/20 bg-black shadow-none",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                logoTheme === "black" ? "opacity-100 ring-1 ring-white/40" : "opacity-40 hover:opacity-70",
+              )}
+              aria-label="Black logo box"
+              aria-pressed={logoTheme === "black"}
+              disabled={!onPatchSite}
+              title="Black logo box"
+              onClick={() => {
+                patch({ clientLogoBoxTheme: "black" });
+                onLogoBoxThemeChange?.("black");
+              }}
+            />
+            <button
+              type="button"
+              className={cn(
+                "h-5 w-5 shrink-0 rounded-none border border-white/20 bg-white shadow-none",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                logoTheme === "white" ? "opacity-100 ring-1 ring-white/40" : "opacity-40 hover:opacity-70",
+              )}
+              aria-label="White logo box"
+              aria-pressed={logoTheme === "white"}
+              disabled={!onPatchSite}
+              title="White logo box"
+              onClick={() => {
+                patch({ clientLogoBoxTheme: "white" });
+                onLogoBoxThemeChange?.("white");
+              }}
+            />
+          </div>
         </div>
         <div className="flex h-16 min-w-0 flex-1 basis-[12rem] flex-col justify-center gap-0">
           <div className="flex h-8 items-center overflow-hidden">
@@ -397,32 +469,114 @@ export function PropertyOverviewSection({
             )}
           </div>
         </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <div className={PROPERTIES_OVERVIEW_IDENTITY_PILLS_CLASS}>
+        <div className={PROPERTIES_OVERVIEW_IDENTITY_PILLS_CLASS}>
+          <span
+            className={`${
+              editorialPackage === "lite"
+                ? PROPERTIES_OVERVIEW_CHIP_LITE_CLASS
+                : editorialPackage === "standard"
+                  ? PROPERTIES_OVERVIEW_CHIP_CLASS
+                  : PROPERTIES_OVERVIEW_CHIP_MUTED_CLASS
+            } w-full`}
+          >
             <span
-              className={`${
+              className={
                 editorialPackage === "lite"
-                  ? PROPERTIES_OVERVIEW_CHIP_LITE_CLASS
+                  ? PROPERTIES_OVERVIEW_CHIP_DOT_LITE_CLASS
                   : editorialPackage === "standard"
-                    ? PROPERTIES_OVERVIEW_CHIP_CLASS
-                    : PROPERTIES_OVERVIEW_CHIP_MUTED_CLASS
-              } ${PROPERTIES_OVERVIEW_CHIP_EDITORIAL_SLOT}`}
-            >
-              <span
-                className={
-                  editorialPackage === "lite"
-                    ? PROPERTIES_OVERVIEW_CHIP_DOT_LITE_CLASS
-                    : editorialPackage === "standard"
-                      ? PROPERTIES_OVERVIEW_CHIP_DOT_OK_CLASS
-                      : PROPERTIES_OVERVIEW_CHIP_DOT_MUTED_CLASS
-                }
-                aria-hidden
-              />
-              <span>{editorialTier ?? "No editorial"}</span>
-            </span>
+                    ? PROPERTIES_OVERVIEW_CHIP_DOT_OK_CLASS
+                    : PROPERTIES_OVERVIEW_CHIP_DOT_MUTED_CLASS
+              }
+              aria-hidden
+            />
+            <span>{editorialTier ?? "No editorial"}</span>
+          </span>
+          <div className={PROPERTIES_OVERVIEW_IDENTITY_ACTIONS_CLASS}>
+            {onToggleEditing ? (
+              <button
+                type="button"
+                className={PROPERTIES_OVERVIEW_ACTION_PILL_CLASS}
+                aria-label={editing ? "Done editing property" : "Edit property"}
+                aria-pressed={editing}
+                onClick={onToggleEditing}
+              >
+                <Pencil aria-hidden />
+              </button>
+            ) : null}
+            {onSaveProperty ? (
+              <button
+                type="button"
+                className={PROPERTIES_OVERVIEW_ACTION_PILL_CLASS}
+                aria-label="Save property"
+                onClick={onSaveProperty}
+              >
+                <Save aria-hidden />
+              </button>
+            ) : null}
+            {onDeleteProperty ? (
+              <button
+                type="button"
+                className={PROPERTIES_OVERVIEW_ACTION_PILL_CLASS}
+                aria-label="Delete property"
+                onClick={() => {
+                  setDeleteConfirmText("");
+                  setDeleteOpen(true);
+                }}
+              >
+                <Trash2 aria-hidden />
+              </button>
+            ) : null}
           </div>
         </div>
       </section>
+
+      <Dialog
+        open={deleteOpen}
+        onOpenChange={(open) => {
+          setDeleteOpen(open);
+          if (!open) setDeleteConfirmText("");
+        }}
+      >
+        <DialogContent className="rounded-none border-0 bg-zinc-950 text-white sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-base">Delete property</DialogTitle>
+            <DialogDescription className="text-base text-muted-foreground">
+              This removes {site.name} from NEO Pulse. Type DELETE to confirm.
+            </DialogDescription>
+          </DialogHeader>
+          <Field
+            value={deleteConfirmText}
+            onChange={(e) => setDeleteConfirmText(e.target.value)}
+            placeholder="Type DELETE"
+            aria-label="Type DELETE to confirm"
+            autoComplete="off"
+          />
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="quiet"
+              onClick={() => {
+                setDeleteOpen(false);
+                setDeleteConfirmText("");
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="run"
+              disabled={deleteConfirmText !== "DELETE"}
+              onClick={() => {
+                onDeleteProperty?.();
+                setDeleteOpen(false);
+                setDeleteConfirmText("");
+              }}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <section className="grid shrink-0 grid-cols-2 gap-3" aria-label="Platform">
         <KpiTile
@@ -433,7 +587,7 @@ export function PropertyOverviewSection({
         <KpiTile label="Scheduled" value={scheduled ? String(scheduled.count) : "0"} />
       </section>
 
-      <div className="grid w-full grid-cols-2 items-start gap-3">
+      <div className="grid w-full grid-cols-2 items-stretch gap-3">
         <section className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)} aria-label="Profile">
           <PanelHeading title="Profile" />
           <dl className={PROPERTIES_OVERVIEW_DL_CLASS}>
@@ -734,8 +888,11 @@ export function PropertyOverviewSection({
           </dl>
         </section>
 
-        <div className="flex min-w-0 flex-col gap-3">
-          <section className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)} aria-label="Master Rules">
+        <div className="flex h-full min-h-0 w-full min-w-0 flex-col gap-3">
+          <section
+            className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, "flex min-h-0 flex-1 flex-col")}
+            aria-label="Master Rules"
+          >
             <PanelHeading title="Master Rules" />
             <MasterInstructionsSection
               siteId={site.id}
@@ -746,12 +903,13 @@ export function PropertyOverviewSection({
               editing={editing}
             />
           </section>
-          <section className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)} aria-label="Sitemaps">
+          <section className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, "h-auto shrink-0")} aria-label="Sitemaps">
             <PanelHeading title="Sitemaps" />
             <div className="flex h-8 shrink-0 items-center overflow-hidden">
               {sitemapUrls.length > 0 ? (
                 <SelectField
                   placeholder="Sitemap"
+                  tone="data"
                   width="full"
                   value={sitemapPick || sitemapUrls[0]}
                   options={sitemapUrls.map((url) => ({ value: url, label: sitemapOptionLabel(url) }))}

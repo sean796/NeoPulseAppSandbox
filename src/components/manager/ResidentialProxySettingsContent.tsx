@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { fetchResidentialProxyStatus } from "@/lib/browser-automation-api";
-import { DASHBOARD_SETTINGS_GROUP_CLASS } from "@/components/manager/dashboard/dashboard-panel-styles";
+import { SETTINGS_STUDIO_PANEL_CLASS } from "@/components/manager/settings/settings-studio-surfaces";
 import { Button } from "@/ui";
 
 export function ResidentialProxySettingsContent() {
@@ -39,7 +39,7 @@ export function ResidentialProxySettingsContent() {
   const configured = Boolean(status?.configured);
 
   return (
-    <div className={DASHBOARD_SETTINGS_GROUP_CLASS}>
+    <section className={SETTINGS_STUDIO_PANEL_CLASS} aria-label="Oxylabs residential proxy">
       <p className="font-semibold text-white">Oxylabs residential proxy</p>
       <p className="text-base text-white">
         Credentials live in <code className="text-white">.env.residential-proxy</code> on the browser worker.
@@ -49,7 +49,11 @@ export function ResidentialProxySettingsContent() {
         {!loading && status ? (
           <>
             <p>{configured ? "Configured" : "Not configured"}</p>
-            {status.host ? <p>Host: {status.host}:{status.port ?? "7777"}</p> : null}
+            {status.host ? (
+              <p>
+                Host: {status.host}:{status.port ?? "7777"}
+              </p>
+            ) : null}
             {status.username ? <p>Username: {status.username}</p> : null}
             {status.ip ? <p>Probe IP: {status.ip}</p> : null}
             {status.error ? <p>{status.error}</p> : null}
@@ -57,14 +61,10 @@ export function ResidentialProxySettingsContent() {
         ) : null}
       </div>
       <div className="mt-3">
-        <Button
-          type="button"
-          disabled={loading || probing}
-          onClick={() => void loadStatus(true)}
-        >
+        <Button type="button" disabled={loading || probing} onClick={() => void loadStatus(true)}>
           {probing ? "Testing…" : "Test connection"}
         </Button>
       </div>
-    </div>
+    </section>
   );
 }

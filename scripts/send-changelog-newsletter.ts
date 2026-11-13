@@ -12,23 +12,20 @@
  *
  * Loads .env.local from the repo root when present. Never commit keys.
  */
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
-  CHANGELOG_NEWSLETTER_HERO_PROMPT,
-  CHANGELOG_NEWSLETTER_SYSTEM,
+  CHANGELOG_NEWSLETTER_READING_SYSTEM,
   CHANGELOG_NEWSLETTER_WEB_MODEL,
   assembleChangelogNewsletter,
-  buildChangelogNewsletterUserPrompt,
-  parseChangelogNewsletterWebDraft,
+  buildChangelogNewsletterReadingUserPrompt,
+  parseChangelogNewsletterReadingDraft,
+  stripBannedChangelogTopics,
 } from "../src/lib/changelog/changelog-newsletter-agent";
-import {
-  CHANGELOG_NEWSLETTER_HERO_CID,
-  buildChangelogNewsletterEmail,
-} from "../src/lib/changelog/changelog-newsletter-email";
-import { DEFAULT_IMAGE_MODEL } from "../src/lib/image-model-defaults";
+import { buildChangelogNewsletterEmail } from "../src/lib/changelog/changelog-newsletter-email";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, "..");
@@ -110,11 +107,40 @@ async function agentmail(apiPath: string, options: RequestInit = {}): Promise<Re
 type ArchiveEntry = {
   title?: string;
   date?: string;
+  rangeFrom?: string;
+  rangeTo?: string;
   commitCount?: number;
   highlights?: string[];
   createdAt?: string;
   sections?: Array<{ heading?: string; items?: string[] }>;
 };
+
+const MAX_COMMIT_SUBJECTS = 80;
+
+function gitCommitSubjects(rangeFrom: string, rangeTo: string): string[] {
+  const since = rangeFrom.trim();
+  const until = rangeTo.trim();
+  if (!since || !until) return [];
+  try {
+    const raw = execFileSync(
+      "git",
+      [
+        "log",
+        `--since=${since}`,
+        `--until=${until} 23:59:59`,
+        `--max-count=${MAX_COMMIT_SUBJECTS}`,
+        "--pretty=format:%s",
+      ],
+      { cwd: REPO_ROOT, encoding: "utf8", maxBuffer: 8 * 1024 * 1024 },
+    );
+    return raw
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+  } catch {
+    return [];
+  }
+}
 
 function newestEntry(entries: unknown): ArchiveEntry {
   if (!Array.isArray(entries) || entries.length === 0) {
@@ -132,44 +158,14 @@ function newestEntry(entries: unknown): ArchiveEntry {
   return sorted[0]!;
 }
 
-function extractImageBase64(data: Record<string, unknown>): { contentType: string; base64: string } {
-  const choices = data.choices;
-  const choice = Array.isArray(choices) ? (choices[0] as Record<string, unknown> | undefined) : undefined;
-  const message = choice?.message as Record<string, unknown> | undefined;
-  if (message && typeof message === "object") {
-    if (Array.isArray(message.images)) {
-      for (const img of message.images as Array<Record<string, unknown>>) {
-        const imageUrl = img?.image_url as { url?: string } | undefined;
-        const url = imageUrl?.url || (img?.imageUrl as string | undefined) || (img?.url as string | undefined);
-        if (typeof url === "string" && url.startsWith("data:image/")) {
-          const comma = url.indexOf(",");
-          if (comma > 0) {
-            return { contentType: url.slice(5, url.indexOf(";")), base64: url.slice(comma + 1) };
-          }
-        }
-      }
-    }
-    const content = message.content;
-    if (typeof content === "string" && content.startsWith("data:image/")) {
-      const comma = content.indexOf(",");
-      if (comma > 0) {
-        return { contentType: content.slice(5, content.indexOf(";")), base64: content.slice(comma + 1) };
-      }
-    }
-    if (Array.isArray(content)) {
-      for (const part of content as Array<Record<string, unknown>>) {
-        const imageUrl = part?.image_url as { url?: string } | undefined;
-        const url = imageUrl?.url || (part?.imageUrl as string | undefined);
-        if (typeof url === "string" && url.startsWith("data:image/")) {
-          const comma = url.indexOf(",");
-          if (comma > 0) {
-            return { contentType: url.slice(5, url.indexOf(";")), base64: url.slice(comma + 1) };
-          }
-        }
-      }
-    }
+function extractChatContent(raw: Record<string, unknown>): string {
+  if (typeof raw.content === "string" && raw.content.trim()) return raw.content;
+  const rawObj = raw.raw as Record<string, unknown> | undefined;
+  const rawChoices = rawObj?.choices as Array<{ message?: { content?: string } }> | undefined;
+  if (typeof rawChoices?.[0]?.message?.content === "string") {
+    return rawChoices[0].message.content;
   }
-  throw new Error("OpenRouter image response did not include a data:image payload.");
+  return "";
 }
 
 async function main(): Promise<void> {
@@ -199,7 +195,10 @@ async function main(): Promise<void> {
         }))
         .filter((section) => section.heading && section.items.length > 0)
     : [];
-  const highlights = {
+  const rangeFrom = String(entry.rangeFrom || entry.date || "").trim();
+  const rangeTo = String(entry.rangeTo || entry.date || "").trim();
+  const commitSubjects = gitCommitSubjects(rangeFrom, rangeTo);
+  const highlights = stripBannedChangelogTopics({
     title: String(entry.title || "").trim(),
     date: String(entry.date || "").trim(),
     commitCount: Number(entry.commitCount) || 0,
@@ -207,11 +206,16 @@ async function main(): Promise<void> {
       ? entry.highlights.map((h) => String(h).trim()).filter(Boolean)
       : [],
     sections,
-  };
-  console.log(`Newest entry: ${highlights.date} · ${highlights.title} (${highlights.commitCount} commits)`);
+    commitSubjects,
+    rangeFrom,
+    rangeTo,
+  });
+  console.log(
+    `Newest entry: ${highlights.date} · ${highlights.title} (${highlights.commitCount} commits, ${commitSubjects.length} git subjects)`,
+  );
 
-  console.log(`Researching Pulse-relevant news with ${CHANGELOG_NEWSLETTER_WEB_MODEL}…`);
-  const webRaw = await hubApi("openrouter/chat-completion", {
+  console.log(`Searching More you know articles with ${CHANGELOG_NEWSLETTER_WEB_MODEL}…`);
+  const readingRaw = await hubApi("openrouter/chat-completion", {
     method: "POST",
     headers: authHeaders,
     body: JSON.stringify({
@@ -219,63 +223,18 @@ async function main(): Promise<void> {
       temperature: 0.2,
       maxTokens: 4096,
       responseFormat: { type: "json_object" },
-      system: CHANGELOG_NEWSLETTER_SYSTEM,
-      user: buildChangelogNewsletterUserPrompt(highlights),
+      system: CHANGELOG_NEWSLETTER_READING_SYSTEM,
+      user: buildChangelogNewsletterReadingUserPrompt(highlights),
     }),
   });
-  const rawObj = webRaw.raw as Record<string, unknown> | undefined;
-  const rawChoices = rawObj?.choices as Array<{ message?: { content?: string } }> | undefined;
-  const webContent =
-    typeof webRaw.content === "string"
-      ? webRaw.content
-      : typeof rawChoices?.[0]?.message?.content === "string"
-        ? rawChoices[0].message.content
-        : "";
-  if (!webContent.trim()) {
-    throw new Error("OpenRouter web draft returned empty content.");
+  const readingContent = extractChatContent(readingRaw);
+  if (!readingContent.trim()) {
+    throw new Error("OpenRouter reading draft returned empty content.");
   }
-  const draft = parseChangelogNewsletterWebDraft(webContent);
-  const payload = assembleChangelogNewsletter(highlights, draft);
+  const reading = parseChangelogNewsletterReadingDraft(readingContent);
+  const payload = assembleChangelogNewsletter(highlights, reading);
 
-  const logoSvgPath = path.join(REPO_ROOT, "public", "branding", "neo-pulse-light.svg");
-  if (!fs.existsSync(logoSvgPath)) {
-    throw new Error(`Missing brand lockup at ${logoSvgPath}`);
-  }
-  const logoSvgBase64 = fs.readFileSync(logoSvgPath).toString("base64");
-  const logoDataUrl = `data:image/svg+xml;base64,${logoSvgBase64}`;
-
-  console.log(`Generating branded hero with ${DEFAULT_IMAGE_MODEL}…`);
-  const imageRaw = await hubApi("openrouter/chat-completion", {
-    method: "POST",
-    headers: authHeaders,
-    body: JSON.stringify({
-      model: DEFAULT_IMAGE_MODEL,
-      modalities: ["text", "image"],
-      maxTokens: 16384,
-      image_config: { aspect_ratio: "16:9" },
-      messages: [
-        {
-          role: "user",
-          content: [
-            { type: "text", text: CHANGELOG_NEWSLETTER_HERO_PROMPT },
-            {
-              type: "text",
-              text: "Use the attached Neo Pulse brand lockup only for color and mark shape reference. Do not copy text or letters into the hero.",
-            },
-            { type: "image_url", image_url: { url: logoDataUrl } },
-          ],
-        },
-      ],
-    }),
-  });
-  const imagePayload = (imageRaw.raw as Record<string, unknown> | undefined) ?? imageRaw;
-  const hero = extractImageBase64(imagePayload);
-  const contentType = hero.contentType.startsWith("image/") ? hero.contentType : "image/png";
-
-  // Wordmark is HTML (brand lime #84bd00 + white) so clients that block SVG still render brand.
-  const emailParts = buildChangelogNewsletterEmail(payload, {
-    heroCid: CHANGELOG_NEWSLETTER_HERO_CID,
-  });
+  const emailParts = buildChangelogNewsletterEmail(payload);
 
   const outDir = path.join(REPO_ROOT, "tmp");
   fs.mkdirSync(outDir, { recursive: true });
@@ -315,15 +274,6 @@ async function main(): Promise<void> {
       text: emailParts.text,
       html: emailParts.html,
       labels: ["changelog-newsletter", "test"],
-      attachments: [
-        {
-          filename: "hero.png",
-          content_type: contentType,
-          content_disposition: "inline",
-          content_id: CHANGELOG_NEWSLETTER_HERO_CID,
-          content: hero.base64,
-        },
-      ],
     }),
   });
 

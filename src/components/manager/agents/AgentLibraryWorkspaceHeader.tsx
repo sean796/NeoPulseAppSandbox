@@ -1,7 +1,6 @@
-import { Bot, RotateCw, Search } from "lucide-react";
+import { RotateCw, Search } from "lucide-react";
 import { Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui";
 
-import { UnifiedWorkspaceChrome } from "@/components/shared/UnifiedWorkspaceChrome";
 import { WorkspacePill } from "@/components/shared/WorkspacePill";
 import {
   BULK_HEADER_FIELD,
@@ -56,6 +55,7 @@ const CATEGORY_OPTIONS: { value: AgentLibraryCategoryFilter; label: string }[] =
   { value: "video", label: "Video model" },
 ];
 
+/** Slim studio toolbar (no UnifiedWorkspaceChrome). Dock supplies page identity. */
 export function AgentLibraryWorkspaceHeader({
   activeSection,
   onSectionChange,
@@ -71,96 +71,89 @@ export function AgentLibraryWorkspaceHeader({
   onRefresh,
 }: AgentLibraryWorkspaceHeaderProps) {
   return (
-    <UnifiedWorkspaceChrome
-      icon={Bot}
-      title="Agent Library"
-      titleRowEnd={
-        <div className="flex items-center gap-1.5">
-          <WorkspacePill
-            label="Library"
-            active={activeSection === "library"}
-            square
-            onClick={() => onSectionChange("library")}
-          />
-          <WorkspacePill
-            label="Hub Settings"
-            active={activeSection === "settings"}
-            square
-            onClick={() => onSectionChange("settings")}
-          />
-        </div>
-      }
-      toolbar={
-        <>
-          <div className="relative flex items-center">
-            <Search
-              className="pointer-events-none absolute left-2.5 h-4 w-4 text-muted-foreground"
-              aria-hidden
-            />
-            <Input
-              value={searchQuery}
-              onChange={(e) => onSearchQueryChange(e.target.value)}
-              placeholder="Search agents by name, id, or module"
-              aria-label="Search agents by name, id, or module"
-              className={cn(BULK_HEADER_FIELD, "w-64 pl-8 sm:w-80")}
-            />
-          </div>
-          <span className={BULK_TOOLBAR_GROUP_DIVIDER} aria-hidden />
-          <Select
-            value={domainFilter}
-            onValueChange={(val) => onDomainFilterChange(val as AgentLibraryDomainFilter)}
-          >
-            <SelectTrigger
-              aria-label="Filter agents by domain"
-              className={cn(BULK_HEADER_SELECT_TRIGGER, "min-w-[11rem]")}
-            >
-              <SelectValue placeholder="Domain filter" />
-            </SelectTrigger>
-            <SelectContent>
-              {DOMAIN_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select
-            value={categoryFilter}
-            onValueChange={(val) => onCategoryFilterChange(val as AgentLibraryCategoryFilter)}
-          >
-            <SelectTrigger
-              aria-label="Filter agents by model category"
-              className={cn(BULK_HEADER_SELECT_TRIGGER, "min-w-[11.5rem]")}
-            >
-              <SelectValue placeholder="Model category" />
-            </SelectTrigger>
-            <SelectContent>
-              {CATEGORY_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <div className="ml-auto flex shrink-0 items-center gap-2">
-            <span className="whitespace-nowrap font-sans text-base tabular-nums text-muted-foreground">
-              {visibleCount} / {totalCount} agents
-            </span>
-            <button
-              type="button"
-              onClick={onRefresh}
-              disabled={busy}
-              className={cn(BULK_HEADER_TOOL_BTN, "inline-flex items-center gap-1.5")}
-              aria-label="Refresh Agent Library"
-            >
-              <RotateCw className={cn("h-4 w-4", busy && "animate-pulse")} aria-hidden />
-              Refresh
-            </button>
-          </div>
-        </>
-      }
-      workspaceBusy={busy}
-      progressBand="empty"
-    />
+    <div
+      className="flex h-11 w-full min-w-0 shrink-0 items-center gap-2 overflow-x-auto bg-black px-3"
+      aria-label="Agent Library toolbar"
+    >
+      <div className="flex shrink-0 items-center gap-1.5">
+        <WorkspacePill
+          label="Library"
+          active={activeSection === "library"}
+          square
+          onClick={() => onSectionChange("library")}
+        />
+        <WorkspacePill
+          label="Hub Settings"
+          active={activeSection === "settings"}
+          square
+          onClick={() => onSectionChange("settings")}
+        />
+      </div>
+      <span className={BULK_TOOLBAR_GROUP_DIVIDER} aria-hidden />
+      <div className="relative flex items-center">
+        <Search
+          className="pointer-events-none absolute left-2.5 h-4 w-4 text-muted-foreground"
+          aria-hidden
+        />
+        <Input
+          value={searchQuery}
+          onChange={(e) => onSearchQueryChange(e.target.value)}
+          placeholder="Search agents by name, id, or module"
+          aria-label="Search agents by name, id, or module"
+          className={cn(BULK_HEADER_FIELD, "w-64 pl-8 sm:w-80")}
+        />
+      </div>
+      <Select
+        value={domainFilter}
+        onValueChange={(val) => onDomainFilterChange(val as AgentLibraryDomainFilter)}
+      >
+        <SelectTrigger
+          aria-label="Filter agents by domain"
+          className={cn(BULK_HEADER_SELECT_TRIGGER, "min-w-[11rem]")}
+        >
+          <SelectValue placeholder="Domain filter" />
+        </SelectTrigger>
+        <SelectContent>
+          {DOMAIN_OPTIONS.map((opt) => (
+            <SelectItem key={opt.value} value={opt.value}>
+              {opt.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Select
+        value={categoryFilter}
+        onValueChange={(val) => onCategoryFilterChange(val as AgentLibraryCategoryFilter)}
+      >
+        <SelectTrigger
+          aria-label="Filter agents by model category"
+          className={cn(BULK_HEADER_SELECT_TRIGGER, "min-w-[11.5rem]")}
+        >
+          <SelectValue placeholder="Model category" />
+        </SelectTrigger>
+        <SelectContent>
+          {CATEGORY_OPTIONS.map((opt) => (
+            <SelectItem key={opt.value} value={opt.value}>
+              {opt.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <div className="ml-auto flex shrink-0 items-center gap-2">
+        <span className="whitespace-nowrap font-sans text-base tabular-nums text-muted-foreground">
+          {visibleCount} / {totalCount} agents
+        </span>
+        <button
+          type="button"
+          onClick={onRefresh}
+          disabled={busy}
+          className={cn(BULK_HEADER_TOOL_BTN, "inline-flex items-center gap-1.5")}
+          aria-label="Refresh Agent Library"
+        >
+          <RotateCw className={cn("h-4 w-4", busy && "animate-pulse")} aria-hidden />
+          Refresh
+        </button>
+      </div>
+    </div>
   );
 }

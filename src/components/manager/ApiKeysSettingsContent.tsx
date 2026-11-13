@@ -1,5 +1,4 @@
-import { useCallback, useState } from "react";
-import { Key } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTeam } from "@/contexts/TeamContext";
 import {
@@ -20,11 +19,7 @@ import { DataForSEOApiKeyContent } from "@/components/DataForSEOApiKeyContent";
 import { SemrushApiKeyContent } from "@/components/SemrushApiKeyContent";
 import { AgentMailApiKeyContent } from "@/components/AgentMailApiKeyContent";
 import { ResidentialProxySettingsContent } from "@/components/manager/ResidentialProxySettingsContent";
-import {
-  DASHBOARD_SETTINGS_GROUP_CLASS,
-  DASHBOARD_SETTINGS_PANEL_CLASS,
-} from "@/components/manager/dashboard/dashboard-panel-styles";
-import { Button } from "@/ui";
+import { SETTINGS_STUDIO_PANEL_CLASS } from "@/components/manager/settings/settings-studio-surfaces";
 
 export type ApiKeysSettingsContentProps = {
   apiKey: string;
@@ -40,6 +35,8 @@ export type ApiKeysSettingsContentProps = {
   temperature: number;
   maxTokens: number;
   topP: number;
+  /** Register Save for the Settings identity strip. */
+  onSaveBindingChange?: (binding: { save: () => void; saving: boolean } | null) => void;
 };
 
 export function ApiKeysSettingsContent({
@@ -56,6 +53,7 @@ export function ApiKeysSettingsContent({
   temperature,
   maxTokens,
   topP,
+  onSaveBindingChange,
 }: ApiKeysSettingsContentProps) {
   const { user } = useAuth();
   const { activeTeam } = useTeam();
@@ -115,19 +113,15 @@ export function ApiKeysSettingsContent({
     saveSemrushApiKey,
   ]);
 
-  return (
-    <div className={`${DASHBOARD_SETTINGS_PANEL_CLASS} space-y-4 text-white`}>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <Key className="h-5 w-5 text-white" aria-hidden />
-          <h2 className="text-base font-semibold text-white">API Keys</h2>
-        </div>
-        <Button variant="run" type="button" disabled={saving} onClick={handleSaveAllKeys}>
-          {saving ? "Saving…" : "Save"}
-        </Button>
-      </div>
+  useEffect(() => {
+    if (!onSaveBindingChange) return;
+    onSaveBindingChange({ save: handleSaveAllKeys, saving });
+    return () => onSaveBindingChange(null);
+  }, [onSaveBindingChange, handleSaveAllKeys, saving]);
 
-      <div className={DASHBOARD_SETTINGS_GROUP_CLASS}>
+  return (
+    <div className="flex w-full min-w-0 flex-col gap-3" aria-label="API Keys">
+      <section className={SETTINGS_STUDIO_PANEL_CLASS}>
         <div className="space-y-6">
           <ApiKeyContent apiKey={apiKey} setApiKey={setApiKey} saveApiKey={saveApiKey} />
           <DataForSEOApiKeyContent
@@ -141,9 +135,9 @@ export function ApiKeysSettingsContent({
             saveApiKey={saveSemrushApiKey}
           />
           <AgentMailApiKeyContent />
-          <ResidentialProxySettingsContent />
         </div>
-      </div>
+      </section>
+      <ResidentialProxySettingsContent />
     </div>
   );
 }

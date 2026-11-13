@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  GitFork,
   CheckCircle2,
   AlertTriangle,
   XCircle,
@@ -13,10 +12,7 @@ import {
 } from 'lucide-react';
 import { VendorButton as Button, Input, Label, Textarea, Badge } from "@/ui";
 
-import {
-  DASHBOARD_SETTINGS_GROUP_CLASS,
-  DASHBOARD_SETTINGS_PANEL_CLASS,
-} from '@/components/manager/dashboard/dashboard-panel-styles';
+import { SETTINGS_STUDIO_PANEL_CLASS } from '@/components/manager/settings/settings-studio-surfaces';
 import { runDecisionTreePipeline } from '@/lib/decision-tree/decision-tree-runner';
 import { DEFAULT_DECISION_THRESHOLDS } from '@/lib/decision-tree/decision-tree-defaults';
 import { logger } from "@/lib/logger";
@@ -104,25 +100,8 @@ The PureStride Compact features an ultra-quiet 2.5 HP brushless motor that stays
   };
 
   return (
-    <div className={`${DASHBOARD_SETTINGS_PANEL_CLASS} space-y-6 text-white`}>
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-4">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <GitFork className="h-5 w-5 text-indigo-400" />
-            <h2 className="text-lg font-bold text-white tracking-wide">Editorial Decision Tree &amp; Checker</h2>
-            <Badge variant="outline" className="border-indigo-400/40 text-indigo-300 bg-indigo-500/10 text-xs">
-              Liquid LFM2.5 + Gemini Pipeline
-            </Badge>
-          </div>
-          <p className="mt-1 text-sm text-zinc-300">
-            Liquid LFM2.5 handles rapid classification, quality gates, and fix routing. Gemini executes targeted content edits.
-          </p>
-        </div>
-      </div>
-
-      {/* Visual Pipeline Flowchart Overview */}
-      <div className="rounded-xl border border-white/10 bg-zinc-950/60 p-4">
+    <div className="flex w-full min-w-0 flex-col gap-3 text-white" aria-label="Decision Tree">
+      <div className={SETTINGS_STUDIO_PANEL_CLASS}>
         <div className="flex items-center gap-2 mb-3">
           <ShieldCheck className="h-4 w-4 text-emerald-400" />
           <h3 className="text-sm font-semibold text-zinc-200">Active Decision Tree Playbook</h3>
@@ -158,7 +137,7 @@ The PureStride Compact features an ultra-quiet 2.5 HP brushless motor that stays
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Thresholds & Config */}
         <div className="lg:col-span-5 space-y-4">
-          <div className={DASHBOARD_SETTINGS_GROUP_CLASS}>
+          <div className={SETTINGS_STUDIO_PANEL_CLASS}>
             <div className="flex items-center gap-2 mb-3">
               <Sliders className="h-4 w-4 text-zinc-300" />
               <h3 className="text-sm font-semibold text-white">Configurable Policy Thresholds</h3>
@@ -247,7 +226,7 @@ The PureStride Compact features an ultra-quiet 2.5 HP brushless motor that stays
 
         {/* Right Column: Draft Test Simulator & Audit Stream */}
         <div className="lg:col-span-7 space-y-4">
-          <div className={DASHBOARD_SETTINGS_GROUP_CLASS}>
+          <div className={SETTINGS_STUDIO_PANEL_CLASS}>
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <Zap className="h-4 w-4 text-amber-400" />

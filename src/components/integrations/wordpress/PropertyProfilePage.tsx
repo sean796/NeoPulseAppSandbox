@@ -40,9 +40,12 @@ export type PropertyProfilePageProps = {
   getScrapingKey: (siteId: string, sitemapUrl: string) => string;
   onPatchSite?: (siteId: string, patch: Partial<WordPressSite>) => void;
   onSaveProperty?: () => void;
+  onDeleteProperty?: () => void;
+  onLogoBoxThemeChange?: (theme: "black" | "white") => void;
   onOpenSettingsProfile?: () => void;
   /** Studio Edit pencil: all overview fields editable together. */
   editing?: boolean;
+  onToggleEditing?: () => void;
 };
 
 export function PropertyProfilePage({
@@ -71,7 +74,11 @@ export function PropertyProfilePage({
   onExtractNAPAndGraph,
   getScrapingKey,
   onPatchSite,
+  onSaveProperty,
+  onDeleteProperty,
+  onLogoBoxThemeChange,
   editing = false,
+  onToggleEditing,
 }: PropertyProfilePageProps): React.ReactElement {
   return (
     <div className="flex min-h-0 w-full flex-1 flex-col overflow-hidden px-3 pt-3 font-sans text-base md:px-5 md:pt-4">
@@ -85,6 +92,10 @@ export function PropertyProfilePage({
         onExtractNAPAndGraph={onExtractNAPAndGraph}
         onPatchSite={onPatchSite}
         editing={editing}
+        onToggleEditing={onToggleEditing}
+        onSaveProperty={onSaveProperty}
+        onDeleteProperty={onDeleteProperty}
+        onLogoBoxThemeChange={onLogoBoxThemeChange}
         settingsPanel={siteSettingsPanel}
         sitemapPanel={
           <SitemapSection

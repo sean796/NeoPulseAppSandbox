@@ -34,6 +34,7 @@ import { NEO_PULSE_OPEN_MASTER_RULES_EVENT } from "@/lib/open-master-rules-setti
 import { isApiTabPath } from "@/lib/api-docs/api-docs-route";
 import { isPulseForgePath, parsePulseForgeRoute, setPulseForgeRoute } from "@/lib/pulse-forge/pulse-forge-route";
 import { isPulseHostPath } from "@/lib/hosting/pulse-host-route";
+import { propertySlugFromDashboardPath } from "@/lib/properties/property-dashboard-slug";
 import {
   parseOverviewClientNameFromSearch,
   resolveSiteIdByClientName,
@@ -70,10 +71,29 @@ export function useIndexManagerNavigation({
     readStoredManagerSettingsCluster(),
   );
 
-  const handleManagerDashboardClusterChange = useCallback((id: ManagerSettingsClusterId) => {
-    setManagerDashboardCluster(id);
-    writeStoredManagerSettingsCluster(id);
-  }, []);
+  const handleManagerDashboardClusterChange = useCallback(
+    (id: ManagerSettingsClusterId) => {
+      setManagerDashboardCluster(id);
+      writeStoredManagerSettingsCluster(id);
+      if (id === "pulse-host") {
+        if (!isPulseHostPath(location.pathname)) {
+          navigate("/pulse-host");
+        }
+        return;
+      }
+      if (isPulseHostPath(location.pathname) || location.pathname === "/agent-library" || location.pathname === "/changelog") {
+        navigate("/dashboard");
+        return;
+      }
+      // Properties home = bare /dashboard; Settings clears any client slug.
+      if (id === "properties" || propertySlugFromDashboardPath(location.pathname)) {
+        navigate("/dashboard");
+      } else if (!location.pathname.startsWith("/dashboard")) {
+        navigate("/dashboard");
+      }
+    },
+    [location.pathname, navigate],
+  );
 
   useEffect(() => {
     const onOpenMasterRules = () => {
@@ -85,6 +105,28 @@ export function useIndexManagerNavigation({
       window.removeEventListener(NEO_PULSE_OPEN_MASTER_RULES_EVENT, onOpenMasterRules as EventListener);
     };
   }, [handleManagerDashboardClusterChange, navigate]);
+
+  /** Settings studio aliases: keep Pulse Host URLs; fold Agent Library / Changelog into /dashboard. */
+  useEffect(() => {
+    if (isPulseHostPath(location.pathname)) {
+      if (managerDashboardCluster !== "pulse-host") {
+        setManagerDashboardCluster("pulse-host");
+        writeStoredManagerSettingsCluster("pulse-host");
+      }
+      return;
+    }
+    if (location.pathname === "/agent-library") {
+      setManagerDashboardCluster("agent-library");
+      writeStoredManagerSettingsCluster("agent-library");
+      navigate("/dashboard", { replace: true });
+      return;
+    }
+    if (location.pathname === "/changelog") {
+      setManagerDashboardCluster("changelog");
+      writeStoredManagerSettingsCluster("changelog");
+      navigate("/dashboard", { replace: true });
+    }
+  }, [location.pathname, managerDashboardCluster, navigate]);
 
   const handleManagerTabChange = useCallback(
     (tab: string) => {
@@ -111,7 +153,21 @@ export function useIndexManagerNavigation({
         return;
       }
       if (tab === "pulse-host") {
+        setManagerDashboardCluster("pulse-host");
+        writeStoredManagerSettingsCluster("pulse-host");
         navigate(isPulseHostPath(location.pathname) ? location.pathname : "/pulse-host");
+        return;
+      }
+      if (tab === "agent-library") {
+        setManagerDashboardCluster("agent-library");
+        writeStoredManagerSettingsCluster("agent-library");
+        navigate("/dashboard");
+        return;
+      }
+      if (tab === "changelog") {
+        setManagerDashboardCluster("changelog");
+        writeStoredManagerSettingsCluster("changelog");
+        navigate("/dashboard");
         return;
       }
       navigate(managerTabPath(tab));

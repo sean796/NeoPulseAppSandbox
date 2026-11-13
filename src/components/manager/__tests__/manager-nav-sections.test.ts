@@ -38,6 +38,18 @@ describe("manager nav sections", () => {
     expect(isManagerNavItemSelected("chat", item!, "properties")).toBe(false);
   });
 
+  it("Dashboard mega menu is Properties + Settings only", () => {
+    const dashboard = MANAGER_NAV_SECTIONS.find((s) => s.id === "dashboard");
+    expect(dashboard?.items.map((i) => i.value)).toEqual([
+      "dashboard-properties",
+      "dashboard-settings",
+    ]);
+    const settings = dashboard?.items.find((i) => i.openSettingsStudio);
+    expect(settings).toBeDefined();
+    expect(isManagerNavItemSelected("dashboard", settings!, "api-keys")).toBe(true);
+    expect(isManagerNavItemSelected("dashboard", settings!, "properties")).toBe(false);
+  });
+
   it("selects a generator item only on the generator tab with its section", () => {
     const item = allItems().find((i) => i.generatorSection);
     expect(item).toBeDefined();
@@ -48,7 +60,13 @@ describe("manager nav sections", () => {
 
   it("selects a plain item when the tab matches its value", () => {
     const item = allItems().find(
-      (i) => !i.dashboardCluster && !i.generatorSection && !i.organicDashboard && !i.children && !i.docsPath,
+      (i) =>
+        !i.dashboardCluster &&
+        !i.openSettingsStudio &&
+        !i.generatorSection &&
+        !i.organicDashboard &&
+        !i.children &&
+        !i.docsPath,
     );
     expect(item).toBeDefined();
     expect(isManagerNavItemSelected(item!.value, item!, undefined)).toBe(true);

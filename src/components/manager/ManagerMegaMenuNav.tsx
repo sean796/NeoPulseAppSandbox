@@ -26,7 +26,10 @@ import {
   type ManagerNavItem,
   type ManagerNavSection,
 } from "@/components/manager/manager-nav-sections";
-import type { ManagerSettingsClusterId } from "@/components/manager/manager-settings-cluster";
+import {
+  readStoredManagerSettingsItem,
+  type ManagerSettingsClusterId,
+} from "@/components/manager/manager-settings-cluster";
 import type { BlogGeneratorSectionId } from "@/components/blog-generator/blog-generator-sections";
 import { useBlogGeneratorSection } from "@/hooks/use-blog-generator-section";
 import { dashboardClusterToArea, managerTabToArea, useTeamPermission } from "@/hooks/use-team-permission";
@@ -123,6 +126,11 @@ export function ManagerMegaMenuNav({
       }
       if (item.generatorSection) {
         onGeneratorSectionChange?.(item.generatorSection);
+        return;
+      }
+      if (item.openSettingsStudio) {
+        onDashboardClusterChange(readStoredManagerSettingsItem());
+        onManagerTabChange("dashboard");
         return;
       }
       if (item.dashboardCluster) {

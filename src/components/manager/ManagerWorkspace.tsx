@@ -10,9 +10,6 @@ import { PulseForgeTabContent } from "@/components/manager/pulse-forge/PulseForg
 import { UsersTabContent } from "@/components/manager/UsersTabContent";
 import { SupportTabContent } from "@/components/manager/support/SupportTabContent";
 import { SitemapOptimizerResearchTab } from "@/components/research/sitemap-optimizer/SitemapOptimizerResearchTab";
-import { PulseHostTabContent } from "@/components/hosting/PulseHostTabContent";
-import { AgentLibraryTabContent } from "@/components/manager/agents/AgentLibraryTabContent";
-import { ChangelogTabContent } from "@/components/manager/changelog/ChangelogTabContent";
 import { ImageStudioTabContent } from "@/components/video-generator/ImageStudioTabContent";
 import { VideoGeneratorTabContent } from "@/components/video-generator/VideoGeneratorTabContent";
 import { OrganicReportingEmbeddedPanel } from "@/components/organic-dashboard/OrganicReportingEmbeddedPanel";
@@ -85,6 +82,7 @@ export const ManagerWorkspace: React.FC<ManagerWorkspaceProps> = ({
   const fullBleedTab =
     embedded &&
     (managerTab === "dashboard" ||
+      managerTab === "pulse-host" ||
       managerTab === "chat" ||
       managerTab === "tasks" ||
       managerTab === "pulse-forge" ||
@@ -93,7 +91,6 @@ export const ManagerWorkspace: React.FC<ManagerWorkspaceProps> = ({
       managerTab === "generator" ||
       managerTab === "local-dominator" ||
       managerTab === "organic-reporting" ||
-      managerTab === "changelog" ||
       managerTab === "api");
   /** Radix tabpanel must participate in flex-1 chain when embedded; parent-only selectors are unreliable. */
   const embeddedTabPanelStretch = embedded ? "flex h-full min-h-0 flex-1 flex-col overflow-hidden" : undefined;
@@ -187,7 +184,7 @@ export const ManagerWorkspace: React.FC<ManagerWorkspaceProps> = ({
                   managerTab === "video-generator" ||
                   managerTab === "api" ||
                   managerTab === "local-dominator" ||
-                  managerTab === "changelog" ||
+                  managerTab === "pulse-host" ||
                   managerTab === "organic-reporting"
                   ? "overflow-y-hidden"
                   : "neo-pulse-embedded-tab-scroller overflow-y-auto",
@@ -335,27 +332,6 @@ export const ManagerWorkspace: React.FC<ManagerWorkspaceProps> = ({
               onResetBlueprint={onResetBlueprint}
             />
           ) : null}
-        </TabsContent>
-
-        <TabsContent
-          value="pulse-host"
-          className={cn(embeddedTabPanelTopClass, "data-[state=inactive]:hidden", embeddedTabPanelStretch)}
-        >
-          {managerTab === "pulse-host" ? <PulseHostTabContent /> : null}
-        </TabsContent>
-
-        <TabsContent
-          value="agent-library"
-          className={cn(embeddedTabPanelTopClass, "data-[state=inactive]:hidden", embeddedTabPanelStretch)}
-        >
-          {managerTab === "agent-library" ? <AgentLibraryTabContent /> : null}
-        </TabsContent>
-
-        <TabsContent
-          value="changelog"
-          className={cn(embeddedTabPanelTopClass, "data-[state=inactive]:hidden", embeddedTabPanelStretch)}
-        >
-          {managerTab === "changelog" ? <ChangelogTabContent /> : null}
         </TabsContent>
 
         <TabsContent

@@ -101,49 +101,55 @@ export function ManagerWorkspaceSettingsTab({
   managerDashboardCluster,
   onManagerDashboardClusterChange,
 }: ManagerWorkspaceSettingsTabProps) {
+  const settingsContent = (
+    <ManagerSettingsContent
+      apiKey={apiKey}
+      setApiKey={setApiKey}
+      saveApiKey={saveApiKey}
+      dataForSEOApiKey={dataForSEOApiKey}
+      setDataForSEOApiKey={setDataForSEOApiKey}
+      saveDataForSEOApiKeyToStorage={saveDataForSEOApiKey}
+      semrushApiKey={semrushApiKey}
+      setSemrushApiKey={setSemrushApiKey}
+      saveSemrushApiKeyToStorage={saveSemrushApiKey}
+      selectedModel={selectedModel}
+      setSelectedModel={setSelectedModel}
+      agentResearchModel={agentResearchModel}
+      setAgentResearchModel={setAgentResearchModel}
+      agentImageModel={agentImageModel}
+      setAgentImageModel={setAgentImageModel}
+      agentMetaModel={agentMetaModel}
+      setAgentMetaModel={setAgentMetaModel}
+      agentReportModel={agentReportModel}
+      setAgentReportModel={setAgentReportModel}
+      agentAdsModel={agentAdsModel}
+      setAgentAdsModel={setAgentAdsModel}
+      temperature={temperature}
+      setTemperature={setTemperature}
+      maxTokens={maxTokens}
+      setMaxTokens={setMaxTokens}
+      topP={topP}
+      setTopP={setTopP}
+      settingsCluster={managerDashboardCluster}
+      onSettingsClusterChange={onManagerDashboardClusterChange}
+    />
+  );
+
+  const panelClass = cn(
+    embeddedTabPanelTopClass,
+    "shadow-none ring-0 ring-offset-0 outline-none focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=inactive]:hidden",
+    embeddedTabPanelStretch,
+  );
+
   return (
-        <TabsContent
-          value="dashboard"
-          className={cn(
-            embeddedTabPanelTopClass,
-            "shadow-none ring-0 ring-offset-0 outline-none focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=inactive]:hidden",
-            embeddedTabPanelStretch,
-          )}
-        >
-          {managerTab === "dashboard" ? (
-            <ManagerSettingsContent
-              apiKey={apiKey}
-              setApiKey={setApiKey}
-              saveApiKey={saveApiKey}
-              dataForSEOApiKey={dataForSEOApiKey}
-              setDataForSEOApiKey={setDataForSEOApiKey}
-              saveDataForSEOApiKeyToStorage={saveDataForSEOApiKey}
-              semrushApiKey={semrushApiKey}
-              setSemrushApiKey={setSemrushApiKey}
-              saveSemrushApiKeyToStorage={saveSemrushApiKey}
-              selectedModel={selectedModel}
-              setSelectedModel={setSelectedModel}
-              agentResearchModel={agentResearchModel}
-              setAgentResearchModel={setAgentResearchModel}
-              agentImageModel={agentImageModel}
-              setAgentImageModel={setAgentImageModel}
-              agentMetaModel={agentMetaModel}
-              setAgentMetaModel={setAgentMetaModel}
-              agentReportModel={agentReportModel}
-              setAgentReportModel={setAgentReportModel}
-              agentAdsModel={agentAdsModel}
-              setAgentAdsModel={setAgentAdsModel}
-              temperature={temperature}
-              setTemperature={setTemperature}
-              maxTokens={maxTokens}
-              setMaxTokens={setMaxTokens}
-              topP={topP}
-              setTopP={setTopP}
-              settingsCluster={managerDashboardCluster}
-              onSettingsClusterChange={onManagerDashboardClusterChange}
-            />
-          ) : null}
-        </TabsContent>
+    <>
+      <TabsContent value="dashboard" className={panelClass}>
+        {managerTab === "dashboard" ? settingsContent : null}
+      </TabsContent>
+      <TabsContent value="pulse-host" className={panelClass}>
+        {managerTab === "pulse-host" ? settingsContent : null}
+      </TabsContent>
+    </>
   );
 }
 

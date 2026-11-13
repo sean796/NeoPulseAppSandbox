@@ -14,7 +14,7 @@ import { LegacyHashRedirect } from "@/components/LegacyHashRedirect";
 import { MANAGER_TAB_ROUTES } from "@/lib/manager-tab-routes";
 
 /** Tabs whose workspace owns deeper path segments (sections, runs, docs). */
-const SUBPATH_TABS = new Set(["generator", "pulse-forge", "pulse-host", "api"]);
+const SUBPATH_TABS = new Set(["dashboard", "generator", "pulse-forge", "pulse-host", "api"]);
 
 import HuddlePopupPage from "./pages/HuddlePopupPage";
 import OrganicDashboardPage from "./pages/OrganicDashboardPage";

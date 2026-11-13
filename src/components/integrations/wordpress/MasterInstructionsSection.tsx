@@ -300,7 +300,7 @@ export const MasterInstructionsSection: React.FC<MasterInstructionsSectionProps>
     const fileText = selectedSource?.content?.trim() ?? "";
     return (
       <div
-        className={`flex h-32 w-full shrink-0 flex-col gap-2 ${COPY}`}
+        className={`flex min-h-0 w-full flex-1 flex-col gap-1.5 ${COPY}`}
         onDragEnter={onDropZoneDragEnter}
         onDragLeave={onDropZoneDragLeave}
         onDragOver={onDropZoneDragOver}

@@ -106,17 +106,34 @@ export const PROPERTIES_OVERVIEW_IDENTITY_NAME_CLASS =
 export const PROPERTIES_OVERVIEW_IDENTITY_URL_CLASS =
   "min-w-0 truncate text-base font-medium !text-white";
 
-/** One fixed package badge slot (zero CLS). */
-export const PROPERTIES_OVERVIEW_IDENTITY_PILLS_CLASS =
-  "ml-auto flex h-8 w-[8.75rem] min-w-[8.75rem] max-w-[8.75rem] shrink-0 flex-nowrap items-center justify-end";
+/** Package badge width (actions row matches this exactly). */
+export const PROPERTIES_OVERVIEW_PACKAGE_SLOT_WIDTH =
+  "w-[8.75rem] min-w-[8.75rem] max-w-[8.75rem]";
+
+/** Package badge stacked above edit/save/delete (right-aligned, same column width). */
+export const PROPERTIES_OVERVIEW_IDENTITY_PILLS_CLASS = cn(
+  "ml-auto flex shrink-0 flex-col items-stretch justify-center gap-1.5",
+  PROPERTIES_OVERVIEW_PACKAGE_SLOT_WIDTH,
+);
+
+/** Icon action row under the package badge (same width as badge). */
+export const PROPERTIES_OVERVIEW_IDENTITY_ACTIONS_CLASS =
+  "grid h-7 w-full shrink-0 grid-cols-3 gap-1";
+
+/** Icon pill under the editorial package badge (pencil / save / delete). */
+export const PROPERTIES_OVERVIEW_ACTION_PILL_CLASS = cn(
+  "inline-flex h-7 w-full items-center justify-center rounded-none border-0 bg-white/10 text-white shadow-none",
+  "hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+  "aria-pressed:bg-white/20",
+  "[&>svg]:h-3.5 [&>svg]:w-3.5",
+);
 
 /** Shared chip chrome; widths are fixed per slot below (zero CLS across clients). */
 const PROPERTIES_OVERVIEW_CHIP_BASE =
   "inline-flex h-8 shrink-0 items-center justify-center gap-2 overflow-hidden rounded-none px-2 text-base font-medium !text-white [&>span:last-child]:min-w-0 [&>span:last-child]:truncate";
 
 /** Package slot: Standard / Lite / No editorial (one package badge per client). */
-export const PROPERTIES_OVERVIEW_CHIP_EDITORIAL_SLOT =
-  "w-[8.75rem] min-w-[8.75rem] max-w-[8.75rem]";
+export const PROPERTIES_OVERVIEW_CHIP_EDITORIAL_SLOT = PROPERTIES_OVERVIEW_PACKAGE_SLOT_WIDTH;
 
 export const PROPERTIES_OVERVIEW_CHIP_CLASS = cn(
   PROPERTIES_OVERVIEW_CHIP_BASE,

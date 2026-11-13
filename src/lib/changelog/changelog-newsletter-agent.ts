@@ -1,51 +1,35 @@
 /**
- * OpenRouter web-search draft for the Pulse changelog newsletter.
- *
- * Product highlights stay on the archive entry (code-owned). This agent
- * only fills SEO news, languages, and must-read tips from live web search,
- * and every item must map to a theme in this Pulse update.
+ * Changelog newsletter draft: CEO-friendly More you know articles (web search).
+ * No Languages. No hero. No Do this week tips.
  */
 
 import { z } from "zod";
 import { parseModelJson } from "../model-json";
 
-/** OpenRouter web-search model (same id as LLM_AUDIT_OPENROUTER_MODEL). */
-export const CHANGELOG_NEWSLETTER_WEB_MODEL = "openai/gpt-4o-mini:online";
+/** Web search model for More you know articles. */
+export const CHANGELOG_NEWSLETTER_WEB_MODEL = "openai/gpt-4o:online";
+
+export const NEWSLETTER_ARTICLE_SUMMARY_MIN = 120;
 
 const httpsUrl = z
   .string()
   .min(1)
   .refine((u) => u.startsWith("https://"), { message: "sourceUrl must be https" });
 
-export const newsletterNewsItemSchema = z.object({
+export const newsletterArticleSchema = z.object({
   title: z.string().min(1),
-  summary: z.string().min(1),
+  summary: z.string().min(NEWSLETTER_ARTICLE_SUMMARY_MIN),
   date: z.string().min(1),
   sourceUrl: httpsUrl,
-  pulseTheme: z.string().min(1),
+  whyItHelps: z.string().min(40),
 });
 
-export const newsletterLanguageItemSchema = z.object({
-  name: z.string().min(1),
-  whyItMatters: z.string().min(1),
-  sourceUrl: httpsUrl,
-  pulseTheme: z.string().min(1),
+/** Web-search pass: CEO supporting reading list. */
+export const changelogNewsletterReadingDraftSchema = z.object({
+  articles: z.array(newsletterArticleSchema).length(3),
 });
 
-export const newsletterTipItemSchema = z.object({
-  title: z.string().min(1),
-  body: z.string().min(1),
-  sourceUrl: httpsUrl,
-  pulseTheme: z.string().min(1),
-});
-
-export const changelogNewsletterWebDraftSchema = z.object({
-  news: z.array(newsletterNewsItemSchema).length(3),
-  languages: z.array(newsletterLanguageItemSchema).length(3),
-  tips: z.array(newsletterTipItemSchema).length(3),
-});
-
-export type ChangelogNewsletterWebDraft = z.infer<typeof changelogNewsletterWebDraftSchema>;
+export type ChangelogNewsletterReadingDraft = z.infer<typeof changelogNewsletterReadingDraftSchema>;
 
 export type ChangelogNewsletterSection = {
   heading: string;
@@ -58,106 +42,227 @@ export type ChangelogNewsletterHighlights = {
   commitCount: number;
   highlights: string[];
   sections?: ChangelogNewsletterSection[];
+  commitSubjects?: string[];
+  rangeFrom?: string;
+  rangeTo?: string;
 };
 
-export type ChangelogNewsletterPayload = ChangelogNewsletterHighlights & ChangelogNewsletterWebDraft;
+export type ChangelogNewsletterPayload = ChangelogNewsletterHighlights & {
+  articles: z.infer<typeof newsletterArticleSchema>[];
+};
 
-export const CHANGELOG_NEWSLETTER_SYSTEM = `You research external news for a Neo Pulse product-update newsletter.
+/** @deprecated */
+export type ChangelogNewsletterWebDraft = ChangelogNewsletterReadingDraft;
 
-Relevance rules (non-negotiable):
-- The user message lists THIS Pulse update (title, highlights, section bullets). That pack is the topic map.
-- Every news story, language item, and tip MUST be directly useful for understanding or applying something named in that pack (for example Pulse Host / WordPress hosting, site user management, client reporting narratives, Semrush, GA4, GSC, OpenRouter keys, Local Grid).
-- Reject generic AI hype, model release roundups, or SEO gossip that does not map to a Pulse theme in the pack.
-- Each item includes pulseTheme: a short phrase naming which Pulse highlight or section theme it supports.
-- Use web search only. Every item needs a real https sourceUrl. Never invent URLs, stories, or dates.
-- Return exactly 3 news items, 3 language items, and 3 tips. No empty arrays.
-- News: three recent industry stories (this week, or last 14 days if thin) that illuminate the Pulse themes above. Two short sentences each. Short human date (e.g. "Nov 12, 2026").
-- Languages: three languages that matter for the SAME Pulse themes (stack languages for hosting/agents/reporting, or content languages tied to client SEO work those features support). One sentence on why it matters for this update.
-- Tips: three must-read actions an agency owner can take this week that use or benefit from the features in THIS Pulse update. Each tip needs a sourceUrl.
-- Do NOT repeat or rephrase the product changelog bullets. Those stay in Highlights.
-- Never use the em dash character. Use commas, periods, or parentheses instead.
+const BANNED_TOPIC_PATTERN = /rank\s*math|\bemcp\b|email\s*desk.*rank|rank.*email\s*desk/i;
 
-Output (JSON only, no markdown fences, no commentary):
-{
-  "news": [{ "title": "...", "summary": "...", "date": "...", "sourceUrl": "https://...", "pulseTheme": "Pulse Host user management" }],
-  "languages": [{ "name": "...", "whyItMatters": "...", "sourceUrl": "https://...", "pulseTheme": "..." }],
-  "tips": [{ "title": "...", "body": "...", "sourceUrl": "https://...", "pulseTheme": "..." }]
-}`;
+export function stripBannedChangelogTopics(
+  entry: ChangelogNewsletterHighlights,
+): ChangelogNewsletterHighlights {
+  const keep = (line: string) => !BANNED_TOPIC_PATTERN.test(line);
+  const highlights = entry.highlights.filter(keep);
+  const sections = (entry.sections ?? [])
+    .map((section) => ({
+      heading: section.heading,
+      items: section.items.filter(keep),
+    }))
+    .filter((section) => section.items.length > 0);
+  return { ...entry, highlights, sections };
+}
 
-export function buildChangelogNewsletterUserPrompt(entry: ChangelogNewsletterHighlights): string {
+function packBlock(entry: ChangelogNewsletterHighlights): string {
+  const cleaned = stripBannedChangelogTopics(entry);
   const bullets =
-    entry.highlights.length > 0
-      ? entry.highlights.map((h) => `- ${h}`).join("\n")
-      : "- (no highlights on this entry)";
+    cleaned.highlights.length > 0
+      ? cleaned.highlights.map((h) => `- ${h}`).join("\n")
+      : "- (no highlights)";
   const sectionLines =
-    entry.sections && entry.sections.length > 0
-      ? entry.sections
+    cleaned.sections && cleaned.sections.length > 0
+      ? cleaned.sections
           .map((section) => {
-            const items = section.items
-              .slice(0, 8)
-              .map((item) => `  - ${item}`)
-              .join("\n");
+            const items = section.items.slice(0, 12).map((item) => `  - ${item}`).join("\n");
             return `${section.heading}:\n${items}`;
           })
           .join("\n")
       : "(no sections)";
-  return `THIS Pulse update (topic map for every news, language, and tip item):
-Title: ${entry.title}
-Date: ${entry.date}
-Commits: ${entry.commitCount}
+  const subjects = (cleaned.commitSubjects ?? []).slice(0, 40);
+  const commitBlock =
+    subjects.length > 0 ? subjects.map((s) => `- ${s}`).join("\n") : "(no commit subjects)";
+  return `Neo Pulse update: ${cleaned.title}
+Date: ${cleaned.date}
+Commits: ${cleaned.commitCount}
+Range: ${cleaned.rangeFrom ?? cleaned.date} to ${cleaned.rangeTo ?? cleaned.date}
+
 Highlights:
 ${bullets}
 
 Sections:
 ${sectionLines}
 
-Search the web for sources that illuminate THESE Pulse themes only. Return the newsletter research JSON now.`;
+Commit subjects:
+${commitBlock}`;
 }
 
-export function parseChangelogNewsletterWebDraft(raw: string): ChangelogNewsletterWebDraft {
-  return parseModelJson(raw, changelogNewsletterWebDraftSchema, "changelog newsletter web draft");
+export const CHANGELOG_NEWSLETTER_READING_SYSTEM = `You curate a "More you know" reading list for a Neo Pulse changelog email sent to client CEOs and non-technical stakeholders.
+
+The user pack describes THIS Neo Pulse ship. Your job is to web-search for real, recent industry news or analysis that explains WHY Pulse made these product moves. This is supporting context for a CEO-friendly changelog, not a rewrite of the changelog and not a developer setup guide.
+
+Audience:
+- A client CEO who does not live in the codebase.
+- Plain language. No engineering jargon. No "how to click through WordPress admin" tutorials.
+
+Hard rules:
+- Use web search. Every item needs a real https sourceUrl you found on a live article page.
+- Never invent URLs, titles, dates, or publisher domains. If search does not return a usable page, do not fabricate one.
+- Prefer news or analysis from the last 12 months on recognizable trade or business publishers (for example Digiday, Search Engine Land, AdExchanger, Agency Management Institute, Harvard Business Review, Wall Street Journal, Forbes agency coverage).
+- sourceUrl must be the exact article page you found. The page title must match your articles.title. Do not point at changelogs, docs hubs, personal portfolios, product marketing pages, or unrelated case studies.
+- Search for industry context behind the CAPABILITY CLASS in the pack (for example: why agencies need centralized hosting user control, why client SEO reports need trustworthy narratives and clean property IDs, why AI marketing stacks need serious API-key operations, why local visibility grids matter when Local Grid is in the pack).
+- Pick pieces a client CEO would care about: risk, trust, revenue, competitive pressure. Do not pick developer or internal-engineering pieces (code quality, refactoring, CI hygiene).
+- Banned: WordPress / GA4 / Semrush / GSC install how-tos, language intros (php.net, MDN intro, W3Schools), vendor 101 docs, anything that only teaches a tool Neo Pulse integrates with.
+- Banned filler titles and themes: "future of analytics", "importance of user management", "importance of code quality", "the role of API key management", vague SEO roundups, generic "what you need to know" listicles with no named research or news hook.
+- Never mention Rank Math or EMCP.
+- Return exactly 3 articles.
+- articles.summary: 2 to 4 sentences a CEO can follow.
+- articles.whyItHelps: one plain sentence of the form "This is why Pulse shipped X this week," naming a concrete client-facing ship item from the pack.
+- Never use the em dash character.
+
+Output JSON only:
+{
+  "articles": [{ "title": "...", "summary": "...", "date": "Nov 12, 2026", "sourceUrl": "https://...", "whyItHelps": "This is why Pulse shipped ..." }]
+}`;
+
+/** @deprecated */
+export const CHANGELOG_NEWSLETTER_SYSTEM = CHANGELOG_NEWSLETTER_READING_SYSTEM;
+
+export function buildChangelogNewsletterReadingUserPrompt(
+  entry: ChangelogNewsletterHighlights,
+): string {
+  return `${packBlock(entry)}
+
+Web-search now for three real CEO-friendly supporting articles that explain why THIS Pulse ship matters. Return the reading-list JSON (articles only).`;
 }
 
-/** Merge code-owned highlights with the validated web draft. */
+/** @deprecated */
+export function buildChangelogNewsletterUserPrompt(
+  entry: ChangelogNewsletterHighlights,
+): string {
+  return buildChangelogNewsletterReadingUserPrompt(entry);
+}
+
+export function parseChangelogNewsletterReadingDraft(raw: string): ChangelogNewsletterReadingDraft {
+  return parseModelJson(raw, changelogNewsletterReadingDraftSchema, "changelog newsletter reading draft");
+}
+
+/** @deprecated */
+export function parseChangelogNewsletterWebDraft(raw: string): ChangelogNewsletterReadingDraft {
+  return parseChangelogNewsletterReadingDraft(raw);
+}
+
+const TITLE_STOPWORDS = new Set([
+  "a",
+  "an",
+  "and",
+  "for",
+  "in",
+  "of",
+  "on",
+  "the",
+  "to",
+  "with",
+  "how",
+  "why",
+  "what",
+  "is",
+  "are",
+]);
+
+function significantTitleTokens(title: string): string[] {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .split(/\s+/)
+    .map((t) => t.trim())
+    .filter((t) => t.length >= 4 && !TITLE_STOPWORDS.has(t));
+}
+
+function extractHtmlTitle(html: string): string {
+  const match = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  if (!match?.[1]) return "";
+  return match[1].replace(/\s+/g, " ").trim();
+}
+
+/**
+ * Fail-fast: every article sourceUrl must be a live page whose document title
+ * overlaps the claimed article title. Does not rewrite content; bad links abort.
+ */
+export async function assertNewsletterArticleSourcesReachable(
+  articles: Array<{ title: string; sourceUrl: string }>,
+): Promise<void> {
+  for (const article of articles) {
+    try {
+      const res = await fetch(article.sourceUrl, {
+        method: "GET",
+        redirect: "follow",
+        signal: AbortSignal.timeout(12_000),
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          Accept: "text/html,application/xhtml+xml",
+        },
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const html = (await res.text()).slice(0, 20_000);
+      const lower = html.toLowerCase();
+      if (
+        lower.includes("domain is for sale") ||
+        lower.includes("buy this domain") ||
+        lower.includes("this domain may be for sale")
+      ) {
+        throw new Error("URL resolves to a domain-for-sale page");
+      }
+      const pageTitle = extractHtmlTitle(html);
+      const tokens = significantTitleTokens(article.title);
+      const pageLower = pageTitle.toLowerCase();
+      const hits = tokens.filter((t) => pageLower.includes(t));
+      const needed = Math.min(2, tokens.length);
+      if (needed > 0 && hits.length < needed) {
+        throw new Error(
+          `page title "${pageTitle || "(missing)"}" does not match claimed title`,
+        );
+      }
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      throw new Error(
+        `More you know source is not a live matching article: "${article.title}" → ${article.sourceUrl} (${detail}). Re-run so web search returns real publisher URLs.`,
+      );
+    }
+  }
+}
+
 export function assembleChangelogNewsletter(
   entry: ChangelogNewsletterHighlights,
-  draft: ChangelogNewsletterWebDraft,
+  reading: ChangelogNewsletterReadingDraft,
 ): ChangelogNewsletterPayload {
-  if (!entry.title.trim()) {
-    throw new Error("Changelog entry title is required.");
-  }
-  if (!entry.date.trim()) {
-    throw new Error("Changelog entry date is required.");
-  }
-  if (!Number.isFinite(entry.commitCount) || entry.commitCount < 0) {
+  const cleaned = stripBannedChangelogTopics(entry);
+  if (!cleaned.title.trim()) throw new Error("Changelog entry title is required.");
+  if (!cleaned.date.trim()) throw new Error("Changelog entry date is required.");
+  if (!Number.isFinite(cleaned.commitCount) || cleaned.commitCount < 0) {
     throw new Error("Changelog entry commitCount is required.");
   }
+  if (cleaned.highlights.length === 0 && (!cleaned.sections || cleaned.sections.length === 0)) {
+    throw new Error("Changelog entry has no highlights or sections after cleanup.");
+  }
   return {
-    title: entry.title.trim(),
-    date: entry.date.trim(),
-    commitCount: entry.commitCount,
-    highlights: entry.highlights.map((h) => h.trim()).filter(Boolean),
-    sections: entry.sections,
-    news: draft.news,
-    languages: draft.languages,
-    tips: draft.tips,
+    title: cleaned.title.trim(),
+    date: cleaned.date.trim(),
+    commitCount: cleaned.commitCount,
+    highlights: cleaned.highlights.map((h) => h.trim()).filter(Boolean),
+    sections: cleaned.sections,
+    commitSubjects: cleaned.commitSubjects,
+    rangeFrom: cleaned.rangeFrom,
+    rangeTo: cleaned.rangeTo,
+    articles: reading.articles,
   };
 }
-
-/** Brand-aligned hero: Neo Pulse dark shell + lime accent. No EKG, no text. */
-export const CHANGELOG_NEWSLETTER_HERO_PROMPT = `Create a wide 16:9 editorial hero for the Neo Pulse product newsletter.
-
-Brand lock:
-- Background near-black / deep charcoal like #02050a (Neo Pulse dark UI).
-- Accent lime green exactly like Neo Pulse brand #84bd00 (not teal, not emerald Tailwind green).
-- Clean agency SaaS aesthetic matching a dark dashboard product, not a medical or fitness look.
-
-Composition:
-- Abstract soft geometry inspired by the Neo Pulse leaf / n brand mark (two curved organic blades), large and elegant, not a logo recreation with letters.
-- Subtle sense of a hosting and reporting control plane: soft panels, faint grid, or layered cards in the dark field.
-- Cinematic lighting with a restrained #84bd00 glow. Premium, minimal, modern.
-
-Forbidden:
-- No heartbeat / EKG / oscilloscope / cardiogram lines.
-- No text, letters, numbers, watermarks, logos, UI chrome, or browser mockups.
-- No purple gradients, no neon cyber clutter, no stock-photo people.`;

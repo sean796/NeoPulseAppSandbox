@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { SEO_WORKSPACE_BODY_SCROLL_CLASS, SEO_WORKSPACE_SHELL_CLASS } from "@/components/seo/seo-workspace-layout";
+import { SEO_WORKSPACE_BODY_SCROLL_CLASS } from "@/components/seo/seo-workspace-layout";
 import { useTeam } from "@/contexts/TeamContext";
 import {
   clearHostedSiteCache,
@@ -132,7 +132,7 @@ export function PulseHostTabContent() {
   const inventoryTab = tab === "plugins" || tab === "themes";
 
   return (
-    <div className={cn(SEO_WORKSPACE_SHELL_CLASS, "font-sans text-base")}>
+    <div className="flex h-full min-h-0 w-full min-w-0 flex-1 flex-col gap-3 overflow-hidden font-sans text-base">
       {route.view === "site" ? (
         <SiteProfilePage
           route={route}

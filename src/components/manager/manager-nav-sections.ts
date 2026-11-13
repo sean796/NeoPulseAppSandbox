@@ -1,6 +1,5 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  Bot,
   Building2,
   Clapperboard,
   Cpu,
@@ -8,10 +7,8 @@ import {
   Image,
   UserRound,
   Users,
-  Cloud,
   Crosshair,
   GitMerge,
-  Key,
   LayoutDashboard,
   Layers,
   LifeBuoy,
@@ -19,14 +16,13 @@ import {
   MessageCircle,
   CheckSquare,
   Share2,
-  ScrollText,
   Search,
   Sparkles,
-  Server,
   Target,
   TrendingUp,
   LineChart,
   Wrench,
+  Settings2,
   Zap,
 } from "lucide-react";
 import type { ManagerSettingsClusterId } from "@/components/manager/manager-settings-cluster";
@@ -71,6 +67,8 @@ export type ManagerNavItem = {
   children?: ManagerNavItem[];
   /** Selects Dashboard tab and this settings section (in-page nav hidden). */
   dashboardCluster?: ManagerSettingsClusterId;
+  /** Opens Dashboard in Settings studio mode (last dock item, or API Keys). */
+  openSettingsStudio?: boolean;
   /** Opens a React Router path outside manager tabs (e.g. /docs). */
   docsPath?: string;
   /** Opens the property-scoped organic dashboard for the active (or first) site. */
@@ -99,50 +97,11 @@ export const MANAGER_NAV_SECTIONS: ManagerNavSection[] = [
         dashboardCluster: "properties",
       },
       {
-        value: "dashboard-api-keys",
-        label: "API Keys",
-        description: "OpenRouter and DataForSEO",
-        icon: Key,
-        dashboardCluster: "api-keys",
-      },
-      {
-        value: "dashboard-master-rules",
-        label: "Master Rules",
-        description: "Per-site client instructions stored in the workspace for AI generation.",
-        icon: ScrollText,
-        dashboardCluster: "master-rules",
-      },
-      {
-        value: "dashboard-ai-generation",
-        label: "AI & Models",
-        description: "Default model and generation parameters",
-        icon: Sparkles,
-        dashboardCluster: "ai-generation",
-      },
-      {
-        value: "dashboard-google",
-        label: "Google Services",
-        description: "Analytics and Search Console",
-        icon: Cloud,
-        dashboardCluster: "google",
-      },
-      {
-        value: "pulse-host",
-        label: "Pulse Host",
-        description: "Managed WordPress sites",
-        icon: Server,
-      },
-      {
-        value: "agent-library",
-        label: "Agent Library",
-        description: "NEO Pulse agent registry, Slack hub agents, and category model routing",
-        icon: Bot,
-      },
-      {
-        value: "changelog",
-        label: "Changelog",
-        description: "App update archive written by the research agent from git commits",
-        icon: ScrollText,
+        value: "dashboard-settings",
+        label: "Settings",
+        description: "API keys, models, Google, Pulse Host, Agent Library, and Changelog",
+        icon: Settings2,
+        openSettingsStudio: true,
       },
     ],
   },
@@ -348,6 +307,13 @@ export function isManagerNavItemSelected(
   activeGeneratorSection?: BlogGeneratorSectionId,
   pathname?: string,
 ): boolean {
+  if (item.openSettingsStudio) {
+    return (
+      managerTab === "dashboard" &&
+      Boolean(dashboardCluster) &&
+      dashboardCluster !== "properties"
+    );
+  }
   if (item.dashboardCluster) {
     return managerTab === "dashboard" && dashboardCluster === item.dashboardCluster;
   }

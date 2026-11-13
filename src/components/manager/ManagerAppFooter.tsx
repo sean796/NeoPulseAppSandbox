@@ -1,11 +1,8 @@
 import { NeoPulseAppBrand } from "@/components/manager/NeoPulseAppBrand";
-import { writeStoredManagerSettingsCluster } from "@/components/manager/manager-settings-cluster";
 import {
-  MANAGER_NAV_TRIGGER_ACTIVE,
-  MANAGER_NAV_TRIGGER_BASE,
-  MANAGER_NAV_TRIGGER_INACTIVE,
-} from "@/components/manager/manager-top-bar-nav-styles";
-import { cn } from "@/lib/utils";
+  type ManagerSettingsClusterId,
+  writeStoredManagerSettingsCluster,
+} from "@/components/manager/manager-settings-cluster";
 import { Button } from "@/ui";
 
 /** In-app shortcuts; inner wrapper adds horizontal gutter so the footer never sits flush to the column edge. */
@@ -20,16 +17,20 @@ export interface ManagerAppFooterProps {
   onTabChange: (tab: string) => void;
   /** Footer brand → Dashboard home (Properties). Syncs mega menu cluster when provided. */
   onDashboardBrandClick?: () => void;
+  /** Optional: set Dashboard settings dock item (Changelog footer link). */
+  onDashboardClusterChange?: (id: ManagerSettingsClusterId) => void;
+  /** Active Dashboard cluster; used so Changelog footer press state matches Settings dock. */
+  settingsCluster?: ManagerSettingsClusterId;
 }
 
-export function ManagerAppFooter({ currentTab, onTabChange, onDashboardBrandClick }: ManagerAppFooterProps) {
+export function ManagerAppFooter({
+  currentTab,
+  onTabChange,
+  onDashboardBrandClick,
+  onDashboardClusterChange,
+  settingsCluster,
+}: ManagerAppFooterProps) {
   const year = new Date().getFullYear();
-
-  const footerNavBtnClass = cn(
-    MANAGER_NAV_TRIGGER_BASE,
-    MANAGER_NAV_TRIGGER_INACTIVE,
-    "h-9 min-h-9 shrink-0 border-0 shadow-none",
-  );
 
   const handleBrandClick = () => {
     if (onDashboardBrandClick) {
@@ -38,6 +39,20 @@ export function ManagerAppFooter({ currentTab, onTabChange, onDashboardBrandClic
       writeStoredManagerSettingsCluster("properties");
       onTabChange("dashboard");
     }
+  };
+
+  const handleFooterLink = (value: string) => {
+    if (value === "changelog") {
+      writeStoredManagerSettingsCluster("changelog");
+      onDashboardClusterChange?.("changelog");
+      onTabChange("changelog");
+      return;
+    }
+    if (value === "dashboard") {
+      writeStoredManagerSettingsCluster("properties");
+      onDashboardClusterChange?.("properties");
+    }
+    onTabChange(value);
   };
 
   return (
@@ -56,13 +71,18 @@ export function ManagerAppFooter({ currentTab, onTabChange, onDashboardBrandClic
           aria-label="Primary workspace areas"
         >
           {FOOTER_APP_LINKS.map(({ value, label }) => {
-            const active = currentTab === value;
+            const active =
+              value === "changelog"
+                ? settingsCluster === "changelog"
+                : value === "dashboard"
+                  ? currentTab === "dashboard" && settingsCluster !== "changelog"
+                  : currentTab === value;
             return (
               <Button
                 pressed={Boolean(active)}
                 variant="quiet"
                 key={value}
-                onClick={() => onTabChange(value)}
+                onClick={() => handleFooterLink(value)}
               >
                 {label}
               </Button>

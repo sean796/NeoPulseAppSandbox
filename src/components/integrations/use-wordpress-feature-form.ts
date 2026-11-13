@@ -317,6 +317,9 @@ export function useWordPressFeatureForm({
       formGa4PropertyId.trim() || liveEdit?.ga4PropertyId?.trim() || "";
     const adsForSave =
       formGoogleAdsCustomerId.trim() || liveEdit?.googleAdsCustomerId?.trim() || "";
+    /** Form stays aligned with overview swatches; prefer form, else live site. */
+    const logoBoxThemeForSave =
+      formClientLogoBoxTheme ?? liveEdit?.clientLogoBoxTheme;
     const saved = handleSaveSite(
       formName,
       formSiteUrl,
@@ -341,7 +344,7 @@ export function useWordPressFeatureForm({
       formServiceState,
       formServiceCountry,
       adsForSave,
-      formClientLogoBoxTheme,
+      logoBoxThemeForSave,
     );
     if (saved) {
       setIsDialogOpen(false);
@@ -351,6 +354,9 @@ export function useWordPressFeatureForm({
       setEditingSite(saved);
       const gbp = saved.gbpLocationId?.trim() ?? gbpForSave;
       setFormGbpLocationId(gbp);
+      setFormClientLogoBoxTheme(
+        saved.clientLogoBoxTheme === "white" ? "white" : "black",
+      );
       if (saved.ga4PropertyId?.trim()) {
         setFormGa4PropertyId(saved.ga4PropertyId.trim());
       }

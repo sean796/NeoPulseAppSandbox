@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ScrollText } from "lucide-react";
 import { Button, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui";
 import { BULK_HEADER_SELECT_TRIGGER } from "@/components/keyword-research/bulk/bulk-workspace-header-styles";
 import { SEO_WORKSPACE_TYPO_CLASS } from "@/components/seo/seo-workspace-layout";
@@ -129,13 +128,13 @@ export function ChangelogTabContent(): React.ReactElement {
     <div
       className={cn(
         SEO_WORKSPACE_TYPO_CLASS,
-        "flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden bg-background",
+        "flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden bg-black",
       )}
     >
       <div className="relative flex h-full min-h-0 w-full flex-1 flex-row overflow-hidden bg-black">
         <aside
           aria-label="Changelog archive by month"
-          className="relative flex h-full min-h-0 w-[21rem] shrink-0 flex-col border-r border-white/10 bg-black font-sans text-base text-white"
+          className="relative flex h-full min-h-0 w-[21rem] shrink-0 flex-col border-r border-white/10 bg-zinc-950 font-sans text-base text-white"
         >
           <div className="flex h-11 shrink-0 items-center border-b border-white/10 bg-black px-3">
             <Select value={monthFilter} onValueChange={setMonthFilter}>
@@ -190,13 +189,8 @@ export function ChangelogTabContent(): React.ReactElement {
             aria-label="Changelog header"
           >
             <div className="flex h-11 w-full min-w-0 shrink-0 items-center gap-2 overflow-x-auto border-b border-white/10 bg-black px-3">
-              <div className="inline-flex h-8 w-[14.5rem] min-w-[14.5rem] max-w-[14.5rem] shrink-0 items-center gap-2 rounded-none border border-white/10 bg-ui-field px-2.5 font-semibold text-white">
-                <ScrollText className="h-4 w-4 shrink-0" aria-hidden />
-                Changelog
-              </div>
-              <div className="h-5 w-px shrink-0 bg-white/15" aria-hidden="true" />
-              <div className="inline-flex h-8 w-[20rem] min-w-[20rem] max-w-[20rem] shrink-0 items-center justify-between rounded-none border border-white/10 bg-ui-field px-2.5 text-foreground">
-                <span className="min-w-0 flex-1 truncate text-left font-mono text-base">
+              <div className="inline-flex h-8 min-w-0 max-w-xl flex-1 items-center rounded-none bg-zinc-900 px-2.5 text-foreground">
+                <span className="min-w-0 flex-1 truncate text-left font-mono text-base tabular-nums">
                   {sourceLine}
                 </span>
               </div>

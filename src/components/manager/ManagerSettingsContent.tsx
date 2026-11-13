@@ -1,13 +1,19 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { AiModelsSettingsContent } from "@/components/manager/AiModelsSettingsContent";
 import { ApiKeysSettingsContent } from "@/components/manager/ApiKeysSettingsContent";
 import { GoogleServicesSettingsContent } from "@/components/manager/GoogleServicesSettingsContent";
 import { ManagerMasterRulesSettingsContent } from "@/components/manager/ManagerMasterRulesSettingsContent";
 import { DecisionTreeManagerContent } from "@/components/manager/decision-tree/DecisionTreeManagerContent";
 import { IntegrationsTab } from "@/components/IntegrationsTab";
-import { ManagerDashboardShell } from "@/components/manager/dashboard/ManagerDashboardShell";
+import { PulseHostTabContent } from "@/components/hosting/PulseHostTabContent";
+import { AgentLibraryTabContent } from "@/components/manager/agents/AgentLibraryTabContent";
+import { ChangelogTabContent } from "@/components/manager/changelog/ChangelogTabContent";
+import { SettingsStudioShell } from "@/components/manager/settings/SettingsStudioShell";
+import { SETTINGS_STUDIO_CTA_CLASS } from "@/components/manager/settings/settings-studio-surfaces";
 import {
   type ManagerSettingsClusterId,
+  type ManagerSettingsItemId,
+  isManagerSettingsItemId,
   readStoredManagerSettingsCluster,
   writeStoredManagerSettingsCluster,
 } from "@/components/manager/manager-settings-cluster";
@@ -29,7 +35,11 @@ import {
   writeGlobalVideoAgentModel,
 } from "@/lib/global-agent-models";
 import { dashboardClusterToArea, useTeamPermission } from "@/hooks/use-team-permission";
-import { DASHBOARD_SECTION_ORDER } from "@/components/manager/dashboard/dashboard-section-labels";
+import {
+  DASHBOARD_SECTION_ORDER,
+  SETTINGS_DOCK_ORDER,
+} from "@/components/manager/dashboard/dashboard-section-labels";
+import { cn } from "@/lib/utils";
 
 export interface ManagerSettingsContentProps {
   apiKey: string;
@@ -156,6 +166,10 @@ export function ManagerSettingsContent({
   const [internalCluster, setInternalCluster] = useState<ManagerSettingsClusterId>(() =>
     readStoredManagerSettingsCluster(),
   );
+  const [apiKeysSaveBinding, setApiKeysSaveBinding] = useState<{
+    save: () => void;
+    saving: boolean;
+  } | null>(null);
 
   const cluster =
     settingsClusterControlled !== undefined ? settingsClusterControlled : internalCluster;
@@ -180,6 +194,11 @@ export function ManagerSettingsContent({
         return !area || canRead(area);
       }),
     [canRead],
+  );
+
+  const visibleSettingsItems = useMemo(
+    () => SETTINGS_DOCK_ORDER.filter((id) => visibleSectionIds.includes(id)),
+    [visibleSectionIds],
   );
 
   useEffect(() => {
@@ -208,20 +227,45 @@ export function ManagerSettingsContent({
     [setSemrushApiKey, saveSemrushApiKeyToStorage],
   );
 
-  const sections = [
-    {
-      id: "properties" as const,
-      content: (
+  const handleSettingsSelect = useCallback(
+    (id: ManagerSettingsItemId) => {
+      onClusterChange(id);
+    },
+    [onClusterChange],
+  );
+
+  const handleApiKeysSaveBindingChange = useCallback(
+    (binding: { save: () => void; saving: boolean } | null) => {
+      setApiKeysSaveBinding(binding);
+    },
+    [],
+  );
+
+  if (cluster === "properties") {
+    return (
+      <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
         <IntegrationsTab
           activeDashboardSection={cluster}
           onDashboardSectionChange={onClusterChange}
           visibleDashboardSectionIds={visibleSectionIds}
         />
-      ),
-    },
-    {
-      id: "api-keys" as const,
-      content: (
+      </div>
+    );
+  }
+
+  const activeItem: ManagerSettingsItemId = isManagerSettingsItemId(cluster)
+    ? cluster
+    : (visibleSettingsItems[0] ?? "api-keys");
+
+  const fillPane =
+    activeItem === "pulse-host" ||
+    activeItem === "agent-library" ||
+    activeItem === "changelog";
+
+  let pane: ReactNode = null;
+  switch (activeItem) {
+    case "api-keys":
+      pane = (
         <ApiKeysSettingsContent
           apiKey={apiKey}
           setApiKey={setApiKey}
@@ -236,16 +280,15 @@ export function ManagerSettingsContent({
           temperature={temperature}
           maxTokens={maxTokens}
           topP={topP}
+          onSaveBindingChange={handleApiKeysSaveBindingChange}
         />
-      ),
-    },
-    {
-      id: "master-rules" as const,
-      content: <ManagerMasterRulesSettingsContent />,
-    },
-    {
-      id: "ai-generation" as const,
-      content: (
+      );
+      break;
+    case "master-rules":
+      pane = <ManagerMasterRulesSettingsContent />;
+      break;
+    case "ai-generation":
+      pane = (
         <AiModelsSettingsContent
           researchModel={agentResearchModel}
           setResearchModel={setAgentResearchModel}
@@ -270,28 +313,50 @@ export function ManagerSettingsContent({
           topP={topP}
           setTopP={setTopP}
         />
-      ),
-    },
-    {
-      id: "decision-tree" as const,
-      content: <DecisionTreeManagerContent />,
-    },
-    {
-      id: "google" as const,
-      content: <GoogleServicesSettingsContent />,
-    },
-  ];
+      );
+      break;
+    case "decision-tree":
+      pane = <DecisionTreeManagerContent />;
+      break;
+    case "google":
+      pane = <GoogleServicesSettingsContent />;
+      break;
+    case "pulse-host":
+      pane = <PulseHostTabContent />;
+      break;
+    case "agent-library":
+      pane = <AgentLibraryTabContent />;
+      break;
+    case "changelog":
+      pane = <ChangelogTabContent />;
+      break;
+    default:
+      pane = null;
+  }
+
+  const identityActions =
+    activeItem === "api-keys" ? (
+      <button
+        type="button"
+        className={cn(SETTINGS_STUDIO_CTA_CLASS, "min-w-[4.5rem]")}
+        disabled={!apiKeysSaveBinding || apiKeysSaveBinding.saving}
+        onClick={() => apiKeysSaveBinding?.save()}
+      >
+        {apiKeysSaveBinding?.saving ? "Saving…" : "Save"}
+      </button>
+    ) : null;
 
   return (
     <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
-      <ManagerDashboardShell
-        activeSection={cluster}
-        onSectionChange={onClusterChange}
-        sections={sections
-          .filter(({ id }) => visibleSectionIds.includes(id))
-          .map(({ id, content }) => ({ id, content }))}
-        visibleSectionIds={visibleSectionIds}
-      />
+      <SettingsStudioShell
+        items={visibleSettingsItems}
+        activeItem={activeItem}
+        onSelect={handleSettingsSelect}
+        identityActions={identityActions}
+        fillPane={fillPane}
+      >
+        {pane}
+      </SettingsStudioShell>
     </div>
   );
 }

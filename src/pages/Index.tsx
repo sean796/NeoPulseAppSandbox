@@ -147,6 +147,8 @@ const Index = () => {
           <ManagerAppFooter
             currentTab={managerTab}
             onTabChange={handleManagerTabChange}
+            onDashboardClusterChange={handleManagerDashboardClusterChange}
+            settingsCluster={managerDashboardCluster}
             onDashboardBrandClick={() => {
               handleManagerDashboardClusterChange("properties");
               handleManagerTabChange("dashboard");

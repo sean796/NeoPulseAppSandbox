@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ScrollText } from "lucide-react";
 import { MasterInstructionsSection } from "@/components/integrations/wordpress/MasterInstructionsSection";
 import { useAuth } from "@/contexts/AuthContext";
 import { getStoredSites, loadSitesFromServerAlways } from "@/components/integrations/storage";
 import type { WordPressSite } from "@/components/integrations/types";
 import { NEO_PULSE_MASTER_RULES_PRESET_SITE_ID_KEY } from "@/lib/open-master-rules-settings";
-import { DASHBOARD_SETTINGS_PANEL_CLASS } from "@/components/manager/dashboard/dashboard-panel-styles";
+import { SETTINGS_STUDIO_PANEL_CLASS } from "@/components/manager/settings/settings-studio-surfaces";
 
 export function ManagerMasterRulesSettingsContent() {
   const { user } = useAuth();
@@ -56,14 +55,7 @@ export function ManagerMasterRulesSettingsContent() {
   }, [sites, presetSiteId]);
 
   return (
-    <div className={`${DASHBOARD_SETTINGS_PANEL_CLASS} space-y-4 text-white`} aria-labelledby="master-rules-heading">
-      <div className="flex items-center gap-2">
-        <ScrollText className="h-5 w-5 text-white" aria-hidden />
-        <h2 id="master-rules-heading" className="text-base font-semibold text-white">
-          Master Rules
-        </h2>
-      </div>
-
+    <section className={SETTINGS_STUDIO_PANEL_CLASS} aria-label="Master Rules">
       {!user ? (
         <p className="text-base text-white">Sign in to load and save master rules.</p>
       ) : sites.length === 0 ? (
@@ -76,6 +68,6 @@ export function ManagerMasterRulesSettingsContent() {
           disabled={activeSite.enabled === false}
         />
       ) : null}
-    </div>
+    </section>
   );
 }

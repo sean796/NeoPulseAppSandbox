@@ -9,12 +9,7 @@ import {
   BULK_HEADER_FIELD,
   BULK_HEADER_RUN_BTN,
 } from "@/components/keyword-research/bulk/bulk-workspace-header-styles";
-import {
-  SEO_WORKSPACE_BODY_SCROLL_CLASS,
-  SEO_WORKSPACE_HEADER_CLASS,
-  SEO_WORKSPACE_SHELL_CLASS,
-  SEO_WORKSPACE_TYPO_CLASS,
-} from "@/components/seo/seo-workspace-layout";
+import { SEO_WORKSPACE_TYPO_CLASS } from "@/components/seo/seo-workspace-layout";
 import {
   buildUnifiedAgentLibraryEntries,
   DEFAULT_HUB_AGENTS,
@@ -152,25 +147,23 @@ export function AgentLibraryTabContent(): React.ReactElement {
   );
 
   return (
-    <div className={cn(SEO_WORKSPACE_SHELL_CLASS, SEO_WORKSPACE_TYPO_CLASS)}>
-      <div className={SEO_WORKSPACE_HEADER_CLASS}>
-        <AgentLibraryWorkspaceHeader
-          activeSection={activeSection}
-          onSectionChange={setActiveSection}
-          searchQuery={searchQuery}
-          onSearchQueryChange={setSearchQuery}
-          domainFilter={domainFilter}
-          onDomainFilterChange={setDomainFilter}
-          categoryFilter={categoryFilter}
-          onCategoryFilterChange={setCategoryFilter}
-          totalCount={allEntries.length}
-          visibleCount={filteredEntries.length}
-          busy={loading || savingSettings || togglingId !== null}
-          onRefresh={() => void loadLibrary()}
-        />
-      </div>
+    <div className={cn("flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden bg-black", SEO_WORKSPACE_TYPO_CLASS)}>
+      <AgentLibraryWorkspaceHeader
+        activeSection={activeSection}
+        onSectionChange={setActiveSection}
+        searchQuery={searchQuery}
+        onSearchQueryChange={setSearchQuery}
+        domainFilter={domainFilter}
+        onDomainFilterChange={setDomainFilter}
+        categoryFilter={categoryFilter}
+        onCategoryFilterChange={setCategoryFilter}
+        totalCount={allEntries.length}
+        visibleCount={filteredEntries.length}
+        busy={loading || savingSettings || togglingId !== null}
+        onRefresh={() => void loadLibrary()}
+      />
 
-      <div className={cn(SEO_WORKSPACE_BODY_SCROLL_CLASS, "flex flex-col gap-3 pb-4")}>
+      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-3 pb-4 pt-3">
         {errorMessage ? (
           <div className="bg-zinc-900 px-4 py-2.5 text-base text-red-400">
             {errorMessage}
