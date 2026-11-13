@@ -90,7 +90,7 @@ Banned from highlights / title (never lead with these):
 - Hub, deploy, disk, module splits, Wave / audit / grade / CI / Storybook / evals, "ownable", "small enough to own", vague "source fails" talk
 - Tiny renames, test-only tweaks, flatten/push ops, doc-only commits
 
-- Include a "highlights" array with ONLY the 3 to 5 Decision-ranked wins. Each bullet a FULL sentence naming the screen or feature and what the user can do.
+- Include a "highlights" array with ONLY the top 3 Decision-ranked wins. Each bullet one short FULL sentence (max 22 words) naming the screen or feature and what the user can do. No OpenRouter.
 - Group only those top wins using "New", "Improved", "Fixed" when needed (max 2 to 4 bullets per section). Never "Behind the scenes" for engineering chores.
 - No fluff, no raw file paths, no engineer jargon.
 - Never use the em dash character. Use commas, periods, or parentheses instead.
@@ -367,7 +367,7 @@ async function rankWeekImpacts(
         throw new Error("Decision Engine impact rank returned HTML instead of JSON (hub mid-deploy).");
       }
       const rank = parseChangelogImpactRank(rankContent);
-      const themes = topImpactThemes(rank, 5);
+      const themes = topImpactThemes(rank, 3);
       for (const row of rank.ranked.slice(0, 8)) {
         console.log(`  impact ${row.impactScore}: ${row.theme}`);
       }

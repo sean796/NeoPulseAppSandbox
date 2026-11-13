@@ -65,8 +65,8 @@ export function parseChangelogImpactRank(raw: string): ChangelogImpactRank {
   return { ranked };
 }
 
-/** Top themes the newsletter writer must cover (highest scores first). */
-export function topImpactThemes(rank: ChangelogImpactRank, limit = 5): string[] {
+/** Top themes the newsletter writer must cover (highest scores first). Default 3 for Jobs-tight weekly highlights. */
+export function topImpactThemes(rank: ChangelogImpactRank, limit = 3): string[] {
   return rank.ranked
     .slice()
     .sort((a, b) => b.impactScore - a.impactScore)

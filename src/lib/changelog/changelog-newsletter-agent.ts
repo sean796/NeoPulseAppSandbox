@@ -49,7 +49,7 @@ export const changelogNewsletterIntroDraftSchema = z.object({
       message: "hook must be 8 words or fewer",
     }),
   body: z.string().min(NEWSLETTER_BODY_MIN),
-  highlights: z.array(z.string().min(1)).min(3).max(5),
+  highlights: z.array(z.string().min(1)).length(3),
 });
 
 /** Pulse-relative More you know. */
@@ -184,30 +184,31 @@ Layout this copy feeds:
 - Summary (hook + body), then Weekly highlights. More you know, AISEO News, Google Updates, and Industry News are written elsewhere.
 
 Voice (Steve Jobs keynote for product users):
-- Full clear sentences. Calm confidence. Name the feature. Say what you can do now.
-- Impactful and concrete. Not vague poetry. Not engineer status updates.
-- Good: "Open the new Changelog screen to review this week's ships, approve a draft, and see when Friday is due."
+- Exactly THREE weekly highlights. Only the biggest. Never pad to four or five.
+- One short full sentence per highlight. Max 22 words. Name the screen. Say what you can do now.
+- Calm confidence. Concrete. No vendor product names (never say OpenRouter). Call it your AI key.
+- Good: "Open Changelog to review the week, approve the draft, and see when Friday is due."
 - Bad: "Every part of Pulse is now small enough for one person to own."
-- Good: "Integrations now shows Google Business Profile leads and Organic Website Leads beside each client."
+- Good: "In Integrations, add a client from the dock and see Google Business and website leads on the property."
 - Bad: "The hub is back. Client data now survives every publish."
-- Good: "Paste your AI key on the Keys screen and Pulse starts using it as you type."
-- Bad: "A report no longer dies when one source fails."
+- Good: "On the Keys screen, paste your AI key and Pulse starts using it as you type."
+- Bad: "A report no longer dies when one source fails." / "cold load" / "fetch" / long compound sentences.
 
 Grounding:
 - The user pack and REQUIRED Decision Engine themes are the ONLY sources of facts.
-- You MUST cover the REQUIRED Decision Engine themes in highlights (and lead the body with them). Rewrite each theme into a full user-facing sentence that names the screen or feature.
+- You MUST cover the REQUIRED Decision Engine themes in highlights (and lead the body with them). Rewrite each theme into one short user-facing sentence that names the screen or feature.
 - Never invent features. Never Rank Math or EMCP. Never external URLs.
 - Never use the em dash character.
-- Ban from hook/body/highlights: this newsletter, AgentMail, AISEO/Google email sections, Friday auto-send meta, wire seeds, palette tweaks, codebase craft, hub reliability, Wave work.
+- Ban from hook/body/highlights: this newsletter, AgentMail, AISEO/Google email sections, Friday auto-send meta, wire seeds, palette tweaks, codebase craft, hub reliability, Wave work, OpenRouter, GA4, GSC as jargon dumps.
 
 Write:
 1) hook: SHORT email-safe headline. Max 8 words and max 48 characters. Complete thought about a product feature users feel (examples: "Changelog you can approve.", "Leads live in Integrations.").
-2) body: one short paragraph of full sentences. Name the screens. Say what users can do this week. No vague reliability slogans.
-3) highlights: exactly 3 to 5 bullets. Full sentences. One Decision Engine theme per bullet. Each names a Pulse screen or feature and the user outcome. Different themes. No lookalikes.
+2) body: 2 to 3 short sentences. Name the screens. Say what users can do. No reliability slogans. No vendor names.
+3) highlights: exactly 3 bullets. One short full sentence each. One Decision Engine theme per bullet. Screen name + user outcome. No lookalikes.
 
 Banned tone:
 - Vague "owns / holds / survives / refuses to quit" metaphors with no screen name.
-- Dry release notes. Engineer ops. Changelog-about-changelog.
+- Long technical explanations. Dry release notes. Engineer ops. Changelog-about-changelog.
 
 Output JSON only:
 {
@@ -682,8 +683,9 @@ export function assembleChangelogNewsletter(
   const highlights = intro.highlights.map((h) => h.trim()).filter(Boolean);
   if (!hook) throw new Error("Newsletter hook is required.");
   if (!body) throw new Error("Newsletter body is required.");
-  if (highlights.length < 3) throw new Error("Newsletter needs at least 3 weekly highlights.");
-  if (highlights.length > 5) throw new Error("Newsletter may include at most 5 weekly highlights.");
+  if (highlights.length !== 3) {
+    throw new Error(`Newsletter needs exactly 3 weekly highlights (got ${highlights.length}).`);
+  }
   return {
     title: cleaned.title.trim(),
     date: cleaned.date.trim(),

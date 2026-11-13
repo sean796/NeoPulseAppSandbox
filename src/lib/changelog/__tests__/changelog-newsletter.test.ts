@@ -49,8 +49,6 @@ const INTRO: ChangelogNewsletterIntroDraft = {
     "Client PDFs finally show every section expanded so nothing looks half-built.",
     "Local map scans land as a clean circle of pins you can actually brief a client on.",
     "The changelog screen now has a real home for what shipped this week.",
-    "Weekly update email ships through a cleaner send path you can trust.",
-    "Deep links open the right screen instead of dumping you on Dashboard.",
   ],
 };
 
@@ -197,8 +195,7 @@ describe("changelog newsletter drafts", () => {
     const intro = parseChangelogNewsletterIntroDraft(JSON.stringify(INTRO));
     expect(intro.hook.length).toBeLessThanOrEqual(48);
     expect(intro.hook.split(/\s+/).length).toBeLessThanOrEqual(8);
-    expect(intro.highlights.length).toBeGreaterThanOrEqual(3);
-    expect(intro.highlights.length).toBeLessThanOrEqual(5);
+    expect(intro.highlights.length).toBe(3);
     const draft = parseChangelogNewsletterReadingDraft(JSON.stringify(READING));
     expect(draft.articles).toHaveLength(3);
     expect(draft.articles[0]?.sourceUrl.startsWith("https://")).toBe(true);
