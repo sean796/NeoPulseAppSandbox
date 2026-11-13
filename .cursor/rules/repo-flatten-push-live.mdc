@@ -1,0 +1,45 @@
+---
+description: Never leave an unflattened dirty tree; ship one commit and push remotes that drive live
+alwaysApply: true
+---
+
+# Flatten, push, keep live current
+
+**Priority: highest for ship / deploy / “done” / live work.** Sean gets stressed when Render or GitHub lag a dirty local tree. Do not end shippable work with an unflattened repo.
+
+## Mandatory self-check (end of every shippable turn)
+
+**Is `git status` clean of real work, and does the remote that drives live match this HEAD?**
+
+If no, flatten and push before you stop.
+
+## What “flattened” means
+
+- One clear commit (or a short intentional series the user asked for), not a pile of half-pushed WIP on `main`.
+- Prefer: stage all intentional work → if local is ahead with multiple WIP commits, `git reset --soft origin/main` (or the agreed base) → **one** commit → push.
+- Do **not** leave dozens of modified/untracked product files sitting only on disk after a feature, deploy, or “push it” request.
+
+## Remotes that must stay current
+
+| Remote | URL | Why |
+|--------|-----|-----|
+| `origin` | `https://github.com/neodigitalca/neo-pulse.git` | Canonical GitHub |
+| `app-sandbox` | `https://github.com/sean796/NeoPulseAppSandbox.git` | **Render** (`neo-pulse-static`, `pulse-host-wp-hub`) auto-deploys from this `main` |
+
+After flatten: `git push origin main` and `git push app-sandbox main` (use `--force-with-lease` on `app-sandbox` only when a soft-reset rewrote commits already on that remote).
+
+## Do
+
+- When the user says push, ship, deploy, flatten, live, or “done”: commit remaining intentional work, flatten if needed, push both remotes above, confirm `git status` shows clean (aside from pid/tmp/secrets).
+- After push to `app-sandbox`, treat Render rebuild as expected; note the commit SHA so live can be matched (`abf91a1`-style header / deploy commit).
+- Exclude from commits: `.env`, `.env.local`, `neo-pulse-app-secrets.php`, `.local-dev-vite.pid`, `scripts/_tmp-*`, credentials.
+
+## Do not
+
+- Do **not** finish deploy/ship work with a large dirty `git status` and only a partial sandbox push.
+- Do **not** assume `app.neodigital.ca` is Pulse UI (Lead Connector). Live Pulse UI: `https://neo-pulse-static.onrender.com/`. Hub: `https://pulse-host-wp-hub.onrender.com`.
+- Do **not** leave “I’ll commit later” as the end state when the user wanted live updated.
+
+## Human runbook
+
+See [`docs/runbooks/flatten-push-live.md`](docs/runbooks/flatten-push-live.md).
