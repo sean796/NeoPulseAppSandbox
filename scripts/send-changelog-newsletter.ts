@@ -343,34 +343,42 @@ async function rankWeekImpacts(
   commits: ChangelogCommit[],
 ): Promise<string[]> {
   const commitLines = commits.map((c) => `- ${c.date} ${c.subject}`);
-  console.log(
-    `Decision Engine ranking coding impact with ${CHANGELOG_IMPACT_DECISION_MODEL}…`,
-  );
-  const rankRaw = await hubApi("openrouter/chat-completion", {
-    method: "POST",
-    headers: authHeaders,
-    body: JSON.stringify({
-      model: CHANGELOG_IMPACT_DECISION_MODEL,
-      temperature: 0.1,
-      maxTokens: 2048,
-      responseFormat: { type: "json_object" },
-      system: CHANGELOG_IMPACT_RANK_SYSTEM,
-      user: buildChangelogImpactRankUserPrompt(commitLines),
-    }),
-  });
-  const rankContent = extractChatContent(rankRaw);
-  if (!rankContent.trim()) {
-    throw new Error("Decision Engine impact rank returned empty content.");
+  const models = [CHANGELOG_IMPACT_DECISION_MODEL, CHANGELOG_WRITER_MODEL];
+  let lastError: Error | null = null;
+  for (const model of models) {
+    console.log(`Decision Engine ranking coding impact with ${model}…`);
+    try {
+      const rankRaw = await hubApi("openrouter/chat-completion", {
+        method: "POST",
+        headers: authHeaders,
+        body: JSON.stringify({
+          model,
+          temperature: 0.1,
+          maxTokens: 2048,
+          responseFormat: { type: "json_object" },
+          system: CHANGELOG_IMPACT_RANK_SYSTEM,
+          user: buildChangelogImpactRankUserPrompt(commitLines),
+        }),
+      });
+      const rankContent = extractChatContent(rankRaw);
+      if (!rankContent.trim()) {
+        throw new Error("Decision Engine impact rank returned empty content.");
+      }
+      const rank = parseChangelogImpactRank(rankContent);
+      const themes = topImpactThemes(rank, 5);
+      for (const row of rank.ranked.slice(0, 8)) {
+        console.log(`  impact ${row.impactScore}: ${row.theme}`);
+      }
+      if (themes.length < 3) {
+        throw new Error("Decision Engine returned fewer than 3 impact themes.");
+      }
+      return themes;
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error(String(err));
+      console.log(`Decision Engine rank failed on ${model}: ${lastError.message}`);
+    }
   }
-  const rank = parseChangelogImpactRank(rankContent);
-  const themes = topImpactThemes(rank, 5);
-  for (const row of rank.ranked.slice(0, 8)) {
-    console.log(`  impact ${row.impactScore}: ${row.theme}`);
-  }
-  if (themes.length < 3) {
-    throw new Error("Decision Engine returned fewer than 3 impact themes.");
-  }
-  return themes;
+  throw lastError ?? new Error("Decision Engine impact rank failed.");
 }
 
 async function generateWeeklyHighlightsEntry(
