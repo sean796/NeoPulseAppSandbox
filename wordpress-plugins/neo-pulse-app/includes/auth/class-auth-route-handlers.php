@@ -35,6 +35,14 @@ class Neo_Pulse_App_Auth_Route_Handlers {
 			self::register( $body );
 			return;
 		}
+		if ( $subpath === 'forgot' && $method === 'POST' ) {
+			self::forgot( $body );
+			return;
+		}
+		if ( $subpath === 'reset' && $method === 'POST' ) {
+			self::reset_password( $body );
+			return;
+		}
 
 		if ( $subpath === 'bootstrap' && $method === 'POST' ) {
 			self::bootstrap( $body );
@@ -347,5 +355,163 @@ class Neo_Pulse_App_Auth_Route_Handlers {
 				'team' => $team_name,
 			)
 		);
+	}
+
+	/**
+	 * @param array<string,mixed> $body
+	 */
+	private static function forgot( array $body ): void {
+		$email = sanitize_email( strtolower( trim( (string) ( $body['email'] ?? '' ) ) ) );
+		$user  = $email !== '' ? Neo_Pulse_App_Teams_Store::get_user_by_email( $email ) : null;
+		if ( ! $user ) {
+			Neo_Pulse_App_Api_Dispatcher::send_json( array( 'ok' => false, 'error' => 'No account for that email' ), 404 );
+			return;
+		}
+		$token = bin2hex( random_bytes( 32 ) );
+		$all   = get_option( 'neo_pulse_password_resets', array() );
+		if ( ! is_array( $all ) ) {
+			$all = array();
+		}
+		$all[ $email ] = array(
+			'token_hash' => hash( 'sha256', $token ),
+			'expires'    => time() + 1800,
+		);
+		update_option( 'neo_pulse_password_resets', $all, false );
+		$link = self::reset_link( $token );
+		$sent = self::send_reset_mail( $email, $link );
+		if ( empty( $sent['ok'] ) ) {
+			Neo_Pulse_App_Api_Dispatcher::send_json( array( 'ok' => false, 'error' => (string) ( $sent['error'] ?? 'Email was not sent' ) ), 500 );
+			return;
+		}
+		Neo_Pulse_App_Api_Dispatcher::send_json( array( 'ok' => true ) );
+	}
+
+	/**
+	 * @param array<string,mixed> $body
+	 */
+	private static function reset_password( array $body ): void {
+		$token    = trim( (string) ( $body['token'] ?? '' ) );
+		$password = (string) ( $body['password'] ?? '' );
+		if ( $token === '' || strlen( $password ) < 8 ) {
+			Neo_Pulse_App_Api_Dispatcher::send_json( array( 'ok' => false, 'error' => 'Password must be at least 8 characters' ), 400 );
+			return;
+		}
+		$all = get_option( 'neo_pulse_password_resets', array() );
+		if ( ! is_array( $all ) ) {
+			Neo_Pulse_App_Api_Dispatcher::send_json( array( 'ok' => false, 'error' => 'Reset link is not valid' ), 400 );
+			return;
+		}
+		$wanted = hash( 'sha256', $token );
+		$email  = '';
+		foreach ( $all as $candidate => $row ) {
+			if ( ! is_array( $row ) ) {
+				continue;
+			}
+			$known = (string) ( $row['token_hash'] ?? '' );
+			if ( $known !== '' && hash_equals( $known, $wanted ) ) {
+				$email = (string) $candidate;
+				if ( (int) ( $row['expires'] ?? 0 ) < time() ) {
+					unset( $all[ $email ] );
+					update_option( 'neo_pulse_password_resets', $all, false );
+					Neo_Pulse_App_Api_Dispatcher::send_json( array( 'ok' => false, 'error' => 'Reset link expired' ), 400 );
+					return;
+				}
+				break;
+			}
+		}
+		if ( $email === '' ) {
+			Neo_Pulse_App_Api_Dispatcher::send_json( array( 'ok' => false, 'error' => 'Reset link is not valid' ), 400 );
+			return;
+		}
+		$user = Neo_Pulse_App_Teams_Store::get_user_by_email( $email );
+		if ( ! $user || ! Neo_Pulse_App_Teams_Store::update_user_password( (int) $user['id'], $password ) ) {
+			Neo_Pulse_App_Api_Dispatcher::send_json( array( 'ok' => false, 'error' => 'Could not save password' ), 500 );
+			return;
+		}
+		unset( $all[ $email ] );
+		update_option( 'neo_pulse_password_resets', $all, false );
+		Neo_Pulse_App_Api_Dispatcher::send_json( array( 'ok' => true ) );
+	}
+
+	private static function reset_link( string $token ): string {
+		$host = (string) wp_parse_url( home_url(), PHP_URL_HOST );
+		$base = ( strpos( $host, 'onrender.com' ) !== false )
+			? 'https://neo-pulse-static.onrender.com'
+			: untrailingslashit( home_url() );
+		return $base . '/login?reset=' . rawurlencode( $token );
+	}
+
+	/**
+	 * Send from the existing changelog AgentMail inbox. Do not create an inbox.
+	 *
+	 * @return array{ok:bool,error?:string}
+	 */
+	private static function send_reset_mail( string $to, string $link ): array {
+		$api_key = class_exists( 'Neo_Pulse_App_Secrets' ) ? Neo_Pulse_App_Secrets::agentmail_api_key() : '';
+		$inbox   = $api_key !== '' ? self::changelog_inbox_id( $api_key ) : '';
+		$text    = "Reset your Neo Pulse password.\n\n" . $link . "\n\nThis link expires in 30 minutes.\n";
+		if ( $inbox === '' ) {
+			return Neo_Pulse_App_Mail::send( $to, 'Reset your Neo Pulse password', $text );
+		}
+		$res = wp_remote_post(
+			'https://api.agentmail.to/v0/inboxes/' . rawurlencode( $inbox ) . '/messages/send',
+			array(
+				'timeout' => 30,
+				'headers' => array(
+					'Authorization' => 'Bearer ' . $api_key,
+					'Content-Type'  => 'application/json',
+				),
+				'body'    => wp_json_encode(
+					array(
+						'to'      => $to,
+						'subject' => 'Reset your Neo Pulse password',
+						'text'    => $text,
+					)
+				),
+			)
+		);
+		if ( is_wp_error( $res ) ) {
+			return array( 'ok' => false, 'error' => $res->get_error_message() );
+		}
+		$code = (int) wp_remote_retrieve_response_code( $res );
+		if ( $code < 200 || $code >= 300 ) {
+			return array( 'ok' => false, 'error' => 'AgentMail HTTP ' . $code );
+		}
+		return array( 'ok' => true );
+	}
+
+	private static function changelog_inbox_id( string $api_key ): string {
+		$res = wp_remote_get(
+			'https://api.agentmail.to/v0/inboxes',
+			array(
+				'timeout' => 20,
+				'headers' => array(
+					'Authorization' => 'Bearer ' . $api_key,
+					'Accept'        => 'application/json',
+				),
+			)
+		);
+		if ( is_wp_error( $res ) ) {
+			return '';
+		}
+		$data = json_decode( (string) wp_remote_retrieve_body( $res ), true );
+		$list = array();
+		if ( isset( $data['inboxes'] ) && is_array( $data['inboxes'] ) ) {
+			$list = $data['inboxes'];
+		} elseif ( is_array( $data ) ) {
+			$list = $data;
+		}
+		foreach ( $list as $inbox ) {
+			if ( ! is_array( $inbox ) ) {
+				continue;
+			}
+			$username = (string) ( $inbox['username'] ?? '' );
+			$address  = (string) ( $inbox['email'] ?? $inbox['address'] ?? '' );
+			if ( $username === 'neo-pulse-changelog' || strpos( $address, 'neo-pulse-changelog' ) !== false ) {
+				return (string) ( $inbox['inbox_id'] ?? $inbox['inboxId'] ?? $inbox['id'] ?? '' );
+			}
+		}
+		return '';
+	}
 	}
 }

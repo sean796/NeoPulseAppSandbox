@@ -98,6 +98,29 @@ export async function loginWithEmail(
   return { ok: true, sessionToken: data.sessionToken };
 }
 
+export async function requestPasswordReset(
+  email: string,
+): Promise<{ ok: boolean; error?: string }> {
+  const res = await api("/auth/forgot", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  return parseApiResult(res);
+}
+
+export async function resetPasswordWithToken(
+  token: string,
+  password: string,
+): Promise<{ ok: boolean; error?: string }> {
+  const res = await api("/auth/reset", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token, password }),
+  });
+  return parseApiResult(res);
+}
+
 export async function logoutApi(): Promise<void> {
   await api("/auth/logout", { method: "POST" });
 }

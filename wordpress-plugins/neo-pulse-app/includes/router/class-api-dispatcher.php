@@ -115,6 +115,8 @@ class Neo_Pulse_App_Api_Dispatcher {
 			array( 'POST', 'auth/register' ),
 			array( 'POST', 'auth/bootstrap' ),
 			array( 'POST', 'auth/setup-admin' ),
+			array( 'POST', 'auth/forgot' ),
+			array( 'POST', 'auth/reset' ),
 			array( 'GET', 'teams/invites/accept' ),
 			array( 'GET', 'organic-dashboard/client-report/load' ),
 			array( 'GET', 'organic-dashboard/client-report/open' ),

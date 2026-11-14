@@ -73,7 +73,7 @@ describe("neo-pulse-app route registry", () => {
     );
     const publicEntries = publicBlock.match(/array\(\s*'(GET|POST)'/g) ?? [];
     const machineEntries = machineBlock.match(/array\(\s*'(GET|POST)'/g) ?? [];
-    expect(publicEntries.length).toBe(13);
+    expect(publicEntries.length).toBe(17);
     expect(machineEntries.length).toBe(3);
     for (const entry of [
       "'GET', 'auth/me'",
@@ -82,6 +82,8 @@ describe("neo-pulse-app route registry", () => {
       "'POST', 'auth/register'",
       "'POST', 'auth/bootstrap'",
       "'POST', 'auth/setup-admin'",
+      "'POST', 'auth/forgot'",
+      "'POST', 'auth/reset'",
       "'GET', 'teams/invites/accept'",
       "'GET', 'organic-dashboard/client-report/load'",
       "'GET', 'organic-dashboard/client-report/open'",
