@@ -513,5 +513,4 @@ class Neo_Pulse_App_Auth_Route_Handlers {
 		}
 		return '';
 	}
-	}
 }
