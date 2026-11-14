@@ -387,11 +387,8 @@ export function PulseAssistSidebarShell({
                 onClick={() => {
                   if (panel === "tasks") {
                     setCancellingTasks(true);
-                    try {
-                      taskManager?.cancelRunningTasks();
-                    } finally {
-                      setCancellingTasks(false);
-                    }
+                    taskManager?.cancelRunningTasks();
+                    void cancelActiveRuns().finally(() => setCancellingTasks(false));
                     return;
                   }
                   if (panel !== "agents") return;
@@ -421,11 +418,8 @@ export function PulseAssistSidebarShell({
                 onClick={() => {
                   if (panel === "tasks") {
                     setClearingTasks(true);
-                    try {
-                      taskManager?.clearAllTasks();
-                    } finally {
-                      setClearingTasks(false);
-                    }
+                    taskManager?.clearAllTasks();
+                    void clearHistory().finally(() => setClearingTasks(false));
                     return;
                   }
                   if (panel !== "agents") return;

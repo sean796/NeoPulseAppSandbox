@@ -13,6 +13,7 @@ export const DASHBOARD_SECTION_ORDER: readonly ManagerSettingsClusterId[] = [
   "google",
   "pulse-host",
   "agent-library",
+  "skills-library",
   "changelog",
 ] as const;
 
@@ -25,6 +26,7 @@ export const SETTINGS_DOCK_ORDER: readonly ManagerSettingsItemId[] = [
   "google",
   "pulse-host",
   "agent-library",
+  "skills-library",
   "changelog",
 ] as const;
 
@@ -37,5 +39,6 @@ export const DASHBOARD_SECTION_LABELS: Record<ManagerSettingsClusterId, string> 
   google: "Google Services",
   "pulse-host": "Pulse Host",
   "agent-library": "Agent Library",
+  "skills-library": "Skills Library",
   changelog: "Changelog",
 };

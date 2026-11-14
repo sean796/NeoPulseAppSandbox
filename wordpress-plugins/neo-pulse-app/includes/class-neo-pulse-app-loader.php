@@ -28,6 +28,7 @@ class Neo_Pulse_App_Loader {
 		Neo_Pulse_App_Workflow_Trigger_Cron::init();
 		Neo_Pulse_App_Agent_Run_Worker_Cron::init();
 		Neo_Pulse_App_Changelog_Newsletter_Cron::init();
+		Neo_Pulse_App_Semrush_Safe_Fix_Cron::init();
 		if ( class_exists( 'Neo_Pulse_App_Agent_Run_Worker_Cron' ) ) {
 			Neo_Pulse_App_Agent_Run_Worker_Cron::activate();
 		}
@@ -61,6 +62,7 @@ class Neo_Pulse_App_Loader {
 		Neo_Pulse_App_Workflow_Trigger_Cron::activate();
 		Neo_Pulse_App_Agent_Run_Worker_Cron::activate();
 		Neo_Pulse_App_Changelog_Newsletter_Cron::activate();
+		Neo_Pulse_App_Semrush_Safe_Fix_Cron::activate();
 		flush_rewrite_rules();
 	}
 
@@ -70,6 +72,7 @@ class Neo_Pulse_App_Loader {
 		Neo_Pulse_App_Workflow_Trigger_Cron::deactivate();
 		Neo_Pulse_App_Agent_Run_Worker_Cron::deactivate();
 		Neo_Pulse_App_Changelog_Newsletter_Cron::deactivate();
+		Neo_Pulse_App_Semrush_Safe_Fix_Cron::deactivate();
 		flush_rewrite_rules();
 	}
 
@@ -110,6 +113,15 @@ class Neo_Pulse_App_Loader {
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-overview-json.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-position-tracking-compare.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-route-handlers.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-safe-fix-schedule.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-safe-fix-audit.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-safe-fix-sheet.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-safe-fix-checklist.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-safe-fix-mail.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-safe-fix-rescan.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-safe-fix-runner.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-safe-fix-route.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-safe-fix-cron.php';
 
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/proposal/class-proposal-lighthouse-parse.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/proposal/class-proposal-faq-inventory.php';
@@ -324,6 +336,8 @@ class Neo_Pulse_App_Loader {
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/seo/class-seo-http.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/seo/class-seo-route-handlers.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/agent-library/class-agent-library-route-handlers.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/skills-library/class-skills-library-store.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/skills-library/class-skills-library-route.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/changelog/class-changelog-schedule.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/changelog/class-changelog-newsletter-runner.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/changelog/class-changelog-newsletter-cron.php';

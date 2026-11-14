@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { flushSync } from "react-dom";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   buildOrganicReportingShareSearch,
@@ -14,10 +13,6 @@ import { useActiveWordPressSite } from "@/contexts/active-wordpress-site-context
 import { useAuth } from "@/contexts/AuthContext";
 import { useManagerErrorLog } from "@/contexts/manager-error-log-context";
 import { OrganicReportingStudioShell } from "@/components/organic-dashboard/OrganicReportingStudioShell";
-import {
-  NEO_PULSE_OPEN_ORGANIC_REPORTING_EVENT,
-  type OpenOrganicReportingDetail,
-} from "@/lib/organic-dashboard/organic-reporting-nav";
 import type { Ga4ReportingDateHarness } from "@/components/research/reporting/Ga4ReportingDateRangePopover-types";
 import {
   resolveGa4PropertyIdForReporting,
@@ -64,12 +59,12 @@ import { resolveOrganicClientReportClientLogoUrl } from "@/lib/integrations/clie
 import { useOrganicReportingExportActions } from "@/pages/use-organic-reporting-export-actions";
 import type { OrganicReportingPanelProps } from "@/pages/organic-dashboard-page-types";
 
-/** Deep links only: hand off to the main app Reporting tab (same shell as Generator). */
+/** Deep links only: hand off to the Reporting tab inside the main app shell. */
 export default function OrganicDashboardPage() {
   const { siteId } = useParams<{ siteId: string }>();
   const navigate = useNavigate();
   const { sites: sitesFromHook } = useWordPressSites();
-  const { activeWordPressSiteId } = useActiveWordPressSite();
+  const { activeWordPressSiteId, setActiveWordPressSiteId } = useActiveWordPressSite();
   const sites = useMemo(
     () => (sitesFromHook.length > 0 ? sitesFromHook : getStoredSites()),
     [sitesFromHook],
@@ -82,17 +77,13 @@ export default function OrganicDashboardPage() {
 
   useEffect(() => {
     if (!site) return;
-    window.dispatchEvent(
-      new CustomEvent(NEO_PULSE_OPEN_ORGANIC_REPORTING_EVENT, {
-        detail: { siteId: site.id } satisfies OpenOrganicReportingDetail,
-      }),
-    );
+    setActiveWordPressSiteId(site.id);
     const search =
       typeof window !== "undefined" && window.location.search.startsWith("?")
         ? window.location.search
         : "";
-    navigate({ pathname: "/", search, hash: "#organic-reporting" }, { replace: true, flushSync: true });
-  }, [navigate, site]);
+    navigate({ pathname: "/organic-reporting", search }, { replace: true, flushSync: true });
+  }, [navigate, setActiveWordPressSiteId, site]);
 
   return (
     <div className="flex flex-1 items-center justify-center bg-background p-8 text-base text-muted-foreground">

@@ -276,6 +276,7 @@ class Neo_Pulse_App_Agent_Runs_Route_Handlers {
 			return;
 		}
 
+		delete_transient( 'neo_pulse_safe_fix_finish_' . $run_id );
 		$run = Neo_Pulse_App_Agent_Runs_Store::cancel_run( $resolved['team_id'], $run_id );
 		if ( ! $run ) {
 			Neo_Pulse_App_Api_Dispatcher::send_json( array( 'ok' => false, 'error' => 'Not found' ), 404 );
@@ -477,7 +478,9 @@ class Neo_Pulse_App_Agent_Runs_Route_Handlers {
 		}
 
 		if ( in_array( (string) ( $run['status'] ?? '' ), array( 'queued', 'running' ), true ) ) {
-			for ( $i = 0; $i < 24; $i++ ) {
+			$recipe = sanitize_key( (string) ( $run['recipeKey'] ?? '' ) );
+			$ticks  = $recipe === 'semrush_safe_fix' ? 1 : 24;
+			for ( $i = 0; $i < $ticks; $i++ ) {
 				$current = Neo_Pulse_App_Agent_Runs_Store::get_run( $team_id, $run_id, true );
 				if ( ! $current ) {
 					break;

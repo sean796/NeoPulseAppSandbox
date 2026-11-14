@@ -165,6 +165,12 @@ export interface WordPressSite {
   slackLastTestAt?: number;
   /** Legacy persisted flag; ignored by current properties UI. */
   postBankEnabled?: boolean;
+
+  /**
+   * Skills opted in for this client (Skills Library ids).
+   * Missing or empty = none. Example: `reporting.semrush.safe-fix`.
+   */
+  assignedAgentIds?: string[];
 }
 
 /** Bulk / keyword flows: `siteUrl` is the WordPress connection base; optional production URL for display. */

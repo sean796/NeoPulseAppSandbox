@@ -13,7 +13,7 @@ class Neo_Pulse_App_Mail {
 	 * @param array<int,array{fileName:string,mime:string,content:string}> $attachments
 	 * @return array{ok:bool,error?:string,transport?:string}
 	 */
-	public static function send( string $to, string $subject, string $message, array $attachments = array() ): array {
+	public static function send( string $to, string $subject, string $message, array $attachments = array(), string $html = '' ): array {
 		$to = sanitize_email( strtolower( trim( $to ) ) );
 		if ( $to === '' || ! is_email( $to ) ) {
 			return array( 'ok' => false, 'error' => 'Invalid email address' );
@@ -21,7 +21,7 @@ class Neo_Pulse_App_Mail {
 
 		$agentmail_key = Neo_Pulse_App_Secrets::agentmail_api_key();
 		if ( $agentmail_key !== '' ) {
-			return self::send_via_agentmail( $agentmail_key, $to, $subject, $message, $attachments );
+			return self::send_via_agentmail( $agentmail_key, $to, $subject, $message, $attachments, $html );
 		}
 
 		$smtp = Neo_Pulse_App_Secrets::smtp();
@@ -40,7 +40,7 @@ class Neo_Pulse_App_Mail {
 	 * @param array<int,array{fileName:string,mime:string,content:string}> $attachments
 	 * @return array{ok:bool,error?:string,transport?:string}
 	 */
-	private static function send_via_agentmail( string $api_key, string $to, string $subject, string $message, array $attachments = array() ): array {
+	private static function send_via_agentmail( string $api_key, string $to, string $subject, string $message, array $attachments = array(), string $html = '' ): array {
 		$inbox = Neo_Pulse_App_Secrets::agentmail_inbox();
 		if ( $inbox === '' || ! is_email( $inbox ) ) {
 			return array( 'ok' => false, 'error' => 'AgentMail inbox not configured. Set general email in API Keys.' );
@@ -51,7 +51,7 @@ class Neo_Pulse_App_Mail {
 			'to'      => $to,
 			'subject' => $subject,
 			'text'    => $message,
-			'html'    => '<p>' . nl2br( esc_html( $message ) ) . '</p>',
+			'html'    => $html !== '' ? $html : '<p>' . nl2br( esc_html( $message ) ) . '</p>',
 		);
 		$encoded_attachments = self::encode_attachments_for_agentmail( $attachments );
 		if ( count( $encoded_attachments ) > 0 ) {

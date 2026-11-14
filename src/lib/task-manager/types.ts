@@ -14,6 +14,8 @@ export type WorkspaceTask = {
   href: string;
   step?: string;
   progress?: number;
+  /** One line per completed action, shown in the task log. */
+  logLines?: string[];
   /** URL of the post/page currently being worked. */
   currentUrl?: string;
   /** Display title for currentUrl when known. */
@@ -34,6 +36,7 @@ export type WorkspaceTaskPatch = Partial<
     | "status"
     | "step"
     | "progress"
+    | "logLines"
     | "currentUrl"
     | "currentTitle"
     | "errorMessage"

@@ -13,6 +13,7 @@ export type ManagerSettingsClusterId =
   | "google"
   | "pulse-host"
   | "agent-library"
+  | "skills-library"
   | "changelog";
 
 /** Settings studio dock items (everything except Properties). */
@@ -27,6 +28,7 @@ const CLUSTER_IDS: readonly ManagerSettingsClusterId[] = [
   "google",
   "pulse-host",
   "agent-library",
+  "skills-library",
   "changelog",
 ];
 
@@ -38,6 +40,7 @@ const SETTINGS_ITEM_IDS: readonly ManagerSettingsItemId[] = [
   "google",
   "pulse-host",
   "agent-library",
+  "skills-library",
   "changelog",
 ];
 

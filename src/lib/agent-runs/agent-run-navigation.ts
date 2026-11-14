@@ -29,6 +29,7 @@ export function resolveAgentRunRecipeKey(
     key === "dfs_llm_article_audit" ||
     key === "browser_automation" ||
     key === "content_gap_check" ||
+    key === "semrush_safe_fix" ||
     key === "content_optimizer_bulk" ||
     key === "overview_pages_meta_batch"
   ) {
@@ -67,6 +68,7 @@ export function agentRunProgressHeading(recipeKey: string): string {
   if (recipeKey === "dfs_llm_article_audit") return "DFS article audit";
   if (recipeKey === "browser_automation") return "Browser automation";
   if (recipeKey === "content_gap_check") return "Content gap check";
+  if (recipeKey === "semrush_safe_fix") return "Semrush safe fix";
   if (recipeKey === "entity_page_creator" || recipeKey === "entity_generator" || recipeKey === "sap_generator") return "Progress";
   if (recipeKey === "post_creator") return "";
   return "Current post";
@@ -97,6 +99,7 @@ function isKnownNonOptimizerRecipe(recipeKey: string): recipeKey is AgentRunReci
     recipeKey === "dfs_llm_article_audit" ||
     recipeKey === "browser_automation" ||
     recipeKey === "content_gap_check" ||
+    recipeKey === "semrush_safe_fix" ||
     recipeKey === "content_optimizer_bulk" ||
     recipeKey === "overview_pages_meta_batch"
   );

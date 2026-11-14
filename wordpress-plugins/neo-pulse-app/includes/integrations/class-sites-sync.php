@@ -22,6 +22,12 @@ class Neo_Pulse_App_Sites_Sync {
 		'industryVertical',
 		'clientLogoUrl',
 		'clientLogoBoxTheme',
+		'assignedAgentIds',
+	);
+
+	/** Fields preserved as arrays when omitted from a partial sync (not cast to string). */
+	private const PRESERVED_ARRAY_FIELDS = array(
+		'assignedAgentIds',
 	);
 
 	/**
@@ -141,6 +147,12 @@ class Neo_Pulse_App_Sites_Sync {
 				continue;
 			}
 			foreach ( self::PRESERVED_INTEGRATION_FIELDS as $field ) {
+				if ( in_array( $field, self::PRESERVED_ARRAY_FIELDS, true ) ) {
+					if ( ! array_key_exists( $field, $site ) && isset( $prev[ $field ] ) && is_array( $prev[ $field ] ) ) {
+						$sites[ $i ][ $field ] = $prev[ $field ];
+					}
+					continue;
+				}
 				if ( empty( $site[ $field ] ) && ! empty( $prev[ $field ] ) ) {
 					$sites[ $i ][ $field ] = (string) $prev[ $field ];
 				}

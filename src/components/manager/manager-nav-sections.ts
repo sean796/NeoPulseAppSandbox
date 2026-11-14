@@ -99,7 +99,7 @@ export const MANAGER_NAV_SECTIONS: ManagerNavSection[] = [
       {
         value: "dashboard-settings",
         label: "Settings",
-        description: "API keys, models, Google, Pulse Host, Agent Library, and Changelog",
+        description: "API keys, models, Google, Pulse Host, Agent Library, Skills Library, and Changelog",
         icon: Settings2,
         openSettingsStudio: true,
       },

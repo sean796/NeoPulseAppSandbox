@@ -47,11 +47,21 @@ function timelineRowsForTask(task: WorkspaceTask, siteLabel: string): AgentRunLo
     });
   }
 
-  if (task.step?.trim() || pct) {
+  const logged = (task.logLines ?? []).filter((line) => line.trim().length > 0);
+  if (logged.length > 0) {
+    logged.forEach((line, index) => {
+      rows.push({
+        key: `${task.id}-log-${index}`,
+        timeLabel: updated,
+        label: line,
+        status: line.toLowerCase().includes("fail") || line.toLowerCase().includes("not confirmed") ? "error" : "done",
+      });
+    });
+  } else if (task.step?.trim() || pct) {
     rows.push({
       key: `${task.id}-step`,
       timeLabel: updated,
-      label: [task.step?.trim(), pct].filter(Boolean).join(" "),
+      label: task.step?.trim() || pct || "",
       status: terminal ? (task.status === "done" ? "done" : "error") : "running",
       isActive: !terminal,
     });

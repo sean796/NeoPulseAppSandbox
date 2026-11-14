@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, type Dispatch, type SetStateAction } from "
 import { logger } from "@/lib/logger";
 import { flushAllAgentRunCheckpointPatches } from "@/lib/agent-runs/agent-run-checkpoint";
 import { agentRunIsServerExecution } from "@/lib/agent-runs/agent-run-display";
+import { resolveAgentRunRecipeKey } from "@/lib/agent-runs/agent-run-navigation";
 import {
   hasTerminalRuns,
   hydrateAgentRunCancellationsForTeam,
@@ -72,6 +73,7 @@ export function useAgentRunsLifecycle({
       if (
         (run.status === "queued" || run.status === "running") &&
         agentRunIsServerExecution(run) &&
+        resolveAgentRunRecipeKey(run) !== "semrush_safe_fix" &&
         !serverProcessInFlight.current.has(run.id)
       ) {
         serverProcessInFlight.current.add(run.id);
@@ -96,6 +98,7 @@ export function useAgentRunsLifecycle({
       const active = runsRef.current.filter(
         (run) =>
           agentRunIsServerExecution(run) &&
+          resolveAgentRunRecipeKey(run) !== "semrush_safe_fix" &&
           (run.status === "queued" || run.status === "running"),
       );
       if (active.length === 0) return;

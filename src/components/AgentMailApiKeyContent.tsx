@@ -9,7 +9,7 @@ import {
 } from "@/lib/api";
 import { Field } from "@/ui";
 
-export function AgentMailApiKeyContent() {
+export function AgentMailApiKeyContent({ onStored }: { onStored?: () => void }) {
   const [inbox, setInbox] = useState(() => loadAgentMailInbox());
   const [apiKey, setApiKey] = useState(() => loadAgentMailApiKey());
 
@@ -23,15 +23,23 @@ export function AgentMailApiKeyContent() {
     return () => window.removeEventListener("neo-pulse-runtime-keys-hydrated", sync);
   }, []);
 
-  const handleKeyChange = useCallback((next: string) => {
-    setApiKey(next);
-    saveAgentMailApiKey(next);
-  }, []);
+  const handleKeyChange = useCallback(
+    (next: string) => {
+      setApiKey(next);
+      saveAgentMailApiKey(next);
+      onStored?.();
+    },
+    [onStored],
+  );
 
-  const handleInboxChange = useCallback((next: string) => {
-    setInbox(next);
-    saveAgentMailInbox(next);
-  }, []);
+  const handleInboxChange = useCallback(
+    (next: string) => {
+      setInbox(next);
+      saveAgentMailInbox(next);
+      onStored?.();
+    },
+    [onStored],
+  );
 
   return (
     <div className="space-y-4">

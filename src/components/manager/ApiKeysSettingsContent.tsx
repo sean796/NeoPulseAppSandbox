@@ -1,18 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTeam } from "@/contexts/TeamContext";
-import {
-  NOTIFY_API_KEY_SAVED_AND_UPDATED_FOR_CURRENT_SE,
-  NOTIFY_SIGN_IN_TO_SAVE_SETTINGS_TO_THE_CLOUD,
-} from "@/lib/notify-messages";
 import { notify } from "@/lib/app-notifications";
-import {
-  loadAgentMailApiKey,
-  loadAgentMailInbox,
-  saveApiKey as saveRuntimeApiKey,
-  saveDataForSEOApiKey as saveRuntimeDataForSeoKey,
-  saveSemrushApiKey as saveRuntimeSemrushKey,
-} from "@/lib/api";
+import { loadAgentMailApiKey, loadAgentMailInbox } from "@/lib/api";
 import { saveManagerWorkspaceBackup } from "@/lib/manager-workspace-backup";
 import { ApiKeyContent } from "@/components/ApiKeyContent";
 import { DataForSEOApiKeyContent } from "@/components/DataForSEOApiKeyContent";
@@ -35,8 +25,6 @@ export type ApiKeysSettingsContentProps = {
   temperature: number;
   maxTokens: number;
   topP: number;
-  /** Register Save for the Settings identity strip. */
-  onSaveBindingChange?: (binding: { save: () => void; saving: boolean } | null) => void;
 };
 
 export function ApiKeysSettingsContent({
@@ -53,28 +41,26 @@ export function ApiKeysSettingsContent({
   temperature,
   maxTokens,
   topP,
-  onSaveBindingChange,
 }: ApiKeysSettingsContentProps) {
   const { user } = useAuth();
   const { activeTeam } = useTeam();
-  const [saving, setSaving] = useState(false);
+  const [agentMailStamp, setAgentMailStamp] = useState(0);
+  const seenCredentials = useRef<string | null>(null);
+  const saveSeq = useRef(0);
+  const onAgentMailStored = useCallback(() => {
+    setAgentMailStamp((n) => n + 1);
+  }, []);
 
-  const handleSaveAllKeys = useCallback(() => {
-    void (async () => {
-      saveKeyInLocalStorage(saveApiKey, apiKey);
-      saveRuntimeApiKey(apiKey);
-      saveKeyInLocalStorage(saveDataForSEOApiKey, dataForSEOApiKey);
-      saveRuntimeDataForSeoKey(dataForSEOApiKey);
-      saveKeyInLocalStorage(saveSemrushApiKey, semrushApiKey);
-      saveRuntimeSemrushKey(semrushApiKey);
+  useEffect(() => {
+    const credentials = `${apiKey}\n${dataForSEOApiKey}\n${semrushApiKey}\n${agentMailStamp}`;
+    if (seenCredentials.current === credentials) return;
+    const openingPage = seenCredentials.current === null;
+    seenCredentials.current = credentials;
+    if (openingPage || !user) return;
 
-      if (!user) {
-        notify.error(NOTIFY_SIGN_IN_TO_SAVE_SETTINGS_TO_THE_CLOUD);
-        return;
-      }
-
-      setSaving(true);
-      try {
+    const seq = ++saveSeq.current;
+    const timer = window.setTimeout(() => {
+      void (async () => {
         const r = await saveManagerWorkspaceBackup(
           {
             apiKey,
@@ -89,35 +75,24 @@ export function ApiKeysSettingsContent({
           },
           activeTeam?.id,
         );
-        if (!r.ok) {
-          notify.error(r.error || "API key save failed");
-          return;
-        }
-        notify.success(NOTIFY_API_KEY_SAVED_AND_UPDATED_FOR_CURRENT_SE);
-      } finally {
-        setSaving(false);
-      }
-    })();
+        if (seq !== saveSeq.current) return;
+        if (!r.ok) notify.error(r.error || "API key save failed");
+      })();
+    }, 400);
+
+    return () => window.clearTimeout(timer);
   }, [
     user,
     activeTeam?.id,
     apiKey,
     dataForSEOApiKey,
     semrushApiKey,
+    agentMailStamp,
     selectedModel,
     temperature,
     maxTokens,
     topP,
-    saveApiKey,
-    saveDataForSEOApiKey,
-    saveSemrushApiKey,
   ]);
-
-  useEffect(() => {
-    if (!onSaveBindingChange) return;
-    onSaveBindingChange({ save: handleSaveAllKeys, saving });
-    return () => onSaveBindingChange(null);
-  }, [onSaveBindingChange, handleSaveAllKeys, saving]);
 
   return (
     <div className="flex w-full min-w-0 flex-col gap-3" aria-label="API Keys">
@@ -134,14 +109,10 @@ export function ApiKeysSettingsContent({
             setApiKey={setSemrushApiKey}
             saveApiKey={saveSemrushApiKey}
           />
-          <AgentMailApiKeyContent />
+          <AgentMailApiKeyContent onStored={onAgentMailStored} />
         </div>
       </section>
       <ResidentialProxySettingsContent />
     </div>
   );
-}
-
-function saveKeyInLocalStorage(fn: (key: string) => void, value: string): void {
-  fn(value);
 }

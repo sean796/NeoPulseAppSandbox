@@ -9,7 +9,6 @@ import { PulseHostTabContent } from "@/components/hosting/PulseHostTabContent";
 import { AgentLibraryTabContent } from "@/components/manager/agents/AgentLibraryTabContent";
 import { ChangelogTabContent } from "@/components/manager/changelog/ChangelogTabContent";
 import { SettingsStudioShell } from "@/components/manager/settings/SettingsStudioShell";
-import { SETTINGS_STUDIO_CTA_CLASS } from "@/components/manager/settings/settings-studio-surfaces";
 import {
   type ManagerSettingsClusterId,
   type ManagerSettingsItemId,
@@ -39,8 +38,6 @@ import {
   DASHBOARD_SECTION_ORDER,
   SETTINGS_DOCK_ORDER,
 } from "@/components/manager/dashboard/dashboard-section-labels";
-import { cn } from "@/lib/utils";
-
 export interface ManagerSettingsContentProps {
   apiKey: string;
   setApiKey: (key: string) => void;
@@ -166,10 +163,6 @@ export function ManagerSettingsContent({
   const [internalCluster, setInternalCluster] = useState<ManagerSettingsClusterId>(() =>
     readStoredManagerSettingsCluster(),
   );
-  const [apiKeysSaveBinding, setApiKeysSaveBinding] = useState<{
-    save: () => void;
-    saving: boolean;
-  } | null>(null);
 
   const cluster =
     settingsClusterControlled !== undefined ? settingsClusterControlled : internalCluster;
@@ -234,13 +227,6 @@ export function ManagerSettingsContent({
     [onClusterChange],
   );
 
-  const handleApiKeysSaveBindingChange = useCallback(
-    (binding: { save: () => void; saving: boolean } | null) => {
-      setApiKeysSaveBinding(binding);
-    },
-    [],
-  );
-
   if (cluster === "properties") {
     return (
       <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
@@ -260,6 +246,7 @@ export function ManagerSettingsContent({
   const fillPane =
     activeItem === "pulse-host" ||
     activeItem === "agent-library" ||
+    activeItem === "skills-library" ||
     activeItem === "changelog";
 
   let pane: ReactNode = null;
@@ -280,7 +267,6 @@ export function ManagerSettingsContent({
           temperature={temperature}
           maxTokens={maxTokens}
           topP={topP}
-          onSaveBindingChange={handleApiKeysSaveBindingChange}
         />
       );
       break;
@@ -325,7 +311,10 @@ export function ManagerSettingsContent({
       pane = <PulseHostTabContent />;
       break;
     case "agent-library":
-      pane = <AgentLibraryTabContent />;
+      pane = <AgentLibraryTabContent scope="agents" />;
+      break;
+    case "skills-library":
+      pane = <AgentLibraryTabContent scope="skills" />;
       break;
     case "changelog":
       pane = <ChangelogTabContent />;
@@ -334,25 +323,12 @@ export function ManagerSettingsContent({
       pane = null;
   }
 
-  const identityActions =
-    activeItem === "api-keys" ? (
-      <button
-        type="button"
-        className={cn(SETTINGS_STUDIO_CTA_CLASS, "min-w-[4.5rem]")}
-        disabled={!apiKeysSaveBinding || apiKeysSaveBinding.saving}
-        onClick={() => apiKeysSaveBinding?.save()}
-      >
-        {apiKeysSaveBinding?.saving ? "Saving…" : "Save"}
-      </button>
-    ) : null;
-
   return (
     <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
       <SettingsStudioShell
         items={visibleSettingsItems}
         activeItem={activeItem}
         onSelect={handleSettingsSelect}
-        identityActions={identityActions}
         fillPane={fillPane}
       >
         {pane}

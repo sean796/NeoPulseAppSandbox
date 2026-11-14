@@ -39,6 +39,7 @@ export function dashboardClusterToArea(cluster: string): TeamPermissionArea | nu
     google: "google",
     "pulse-host": "hosting",
     "agent-library": "ai-generation",
+    "skills-library": "ai-generation",
     changelog: "properties",
   };
   return map[cluster] ?? null;

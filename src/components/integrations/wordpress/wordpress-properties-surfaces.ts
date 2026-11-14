@@ -112,19 +112,26 @@ export const PROPERTIES_OVERVIEW_IDENTITY_URL_CLASS =
 export const PROPERTIES_OVERVIEW_PACKAGE_SLOT_WIDTH =
   "w-[8.75rem] min-w-[8.75rem] max-w-[8.75rem]";
 
-/** Package badge stacked above edit/save/delete (right-aligned, same column width). */
+/**
+ * Package badge + edit/save/delete: same outer height as brand field stack (6.5rem).
+ * Badge and button row share height evenly (flex-1 each), flush top/bottom.
+ */
 export const PROPERTIES_OVERVIEW_IDENTITY_PILLS_CLASS = cn(
-  "ml-auto flex shrink-0 flex-col items-stretch justify-center gap-1.5",
+  "ml-auto flex h-[6.5rem] shrink-0 flex-col items-stretch gap-1",
   PROPERTIES_OVERVIEW_PACKAGE_SLOT_WIDTH,
 );
 
-/** Icon action row under the package badge (same width as badge). */
-export const PROPERTIES_OVERVIEW_IDENTITY_ACTIONS_CLASS =
-  "grid h-7 w-full shrink-0 grid-cols-3 gap-1";
+/** Package badge: equal share of the identity column (same height as the button row). */
+export const PROPERTIES_OVERVIEW_PACKAGE_BADGE_CLASS =
+  "flex min-h-0 w-full flex-1 items-center justify-center gap-2 overflow-hidden rounded-none px-2 text-base font-medium !text-white [&>span:last-child]:min-w-0 [&>span:last-child]:truncate";
 
-/** Icon pill under the editorial package badge (pencil / save / delete). */
+/** Icon action row: equal share with the package badge; three equal buttons. */
+export const PROPERTIES_OVERVIEW_IDENTITY_ACTIONS_CLASS =
+  "grid min-h-0 w-full flex-1 grid-cols-3 gap-1";
+
+/** Icon pill (pencil / save / delete): fill the shared row height. */
 export const PROPERTIES_OVERVIEW_ACTION_PILL_CLASS = cn(
-  "inline-flex h-7 w-full items-center justify-center rounded-none border-0 bg-white/10 text-white shadow-none",
+  "inline-flex h-full min-h-0 w-full items-center justify-center rounded-none border-0 bg-white/10 text-white shadow-none",
   "hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
   "aria-pressed:bg-white/20",
   "[&>svg]:h-3.5 [&>svg]:w-3.5",
@@ -162,19 +169,19 @@ export const PROPERTIES_OVERVIEW_CHIP_DOT_WARN_CLASS = "h-1.5 w-1.5 shrink-0 rou
 export const PROPERTIES_OVERVIEW_CHIP_DOT_MUTED_CLASS = "h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-400";
 export const PROPERTIES_OVERVIEW_CHIP_DOT_LITE_CLASS = "h-1.5 w-1.5 shrink-0 rounded-full bg-sky-400";
 
-/** Shared key-value pill row (darker well inside muted section frame). Inline + compact. */
+/** Shared key-value pill row: label left, value right. */
 export const PROPERTIES_OVERVIEW_PILL_ROW_CLASS = cn(
-  "flex h-11 w-full min-w-0 items-center justify-start gap-2 rounded-none border-0 bg-black px-3",
+  "flex h-11 w-full min-w-0 items-center justify-between gap-2 rounded-none border-0 bg-black px-3",
 );
 
 export const PROPERTIES_OVERVIEW_PILL_LABEL_CLASS =
-  "shrink-0 pt-0.5 text-xs font-semibold uppercase tracking-wider text-white";
+  "shrink-0 pt-0.5 text-left text-xs font-semibold uppercase tracking-wider text-white";
 
 export const PROPERTIES_OVERVIEW_PILL_VALUE_CLASS =
-  "min-w-0 flex-1 truncate whitespace-nowrap text-left text-xs font-medium text-white";
+  "min-w-0 flex-1 truncate whitespace-nowrap text-right text-xs font-medium text-white";
 
 export const PROPERTIES_OVERVIEW_PILL_EMPTY_CLASS =
-  "min-w-0 flex-1 truncate whitespace-nowrap text-left text-xs font-medium text-white";
+  "min-w-0 flex-1 truncate whitespace-nowrap text-right text-xs font-medium text-white";
 
 export const PROPERTIES_OVERVIEW_PILL_NOTE_CLASS =
   "inline-flex shrink-0 items-center gap-1.5 whitespace-normal break-words rounded-none border border-white/5 bg-white/5 px-2 py-0.5 text-xs font-medium text-white";
@@ -191,7 +198,7 @@ export const PROPERTIES_OVERVIEW_KPI_TILE_CLASS = cn(
 export const PROPERTIES_OVERVIEW_KPI_LABEL_CLASS = PROPERTIES_OVERVIEW_PILL_LABEL_CLASS;
 
 export const PROPERTIES_OVERVIEW_KPI_VALUE_CLASS =
-  "min-w-0 flex-1 truncate whitespace-nowrap text-left text-xl font-semibold tracking-tight text-white";
+  "min-w-0 flex-1 truncate whitespace-nowrap text-right text-xl font-semibold tracking-tight text-white";
 
 export const PROPERTIES_OVERVIEW_KPI_NOTE_CLASS =
   "flex min-w-0 max-w-full flex-wrap items-center justify-end gap-1.5 text-xs font-medium text-white";

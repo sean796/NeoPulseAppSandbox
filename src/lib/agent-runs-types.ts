@@ -43,7 +43,8 @@ export type AgentRunRecipeKey =
   | "chatgpt_website_audit"
   | "dfs_llm_article_audit"
   | "browser_automation"
-  | "content_gap_check";
+  | "content_gap_check"
+  | "semrush_safe_fix";
 
 export type AgentRunStepArtifact = {
   id: string;

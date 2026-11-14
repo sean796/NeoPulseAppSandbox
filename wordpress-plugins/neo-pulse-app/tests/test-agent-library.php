@@ -2,9 +2,9 @@
 /**
  * Standalone CLI tests for the Agent Library route handlers: the state
  * payload matches the app contract, toggles persist to the private data
- * root, settings save the model, and the stored OpenRouter key never
- * appears in a response (only configured plus the last four characters).
- * The store's locked update is covered too: increments never get lost.
+ * root, and OpenRouter status uses app secrets only (no Agent Library
+ * key override). The store's locked update is covered too: increments
+ * never get lost.
  *
  * Run via: php wordpress-plugins/neo-pulse-app/tests/test-agent-library.php
  */
@@ -111,7 +111,7 @@ check( 'catalog rows are slack-hub domain', $res['data']['hubAgents'][0]['domain
 check( 'overrides start empty', $res['data']['overrides'] === array() || $res['data']['overrides'] == new stdClass() );
 check( 'key unconfigured without a server key', $res['data']['settings']['openRouter']['configured'] === false );
 check( 'suffix null without a key', $res['data']['settings']['openRouter']['suffix'] === null );
-check( 'default model is the hub flash model', $res['data']['settings']['openRouterModel'] === 'deepseek/deepseek-v4.1-flash' );
+check( 'no openRouterModel in settings', ! array_key_exists( 'openRouterModel', $res['data']['settings'] ) );
 
 // 2. The server-resolved key drives configured plus suffix (never the key itself).
 Neo_Pulse_App_Secrets::$key = 'unit-test-server-key-0000abcd';
@@ -136,22 +136,28 @@ check( 'toggle without agentId is a 400', $res['status'] === 400 && $res['data']
 $res = dispatch( 'toggle', 'POST', array( 'agentId' => 'write' ) );
 check( 'toggle without enabled is a 400', $res['status'] === 400 && $res['data']['ok'] === false );
 
-// 5. Settings save the model and the key override; the key stays server-side.
+// 5. Settings route removed; status stays app secrets only. Legacy keys are stripped on write.
 $res = dispatch( 'settings', 'POST', array( 'openRouterApiKey' => 'unit-test-override-key-00009876', 'openRouterModel' => 'openai/gpt-5.2' ) );
-check( 'settings responds 200', $res['status'] === 200 );
-check( 'settings saves the model', $res['data']['settings']['openRouterModel'] === 'openai/gpt-5.2' );
-check( 'override key marks configured', $res['data']['settings']['openRouter']['configured'] === true );
-check( 'suffix is the last four of the override key', $res['data']['settings']['openRouter']['suffix'] === '9876' );
-check( 'response never contains the full override key', strpos( (string) json_encode( $res['data'] ), 'unit-test-override-key-00009876' ) === false );
+check( 'settings route is a 404', $res['status'] === 404 && $res['data']['ok'] === false );
+Neo_Pulse_App_Json_File_Store::write(
+	$stored_path,
+	array(
+		'overrides' => array( 'write' => false ),
+		'settings'  => array(
+			'openRouterApiKey' => 'unit-test-legacy-key-00001111',
+			'openRouterModel'  => 'openai/gpt-5.2',
+		),
+	)
+);
+$res = dispatch( 'toggle', 'POST', array( 'agentId' => 'write', 'enabled' => true ) );
+check( 'toggle after legacy file responds 200', $res['status'] === 200 );
+check( 'status still uses app secrets suffix', $res['data']['settings']['openRouter']['suffix'] === 'abcd' );
+check( 'response never contains the legacy override key', strpos( (string) json_encode( $res['data'] ), 'unit-test-legacy-key-00001111' ) === false );
 $stored = json_decode( (string) file_get_contents( $stored_path ), true );
-check( 'override key persists server-side', ( $stored['settings']['openRouterApiKey'] ?? '' ) === 'unit-test-override-key-00009876' );
+check( 'legacy settings keys stripped on write', ! isset( $stored['settings'] ) );
+check( 'overrides still persist after strip', ( $stored['overrides']['write'] ?? null ) === true );
 
-// 6. An empty settings save changes nothing (matches the client contract).
-$res = dispatch( 'settings', 'POST', array() );
-check( 'empty settings save keeps the model', $res['data']['settings']['openRouterModel'] === 'openai/gpt-5.2' );
-check( 'empty settings save keeps the key suffix', $res['data']['settings']['openRouter']['suffix'] === '9876' );
-
-// 7. Unknown routes 404; logged-out requests 401.
+// 6. Unknown routes 404; logged-out requests 401.
 $res = dispatch( 'bogus', 'GET' );
 check( 'unknown route is a 404', $res['status'] === 404 && $res['data']['ok'] === false );
 $res = dispatch( '', 'POST' );
@@ -160,7 +166,7 @@ Neo_Pulse_App_Auth_Session::$user = null;
 $res = dispatch( '', 'GET' );
 check( 'logged-out request is a 401', $res['status'] === 401 && $res['data']['ok'] === false );
 
-// 8. The locked store update reads the freshest value under the lock, so
+// 7. The locked store update reads the freshest value under the lock, so
 // back-to-back read-modify-write cycles never lose a change.
 $counter_path = $tmp_root . '/neo-pulse-data/counter.json';
 Neo_Pulse_App_Json_File_Store::write( $counter_path, array( 'count' => 1 ) );

@@ -31,6 +31,7 @@ import {
   type OpenOrganicReportingDetail,
 } from "@/lib/organic-dashboard/organic-reporting-nav";
 import { NEO_PULSE_OPEN_MASTER_RULES_EVENT } from "@/lib/open-master-rules-settings";
+import { NEO_PULSE_OPEN_SKILLS_LIBRARY_EVENT } from "@/lib/open-skills-library";
 import { isApiTabPath } from "@/lib/api-docs/api-docs-route";
 import { isPulseForgePath, parsePulseForgeRoute, setPulseForgeRoute } from "@/lib/pulse-forge/pulse-forge-route";
 import { isPulseHostPath } from "@/lib/hosting/pulse-host-route";
@@ -100,9 +101,14 @@ export function useIndexManagerNavigation({
       navigate("/dashboard");
       handleManagerDashboardClusterChange("master-rules");
     };
+    const onOpenSkillsLibrary = () => {
+      handleManagerDashboardClusterChange("skills-library");
+    };
     window.addEventListener(NEO_PULSE_OPEN_MASTER_RULES_EVENT, onOpenMasterRules as EventListener);
+    window.addEventListener(NEO_PULSE_OPEN_SKILLS_LIBRARY_EVENT, onOpenSkillsLibrary as EventListener);
     return () => {
       window.removeEventListener(NEO_PULSE_OPEN_MASTER_RULES_EVENT, onOpenMasterRules as EventListener);
+      window.removeEventListener(NEO_PULSE_OPEN_SKILLS_LIBRARY_EVENT, onOpenSkillsLibrary as EventListener);
     };
   }, [handleManagerDashboardClusterChange, navigate]);
 

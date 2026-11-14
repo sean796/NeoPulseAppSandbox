@@ -10,6 +10,7 @@
  * - set-page-schema
  * - set-type-rules
  * - update-settings
+ * - apply-technical-fix
  * - undo
  *
  * Every write goes through the plugin's own save functions, supports `dry_run: true`,
@@ -25,11 +26,13 @@ $neo_pulse_wp_mcp_write_dir = __DIR__ . '/';
 require_once $neo_pulse_wp_mcp_write_dir . 'trait-neo-pulse-wp-mcp-write-business-location.php';
 require_once $neo_pulse_wp_mcp_write_dir . 'trait-neo-pulse-wp-mcp-write-page-schema.php';
 require_once $neo_pulse_wp_mcp_write_dir . 'trait-neo-pulse-wp-mcp-write-settings.php';
+require_once $neo_pulse_wp_mcp_write_dir . 'trait-neo-pulse-wp-mcp-write-technical-fix.php';
 
 final class Neo_Pulse_Wp_Mcp_Write {
 	use Neo_Pulse_Wp_Mcp_Write_Trait_Business_Location;
 	use Neo_Pulse_Wp_Mcp_Write_Trait_Page_Schema;
 	use Neo_Pulse_Wp_Mcp_Write_Trait_Settings;
+	use Neo_Pulse_Wp_Mcp_Write_Trait_Technical_Fix;
 
 	/**
 	 * Catalog of available write operations.
@@ -140,6 +143,18 @@ final class Neo_Pulse_Wp_Mcp_Write {
 						'dry_run'          => 'boolean (optional)',
 					),
 				),
+				'apply-technical-fix'      => array(
+					'description' => 'Apply one no-approval Semrush technical fix: title, meta_description, missing_alt, broken_internal_link, or broken_internal_image. Supports dry_run.',
+					'arguments'   => array(
+						'post_id'  => 'integer (required unless url is given)',
+						'url'      => 'string (optional page URL)',
+						'kind'     => 'title | meta_description | missing_alt | broken_internal_link | broken_internal_image',
+						'value'    => 'string (title, meta description, or alt text)',
+						'fromUrl'  => 'string (broken link/image URL or image src for alt)',
+						'toUrl'    => 'string (HTTP 200 replacement URL for link/image swaps)',
+						'dry_run'  => 'boolean (optional)',
+					),
+				),
 				'undo'                    => array(
 					'description' => 'Restore a previous Neo Pulse MCP write by history ID, refusing on conflict unless force: true.',
 					'arguments'   => array(
@@ -183,6 +198,8 @@ final class Neo_Pulse_Wp_Mcp_Write {
 				return self::set_type_rules( $args );
 			case 'update-settings':
 				return self::update_settings( $args );
+			case 'apply-technical-fix':
+				return self::apply_technical_fix( $args );
 			case 'undo':
 				return self::undo( $args );
 			default:

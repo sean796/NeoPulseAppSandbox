@@ -53,7 +53,21 @@ function stepFromAgentRun(run: AgentRun): string | undefined {
   return label || undefined;
 }
 
+function logLinesFromAgentRun(run: AgentRun): string[] {
+  return (run.steps ?? [])
+    .map((step) => (step.label ?? "").trim())
+    .filter((label) => label.length > 0);
+}
+
 function patchFromAgentRun(run: AgentRun) {
+  const patch: ReturnType<typeof patchFields> = patchFields(run);
+  if (Array.isArray(run.steps) && run.steps.length > 0) {
+    patch.logLines = logLinesFromAgentRun(run);
+  }
+  return patch;
+}
+
+function patchFields(run: AgentRun) {
   return {
     title: titleFromAgentRun(run),
     status: statusFromAgentRun(run),

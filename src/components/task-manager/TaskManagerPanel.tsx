@@ -48,13 +48,6 @@ function statusClass(status: WorkspaceTaskStatus): string {
   return "agent-runs-status-pill agent-runs-status-pill--failed";
 }
 
-function progressLabel(task: WorkspaceTask): string {
-  if (typeof task.progress === "number" && Number.isFinite(task.progress)) {
-    return `${Math.round(task.progress)}%`;
-  }
-  return "";
-}
-
 function kindLabel(kind: string): string {
   const trimmed = kind.trim();
   if (!trimmed) return "Task";
@@ -64,10 +57,13 @@ function kindLabel(kind: string): string {
 /** Step + % on one line; post on its own line. */
 function taskStatusLines(task: WorkspaceTask): string[] {
   const lines: string[] = [];
-  const step = task.step?.trim() || "";
-  const pct = progressLabel(task);
-  const stepLine = [step, pct].filter(Boolean).join(" ");
-  if (stepLine) lines.push(stepLine);
+  const logged = (task.logLines ?? []).map((line) => line.trim()).filter(Boolean);
+  if (logged.length > 0) {
+    lines.push(logged[logged.length - 1]);
+  } else {
+    const step = task.step?.trim() || "";
+    if (step) lines.push(step);
+  }
   const post = task.currentTitle?.trim() || task.currentUrl?.trim() || "";
   if (post) lines.push(post);
   return lines;
@@ -180,11 +176,7 @@ export function TaskManagerPanel() {
             </div>
           </div>
 
-          {filteredTasks.length === 0 ? (
-            <p className="px-3 py-4 text-base text-muted-foreground">
-              {tasks.length === 0 ? "No tasks" : "No tasks in this category."}
-            </p>
-          ) : (
+          {filteredTasks.length === 0 ? null : (
             <div className="agent-runs-client-group">
               <div className="agent-runs-bucket-group__runs">
                 {filteredTasks.map((task, index) => {

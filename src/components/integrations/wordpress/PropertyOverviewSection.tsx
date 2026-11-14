@@ -1,5 +1,11 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { Pencil, Plus, Save, Trash2 } from "lucide-react";
+import { runSemrushSafeFix } from "@/lib/semrush-safe-fix/semrush-safe-fix-api";
+import { fetchAgentRun } from "@/lib/agent-runs-api";
+import { trackStartedAgentRun } from "@/lib/task-manager/adapt-agent-run";
+import { resolveSemrushProjectIdForSite } from "@/lib/semrush-project-id-defaults";
+import { useTeam } from "@/contexts/TeamContext";
+import { AgentRunsContext } from "@/contexts/agent-runs-react-context";
 import {
   Button,
   Dialog,
@@ -11,6 +17,8 @@ import {
   Field,
   SelectField,
 } from "@/ui";
+import { ASSIGNABLE_SITE_AGENTS } from "@/lib/agent-library/agent-library-api";
+import { openSkillsLibrary } from "@/lib/open-skills-library";
 import type { WordPressSite } from "../types";
 import { propertyHostingLabel } from "./property-profile-view-model";
 import { MasterInstructionsSection } from "./MasterInstructionsSection";
@@ -43,12 +51,9 @@ import {
   resolveEditorialContentPackageForSite,
 } from "@/lib/editorial-content-package";
 import {
-  PROPERTIES_OVERVIEW_CHIP_CLASS,
   PROPERTIES_OVERVIEW_CHIP_DOT_LITE_CLASS,
   PROPERTIES_OVERVIEW_CHIP_DOT_MUTED_CLASS,
   PROPERTIES_OVERVIEW_CHIP_DOT_OK_CLASS,
-  PROPERTIES_OVERVIEW_CHIP_LITE_CLASS,
-  PROPERTIES_OVERVIEW_CHIP_MUTED_CLASS,
   PROPERTIES_OVERVIEW_DL_CLASS,
   PROPERTIES_OVERVIEW_DL_LABEL_CLASS,
   PROPERTIES_OVERVIEW_DL_ROW_CLASS,
@@ -59,13 +64,12 @@ import {
   PROPERTIES_OVERVIEW_IDENTITY_NAME_CLASS,
   PROPERTIES_OVERVIEW_IDENTITY_PILLS_CLASS,
   PROPERTIES_OVERVIEW_IDENTITY_URL_CLASS,
-  PROPERTIES_OVERVIEW_KPI_LABEL_CLASS,
-  PROPERTIES_OVERVIEW_KPI_ROW_CLASS,
-  PROPERTIES_OVERVIEW_KPI_TILE_CLASS,
-  PROPERTIES_OVERVIEW_KPI_VALUE_CLASS,
+  PROPERTIES_OVERVIEW_PACKAGE_BADGE_CLASS,
   PROPERTIES_OVERVIEW_PANEL_CLASS,
   PROPERTIES_OVERVIEW_PANEL_TITLE_CLASS,
+  PROPERTIES_OVERVIEW_PILL_LABEL_CLASS,
   PROPERTIES_OVERVIEW_PILL_ROW_CLASS,
+  PROPERTIES_OVERVIEW_PILL_VALUE_CLASS,
   PROPERTIES_OVERVIEW_PROFILE_EMPTY_CLASS,
   PROPERTIES_OVERVIEW_STACK_CLASS,
 } from "./wordpress-properties-surfaces";
@@ -95,10 +99,11 @@ function sitemapOptionLabel(url: string): string {
   }
 }
 
-function PanelHeading({ title }: { title: string }) {
+function PanelHeading({ title, end }: { title: string; end?: ReactNode }) {
   return (
     <div className="flex h-8 shrink-0 items-center">
       <h2 className={PROPERTIES_OVERVIEW_PANEL_TITLE_CLASS}>{title}</h2>
+      {end}
     </div>
   );
 }
@@ -128,40 +133,6 @@ function FadeText({
   );
 }
 
-function KpiTile({
-  fadeKey,
-  label,
-  value,
-  title,
-}: {
-  fadeKey: string;
-  label: string;
-  value: string;
-  title?: string;
-}) {
-  return (
-    <div className={PROPERTIES_OVERVIEW_KPI_TILE_CLASS} title={title}>
-      <div className={cn(PROPERTIES_OVERVIEW_PILL_ROW_CLASS, "min-h-11")}>
-        <span
-          className={PROPERTIES_OVERVIEW_KPI_LABEL_CLASS}
-          style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
-        >
-          {label}
-        </span>
-        <FadeText fadeKey={fadeKey} className="flex min-w-0 flex-1 items-center">
-          <span
-            className={PROPERTIES_OVERVIEW_KPI_VALUE_CLASS}
-            title={value}
-            style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
-          >
-            {value}
-          </span>
-        </FadeText>
-      </div>
-    </div>
-  );
-}
-
 /** Display GBP as the numeric id, never the business.google.com URL. */
 function gbpDisplayId(raw: string): string {
   const value = raw.trim();
@@ -177,9 +148,18 @@ function gbpDisplayId(raw: string): string {
   return digits?.[0] ?? value;
 }
 
-/** Inline edit controls after the label; fixed height so pills do not shift. */
+/** Inline edit controls on the right; fixed height so pills do not shift. */
 const VALUE_EDIT_WRAP_CLASS =
-  "flex h-8 min-w-0 flex-1 items-center justify-start gap-1.5 overflow-hidden [&_input]:min-w-0 [&_input]:flex-1 [&_input]:bg-black [&_input]:text-left [&_input]:text-white [&_button]:shrink-0 [&_[data-slot=select-trigger]]:min-w-0 [&_[data-slot=select-trigger]]:flex-1";
+  "flex h-8 min-w-0 flex-1 items-center justify-end gap-1.5 overflow-hidden [&_input]:min-w-0 [&_input]:flex-1 [&_input]:bg-black [&_input]:text-right [&_input]:text-white [&_button]:shrink-0 [&_[data-slot=select-trigger]]:min-w-0 [&_[data-slot=select-trigger]]:flex-1 [&_[data-slot=select-trigger]]:justify-end";
+
+/** Off / Auto / Run segment inside a black overview pill. Green + black text on hover only. */
+const ASSIGNED_AGENT_MODE_BTN_CLASS = cn(
+  "inline-flex h-8 min-w-[3.25rem] shrink-0 items-center justify-center px-3 text-base font-medium text-muted-foreground",
+  "hover:bg-primary hover:text-black",
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+  "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-muted-foreground",
+  "data-[active=true]:bg-white/10 data-[active=true]:text-white",
+);
 
 function IntegrationRow({
   fadeKey,
@@ -210,17 +190,17 @@ function IntegrationRow({
       </dt>
       <dd
         className={cn(
-          "flex h-8 min-w-0 flex-1 items-center justify-start overflow-hidden",
+          "flex h-8 min-w-0 flex-1 items-center justify-end overflow-hidden",
           empty ? PROPERTIES_OVERVIEW_PROFILE_EMPTY_CLASS : PROPERTIES_OVERVIEW_DL_VALUE_CLASS,
         )}
         title={empty || children ? undefined : title || value}
         style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
       >
-        <FadeText fadeKey={fadeKey} className="flex h-8 min-w-0 flex-1 items-center">
+        <FadeText fadeKey={fadeKey} className="flex h-8 min-w-0 w-full flex-1 items-center justify-end">
           {children ? (
             <div className={VALUE_EDIT_WRAP_CLASS}>{children}</div>
           ) : (
-            <span className="truncate text-left">{empty ? "Not set" : value}</span>
+            <span className="min-w-0 truncate text-right">{empty ? "Not set" : value}</span>
           )}
         </FadeText>
       </dd>
@@ -246,7 +226,9 @@ export function PropertyOverviewSection({
 }: PropertyOverviewSectionProps) {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
-  const scheduled = site.scheduledPosts;
+  const [safeFixBusy, setSafeFixBusy] = useState(false);
+  const { activeTeam } = useTeam();
+  const agentRuns = useContext(AgentRunsContext);
   const ga4 = site.ga4PropertyId?.trim() ?? "";
   const ads = site.googleAdsCustomerId?.trim() ?? "";
   const gbpRaw = site.gbpLocationId?.trim() ?? "";
@@ -301,6 +283,40 @@ export function PropertyOverviewSection({
 
   const patch = (next: Partial<WordPressSite>) => {
     onPatchSite?.(site.id, next);
+  };
+
+  const startSafeFix = () => {
+    if (safeFixBusy) return;
+    setSafeFixBusy(true);
+    void runSemrushSafeFix({
+      siteId: site.id,
+      siteName: site.name,
+      siteUrl: site.siteUrl,
+      username: site.username,
+      appPassword: site.appPassword,
+      semrushSiteAuditProjectId: resolveSemrushProjectIdForSite(site),
+      teamId: activeTeam?.id,
+    })
+      .then(async (result) => {
+        if (result.runId && activeTeam?.id) {
+          const teamId = activeTeam.id;
+          const runId = result.runId;
+          for (let attempt = 0; attempt < 90; attempt += 1) {
+            const run = await fetchAgentRun(teamId, runId);
+            if (run) trackStartedAgentRun(run);
+            if (
+              run &&
+              (run.status === "done" || run.status === "failed" || run.status === "cancelled")
+            ) {
+              break;
+            }
+            await new Promise((resolve) => window.setTimeout(resolve, 2000));
+          }
+        }
+        void agentRuns?.refreshRuns();
+      })
+      .catch(() => ({ ok: false as const, error: "request failed" }))
+      .finally(() => setSafeFixBusy(false));
   };
 
   const commitPrimaryLocation = (city: string, state: string) => {
@@ -384,10 +400,10 @@ export function PropertyOverviewSection({
   return (
     <div className={PROPERTIES_OVERVIEW_STACK_CLASS}>
       <section className={cn(PROPERTIES_OVERVIEW_IDENTITY_CLASS, "overflow-hidden")} aria-label="Property">
-        <div className="flex h-[4.25rem] min-w-0 flex-1 items-stretch gap-1">
+        <div className="flex h-[6.5rem] min-w-0 flex-1 items-stretch gap-1">
           <div
             className={cn(
-              "flex h-[4.25rem] w-36 shrink-0 items-center justify-center overflow-hidden rounded-none border border-white/15",
+              "flex h-[6.5rem] w-36 shrink-0 items-center justify-center overflow-hidden rounded-none border border-white/15",
               logoTheme === "white" ? "bg-white" : "bg-black",
             )}
             aria-label={logoTheme === "white" ? "Logo box white" : "Logo box black"}
@@ -415,7 +431,7 @@ export function PropertyOverviewSection({
             </FadeText>
           </div>
           <div
-            className="flex h-[4.25rem] w-5 shrink-0 flex-col gap-1"
+            className="flex h-[6.5rem] w-5 shrink-0 flex-col gap-1"
             role="group"
             aria-label="Logo box theme"
           >
@@ -511,17 +527,40 @@ export function PropertyOverviewSection({
                 )}
               </FadeText>
             </div>
+            <div
+              className={cn(
+                PROPERTIES_OVERVIEW_PILL_ROW_CLASS,
+                "h-8 max-h-8 w-full border-0 bg-black px-2",
+              )}
+              title={wpEngineAccountId || undefined}
+            >
+              <span
+                className={PROPERTIES_OVERVIEW_PILL_LABEL_CLASS}
+                style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
+              >
+                WordPress
+              </span>
+              <FadeText fadeKey={contentFadeKey} className="flex h-8 min-w-0 flex-1 items-center justify-end">
+                <span
+                  className={cn(PROPERTIES_OVERVIEW_PILL_VALUE_CLASS, "truncate")}
+                  style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
+                >
+                  {propertyHostingLabel(site)}
+                </span>
+              </FadeText>
+            </div>
           </div>
         </div>
         <div className={PROPERTIES_OVERVIEW_IDENTITY_PILLS_CLASS}>
           <span
-            className={`${
+            className={cn(
+              PROPERTIES_OVERVIEW_PACKAGE_BADGE_CLASS,
               editorialPackage === "lite"
-                ? PROPERTIES_OVERVIEW_CHIP_LITE_CLASS
+                ? "border-0 bg-sky-500/10"
                 : editorialPackage === "standard"
-                  ? PROPERTIES_OVERVIEW_CHIP_CLASS
-                  : PROPERTIES_OVERVIEW_CHIP_MUTED_CLASS
-            } w-full`}
+                  ? "border-0 bg-emerald-500/10"
+                  : "border-0 bg-zinc-500/10",
+            )}
           >
             <span
               className={
@@ -546,7 +585,9 @@ export function PropertyOverviewSection({
               >
                 <Pencil aria-hidden />
               </button>
-            ) : null}
+            ) : (
+              <span className={PROPERTIES_OVERVIEW_ACTION_PILL_CLASS} aria-hidden />
+            )}
             {onSaveProperty ? (
               <button
                 type="button"
@@ -556,7 +597,9 @@ export function PropertyOverviewSection({
               >
                 <Save aria-hidden />
               </button>
-            ) : null}
+            ) : (
+              <span className={PROPERTIES_OVERVIEW_ACTION_PILL_CLASS} aria-hidden />
+            )}
             {onDeleteProperty ? (
               <button
                 type="button"
@@ -569,7 +612,9 @@ export function PropertyOverviewSection({
               >
                 <Trash2 aria-hidden />
               </button>
-            ) : null}
+            ) : (
+              <span className={PROPERTIES_OVERVIEW_ACTION_PILL_CLASS} aria-hidden />
+            )}
           </div>
         </div>
       </section>
@@ -621,18 +666,6 @@ export function PropertyOverviewSection({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      <section className="grid shrink-0 grid-cols-2 gap-3" aria-label="Platform">
-        <KpiTile fadeKey={contentFadeKey}
-          label="WordPress"
-          value={propertyHostingLabel(site)}
-          title={wpEngineAccountId || undefined}
-        />
-        <KpiTile fadeKey={contentFadeKey}
-          label="Scheduled"
-          value={scheduled ? String(scheduled.count) : "0"}
-        />
-      </section>
 
       <div className="grid w-full grid-cols-2 items-stretch gap-3">
         <section className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)} aria-label="Profile">
@@ -940,13 +973,15 @@ export function PropertyOverviewSection({
             </IntegrationRow>
           </dl>
         </section>
+      </div>
 
+      <div className="grid w-full grid-cols-2 items-stretch gap-3">
         <section
           className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)}
           aria-label="Settings"
         >
           <PanelHeading title="Settings" />
-          <dl className={PROPERTIES_OVERVIEW_DL_CLASS}>
+          <div className={PROPERTIES_OVERVIEW_DL_CLASS}>
             <IntegrationRow fadeKey={contentFadeKey} label="Site URL" value={editing ? undefined : site.siteUrl?.trim() ?? ""}>
               {editing ? (
                 <Field
@@ -989,15 +1024,24 @@ export function PropertyOverviewSection({
                 />
               ) : null}
             </IntegrationRow>
-          </dl>
-        </section>
-
-        <div className="flex h-full min-h-0 w-full min-w-0 flex-col gap-3">
-          <section
-            className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, "flex min-h-0 flex-1 flex-col")}
-            aria-label="Master Rules"
-          >
-            <PanelHeading title="Master Rules" />
+            <SelectField
+              key="property-overview-sitemap"
+              placeholder="Sitemap"
+              tone="data"
+              width="full"
+              value={sitemapValue}
+              options={sitemapUrls.map((url) => ({
+                value: url,
+                label: sitemapOptionLabel(url),
+              }))}
+              onValueChange={setSitemapPick}
+              disabled={sitemapUrls.length === 0}
+            />
+          </div>
+          <div className="mt-2 flex min-h-0 w-full flex-col gap-2">
+            <div className="flex h-8 shrink-0 items-center">
+              <h3 className={PROPERTIES_OVERVIEW_PANEL_TITLE_CLASS}>Master Rules</h3>
+            </div>
             <MasterInstructionsSection
               siteId={site.id}
               siteUrl={site.siteUrl}
@@ -1007,26 +1051,92 @@ export function PropertyOverviewSection({
               editing={editing}
               fadeKey={contentFadeKey}
             />
-          </section>
-          <section className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, "h-auto shrink-0")} aria-label="Sitemaps">
-            <PanelHeading title="Sitemaps" />
-            <div className="flex h-8 shrink-0 items-center overflow-hidden">
-              <SelectField
-                key="property-overview-sitemap"
-                placeholder="Sitemap"
-                tone="data"
-                width="full"
-                value={sitemapValue}
-                options={sitemapUrls.map((url) => ({
-                  value: url,
-                  label: sitemapOptionLabel(url),
-                }))}
-                onValueChange={setSitemapPick}
-                disabled={sitemapUrls.length === 0}
-              />
-            </div>
-          </section>
-        </div>
+          </div>
+        </section>
+
+        <section
+          className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)}
+          aria-label="Skills"
+        >
+          <PanelHeading
+            title="Skills"
+            end={
+              <button
+                type="button"
+                onClick={() => openSkillsLibrary()}
+                className="ml-auto inline-flex h-8 shrink-0 items-center justify-center bg-black px-3 text-base font-medium text-white hover:bg-primary hover:text-black"
+              >
+                Library
+              </button>
+            }
+          />
+          <dl className={PROPERTIES_OVERVIEW_DL_CLASS}>
+            {ASSIGNABLE_SITE_AGENTS.map((agent) => {
+              const assigned = (site.assignedAgentIds ?? []).includes(agent.id);
+              const setAssigned = (nextOn: boolean) => {
+                if (!onPatchSite) return;
+                const current = site.assignedAgentIds ?? [];
+                const next = nextOn
+                  ? current.includes(agent.id)
+                    ? current
+                    : [...current, agent.id]
+                  : current.filter((id) => id !== agent.id);
+                patch({ assignedAgentIds: next });
+              };
+              const runNow = () => {
+                startSafeFix();
+              };
+              return (
+                <div
+                  key={agent.id}
+                  className={cn(
+                    PROPERTIES_OVERVIEW_DL_ROW_CLASS,
+                    "h-11 max-h-11 min-h-11 w-full items-center overflow-hidden py-1",
+                  )}
+                >
+                  <dt
+                    className={PROPERTIES_OVERVIEW_DL_LABEL_CLASS}
+                    style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
+                  >
+                    {agent.label}
+                  </dt>
+                  <dd className="ml-auto flex h-8 shrink-0 items-center gap-0.5">
+                    <button
+                      type="button"
+                      className={ASSIGNED_AGENT_MODE_BTN_CLASS}
+                      data-active={!assigned ? "true" : "false"}
+                      aria-pressed={!assigned}
+                      disabled={!onPatchSite}
+                      onClick={() => setAssigned(false)}
+                    >
+                      Off
+                    </button>
+                    <button
+                      type="button"
+                      className={ASSIGNED_AGENT_MODE_BTN_CLASS}
+                      data-active={assigned ? "true" : "false"}
+                      aria-pressed={assigned}
+                      disabled={!onPatchSite}
+                      onClick={() => setAssigned(true)}
+                    >
+                      Auto
+                    </button>
+                    <button
+                      type="button"
+                      className={ASSIGNED_AGENT_MODE_BTN_CLASS}
+                      aria-label={`Run ${agent.label} now`}
+                      aria-busy={safeFixBusy}
+                      disabled={safeFixBusy}
+                      onClick={runNow}
+                    >
+                      Run
+                    </button>
+                  </dd>
+                </div>
+              );
+            })}
+          </dl>
+        </section>
       </div>
     </div>
   );

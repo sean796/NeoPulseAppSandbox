@@ -288,6 +288,11 @@ class Neo_Pulse_App_Api_Dispatcher {
 			return;
 		}
 
+		if ( str_starts_with( $route, 'semrush-safe-fix/' ) ) {
+			Neo_Pulse_App_Semrush_Safe_Fix_Route::dispatch_http( substr( $route, strlen( 'semrush-safe-fix/' ) ), $method, $body );
+			return;
+		}
+
 		if ( 0 === strpos( $route, 'semrush/' ) ) {
 			Neo_Pulse_App_Semrush_Route_Handlers::dispatch_http( substr( $route, 8 ), $method, $body );
 			return;
@@ -346,6 +351,12 @@ class Neo_Pulse_App_Api_Dispatcher {
 		if ( 0 === strpos( $route, 'agent-library/' ) || $route === 'agent-library' ) {
 			$agent_lib_route = $route === 'agent-library' ? '' : substr( $route, 14 );
 			Neo_Pulse_App_Agent_Library_Route_Handlers::dispatch_http( $agent_lib_route, $method, $body );
+			return;
+		}
+
+		if ( 0 === strpos( $route, 'skills-library/' ) || $route === 'skills-library' ) {
+			$skills_lib_route = $route === 'skills-library' ? '' : substr( $route, 16 );
+			Neo_Pulse_App_Skills_Library_Route::dispatch_http( $skills_lib_route, $method, $body );
 			return;
 		}
 

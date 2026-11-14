@@ -135,8 +135,16 @@ class Neo_Pulse_App_Data_Paths {
 		return self::root() . '/agent-library.json';
 	}
 
+	public static function skills_library_path(): string {
+		return self::root() . '/skills-library.json';
+	}
+
 	public static function changelog_path(): string {
 		return self::root() . '/changelog.json';
+	}
+
+	public static function semrush_safe_fix_schedule_path(): string {
+		return self::root() . '/semrush-safe-fix.json';
 	}
 
 	public static function careers_applications_path(): string {

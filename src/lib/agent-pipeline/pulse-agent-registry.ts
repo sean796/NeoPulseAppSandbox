@@ -435,6 +435,15 @@ export const PULSE_AGENT_REGISTRY: readonly PulseRegisteredAgentEntry[] = [
       "Turns git commits since the last archived entry into one plain-language changelog entry for the Neo Pulse web app, grouped into themes with highlights.",
     sourceModule: "src/lib/changelog/changelog-agent.ts",
   },
+  {
+    id: "reporting.semrush.safe-fix",
+    label: "Semrush Safe Fix Agent",
+    category: "meta",
+    domain: "reporting",
+    reason:
+      "Applies no-approval Semrush Site Audit fixes (missing title/meta/alt, broken internal links and images) via Neo MCP, then rescans for HTTP 200.",
+    sourceModule: "src/lib/semrush-safe-fix/semrush-safe-fix-agent.ts",
+  },
 ] as const;
 
 export function getPulseAgentById(id: string): PulseRegisteredAgentEntry | undefined {

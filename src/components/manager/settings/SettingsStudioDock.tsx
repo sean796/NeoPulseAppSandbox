@@ -4,6 +4,7 @@ import {
   Cloud,
   GitBranch,
   Key,
+  Puzzle,
   ScrollText,
   Server,
   Sparkles,
@@ -28,6 +29,7 @@ const SETTINGS_DOCK_ICONS: Record<ManagerSettingsItemId, LucideIcon> = {
   google: Cloud,
   "pulse-host": Server,
   "agent-library": Bot,
+  "skills-library": Puzzle,
   changelog: ScrollText,
 };
 

@@ -4,8 +4,6 @@ import { PULSE_AGENT_REGISTRY, type PulseRegisteredAgentEntry } from "@/lib/agen
 import type { AgentOpenRouterCategory } from "@/lib/openrouter-agent-category-api";
 import { resolveModelForAgentCategory } from "@/lib/openrouter-agent-category-api";
 
-export type AgentLibrarySection = "library" | "settings";
-
 export type AgentLibraryDomainFilter =
   | "all"
   | "slack-hub"
@@ -20,6 +18,18 @@ export type AgentLibraryDomainFilter =
   | "wikipedia";
 
 export type AgentLibraryCategoryFilter = "all" | AgentOpenRouterCategory;
+
+/** Skills that can be turned on per client on the property profile. */
+export const ASSIGNABLE_SITE_AGENTS = [
+  {
+    id: "reporting.semrush.safe-fix",
+    label: "Semrush Safe Fix Agent",
+  },
+] as const;
+
+export type AssignableSiteAgentId = (typeof ASSIGNABLE_SITE_AGENTS)[number]["id"];
+
+const SKILL_IDS = new Set<string>(ASSIGNABLE_SITE_AGENTS.map((agent) => agent.id));
 
 export interface HubAgentDefinitionItem {
   id: string;
@@ -39,8 +49,6 @@ export interface AgentLibrarySettingsPublic {
     configured: boolean;
     suffix: string | null;
   };
-  openRouterModel: string;
-  openRouterAccountEmail: string;
 }
 
 export interface AgentLibraryServerPayload {
@@ -130,7 +138,7 @@ export const DEFAULT_HUB_AGENTS: HubAgentDefinitionItem[] = [
   },
 ];
 
-export function buildUnifiedAgentLibraryEntries(
+function buildAllLibraryEntries(
   hubAgents: HubAgentDefinitionItem[],
   overrides: Record<string, boolean>,
   siteId?: string | null,
@@ -171,6 +179,24 @@ export function buildUnifiedAgentLibraryEntries(
   return [...hubRows, ...pulseRows];
 }
 
+/** Agent Library: every registered agent except skills. */
+export function buildUnifiedAgentLibraryEntries(
+  hubAgents: HubAgentDefinitionItem[],
+  overrides: Record<string, boolean>,
+  siteId?: string | null,
+): UnifiedAgentLibraryEntry[] {
+  return buildAllLibraryEntries(hubAgents, overrides, siteId).filter((entry) => !SKILL_IDS.has(entry.id));
+}
+
+/** Skills Library: assignable site skills only. */
+export function buildSkillsLibraryEntries(
+  hubAgents: HubAgentDefinitionItem[],
+  overrides: Record<string, boolean>,
+  siteId?: string | null,
+): UnifiedAgentLibraryEntry[] {
+  return buildAllLibraryEntries(hubAgents, overrides, siteId).filter((entry) => SKILL_IDS.has(entry.id));
+}
+
 export async function fetchAgentLibraryState(): Promise<AgentLibraryServerPayload> {
   const res = await fetch(backendApiUrl("/agent-library"), {
     method: "GET",
@@ -197,23 +223,6 @@ export async function toggleAgentLibraryEntry(
   const data = (await res.json()) as AgentLibraryServerPayload;
   if (!res.ok || !data.ok) {
     throw new Error(data.error ?? `Toggle failed (${res.status})`);
-  }
-  return data;
-}
-
-export async function saveAgentLibrarySettings(params: {
-  openRouterApiKey?: string;
-  openRouterModel?: string;
-}): Promise<AgentLibraryServerPayload> {
-  const res = await fetch(backendApiUrl("/agent-library/settings"), {
-    method: "POST",
-    credentials: "include",
-    headers: neoPulseApiHeaders({ "Content-Type": "application/json" }),
-    body: JSON.stringify(params),
-  });
-  const data = (await res.json()) as AgentLibraryServerPayload;
-  if (!res.ok || !data.ok) {
-    throw new Error(data.error ?? `Save failed (${res.status})`);
   }
   return data;
 }

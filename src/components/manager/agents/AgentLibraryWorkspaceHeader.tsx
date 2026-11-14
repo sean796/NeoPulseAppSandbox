@@ -1,23 +1,19 @@
 import { RotateCw, Search } from "lucide-react";
 import { Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui";
 
-import { WorkspacePill } from "@/components/shared/WorkspacePill";
 import {
   BULK_HEADER_FIELD,
   BULK_HEADER_SELECT_TRIGGER,
   BULK_HEADER_TOOL_BTN,
-  BULK_TOOLBAR_GROUP_DIVIDER,
 } from "@/components/keyword-research/bulk/bulk-workspace-header-styles";
 import type {
   AgentLibraryCategoryFilter,
   AgentLibraryDomainFilter,
-  AgentLibrarySection,
 } from "@/lib/agent-library/agent-library-api";
 import { cn } from "@/lib/utils";
 
 export interface AgentLibraryWorkspaceHeaderProps {
-  activeSection: AgentLibrarySection;
-  onSectionChange: (section: AgentLibrarySection) => void;
+  scope?: "agents" | "skills";
   searchQuery: string;
   onSearchQueryChange: (query: string) => void;
   domainFilter: AgentLibraryDomainFilter;
@@ -57,8 +53,7 @@ const CATEGORY_OPTIONS: { value: AgentLibraryCategoryFilter; label: string }[] =
 
 /** Slim studio toolbar (no UnifiedWorkspaceChrome). Dock supplies page identity. */
 export function AgentLibraryWorkspaceHeader({
-  activeSection,
-  onSectionChange,
+  scope = "agents",
   searchQuery,
   onSearchQueryChange,
   domainFilter,
@@ -70,26 +65,14 @@ export function AgentLibraryWorkspaceHeader({
   busy,
   onRefresh,
 }: AgentLibraryWorkspaceHeaderProps) {
+  const skills = scope === "skills";
+  const libraryName = skills ? "Skills Library" : "Agent Library";
+  const noun = skills ? "skills" : "agents";
   return (
     <div
       className="flex h-11 w-full min-w-0 shrink-0 items-center gap-2 overflow-x-auto bg-black px-3"
-      aria-label="Agent Library toolbar"
+      aria-label={`${libraryName} toolbar`}
     >
-      <div className="flex shrink-0 items-center gap-1.5">
-        <WorkspacePill
-          label="Library"
-          active={activeSection === "library"}
-          square
-          onClick={() => onSectionChange("library")}
-        />
-        <WorkspacePill
-          label="Hub Settings"
-          active={activeSection === "settings"}
-          square
-          onClick={() => onSectionChange("settings")}
-        />
-      </div>
-      <span className={BULK_TOOLBAR_GROUP_DIVIDER} aria-hidden />
       <div className="relative flex items-center">
         <Search
           className="pointer-events-none absolute left-2.5 h-4 w-4 text-muted-foreground"
@@ -98,8 +81,8 @@ export function AgentLibraryWorkspaceHeader({
         <Input
           value={searchQuery}
           onChange={(e) => onSearchQueryChange(e.target.value)}
-          placeholder="Search agents by name, id, or module"
-          aria-label="Search agents by name, id, or module"
+          placeholder={`Search ${noun} by name, id, or module`}
+          aria-label={`Search ${noun} by name, id, or module`}
           className={cn(BULK_HEADER_FIELD, "w-64 pl-8 sm:w-80")}
         />
       </div>
@@ -108,7 +91,7 @@ export function AgentLibraryWorkspaceHeader({
         onValueChange={(val) => onDomainFilterChange(val as AgentLibraryDomainFilter)}
       >
         <SelectTrigger
-          aria-label="Filter agents by domain"
+          aria-label={`Filter ${noun} by domain`}
           className={cn(BULK_HEADER_SELECT_TRIGGER, "min-w-[11rem]")}
         >
           <SelectValue placeholder="Domain filter" />
@@ -126,7 +109,7 @@ export function AgentLibraryWorkspaceHeader({
         onValueChange={(val) => onCategoryFilterChange(val as AgentLibraryCategoryFilter)}
       >
         <SelectTrigger
-          aria-label="Filter agents by model category"
+          aria-label={`Filter ${noun} by model category`}
           className={cn(BULK_HEADER_SELECT_TRIGGER, "min-w-[11.5rem]")}
         >
           <SelectValue placeholder="Model category" />
@@ -141,14 +124,14 @@ export function AgentLibraryWorkspaceHeader({
       </Select>
       <div className="ml-auto flex shrink-0 items-center gap-2">
         <span className="whitespace-nowrap font-sans text-base tabular-nums text-muted-foreground">
-          {visibleCount} / {totalCount} agents
+          {visibleCount} / {totalCount} {noun}
         </span>
         <button
           type="button"
           onClick={onRefresh}
           disabled={busy}
           className={cn(BULK_HEADER_TOOL_BTN, "inline-flex items-center gap-1.5")}
-          aria-label="Refresh Agent Library"
+          aria-label={`Refresh ${libraryName}`}
         >
           <RotateCw className={cn("h-4 w-4", busy && "animate-pulse")} aria-hidden />
           Refresh

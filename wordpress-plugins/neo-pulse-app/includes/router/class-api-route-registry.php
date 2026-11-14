@@ -44,6 +44,7 @@ class Neo_Pulse_App_Api_Route_Registry {
 			array( 'method' => 'POST', 'path' => 'overview/optimize-meta-ai' ),
 			array( 'method' => 'POST', 'path' => 'dataforseo/competitor-research' ),
 			array( 'method' => 'POST', 'path' => 'semrush/competitor-research' ),
+			array( 'method' => 'POST', 'path' => 'semrush-safe-fix/run' ),
 			array( 'method' => 'POST', 'path' => 'proposal/site-audit' ),
 			array( 'method' => 'POST', 'path' => 'seo/discover-locations' ),
 			array( 'method' => 'GET', 'path' => 'vertical-benchmarks/taxonomy' ),

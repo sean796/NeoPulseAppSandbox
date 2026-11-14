@@ -1,5 +1,5 @@
 ---
-title: Pulse Agent Registry (48 Agents)
+title: Pulse Agent Registry (49 Agents)
 slug: pulse-engine/agent-registry
 section: Pulse Engine
 order: 30
@@ -55,6 +55,7 @@ Complete catalog of every registered agent in `PULSE_AGENT_REGISTRY` (`src/lib/a
 | `competitor.research.report` | `competitor-research` | `research` | Competitor Strategy Report Writer | Synthesizes competitor keyword gaps, traffic tiers, and backlink profiles into an executive SEO strategy report. | `src/lib/competitor-research/competitor-report-agent.ts` |
 | `reporting.gsc.section-writer` | `reporting` | `report` | GSC Performance Report Agent | Plans and writes month-over-month Google Search Console executive report sections. | `src/lib/gsc-reporting/gsc-reporting-agent-harness.ts` |
 | `reporting.changelog.app-update-log` | `reporting` | `research` | App Changelog Writer | Turns git commits since the last archived entry into one plain-language changelog entry for the Neo Pulse web app, grouped into themes with highlights. | `src/lib/changelog/changelog-agent.ts` |
+| `reporting.semrush.safe-fix` | `reporting` | `meta` | Semrush Safe Fix Agent | Applies no-approval Semrush Site Audit fixes via Neo MCP, then rescans for HTTP 200. | `src/lib/semrush-safe-fix/semrush-safe-fix-agent.ts` |
 | `reporting.organic.highlights` | `reporting` | `report` | Organic Dashboard Highlights Agent | Summarizes GA4 + GSC + WordPress publishing velocity into client-ready organic highlights. | `src/lib/organic-dashboard/organic-reporting-highlights.ts` |
 | `reporting.chat.call-summary` | `reporting` | `report` | Workplace Call Transcript Summarizer | Summarizes speaker-labeled call transcripts into concise notes and owner-assigned action items. | `src/lib/chat-call-summary.ts` |
 | `ads.ppc.reporting` | `ppc-ads` | `ads` | Google Ads & PPC Reporting Agent | Analyzes Google Ads campaign, ad group, and conversion metrics to write PPC performance reports. | `src/lib/ads-reporting/ads-reporting-agent-harness.ts` |

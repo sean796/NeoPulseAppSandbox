@@ -66,6 +66,9 @@ class Neo_Pulse_App_Agent_Run_Worker {
 			if ( $recipe === 'local_dominator_export' && class_exists( 'Neo_Pulse_App_Agent_Run_Harness_Local_Dominator_Export' ) ) {
 				Neo_Pulse_App_Agent_Run_Harness_Local_Dominator_Export::tick( $team_id, $run );
 			}
+			if ( $recipe === 'semrush_safe_fix' && class_exists( 'Neo_Pulse_App_Semrush_Safe_Fix_Runner' ) ) {
+				Neo_Pulse_App_Semrush_Safe_Fix_Runner::resume( $run );
+			}
 		} catch ( Exception $e ) {
 			Neo_Pulse_App_Agent_Runs_Store::patch_run(
 				$team_id,
