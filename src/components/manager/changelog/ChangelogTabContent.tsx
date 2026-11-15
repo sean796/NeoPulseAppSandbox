@@ -142,8 +142,21 @@ export function ChangelogTabContent(): React.ReactElement {
     try {
       const feed = await fetchUncoveredCommits();
       if (feed.commits.length === 0) return;
+      const priorEntries =
+        feed.priorEntries?.map((e) => ({
+          title: e.title,
+          highlights: e.highlights ?? [],
+        })) ??
+        entries.slice(0, 8).map((e) => ({
+          title: e.title,
+          highlights: e.highlights ?? [],
+        }));
       const modelDraft = await appChangelogWriterAgent.run(
-        { commits: feed.commits, coveredThrough: feed.coveredThrough },
+        {
+          commits: feed.commits,
+          coveredThrough: feed.coveredThrough,
+          priorEntries,
+        },
         { apiKey: loadApiKey() },
       );
       const nextEntry = buildChangelogEntry(modelDraft, feed.commits, todayIso());
@@ -155,7 +168,7 @@ export function ChangelogTabContent(): React.ReactElement {
     } finally {
       setGenerating(false);
     }
-  }, []);
+  }, [entries]);
 
   const handleSaveSchedule = useCallback(async () => {
     setSavingSchedule(true);

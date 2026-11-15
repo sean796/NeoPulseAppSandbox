@@ -19,6 +19,12 @@ function wp_mkdir_p( $dir ) {
 function sanitize_file_name( $name ) {
 	return preg_replace( '/[^A-Za-z0-9._-]/', '-', (string) $name );
 }
+function sanitize_email( $email ) {
+	return filter_var( (string) $email, FILTER_SANITIZE_EMAIL ) ?: '';
+}
+function is_email( $email ) {
+	return (bool) filter_var( (string) $email, FILTER_VALIDATE_EMAIL );
+}
 function wp_json_encode( $data, $options = 0 ) {
 	return json_encode( $data, $options );
 }
@@ -53,6 +59,7 @@ class Neo_Pulse_App_Api_Dispatcher {
 
 require_once dirname( __DIR__ ) . '/includes/storage/class-neo-pulse-data-paths.php';
 require_once dirname( __DIR__ ) . '/includes/storage/class-json-file-store.php';
+require_once dirname( __DIR__ ) . '/includes/changelog/class-changelog-schedule.php';
 require_once dirname( __DIR__ ) . '/includes/changelog/class-changelog-route-handlers.php';
 
 $failures = array();
@@ -153,6 +160,11 @@ dispatch( 'entry', 'POST', array( 'entry' => $entry2 ) );
 $res = dispatch( '', 'GET' );
 check( 'entries list newest first', $res['data']['entries'][0]['id'] === '2026-11-03..2026-11-05' );
 check( 'all commits covered after second entry', $res['data']['source']['uncoveredCount'] === 0 );
+
+// 7a. With nothing uncovered, Generate feed stays empty (no prior-pack replay).
+$res = dispatch( 'source', 'GET' );
+check( 'empty uncovered feed returns zero commits', $res['status'] === 200 && count( $res['data']['commits'] ) === 0 );
+check( 'feed includes priorEntries', isset( $res['data']['priorEntries'] ) && is_array( $res['data']['priorEntries'] ) && count( $res['data']['priorEntries'] ) >= 1 );
 
 // 7b. A later report on the same date is kept beside the earlier one.
 usleep( 20000 );

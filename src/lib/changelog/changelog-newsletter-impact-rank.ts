@@ -1,6 +1,7 @@
 /**
  * Decision-engine ranking for weekly newsletter major features.
- * Scores only big user-facing Pulse features of the week.
+ * Scores only big user-facing Pulse features of THIS week that are not
+ * already covered in prior changelog entries.
  */
 
 import { z } from "zod";
@@ -23,26 +24,26 @@ export type ChangelogImpactRank = z.infer<typeof changelogImpactRankSchema>;
 
 export const CHANGELOG_IMPACT_RANK_SYSTEM = `You are the Neo Pulse Decision Engine scoring MAJOR WEEKLY FEATURES for a product newsletter.
 
-Readers are everyday Pulse users. They want the big new capabilities of THIS WEEK. Not polish. Not bug fixes. Not keys. Not links.
+Readers are everyday Pulse users. They want the big NEW capabilities of THIS WEEK's uncovered commit pack. Not polish. Not repeats of last week's changelog.
 
-Job: read the week's commit pack and return the 3 to 5 biggest NEW or TRANSFORMED product features people can open and use, ranked by impactScore (0 to 5).
+Job: read the week's commit pack and return the 3 to 5 biggest NEW or TRANSFORMED product features people can open and use, ranked by impactScore (0 to 5). Prefer newest dates in the pack when choosing among equals.
 
-Score ONLY major features of the week:
-- 5 = brand-new screen or major workflow (Changelog studio, Integrations add-client dock, Google Business / Organic Website Leads surfaces, Settings studio rebuild that changes how you work)
+Score ONLY major features of THIS pack:
+- 5 = brand-new screen or major workflow users open (Skills schedule / run controls, Properties profile, Assist, a Studio rebuild that changes how you work)
 - 4 = large feature expansion on a named product area users live in
 - 3 = meaningful feature addition (still a feature, not a fix)
 - 2 or below = do not use for newsletter highlights
 
 Hard BAN from ranked list (never include, even if many commits):
+- Themes already listed under PRIOR ARCHIVE in the user message (titles or highlights). If Pulse Host, My Sites, hosted WordPress users, client report sharing, or OpenRouter keys were already published, ban them.
 - API Keys / AI key / OpenRouter / "registers as you type"
 - Deep links / cold load / Dashboard bounce
 - Partial report fetch / "sections that loaded" / single-source failure
 - Hub, deploy, disk, Wave, CI, Storybook, evals, module splits, "ownable", architecture
 - AgentMail, AISEO News / Google Updates email sections, newsletter format, wire-seed, palette, Friday auto-send meta, flatten/push
 
-theme: name the MAJOR FEATURE in plain English (screen or capability).
+theme: name the MAJOR FEATURE in plain English (screen or capability) that is NEW this week.
 why: one short sentence of why this is a major weekly feature for a Pulse user.
-Recency bias is forbidden. Score the whole week.
 Never use the em dash character.
 
 Output JSON only:
@@ -50,16 +51,24 @@ Output JSON only:
   "ranked": [{ "theme": "...", "impactScore": 5, "why": "..." }]
 }`;
 
-export function buildChangelogImpactRankUserPrompt(commitLines: string[]): string {
+export function buildChangelogImpactRankUserPrompt(
+  commitLines: string[],
+  priorLines: string[] = [],
+): string {
   const today = new Date().toISOString().slice(0, 10);
-  return `Today is ${today}. Score ONLY major weekly FEATURES from this Neo Pulse commit pack.
+  const priorBlock =
+    priorLines.length > 0
+      ? `PRIOR ARCHIVE (already published, ban these themes):\n${priorLines.join("\n")}\n`
+      : "PRIOR ARCHIVE: none yet.\n";
+  return `Today is ${today}. Score ONLY major NEW weekly FEATURES from this Neo Pulse commit pack.
 
-Ignore keys, deep links, report-partial fixes, hub, Wave, and newsletter meta.
+${priorBlock}
+Ignore keys, deep links, report-partial fixes, hub, Wave, newsletter meta, and anything already in PRIOR ARCHIVE.
 
 Commit pack (oldest first):
 ${commitLines.join("\n")}
 
-Return the ranked Decision Engine JSON now. Highest impactScore first. Themes must be major features users open.`;
+Return the ranked Decision Engine JSON now. Highest impactScore first. Themes must be major NEW features users open this week.`;
 }
 
 export function parseChangelogImpactRank(raw: string): ChangelogImpactRank {
@@ -86,6 +95,8 @@ const BANNED_THEME_NEEDLES = [
   "ownable",
   "agentmail",
   "newsletter",
+  "pulse host",
+  "my sites",
 ];
 
 /** True when a Decision theme is polish/fix noise, not a major weekly feature. */

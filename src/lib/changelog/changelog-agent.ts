@@ -19,6 +19,13 @@ export const changelogCommitSchema = z.object({
 
 export type ChangelogCommit = z.infer<typeof changelogCommitSchema>;
 
+export const changelogPriorEntrySchema = z.object({
+  title: z.string().min(1),
+  highlights: z.array(z.string()).default([]),
+});
+
+export type ChangelogPriorEntry = z.infer<typeof changelogPriorEntrySchema>;
+
 export const changelogDraftSchema = z.object({
   title: z.string().min(1),
   highlights: z.array(z.string().min(1)).default([]),
@@ -35,6 +42,7 @@ export type ChangelogDraft = z.infer<typeof changelogDraftSchema>;
 const changelogInputSchema = z.object({
   commits: z.array(changelogCommitSchema).min(1).max(500),
   coveredThrough: z.string().nullable().default(null),
+  priorEntries: z.array(changelogPriorEntrySchema).default([]),
 });
 
 export type ChangelogAgentInput = z.infer<typeof changelogInputSchema>;
@@ -44,36 +52,50 @@ export const CHANGELOG_WRITER_MODEL = "deepseek/deepseek-v4.1-flash";
 export const CHANGELOG_WRITER_SYSTEM = `You write one weekly changelog entry for Neo Pulse for everyday people who USE the program (agency owners and staff). Not engineers.
 
 Grounding rules (non-negotiable):
-- The commit pack in the user message is the FULL WEEK of commits. It is the ONLY source of facts.
-- Summarize the ENTIRE week. Recency bias is forbidden. Earlier-week ships can outrank today's commits.
+- The commit pack in the user message is THIS WEEK's uncovered work only. It is the ONLY source of facts.
+- Write about what is NEW in this pack. Prefer the newest dates and the biggest user-facing ships (Skills, Properties / profile, Assist, Studios, schedule controls, etc.).
 - Never invent dates, counts, or version numbers.
 - Do NOT write an intro paragraph or summary.
-- This is a WEEKLY HIGHLIGHTS entry of the week's MOST SIGNIFICANT product features users can open and use.
 
-What counts as significant (rank these first):
-- New or changed screens (Changelog with archive, draft approval, weekly due flag)
-- Integrations / add-client / Google Business Profile leads / Organic Website Leads
-- Keys screen: paste your AI key and Pulse starts using it as you type
-- Workspace links that open the page you clicked
-- Client reports that still show every section that loaded when one feed is quiet
+Non-repetition (non-negotiable):
+- The user message lists PRIOR changelog entries already published. Do NOT reuse their titles, themes, or bullets. If Pulse Host, My Sites, hosted WordPress users, client report share links, or OpenRouter keys already appear in prior entries, they are BANNED for this entry even if old commits remain in the pack.
+- Each user-facing win appears ONCE in the whole JSON. Never copy the same bullet into Highlights and New and Improved and Fixed.
+- highlights = the 3 to 5 top wins (unique full sentences).
+- sections = partition those wins into "New", "Improved", and/or "Fixed" (omit empty headings). Max 2 to 4 items per section. Every section item must be a DISTINCT sentence from every highlight and from every other section item. Never paste the Highlights list again under New/Improved/Fixed.
 
-Banned from highlights / title (never lead with these, even if many commits say them):
-- This newsletter itself, AgentMail sends, AISEO News / Google Updates email sections, weekly-highlights format tweaks, email palette / wire-seed / setup-key fixes
-- Changelog-about-changelog / Friday auto-send meta about the email itself
-- Hub, deploy, Wave / audit / grade / CI / Storybook / evals / "ownable" / module splits
-- Tiny renames, test-only tweaks, flatten/push ops, doc-only commits
+Banned from title and bullets (never lead with these):
+- This newsletter itself, AgentMail, AISEO News / Google Updates email sections, weekly-highlights format tweaks, email palette / wire-seed / setup-key fixes
+- Changelog-about-changelog / Friday auto-send meta
+- Hub, deploy, Wave / audit / grade / CI / Storybook / evals / "ownable" / module splits / flatten/push / doc-only / test-only
+- Tiny renames and engineer-only cleanup
 
-- Include a "highlights" array with ONLY the 3 to 5 most significant weekly wins. Each bullet a FULL sentence naming the screen or feature and what the user can do.
-- Group only those top wins using "New", "Improved", "Fixed" when needed (max 2 to 4 bullets per section).
+- Title: short weekly title naming THIS pack's main new theme (max 12 words). Not a prior-entry title.
 - No fluff, no raw file paths, no engineer jargon.
 - Never use the em dash character. Use commas, periods, or parentheses instead.
 
 Output (JSON only, no markdown fences, no commentary before or after):
 {
-  "title": "Short weekly title naming the main user-facing feature theme (max 12 words)",
+  "title": "Short weekly title naming the main NEW user-facing theme (max 12 words)",
   "highlights": ["One full sentence naming a screen or feature and the user outcome"],
-  "sections": [{ "heading": "New", "items": ["One full sentence per top win"] }]
+  "sections": [{ "heading": "New", "items": ["Distinct sentence for a New win only"] }]
 }`;
+
+function formatPriorBlock(priorEntries: ChangelogPriorEntry[]): string {
+  if (priorEntries.length === 0) {
+    return "Prior archive entries: none yet.";
+  }
+  const lines = priorEntries.map((e, i) => {
+    const highs =
+      e.highlights.length > 0
+        ? e.highlights
+            .slice(0, 6)
+            .map((h) => `    - ${h}`)
+            .join("\n")
+        : "    (no highlights stored)";
+    return `${i + 1}. Title: ${e.title}\n${highs}`;
+  });
+  return `Prior archive entries (ALREADY PUBLISHED, do not repeat themes or bullets):\n${lines.join("\n")}`;
+}
 
 function buildUserPrompt(input: ChangelogAgentInput): string {
   const lines = input.commits.map((c) => {
@@ -83,15 +105,17 @@ function buildUserPrompt(input: ChangelogAgentInput): string {
   });
   const from = input.commits[0]?.date ?? "";
   const to = input.commits[input.commits.length - 1]?.date ?? "";
-  return `Covered period: ${from} to ${to} (${input.commits.length} commits). Previous archive coverage ended: ${input.coveredThrough ?? "never (first entry)"}.
+  return `${formatPriorBlock(input.priorEntries)}
 
-Commit pack (oldest first):
+Covered period for THIS pack: ${from} to ${to} (${input.commits.length} commits). Previous coverage marker: ${input.coveredThrough ?? "never (first entry)"}.
+
+Commit pack (oldest first). These commits are NOT yet in the archive:
 ${lines.join("\n")}
 
 Write the weekly highlights changelog JSON now.
-Cover the ENTIRE week pack. Pick the 3 to 5 MOST SIGNIFICANT product wins for a CEO.
-Do not write about the changelog newsletter, AgentMail, or email section tweaks.
-Do not fixate on the newest commits.`;
+Lead with the NEWEST significant product work in this pack (Skills, profile, Properties, Assist, studios, schedules, and similar user surfaces).
+Do not repeat prior archive themes. Do not duplicate the same bullet across Highlights and every section.
+Do not write about the changelog newsletter, AgentMail, or email section tweaks.`;
 }
 
 export function buildChangelogWriterUserPrompt(input: ChangelogAgentInput): string {
@@ -104,7 +128,7 @@ export const appChangelogWriterAgent = createPulseAgent<ChangelogAgentInput, Cha
   category: "research",
   domain: "reporting",
   reason:
-    "Turns this week's git commits into a short plain-language Neo Pulse weekly highlights entry (most significant wins only).",
+    "Turns this week's uncovered git commits into a short plain-language Neo Pulse weekly highlights entry that does not repeat prior archive themes.",
   inputSchema: changelogInputSchema,
   outputSchema: changelogDraftSchema,
   temperature: 0.3,
@@ -135,6 +159,7 @@ export function buildChangelogEntry(
   rangeFrom: string;
   rangeTo: string;
   commitCount: number;
+  commitHashes: string[];
   title: string;
   highlights: string[];
   sections: { heading: string; items: string[] }[];
@@ -147,6 +172,7 @@ export function buildChangelogEntry(
     rangeFrom,
     rangeTo,
     commitCount: commits.length,
+    commitHashes: commits.map((c) => c.hash),
     title: draft.title,
     highlights: [...(draft.highlights ?? [])],
     sections: draft.sections.map((section) => ({

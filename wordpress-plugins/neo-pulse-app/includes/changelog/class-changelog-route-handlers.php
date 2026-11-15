@@ -39,14 +39,15 @@ class Neo_Pulse_App_Changelog_Route_Handlers {
 		}
 
 		if ( $subpath === 'source' && $method === 'GET' ) {
-			$state     = self::read_state();
-			$uncovered = self::uncovered_commits( $state );
-			$commits   = $uncovered !== array() ? $uncovered : self::entry_commits( $state, self::newest_entry( $state ) );
+			$state = self::read_state();
+			// Only uncovered commits. Never re-feed a prior entry's pack when
+			// the pool is empty (that caused duplicate Pulse Host changelogs).
 			Neo_Pulse_App_Api_Dispatcher::send_json(
 				array(
 					'ok'             => true,
 					'coveredThrough' => self::covered_through( $state ),
-					'commits'        => $commits,
+					'commits'        => self::uncovered_commits( $state ),
+					'priorEntries'   => self::prior_entry_summaries( $state ),
 				)
 			);
 			return;
@@ -199,65 +200,89 @@ class Neo_Pulse_App_Changelog_Route_Handlers {
 	}
 
 	/**
+	 * Recent archive titles and highlights so Generate never repeats them.
+	 *
+	 * @param array{entries: array<int,array<string,mixed>>, commits: array<int,array<string,mixed>>} $state Stored state.
+	 * @return array<int,array{title: string, highlights: string[]}>
+	 */
+	private static function prior_entry_summaries( array $state ): array {
+		$entries = $state['entries'];
+		usort(
+			$entries,
+			static function ( $a, $b ) {
+				$by_date = strcmp( (string) ( $b['date'] ?? '' ), (string) ( $a['date'] ?? '' ) );
+				if ( 0 !== $by_date ) {
+					return $by_date;
+				}
+				return strcmp( (string) ( $b['createdAt'] ?? '' ), (string) ( $a['createdAt'] ?? '' ) );
+			}
+		);
+		$out = array();
+		foreach ( array_slice( $entries, 0, 8 ) as $entry ) {
+			$title = isset( $entry['title'] ) && is_string( $entry['title'] ) ? trim( $entry['title'] ) : '';
+			if ( $title === '' ) {
+				continue;
+			}
+			$out[] = array(
+				'title'      => substr( $title, 0, 300 ),
+				'highlights' => self::clean_string_list( $entry['highlights'] ?? array() ),
+			);
+		}
+		return $out;
+	}
+
+	/**
+	 * Hashes already written into a changelog entry. Prefer explicit
+	 * commitHashes; for legacy entries without hashes, only commits that
+	 * fall inside that entry's date range (no "all commits" fallback).
+	 *
+	 * @param array{entries: array<int,array<string,mixed>>, commits: array<int,array<string,mixed>>} $state Stored state.
+	 * @return array<string,true>
+	 */
+	private static function covered_hash_set( array $state ): array {
+		$set = array();
+		foreach ( $state['entries'] as $entry ) {
+			$hashes = isset( $entry['commitHashes'] ) && is_array( $entry['commitHashes'] ) ? $entry['commitHashes'] : array();
+			$listed = false;
+			foreach ( $hashes as $hash ) {
+				if ( is_string( $hash ) && $hash !== '' ) {
+					$set[ $hash ] = true;
+					$listed       = true;
+				}
+			}
+			if ( $listed ) {
+				continue;
+			}
+			$from = isset( $entry['rangeFrom'] ) && is_string( $entry['rangeFrom'] ) ? $entry['rangeFrom'] : '';
+			$to   = isset( $entry['rangeTo'] ) && is_string( $entry['rangeTo'] ) ? $entry['rangeTo'] : '';
+			if ( $from === '' && $to === '' ) {
+				continue;
+			}
+			foreach ( $state['commits'] as $commit ) {
+				$date = (string) $commit['date'];
+				if ( ( $from === '' || strcmp( $date, $from ) >= 0 ) && ( $to === '' || strcmp( $date, $to ) <= 0 ) ) {
+					$set[ (string) $commit['hash'] ] = true;
+				}
+			}
+		}
+		return $set;
+	}
+
+	/**
 	 * Commits not yet covered by any saved entry, oldest first so the
-	 * agent reads them in the order they landed.
+	 * agent reads them in the order they landed. Coverage is by commit
+	 * hash so same-day ships after a Generate still wait in the pool.
 	 *
 	 * @param array{entries: array<int,array<string,mixed>>, commits: array<int,array<string,mixed>>} $state Stored state.
 	 * @return array<int,array<string,mixed>>
 	 */
 	private static function uncovered_commits( array $state ): array {
-		$covered = self::covered_through( $state );
+		$covered = self::covered_hash_set( $state );
 		$out     = array();
 		foreach ( $state['commits'] as $commit ) {
-			if ( $covered === null || strcmp( (string) $commit['date'], $covered ) > 0 ) {
+			if ( ! isset( $covered[ (string) $commit['hash'] ] ) ) {
 				$out[] = $commit;
 			}
-		}
-		usort(
-			$out,
-			static function ( $a, $b ) {
-				return strcmp( (string) $a['date'], (string) $b['date'] );
-			}
-		);
-		return $out;
-	}
-
-	/**
-	 * @param array{entries: array<int,array<string,mixed>>, commits: array<int,array<string,mixed>>} $state Stored state.
-	 * @return array<string,mixed>|null
-	 */
-	private static function newest_entry( array $state ): ?array {
-		$newest = null;
-		foreach ( $state['entries'] as $entry ) {
-			if ( $newest === null || strcmp( (string) ( $entry['date'] ?? '' ), (string) ( $newest['date'] ?? '' ) ) > 0 ) {
-				$newest = $entry;
-			}
-		}
-		return $newest;
-	}
-
-	/**
-	 * Commits falling inside a saved entry's date range (or all stored
-	 * commits when no entry exists yet), oldest first. Used when Generate
-	 * runs with nothing uncovered, so the new report can still be written
-	 * and saved beside the earlier one.
-	 *
-	 * @param array{entries: array<int,array<string,mixed>>, commits: array<int,array<string,mixed>>} $state Stored state.
-	 * @param array<string,mixed>|null                                                                $entry Entry to match.
-	 * @return array<int,array<string,mixed>>
-	 */
-	private static function entry_commits( array $state, ?array $entry ): array {
-		$from = is_array( $entry ) && isset( $entry['rangeFrom'] ) && is_string( $entry['rangeFrom'] ) ? $entry['rangeFrom'] : '';
-		$to   = is_array( $entry ) && isset( $entry['rangeTo'] ) && is_string( $entry['rangeTo'] ) ? $entry['rangeTo'] : '';
-		$out  = array();
-		foreach ( $state['commits'] as $commit ) {
-			$date = (string) $commit['date'];
-			if ( ( $from === '' || strcmp( $date, $from ) >= 0 ) && ( $to === '' || strcmp( $date, $to ) <= 0 ) ) {
-				$out[] = $commit;
-			}
-		}
-		if ( $out === array() ) {
-			$out = $state['commits'];
 		}
 		usort(
 			$out,
@@ -454,17 +479,27 @@ class Neo_Pulse_App_Changelog_Route_Handlers {
 				}
 			}
 		}
+		$commit_hashes = array();
+		if ( isset( $entry['commitHashes'] ) && is_array( $entry['commitHashes'] ) ) {
+			foreach ( $entry['commitHashes'] as $hash ) {
+				if ( is_string( $hash ) && trim( $hash ) !== '' ) {
+					$commit_hashes[] = substr( trim( $hash ), 0, 64 );
+				}
+			}
+			$commit_hashes = array_values( array_unique( $commit_hashes ) );
+		}
 		$clean = array(
-			'id'          => substr( $id, 0, 80 ),
-			'date'        => substr( $date, 0, 32 ),
-			'rangeFrom'   => isset( $entry['rangeFrom'] ) && is_string( $entry['rangeFrom'] ) ? substr( trim( $entry['rangeFrom'] ), 0, 32 ) : '',
-			'rangeTo'     => isset( $entry['rangeTo'] ) && is_string( $entry['rangeTo'] ) ? substr( trim( $entry['rangeTo'] ), 0, 32 ) : '',
-			'commitCount' => isset( $entry['commitCount'] ) ? max( 0, (int) $entry['commitCount'] ) : 0,
-			'title'       => substr( $title, 0, 300 ),
-			'summary'     => isset( $entry['summary'] ) && is_string( $entry['summary'] ) ? substr( trim( $entry['summary'] ), 0, 4000 ) : '',
-			'highlights'  => self::clean_string_list( $entry['highlights'] ?? array() ),
-			'sections'    => $sections,
-			'createdAt'   => self::now_stamp(),
+			'id'           => substr( $id, 0, 80 ),
+			'date'         => substr( $date, 0, 32 ),
+			'rangeFrom'    => isset( $entry['rangeFrom'] ) && is_string( $entry['rangeFrom'] ) ? substr( trim( $entry['rangeFrom'] ), 0, 32 ) : '',
+			'rangeTo'      => isset( $entry['rangeTo'] ) && is_string( $entry['rangeTo'] ) ? substr( trim( $entry['rangeTo'] ), 0, 32 ) : '',
+			'commitCount'  => isset( $entry['commitCount'] ) ? max( 0, (int) $entry['commitCount'] ) : 0,
+			'commitHashes' => array_slice( $commit_hashes, 0, self::MAX_PACK_COMMITS ),
+			'title'        => substr( $title, 0, 300 ),
+			'summary'      => isset( $entry['summary'] ) && is_string( $entry['summary'] ) ? substr( trim( $entry['summary'] ), 0, 4000 ) : '',
+			'highlights'   => self::clean_string_list( $entry['highlights'] ?? array() ),
+			'sections'     => $sections,
+			'createdAt'    => self::now_stamp(),
 		);
 		$saved = self::mutate_state(
 			static function ( array &$state ) use ( $clean ): void {

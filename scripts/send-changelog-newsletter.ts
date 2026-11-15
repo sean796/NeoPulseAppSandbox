@@ -70,34 +70,32 @@ const CHANGELOG_WRITER_MODEL = "deepseek/deepseek-v4.1-flash";
 const CHANGELOG_WRITER_SYSTEM = `You write one weekly changelog entry for Neo Pulse for everyday people who USE the program (agency owners and staff). Not engineers.
 
 Grounding rules (non-negotiable):
-- The commit pack in the user message is the FULL WEEK of commits. It is the ONLY source of facts.
-- Summarize the ENTIRE week. Recency bias is forbidden. Earlier-week ships can outrank today's commits.
+- The commit pack in the user message is THIS WEEK's work. It is the ONLY source of facts.
+- Prefer the newest dates and the biggest NEW user-facing ships (Skills, Properties / profile, Assist, Studios, schedules).
 - Never invent dates, counts, or version numbers.
 - Do NOT write an intro paragraph or summary.
-- This is a WEEKLY HIGHLIGHTS entry of the week's MOST SIGNIFICANT product features users can open and use.
 
 When REQUIRED Decision Engine themes are listed in the user message, those ARE the highlights. Cover them in order as full user-facing sentences. Do not swap them for newsletter meta or codebase craft.
 
-What counts as significant (Decision Engine ranks MAJOR FEATURES only):
-- Changelog screen (archive, draft approval, weekly due flag)
-- Integrations add-client dock
-- Google Business Profile leads and Organic Website Leads in Integrations
+Non-repetition (non-negotiable):
+- PRIOR ARCHIVE entries are already published. Do not reuse their titles, themes, or bullets (including Pulse Host, My Sites, hosted WordPress users, client report sharing, OpenRouter keys when already covered).
+- Each win appears once. Never copy Highlights verbatim into New, Improved, and Fixed.
+- highlights = top 3 unique full sentences (max 22 words each).
+- sections = partition into New / Improved / Fixed with DISTINCT sentences only; omit empty headings.
 
 Banned from highlights / title (never include):
 - API Keys, AI key, OpenRouter, deep links, cold load, partial report fixes
 - This newsletter, AgentMail, AISEO/Google email sections, wire-seed, palette, Friday auto-send meta
 - Hub, deploy, Wave, CI, "ownable", what something is not, "small fix" language
 
-- Include a "highlights" array with ONLY the top 3 major features. Each bullet one short FULL sentence (max 22 words) naming the feature and what you can do.
-- Group only those top wins using "New", "Improved", "Fixed" when needed (max 2 to 4 bullets per section). Never "Behind the scenes" for engineering chores.
 - No fluff, no raw file paths, no engineer jargon.
 - Never use the em dash character. Use commas, periods, or parentheses instead.
 
 Output (JSON only, no markdown fences, no commentary before or after):
 {
-  "title": "Short weekly title naming the main user-facing feature theme (max 12 words)",
+  "title": "Short weekly title naming the main NEW user-facing theme (max 12 words)",
   "highlights": ["One full sentence naming a screen or feature and the user outcome"],
-  "sections": [{ "heading": "New", "items": ["One full sentence per top win"] }]
+  "sections": [{ "heading": "New", "items": ["Distinct sentence for a New win only"] }]
 }`;
 
 const changelogDraftSchema = z.object({
@@ -123,6 +121,7 @@ function buildChangelogWriterUserPrompt(
   commits: ChangelogCommit[],
   coveredThrough: string | null,
   requiredThemes: string[] = [],
+  priorEntries: { title: string; highlights: string[] }[] = [],
 ): string {
   const lines = commits.map((c) => {
     const files = c.files.length > 0 ? ` [files: ${c.files.slice(0, 8).join(", ")}]` : "";
@@ -137,15 +136,31 @@ function buildChangelogWriterUserPrompt(
           .map((t, i) => `${i + 1}. ${t}`)
           .join("\n")}\n\n`
       : "";
-  return `Covered period: ${from} to ${to} (${commits.length} commits). Previous archive coverage ended: ${coveredThrough ?? "never (first entry)"}.
+  const priorBlock =
+    priorEntries.length > 0
+      ? `Prior archive entries (ALREADY PUBLISHED, do not repeat themes or bullets):\n${priorEntries
+          .map((e, i) => {
+            const highs =
+              e.highlights.length > 0
+                ? e.highlights
+                    .slice(0, 6)
+                    .map((h) => `    - ${h}`)
+                    .join("\n")
+                : "    (no highlights stored)";
+            return `${i + 1}. Title: ${e.title}\n${highs}`;
+          })
+          .join("\n")}\n\n`
+      : "Prior archive entries: none yet.\n\n";
+  return `${priorBlock}Covered period for THIS pack: ${from} to ${to} (${commits.length} commits). Previous coverage marker: ${coveredThrough ?? "never (first entry)"}.
 
 Commit pack (oldest first):
 ${lines.join("\n")}
 
 ${requiredBlock}Write the weekly highlights changelog JSON now.
-Steve Jobs keynote clarity. Cover REQUIRED Decision Engine themes.
-Do not write about the changelog newsletter, AgentMail, or email section tweaks.
-Do not fixate on the newest commits.`;
+Lead with NEW Skills / profile / Properties / Assist / studio work when present.
+Cover REQUIRED Decision Engine themes. Do not repeat prior archive themes.
+Do not duplicate the same bullet across Highlights and every section.
+Do not write about the changelog newsletter, AgentMail, or email section tweaks.`;
 }
 
 function buildFreshChangelogEntry(
@@ -159,6 +174,7 @@ function buildFreshChangelogEntry(
     rangeFrom: commits[0]?.date ?? entryDate,
     rangeTo: commits[commits.length - 1]?.date ?? entryDate,
     commitCount: commits.length,
+    commitHashes: commits.map((c) => c.hash),
     title: draft.title,
     highlights: [...(draft.highlights ?? [])],
     sections: draft.sections.map((section) => ({
@@ -338,8 +354,13 @@ function extractChatContent(raw: Record<string, unknown>): string {
 async function rankWeekImpacts(
   authHeaders: Record<string, string>,
   commits: ChangelogCommit[],
+  priorEntries: { title: string; highlights: string[] }[] = [],
 ): Promise<string[]> {
   const commitLines = commits.map((c) => `- ${c.date} ${c.subject}`);
+  const priorLines = priorEntries.flatMap((e) => [
+    `- Title: ${e.title}`,
+    ...e.highlights.slice(0, 6).map((h) => `  - ${h}`),
+  ]);
   const models = [CHANGELOG_IMPACT_DECISION_MODEL, CHANGELOG_WRITER_MODEL];
   let lastError: Error | null = null;
   for (const model of models) {
@@ -354,7 +375,7 @@ async function rankWeekImpacts(
           maxTokens: 2048,
           responseFormat: { type: "json_object" },
           system: CHANGELOG_IMPACT_RANK_SYSTEM,
-          user: buildChangelogImpactRankUserPrompt(commitLines),
+          user: buildChangelogImpactRankUserPrompt(commitLines, priorLines),
         }),
       });
       const rankContent = extractChatContent(rankRaw);
@@ -384,6 +405,7 @@ async function rankWeekImpacts(
 async function generateWeeklyHighlightsEntry(
   authHeaders: Record<string, string>,
   previous: ArchiveEntry | null,
+  archiveEntries: ArchiveEntry[] = [],
 ): Promise<{ entry: ArchiveEntry; weekCommits: ChangelogCommit[]; requiredThemes: string[] }> {
   const since = weekSinceIso();
   console.log(
@@ -404,7 +426,15 @@ async function generateWeeklyHighlightsEntry(
     body: JSON.stringify({ commits }),
   });
 
-  const requiredThemes = await rankWeekImpacts(authHeaders, commits);
+  const priorEntries = (archiveEntries.length > 0 ? archiveEntries : previous ? [previous] : [])
+    .slice(0, 8)
+    .map((e) => ({
+      title: e.title || "",
+      highlights: Array.isArray(e.highlights) ? e.highlights.filter((h): h is string => typeof h === "string") : [],
+    }))
+    .filter((e) => e.title !== "");
+
+  const requiredThemes = await rankWeekImpacts(authHeaders, commits, priorEntries);
 
   console.log(`Writing weekly highlights entry with ${CHANGELOG_WRITER_MODEL}…`);
   const draftRaw = await hubApi("openrouter/chat-completion", {
@@ -420,6 +450,7 @@ async function generateWeeklyHighlightsEntry(
         commits,
         previous?.date?.trim() || null,
         requiredThemes,
+        priorEntries,
       ),
     }),
   });
@@ -467,9 +498,11 @@ async function main(): Promise<void> {
     );
   }
 
+  const archiveList = Array.isArray(archive.entries) ? (archive.entries as ArchiveEntry[]) : [];
   const { entry, weekCommits, requiredThemes } = await generateWeeklyHighlightsEntry(
     authHeaders,
     previous,
+    archiveList,
   );
   if (entryOnly) {
     console.log(`Entry-only complete. Archive now has entry: ${entry.date} · ${entry.title}`);

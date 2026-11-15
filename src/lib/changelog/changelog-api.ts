@@ -13,11 +13,18 @@ export interface ChangelogEntry {
   rangeFrom: string;
   rangeTo: string;
   commitCount: number;
+  /** Hashes covered by this entry so same-day new commits stay uncovered. */
+  commitHashes?: string[];
   title: string;
   summary?: string;
   highlights?: string[];
   sections: ChangelogSection[];
   createdAt?: string;
+}
+
+export interface ChangelogPriorEntrySummary {
+  title: string;
+  highlights: string[];
 }
 
 export interface ChangelogSourceStatus {
@@ -61,6 +68,7 @@ export interface ChangelogSourceFeed {
   ok: boolean;
   coveredThrough: string | null;
   commits: ChangelogCommit[];
+  priorEntries?: ChangelogPriorEntrySummary[];
   error?: string;
 }
 

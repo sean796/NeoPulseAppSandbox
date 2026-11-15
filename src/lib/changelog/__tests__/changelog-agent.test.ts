@@ -34,7 +34,16 @@ describe("app changelog writer agent", () => {
     callAgentCategoryOpenRouterChat.mockResolvedValue({ content: JSON.stringify(VALID_DRAFT) });
 
     const draft = await appChangelogWriterAgent.run(
-      { commits: COMMITS, coveredThrough: "2026-10-30" },
+      {
+        commits: COMMITS,
+        coveredThrough: "2026-10-30",
+        priorEntries: [
+          {
+            title: "Pulse Host site controls and client report sharing",
+            highlights: ["Pulse Host now has a My Sites page"],
+          },
+        ],
+      },
       { apiKey: "sk-or-test" },
     );
 
@@ -48,15 +57,17 @@ describe("app changelog writer agent", () => {
     };
     expect(call.category).toBe("research");
     expect(call.user).toContain("Fix login loop");
+    expect(call.user).toContain("ALREADY PUBLISHED");
+    expect(call.user).toContain("Pulse Host site controls");
+    expect(call.user).toContain("NEWEST significant");
     expect(call.system).toContain("ONLY source of facts");
-    expect(call.system).toContain("WEEKLY HIGHLIGHTS");
-    expect(call.system).toContain("3 to 5 most significant");
-    expect(call.system).toContain("Recency bias is forbidden");
-    expect(call.system).toContain("Banned from highlights");
+    expect(call.system).toContain("Non-repetition");
+    expect(call.system).toContain("PRIOR changelog");
+    expect(call.system).toContain("DISTINCT sentence");
+    expect(call.system).not.toContain("Recency bias is forbidden");
+    expect(call.system).not.toContain("Keys screen: paste your AI key");
+    expect(call.system).toContain("Banned from title");
     expect(call.system).toContain("AgentMail");
-    expect(call.system).not.toContain("8 to 20");
-    expect(call.user).toContain("MOST SIGNIFICANT product wins");
-    expect(call.user).toContain("Do not write about the changelog newsletter");
   });
 
   it("rejects malformed model output visibly", async () => {
@@ -90,6 +101,7 @@ describe("app changelog writer agent", () => {
     expect(entry.rangeFrom).toBe("2026-11-02");
     expect(entry.rangeTo).toBe("2026-11-05");
     expect(entry.commitCount).toBe(2);
+    expect(entry.commitHashes).toEqual(["aaa111", "bbb222"]);
     expect(entry.title).toBe(VALID_DRAFT.title);
   });
 });
