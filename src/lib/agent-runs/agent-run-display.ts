@@ -101,6 +101,9 @@ export function buildAgentRunProgressLabel(step: string, message: string): strin
 }
 
 export function agentRunIsServerExecution(run: AgentRun): boolean {
+  if (run.plan?.executionMode === "client") {
+    return false;
+  }
   if (run.plan?.executionMode === "server" || run.result?.executionMode === "server") {
     return true;
   }

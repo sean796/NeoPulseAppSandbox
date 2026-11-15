@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generatedAt": "2026-11-07T01:38:43.654Z",
+  "generatedAt": "2026-11-15T12:06:08.097Z",
   "modules": [
     {
       "id": "dashboard/properties",
@@ -83,7 +83,7 @@
     {
       "id": "dashboard/ai-generation",
       "label": "AI & Models",
-      "menuPath": "Dashboard → AI & Models",
+      "menuPath": "Dashboard → Settings → AI & Models",
       "section": "dashboard",
       "hash": "#settings",
       "pulseNav": "pulse:nav/dashboard/ai-generation",
@@ -101,13 +101,35 @@
         "max tokens"
       ],
       "relatedModules": [
-        "dashboard/api-keys"
+        "dashboard/api-keys",
+        "dashboard/decision-tree"
+      ]
+    },
+    {
+      "id": "dashboard/decision-tree",
+      "label": "Decision Tree",
+      "menuPath": "Dashboard → Settings → Decision Tree",
+      "section": "dashboard",
+      "hash": "#settings",
+      "pulseNav": "pulse:nav/dashboard/decision-tree",
+      "managerTab": "dashboard",
+      "dashboardCluster": "decision-tree",
+      "description": "Editorial decision thresholds and audit pipeline for Studio, Opt, and proposal quality checks.",
+      "aliases": [
+        "decision tree",
+        "decision model",
+        "editorial checker",
+        "quality router"
+      ],
+      "relatedModules": [
+        "dashboard/ai-generation",
+        "generator/bulk-prompt"
       ]
     },
     {
       "id": "dashboard/google",
       "label": "Google Services",
-      "menuPath": "Dashboard → Google Services",
+      "menuPath": "Dashboard → Settings → Google Services",
       "section": "dashboard",
       "hash": "#settings",
       "pulseNav": "pulse:nav/dashboard/google",
@@ -130,6 +152,90 @@
       "relatedModules": [
         "reporting/performance",
         "gbp-post"
+      ]
+    },
+    {
+      "id": "dashboard/pulse-host",
+      "label": "Pulse Host",
+      "menuPath": "Dashboard → Settings → Pulse Host",
+      "section": "dashboard",
+      "hash": "#settings",
+      "pulseNav": "pulse:nav/dashboard/pulse-host",
+      "managerTab": "dashboard",
+      "dashboardCluster": "pulse-host",
+      "description": "Pulse Host WordPress hub connection and site hosting controls.",
+      "aliases": [
+        "pulse host",
+        "host hub",
+        "wp hub"
+      ],
+      "relatedModules": [
+        "dashboard/properties",
+        "integrations"
+      ]
+    },
+    {
+      "id": "dashboard/agent-library",
+      "label": "Agent Library",
+      "menuPath": "Dashboard → Settings → Agent Library",
+      "section": "dashboard",
+      "hash": "#settings",
+      "pulseNav": "pulse:nav/dashboard/agent-library",
+      "managerTab": "dashboard",
+      "dashboardCluster": "agent-library",
+      "description": "Browse and toggle registered Pulse agents (excluding assignable site skills).",
+      "aliases": [
+        "agent library",
+        "agents library",
+        "registered agents"
+      ],
+      "relatedModules": [
+        "dashboard/skills-library",
+        "dashboard/ai-generation"
+      ]
+    },
+    {
+      "id": "dashboard/skills-library",
+      "label": "Skills Library",
+      "menuPath": "Dashboard → Settings → Skills Library",
+      "section": "dashboard",
+      "hash": "#settings",
+      "pulseNav": "pulse:nav/dashboard/skills-library",
+      "managerTab": "dashboard",
+      "dashboardCluster": "skills-library",
+      "description": "Assignable per-site skills: Semrush Safe Fix and Posts Content Gap Check.",
+      "aliases": [
+        "skills library",
+        "skills studio",
+        "site skills",
+        "assignable skills"
+      ],
+      "features": [
+        "semrush safe fix",
+        "posts content gap check"
+      ],
+      "relatedModules": [
+        "dashboard/agent-library",
+        "dashboard/properties"
+      ]
+    },
+    {
+      "id": "dashboard/changelog",
+      "label": "Changelog",
+      "menuPath": "Dashboard → Settings → Changelog",
+      "section": "dashboard",
+      "hash": "#settings",
+      "pulseNav": "pulse:nav/dashboard/changelog",
+      "managerTab": "dashboard",
+      "dashboardCluster": "changelog",
+      "description": "Product changelog and app update log.",
+      "aliases": [
+        "changelog",
+        "release notes",
+        "app updates"
+      ],
+      "relatedModules": [
+        "dashboard/agent-library"
       ]
     },
     {
@@ -208,53 +314,41 @@
       "relatedModules": [
         "chat",
         "users",
-        "pulse-forge"
+        "support"
       ]
     },
     {
-      "id": "pulse-forge",
-      "label": "Pulse Forge",
-      "menuPath": "Teams → Pulse Forge",
+      "id": "support",
+      "label": "Support",
+      "menuPath": "Teams → Support",
       "section": "teams",
-      "hash": "#pulse-forge/forge",
-      "pulseNav": "pulse:nav/pulse-forge/forge",
-      "managerTab": "pulse-forge",
-      "description": "My Forge dashboard, Agents recipe library, and Workflows canvas: install recipes, create and run workflows.",
+      "hash": "#support",
+      "pulseNav": "pulse:nav/support",
+      "managerTab": "support",
+      "description": "Pulse Assist tickets, chat logs, and export.",
       "aliases": [
-        "automations",
-        "forge dashboard",
-        "my forge",
-        "recipe library",
-        "recipe builder",
-        "seo automations",
-        "pulse forge",
-        "workflows"
-      ],
-      "features": [
-        "My Forge dashboard",
-        "Agents recipe library",
-        "Workflows canvas",
-        "publish workflow",
-        "run workflow"
+        "support",
+        "tickets",
+        "assist tickets"
       ],
       "relatedModules": [
         "tasks",
-        "generator/opt"
+        "chat"
       ]
     },
     {
       "id": "generator/opt",
-      "label": "Overview",
-      "menuPath": "SEO → Generator → Opt",
+      "label": "Opt",
+      "menuPath": "Tools → SEO → Opt",
       "section": "seo",
       "hash": "#generator",
       "pulseNav": "pulse:nav/generator/opt",
       "managerTab": "generator",
       "generatorSection": "opt",
-      "description": "Single-site content optimizer: sitemap grid (Pages, Posts, SAP), meta editing, AISEO bulk flyouts, row expansion.",
+      "description": "Pages grid, AISEO, meta, and WordPress publish for the active property.",
       "aliases": [
-        "overview",
         "opt",
+        "overview",
         "content optimizer",
         "meta optimizer",
         "pages grid",
@@ -267,22 +361,23 @@
         "AI meta",
         "multi-site pill"
       ],
-      "uiNotes": "Overview is Generator → Opt, not a top-level tab. AISEO flyouts cannot be deep-linked.",
+      "uiNotes": "Opt is Tools → SEO → Opt. AISEO flyouts cannot be deep-linked.",
       "relatedModules": [
         "generator/research",
-        "sitemap-optimizer"
+        "sitemap-optimizer",
+        "generator/bulk-prompt"
       ]
     },
     {
       "id": "generator/bulk-csv",
-      "label": "CSV",
-      "menuPath": "SEO → Generator → CSV",
+      "label": "Studio CSV",
+      "menuPath": "Tools → SEO → Studio",
       "section": "seo",
       "hash": "#generator",
-      "pulseNav": "pulse:nav/generator/bulk-csv",
+      "pulseNav": "pulse:nav/generator/bulk-prompt",
       "managerTab": "generator",
-      "generatorSection": "bulk-csv",
-      "description": "Bulk blog generation from CSV upload.",
+      "generatorSection": "bulk-prompt",
+      "description": "Legacy CSV bulk path. Opens Blog Studio (Tools → SEO → Studio).",
       "aliases": [
         "csv",
         "bulk csv",
@@ -298,68 +393,72 @@
     },
     {
       "id": "generator/bulk-prompt",
-      "label": "Prompt",
-      "menuPath": "SEO → Generator → Prompt",
+      "label": "Studio",
+      "menuPath": "Tools → SEO → Studio",
       "section": "seo",
       "hash": "#generator",
       "pulseNav": "pulse:nav/generator/bulk-prompt",
       "managerTab": "generator",
       "generatorSection": "bulk-prompt",
-      "description": "Bulk blog generation from prompt templates.",
+      "description": "Blog Studio: unified batch studio for prompts, CSV, file imports, entity, and competitor ideas.",
       "aliases": [
+        "studio",
+        "blog studio",
         "prompt bulk",
-        "bulk prompt"
+        "bulk prompt",
+        "ideas studio"
       ],
       "relatedModules": [
-        "generator/bulk-csv"
+        "generator/opt",
+        "generator/bulk-press-release"
       ]
     },
     {
       "id": "generator/bulk-blog-import",
-      "label": "Import",
-      "menuPath": "SEO → Generator → Import",
+      "label": "Studio Import",
+      "menuPath": "Tools → SEO → Studio",
       "section": "seo",
       "hash": "#generator",
-      "pulseNav": "pulse:nav/generator/bulk-blog-import",
+      "pulseNav": "pulse:nav/generator/bulk-prompt",
       "managerTab": "generator",
-      "generatorSection": "bulk-blog-import",
-      "description": "Import existing blog posts for optimization.",
+      "generatorSection": "bulk-prompt",
+      "description": "Legacy blog import path. Opens Blog Studio (Tools → SEO → Studio).",
       "aliases": [
         "blog import",
         "import"
       ],
       "relatedModules": [
-        "generator/bulk-csv"
+        "generator/bulk-prompt"
       ]
     },
     {
       "id": "generator/bulk-press-release",
       "label": "PR",
-      "menuPath": "SEO → Generator → PR",
+      "menuPath": "Tools → SEO → PR",
       "section": "seo",
       "hash": "#generator",
       "pulseNav": "pulse:nav/generator/bulk-press-release",
       "managerTab": "generator",
       "generatorSection": "bulk-press-release",
-      "description": "Press release bulk generator.",
+      "description": "Press release bulk pipeline.",
       "aliases": [
         "press release",
         "pr generator"
       ],
       "relatedModules": [
-        "generator/bulk-csv"
+        "generator/bulk-prompt"
       ]
     },
     {
       "id": "generator/entity",
-      "label": "Entity",
-      "menuPath": "SEO → Generator → Entity",
+      "label": "Studio Entity",
+      "menuPath": "Tools → SEO → Studio",
       "section": "seo",
       "hash": "#generator",
-      "pulseNav": "pulse:nav/generator/entity",
+      "pulseNav": "pulse:nav/generator/bulk-prompt",
       "managerTab": "generator",
-      "generatorSection": "entity",
-      "description": "SAP / entity location page generator.",
+      "generatorSection": "bulk-prompt",
+      "description": "Legacy entity path. Opens Blog Studio for entity and competitor page generation.",
       "aliases": [
         "entity",
         "sap",
@@ -367,36 +466,38 @@
         "sap generator"
       ],
       "relatedModules": [
+        "generator/bulk-prompt",
         "generator/opt"
       ]
     },
     {
       "id": "generator/competitor",
-      "label": "Competitor",
-      "menuPath": "SEO → Generator → Competitor",
+      "label": "Studio Competitor",
+      "menuPath": "Tools → SEO → Studio",
       "section": "seo",
       "hash": "#generator",
-      "pulseNav": "pulse:nav/generator/competitor",
+      "pulseNav": "pulse:nav/generator/bulk-prompt",
       "managerTab": "generator",
-      "generatorSection": "competitor",
-      "description": "Competitor research content generator.",
+      "generatorSection": "bulk-prompt",
+      "description": "Legacy competitor path. Opens Blog Studio.",
       "aliases": [
         "competitor generator"
       ],
       "relatedModules": [
+        "generator/bulk-prompt",
         "generator/research"
       ]
     },
     {
       "id": "generator/flow",
       "label": "Flow",
-      "menuPath": "SEO → Generator → Flow",
+      "menuPath": "Tools → SEO → Flow",
       "section": "seo",
       "hash": "#generator",
       "pulseNav": "pulse:nav/generator/flow",
       "managerTab": "generator",
       "generatorSection": "flow",
-      "description": "Free Flow AI writing workspace.",
+      "description": "Freeform multi-agent flow builder.",
       "aliases": [
         "free flow",
         "flow",
@@ -409,25 +510,27 @@
     {
       "id": "generator/image",
       "label": "Image",
-      "menuPath": "SEO → Generator → Image",
-      "section": "seo",
+      "menuPath": "Tools → Media → Image",
+      "section": "media",
       "hash": "#generator",
       "pulseNav": "pulse:nav/generator/image",
       "managerTab": "generator",
       "generatorSection": "image",
-      "description": "AI image generation for content.",
+      "description": "AI image studio with grounded references and scene checklist.",
       "aliases": [
         "image generator",
-        "ai images"
+        "ai images",
+        "image studio"
       ],
       "relatedModules": [
+        "video-generator",
         "generator/opt"
       ]
     },
     {
       "id": "generator/research",
       "label": "Research",
-      "menuPath": "SEO → Generator → Research",
+      "menuPath": "Tools → SEO → Research",
       "section": "seo",
       "hash": "#generator",
       "pulseNav": "pulse:nav/generator/research",
@@ -447,13 +550,13 @@
       ],
       "relatedModules": [
         "sitemap-optimizer",
-        "generator/competitor"
+        "generator/bulk-prompt"
       ]
     },
     {
       "id": "reporting/performance",
       "label": "Performance",
-      "menuPath": "Reporting → Performance",
+      "menuPath": "Tools → Reporting → Performance",
       "section": "reporting",
       "hash": "#reporting",
       "pulseNav": "pulse:nav/reporting/performance",
@@ -468,13 +571,54 @@
       ],
       "relatedModules": [
         "dashboard/google",
-        "dashboard/properties"
+        "dashboard/properties",
+        "local-dominator"
+      ]
+    },
+    {
+      "id": "local-dominator",
+      "label": "Local Grid",
+      "menuPath": "Tools → Reporting → Local Grid",
+      "section": "reporting",
+      "hash": "#local-dominator",
+      "pulseNav": "pulse:nav/local-dominator",
+      "managerTab": "local-dominator",
+      "description": "Google Maps geo-grid rank studio powered by DataForSEO.",
+      "aliases": [
+        "local grid",
+        "local dominator",
+        "geo grid",
+        "maps rank"
+      ],
+      "relatedModules": [
+        "reporting/performance",
+        "gbp-post"
+      ]
+    },
+    {
+      "id": "video-generator",
+      "label": "Video",
+      "menuPath": "Tools → Media → Video",
+      "section": "media",
+      "hash": "#video-generator",
+      "pulseNav": "pulse:nav/video-generator",
+      "managerTab": "video-generator",
+      "description": "Brief, storyboard, and HeyGen render with narration.",
+      "aliases": [
+        "video",
+        "video studio",
+        "heygen",
+        "storyboard"
+      ],
+      "relatedModules": [
+        "generator/image",
+        "generator/bulk-prompt"
       ]
     },
     {
       "id": "sitemap-optimizer",
       "label": "Sitemap",
-      "menuPath": "SEO → Sitemap",
+      "menuPath": "Tools → SEO → Sitemap",
       "section": "seo",
       "hash": "#sitemap-optimizer",
       "pulseNav": "pulse:nav/sitemap-optimizer",
@@ -496,7 +640,7 @@
     {
       "id": "vertical-benchmarks",
       "label": "Industry verticals",
-      "menuPath": "SEO → Industry verticals",
+      "menuPath": "Tools → SEO → Industry verticals",
       "section": "seo",
       "hash": "#vertical-benchmarks",
       "pulseNav": "pulse:nav/vertical-benchmarks",
@@ -508,13 +652,14 @@
         "benchmarks"
       ],
       "relatedModules": [
-        "reporting/performance"
+        "reporting/performance",
+        "generator/bulk-prompt"
       ]
     },
     {
       "id": "gbp-post",
       "label": "GBP",
-      "menuPath": "Social → GBP",
+      "menuPath": "Tools → Social → GBP",
       "section": "social",
       "hash": "#gbp-post",
       "pulseNav": "pulse:nav/gbp-post",
@@ -533,7 +678,7 @@
     {
       "id": "content-calendar",
       "label": "Calendar",
-      "menuPath": "Social → Calendar",
+      "menuPath": "Tools → Social → Calendar",
       "section": "social",
       "hash": "#content-calendar",
       "pulseNav": "pulse:nav/content-calendar",
@@ -550,7 +695,7 @@
     {
       "id": "social-creator",
       "label": "Creator",
-      "menuPath": "Social → Creator",
+      "menuPath": "Tools → Social → Creator",
       "section": "social",
       "hash": "#social-creator",
       "pulseNav": "pulse:nav/social-creator",
@@ -569,7 +714,7 @@
     {
       "id": "ppc-google",
       "label": "Google PPC",
-      "menuPath": "PPC → Google",
+      "menuPath": "Tools → PPC → Google",
       "section": "ppc",
       "hash": "#ppc-google",
       "pulseNav": "pulse:nav/ppc-google",
@@ -588,7 +733,7 @@
     {
       "id": "ppc-meta",
       "label": "Meta PPC",
-      "menuPath": "PPC → Meta",
+      "menuPath": "Tools → PPC → Meta",
       "section": "ppc",
       "hash": "#ppc-meta",
       "pulseNav": "pulse:nav/ppc-meta",
@@ -1085,82 +1230,13 @@
       ]
     },
     {
-      "id": "pulse-forge/dashboard",
-      "moduleId": "pulse-forge",
-      "label": "My Forge",
-      "question": "How do I open the Forge dashboard?",
-      "pulseNav": "pulse:nav/pulse-forge/forge",
-      "steps": [
-        "Open [Teams → Pulse Forge](pulse:nav/pulse-forge/forge).",
-        "Select **My Forge** in the left sidebar to see installed automations and recent runs."
-      ],
-      "aliases": [
-        "forge dashboard",
-        "my forge",
-        "pulse forge dashboard"
-      ]
-    },
-    {
-      "id": "pulse-forge/recipes",
-      "moduleId": "pulse-forge",
-      "label": "Agents",
-      "question": "How do I browse or install a recipe?",
-      "pulseNav": "pulse:nav/pulse-forge/recipes",
-      "steps": [
-        "Open [Teams → Pulse Forge](pulse:nav/pulse-forge/forge).",
-        "Select **Agents** in the left sidebar to open the recipe library.",
-        "Open a recipe, then install it as an automation or as a workflow."
-      ],
-      "aliases": [
-        "recipe library",
-        "install recipe",
-        "agents recipes",
-        "recipe builder"
-      ]
-    },
-    {
-      "id": "pulse-forge/workflows",
-      "moduleId": "pulse-forge",
-      "label": "Workflows",
-      "question": "How do I create or open a workflow?",
-      "pulseNav": "pulse:nav/pulse-forge/workflows",
-      "steps": [
-        "Open [Teams → Pulse Forge](pulse:nav/pulse-forge/workflows).",
-        "Select **Workflows** in the left sidebar.",
-        "Click **New workflow** or open an existing workflow tile to edit the canvas."
-      ],
-      "aliases": [
-        "create workflow",
-        "open workflow",
-        "workflow canvas"
-      ]
-    },
-    {
-      "id": "pulse-forge/publish-run",
-      "moduleId": "pulse-forge",
-      "label": "Publish and run",
-      "question": "How do I publish or run a workflow?",
-      "pulseNav": "pulse:nav/pulse-forge/workflows",
-      "steps": [
-        "Open [Teams → Pulse Forge → Workflows](pulse:nav/pulse-forge/workflows).",
-        "Open the workflow.",
-        "Use **Publish** to make it live, then **Test** to start a run."
-      ],
-      "aliases": [
-        "publish workflow",
-        "run workflow",
-        "start workflow",
-        "test workflow"
-      ]
-    },
-    {
       "id": "generator/opt/sitemap-pills",
       "moduleId": "generator/opt",
       "label": "Pages Posts SAP pills",
       "question": "How do I switch between Pages, Posts, and SAP?",
       "pulseNav": "pulse:nav/generator/opt",
       "steps": [
-        "Open [SEO → Generator → Opt](pulse:nav/generator/opt) (Overview).",
+        "Open [Tools → SEO → Opt](pulse:nav/generator/opt).",
         "On the black toolbar, click **Pages**, **Posts**, or **SAP** sitemap source pills."
       ],
       "aliases": [
@@ -1173,10 +1249,10 @@
       "id": "generator/opt/aiseo-bulk-meta",
       "moduleId": "generator/opt",
       "label": "AISEO bulk meta",
-      "question": "How do I bulk-optimize meta on Overview?",
+      "question": "How do I run Opt AISEO bulk meta?",
       "pulseNav": "pulse:nav/generator/opt",
       "steps": [
-        "Open [SEO → Generator → Opt](pulse:nav/generator/opt) (Overview).",
+        "Open [Tools → SEO → Opt](pulse:nav/generator/opt).",
         "Select rows with checkboxes.",
         "Open the **AISEO** flyout on the black toolbar → **Meta** → **All Meta** or **MD**.",
         "Run the bulk job on selected rows."
@@ -1192,10 +1268,10 @@
       "id": "generator/opt/row-expansion",
       "moduleId": "generator/opt",
       "label": "Row expansion",
-      "question": "How do I expand an Overview row?",
+      "question": "How do I expand an Opt row?",
       "pulseNav": "pulse:nav/generator/opt",
       "steps": [
-        "Open [SEO → Generator → Opt](pulse:nav/generator/opt) (Overview).",
+        "Open [Tools → SEO → Opt](pulse:nav/generator/opt).",
         "Click a row in the grid to expand row details.",
         "Use row actions such as **AI meta** for single-page optimization."
       ],
@@ -1212,7 +1288,7 @@
       "question": "How do I run AI meta on one page?",
       "pulseNav": "pulse:nav/generator/opt",
       "steps": [
-        "Open [SEO → Generator → Opt](pulse:nav/generator/opt) (Overview).",
+        "Open [Tools → SEO → Opt](pulse:nav/generator/opt).",
         "Expand the page row.",
         "Click **AI meta** in row details (pages: meta + FAQs; posts: **AI title** then meta)."
       ],
@@ -1229,7 +1305,7 @@
       "question": "How do I optimize a page title?",
       "pulseNav": "pulse:nav/generator/opt",
       "steps": [
-        "Open [SEO → Generator → Opt](pulse:nav/generator/opt) (Overview).",
+        "Open [Tools → SEO → Opt](pulse:nav/generator/opt).",
         "Use **Pages**, **Posts**, or **SAP** pills to find the URL.",
         "Expand the row and edit **SEO title** (posts: use **AI title** or **AI meta**).",
         "Click **Save**."
@@ -1243,29 +1319,29 @@
       ]
     },
     {
-      "id": "generator/opt",
-      "moduleId": "Multi-site pill",
-      "label": "How do I use multi-site Overview?",
-      "question": "pulse:nav/generator/opt",
-      "pulseNav": [
-        "Open [SEO → Generator → Opt](pulse:nav/generator/opt) (Overview).",
+      "id": "generator/opt/multi-site",
+      "moduleId": "generator/opt",
+      "label": "Multi-site pill",
+      "question": "How do I use multi-site Opt?",
+      "pulseNav": "pulse:nav/generator/opt",
+      "steps": [
+        "Open [Tools → SEO → Opt](pulse:nav/generator/opt).",
         "Switch the content optimizer section to **Multi-site** when available.",
         "Compare or bulk work across connected properties from the multi-site grid."
       ],
-      "steps": [
+      "aliases": [
         "multi-site",
         "multi site overview"
-      ],
-      "aliases": []
+      ]
     },
     {
       "id": "generator/bulk-csv/csv-upload",
-      "moduleId": "generator/bulk-csv",
+      "moduleId": "generator/bulk-prompt",
       "label": "CSV upload",
       "question": "How do I bulk generate from CSV?",
-      "pulseNav": "pulse:nav/generator/bulk-csv",
+      "pulseNav": "pulse:nav/generator/bulk-prompt",
       "steps": [
-        "Open [SEO → Generator → CSV](pulse:nav/generator/bulk-csv).",
+        "Open [Tools → SEO → Studio](pulse:nav/generator/bulk-prompt).",
         "Upload a CSV with blog generation columns.",
         "Configure options and run **Bulk generate**."
       ],
@@ -1280,9 +1356,9 @@
       "moduleId": "generator/bulk-csv",
       "label": "Bulk generate",
       "question": "How do I run CSV bulk generation?",
-      "pulseNav": "pulse:nav/generator/bulk-csv",
+      "pulseNav": "pulse:nav/generator/bulk-prompt",
       "steps": [
-        "Open [SEO → Generator → CSV](pulse:nav/generator/bulk-csv).",
+        "Open [SEO → Generator → CSV](pulse:nav/generator/bulk-prompt).",
         "After CSV upload, start the bulk generation run from the toolbar."
       ],
       "aliases": [
@@ -1297,7 +1373,7 @@
       "question": "How do I bulk generate from prompts?",
       "pulseNav": "pulse:nav/generator/bulk-prompt",
       "steps": [
-        "Open [SEO → Generator → Prompt](pulse:nav/generator/bulk-prompt).",
+        "Open [Tools → SEO → Studio](pulse:nav/generator/bulk-prompt).",
         "Configure prompt templates and run bulk generation."
       ],
       "aliases": [
@@ -1310,9 +1386,9 @@
       "moduleId": "generator/bulk-blog-import",
       "label": "Blog import",
       "question": "How do I import blog posts?",
-      "pulseNav": "pulse:nav/generator/bulk-blog-import",
+      "pulseNav": "pulse:nav/generator/bulk-prompt",
       "steps": [
-        "Open [SEO → Generator → Import](pulse:nav/generator/bulk-blog-import).",
+        "Open [Tools → SEO → Studio](pulse:nav/generator/bulk-prompt).",
         "Import existing WordPress posts for optimization workflows."
       ],
       "aliases": [
@@ -1327,7 +1403,7 @@
       "question": "How do I generate press releases in bulk?",
       "pulseNav": "pulse:nav/generator/bulk-press-release",
       "steps": [
-        "Open [SEO → Generator → PR](pulse:nav/generator/bulk-press-release).",
+        "Open [Tools → SEO → PR](pulse:nav/generator/bulk-press-release).",
         "Configure press release rows and run the bulk PR generator."
       ],
       "aliases": [
@@ -1340,9 +1416,9 @@
       "moduleId": "generator/entity",
       "label": "Entity SAP generator",
       "question": "How do I generate SAP entity pages?",
-      "pulseNav": "pulse:nav/generator/entity",
+      "pulseNav": "pulse:nav/generator/bulk-prompt",
       "steps": [
-        "Open [SEO → Generator → Entity](pulse:nav/generator/entity).",
+        "Open [Tools → SEO → Studio](pulse:nav/generator/bulk-prompt).",
         "Configure entity/location pages and run SAP generation."
       ],
       "aliases": [
@@ -1356,9 +1432,9 @@
       "moduleId": "generator/competitor",
       "label": "Competitor generator",
       "question": "How do I run competitor content generation?",
-      "pulseNav": "pulse:nav/generator/competitor",
+      "pulseNav": "pulse:nav/generator/bulk-prompt",
       "steps": [
-        "Open [SEO → Generator → Competitor](pulse:nav/generator/competitor).",
+        "Open [Tools → SEO → Studio](pulse:nav/generator/bulk-prompt).",
         "Configure competitor research inputs and generate content."
       ],
       "aliases": [
@@ -1373,7 +1449,7 @@
       "question": "How do I use Free Flow?",
       "pulseNav": "pulse:nav/generator/flow",
       "steps": [
-        "Open [SEO → Generator → Flow](pulse:nav/generator/flow).",
+        "Open [Tools → SEO → Flow](pulse:nav/generator/flow).",
         "Enter a freeform prompt and generate sectioned content in the Flow workspace."
       ],
       "aliases": [
@@ -1389,7 +1465,7 @@
       "question": "How do I generate AI images?",
       "pulseNav": "pulse:nav/generator/image",
       "steps": [
-        "Open [SEO → Generator → Image](pulse:nav/generator/image).",
+        "Open [Tools → Media → Image](pulse:nav/generator/image).",
         "Enter image prompts and generate assets for content."
       ],
       "aliases": [
@@ -1404,7 +1480,7 @@
       "question": "How do I run proposal research?",
       "pulseNav": "pulse:nav/generator/research",
       "steps": [
-        "Open [SEO → Generator → Research](pulse:nav/generator/research).",
+        "Open [Tools → SEO → Research](pulse:nav/generator/research).",
         "Select the **Proposal** research section.",
         "Configure inputs and run the proposal research pipeline."
       ],
@@ -1420,7 +1496,7 @@
       "question": "How do I run citation research?",
       "pulseNav": "pulse:nav/generator/research",
       "steps": [
-        "Open [SEO → Generator → Research](pulse:nav/generator/research).",
+        "Open [Tools → SEO → Research](pulse:nav/generator/research).",
         "Select the **Citation** research section.",
         "Run citation discovery for the active property."
       ],
@@ -1436,7 +1512,7 @@
       "question": "How do I run backlinking research?",
       "pulseNav": "pulse:nav/generator/research",
       "steps": [
-        "Open [SEO → Generator → Research](pulse:nav/generator/research).",
+        "Open [Tools → SEO → Research](pulse:nav/generator/research).",
         "Select the **Backlinking** research section.",
         "Run backlink opportunity research."
       ],
@@ -1470,9 +1546,9 @@
       "question": "How do I generate a Google Ads PPC report?",
       "pulseNav": "pulse:nav/reporting/performance",
       "steps": [
-        "Use Pulse Forge recipes **ads-monthly-mom-report** or **ads-monthly-yoy-report** for automated PPC markdown reports.",
+        "Install recipes **ads-monthly-mom-report** or **ads-monthly-yoy-report** for automated PPC markdown reports.",
         "Assign a property with a 10-digit Google Ads customer ID on Dashboard → Properties.",
-        "Track runs under Forge → Task Builder or agent runs."
+        "Track runs under the Agents rail."
       ],
       "aliases": [
         "ppc report",
@@ -1659,6 +1735,44 @@
         "api docs",
         "api documentation",
         "endpoints"
+      ]
+    },
+    {
+      "id": "reporting.semrush.safe-fix",
+      "moduleId": "dashboard/skills-library",
+      "label": "Semrush Safe Fix",
+      "question": "What does the Semrush Safe Fix skill do?",
+      "pulseNav": "pulse:nav/dashboard/skills-library",
+      "steps": [
+        "Open [Dashboard → Settings → Skills Library](pulse:nav/dashboard/skills-library).",
+        "Find **Semrush Safe Fix Agent** (id `reporting.semrush.safe-fix`).",
+        "Enable it on the property profile when you want no-approval Semrush Site Audit fixes (missing title/meta/alt, broken internal links and images) via Neo MCP, then a rescan for HTTP 200."
+      ],
+      "aliases": [
+        "semrush safe fix",
+        "sem rush fix",
+        "semrush fix agent",
+        "semrush fix",
+        "safe fix agent",
+        "what does the semrush fix agent do"
+      ]
+    },
+    {
+      "id": "content.posts.gap-check",
+      "moduleId": "dashboard/skills-library",
+      "label": "Posts Content Gap Check",
+      "question": "What does the Posts Content Gap Check skill do?",
+      "pulseNav": "pulse:nav/dashboard/skills-library",
+      "steps": [
+        "Open [Dashboard → Settings → Skills Library](pulse:nav/dashboard/skills-library).",
+        "Find **Posts Content Gap Check** (id `content.posts.gap-check`).",
+        "Enable it on the property profile when you want next-month published and scheduled blog counts checked against the site blog quota, and Blog Ideas (GSC) started when short until WordPress upload finishes."
+      ],
+      "aliases": [
+        "posts content gap check",
+        "content gap check",
+        "blog gap check",
+        "content gap skill"
       ]
     }
   ]

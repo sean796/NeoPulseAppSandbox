@@ -1,5 +1,5 @@
 import { Download } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { OptimizationArtifactDownloads } from "@/components/integrations/wordpress/OptimizationArtifactDownloads";
 import {
   CONTENT_OPTIMIZER_ACTIVE_ROW_HIGHLIGHT_CLASS,
@@ -17,8 +17,6 @@ import {
 import { findAgentRunBrowserPreviewArtifact, agentRunBrowserPreviewBase64FromArtifact } from "@/lib/agent-runs/agent-run-browser-preview";
 import {
   downloadAgentRunLog,
-  downloadWorkflowRunAgentLogs,
-  workflowRunIdFromAgentRun,
 } from "@/lib/agent-runs/agent-run-log-download";
 import { useTeam } from "@/contexts/TeamContext";
 import { useAgentRunsContext } from "@/contexts/use-agent-runs-context";
@@ -72,13 +70,8 @@ export function AgentRunsDetailsDrawer({
   const [browserPreviewOpen, setBrowserPreviewOpen] = useState(false);
   const live = useAgentRunLiveSnapshot(run);
   const { activeTeam } = useTeam();
-  const { refreshRuns, runs } = useAgentRunsContext();
+  const { refreshRuns } = useAgentRunsContext();
   const isRunning = !isAgentRunTerminal(run.status);
-  const workflowRunId = useMemo(() => workflowRunIdFromAgentRun(run), [run]);
-  const workflowRunLogCount = useMemo(() => {
-    if (!workflowRunId) return 0;
-    return runs.filter((item) => workflowRunIdFromAgentRun(item) === workflowRunId).length;
-  }, [runs, workflowRunId]);
   const showResumableError = resumable && Boolean(run.errorMessage?.trim());
   const progressSteps = useAgentRunEnrichedProgressSteps(run, live?.progressLabel ?? null);
   const timelineRows = formatAgentRunLogTimeline(run, progressSteps, live?.progressLabel ?? null);
@@ -281,18 +274,6 @@ export function AgentRunsDetailsDrawer({
           >
             <Download className="h-3.5 w-3.5" aria-hidden />
           </Button>
-          {workflowRunId && workflowRunLogCount > 1 ? (
-            <Button
-              variant="quiet"
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                void downloadWorkflowRunAgentLogs(activeTeam?.id ?? null, workflowRunId, runs);
-              }}
-            >
-              All logs ({workflowRunLogCount})
-            </Button>
-          ) : null}
           {generatedFiles.length > 0 ? (
             <div className="ml-auto min-w-0">
               <OptimizationArtifactDownloads files={generatedFiles} variant="details" />

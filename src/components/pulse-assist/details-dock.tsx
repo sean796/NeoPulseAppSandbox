@@ -18,16 +18,17 @@ export function DetailsDockProvider({ children }: { children: ReactNode }) {
   const { sidebarOpen, sidebarPanel } = useAgentRunsContext();
   const [target, setTarget] = useState<HTMLElement | null>(null);
   const [count, setCount] = useState(0);
+  const [studioOpen, setStudioOpen] = useState(false);
 
   const register = useCallback(() => {
     setCount((c) => c + 1);
     return () => setCount((c) => c - 1);
   }, []);
 
-  const open = sidebarOpen && sidebarPanel === "details";
+  const open = studioOpen || (sidebarOpen && sidebarPanel === "details");
   const value = useMemo(
-    () => ({ target, setTarget, count, register, open }),
-    [target, count, register, open],
+    () => ({ target, setTarget, count, register, open, setStudioOpen }),
+    [target, count, register, open, setStudioOpen],
   );
 
   return <DetailsDockContext.Provider value={value}>{children}</DetailsDockContext.Provider>;

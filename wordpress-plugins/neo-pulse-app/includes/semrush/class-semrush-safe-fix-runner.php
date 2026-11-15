@@ -18,34 +18,44 @@ class Neo_Pulse_App_Semrush_Safe_Fix_Runner {
 	 */
 	public static function run_scheduled(): array {
 		$schedule = Neo_Pulse_App_Semrush_Safe_Fix_Schedule::load();
-		if ( ! Neo_Pulse_App_Semrush_Safe_Fix_Schedule::is_due_now( $schedule ) ) {
+		if ( empty( $schedule['enabled'] ) ) {
 			return array( 'ok' => true, 'skipped' => true, 'reason' => 'not_due' );
 		}
 		if ( ! Neo_Pulse_App_Semrush_Safe_Fix_Schedule::is_library_enabled() ) {
-			$schedule['lastRunKey']   = Neo_Pulse_App_Semrush_Safe_Fix_Schedule::run_key();
-			$schedule['lastRunAt']    = gmdate( 'c' );
-			$schedule['lastRunOk']    = true;
-			$schedule['lastRunError'] = 'library_disabled';
-			Neo_Pulse_App_Semrush_Safe_Fix_Schedule::save( $schedule );
 			return array( 'ok' => true, 'skipped' => true, 'reason' => 'library_disabled' );
 		}
+		return self::run_due_sites( Neo_Pulse_App_Semrush_Safe_Fix_Schedule::AGENT_ID );
+	}
 
-		try {
-			$result = self::run( array( 'source' => 'scheduled' ) );
-			$schedule['lastRunKey']   = Neo_Pulse_App_Semrush_Safe_Fix_Schedule::run_key();
-			$schedule['lastRunAt']    = gmdate( 'c' );
-			$schedule['lastRunOk']    = ! empty( $result['ok'] );
-			$schedule['lastRunError'] = empty( $result['ok'] ) ? substr( (string) ( $result['error'] ?? 'failed' ), 0, 500 ) : '';
-			Neo_Pulse_App_Semrush_Safe_Fix_Schedule::save( $schedule );
-			return $result;
-		} catch ( Throwable $e ) {
-			$schedule['lastRunKey']   = Neo_Pulse_App_Semrush_Safe_Fix_Schedule::run_key();
-			$schedule['lastRunAt']    = gmdate( 'c' );
-			$schedule['lastRunOk']    = false;
-			$schedule['lastRunError'] = substr( $e->getMessage(), 0, 500 );
-			Neo_Pulse_App_Semrush_Safe_Fix_Schedule::save( $schedule );
-			return array( 'ok' => false, 'error' => $e->getMessage() );
+	/**
+	 * Auto: each assigned site uses its own run schedule.
+	 *
+	 * @return array<string,mixed>
+	 */
+	private static function run_due_sites( string $agent_id ): array {
+		$results = array();
+		foreach ( self::sites_for_run( '' ) as $site ) {
+			$due = Neo_Pulse_App_Skill_Run_Schedule::due_for_site( $site, $agent_id );
+			if ( empty( $due['due'] ) ) {
+				continue;
+			}
+			$id = (string) ( $site['id'] ?? '' );
+			try {
+				$results[] = self::run(
+					array(
+						'source' => 'scheduled',
+						'siteId' => $id,
+					)
+				);
+			} catch ( Throwable $e ) {
+				$results[] = array( 'ok' => false, 'error' => $e->getMessage() );
+			}
+			Neo_Pulse_App_Skill_Run_Schedule::stamp( $id, $agent_id, (string) ( $due['runKey'] ?? '' ) );
 		}
+		if ( $results === array() ) {
+			return array( 'ok' => true, 'skipped' => true, 'reason' => 'not_due' );
+		}
+		return array( 'ok' => true, 'results' => $results );
 	}
 
 	/**

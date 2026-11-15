@@ -106,6 +106,22 @@ wp_mkdir_p( $abspath );
 
 $skill_id = Neo_Pulse_App_Skills_Library_Store::SKILL_SAFE_FIX;
 $slug     = Neo_Pulse_App_Skills_Library_Store::SKILL_SAFE_FIX_SLUG;
+// Dispatcher must use strlen('skills-library/') === 15 (16 chops the first slug char → Unknown skill id).
+$prefix = 'skills-library/';
+check( 'skills-library route prefix length is 15', strlen( $prefix ) === 15 );
+foreach (
+	array(
+		$slug => $skill_id,
+		Neo_Pulse_App_Skills_Library_Store::SKILL_POSTS_GAP_SLUG => Neo_Pulse_App_Skills_Library_Store::SKILL_POSTS_GAP,
+	) as $path_slug => $expected_id
+) {
+	$sub = substr( $prefix . $path_slug, strlen( $prefix ) );
+	check(
+		"dispatcher substr keeps skill slug {$path_slug}",
+		$sub === $path_slug
+		&& Neo_Pulse_App_Skills_Library_Store::resolve_skill_id( $sub ) === $expected_id
+	);
+}
 check(
 	'slug resolves to full skill id',
 	Neo_Pulse_App_Skills_Library_Store::resolve_skill_id( $slug ) === $skill_id

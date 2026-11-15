@@ -8,9 +8,9 @@ import {
 } from "@/lib/manager-tab-routes";
 
 describe("manager tab routes", () => {
-  it("registers 24 unique tabs", () => {
-    expect(MANAGER_TAB_ROUTES).toHaveLength(24);
-    expect(new Set(MANAGER_TAB_ROUTES.map((r) => r.id)).size).toBe(24);
+  it("registers 23 unique tabs", () => {
+    expect(MANAGER_TAB_ROUTES).toHaveLength(23);
+    expect(new Set(MANAGER_TAB_ROUTES.map((r) => r.id)).size).toBe(23);
   });
 
   it("routes the changelog tab at /changelog", () => {
@@ -50,7 +50,7 @@ describe("manager tab routes", () => {
 
   it("recognizes tab ids", () => {
     expect(isManagerTabId("chat")).toBe(true);
-    expect(isManagerTabId("pulse-forge")).toBe(true);
+    expect(isManagerTabId("pulse-forge")).toBe(false);
     expect(isManagerTabId("nope")).toBe(false);
     expect(isManagerTabId("")).toBe(false);
   });
@@ -80,6 +80,6 @@ describe("legacyHashToPath", () => {
   it("maps chat message hashes and plain tab hashes", () => {
     expect(legacyHashToPath("#m123")).toBe("/chat?message=123");
     expect(legacyHashToPath("tasks")).toBe("/tasks");
-    expect(legacyHashToPath("#pulse-forge")).toBe("/pulse-forge");
+    expect(legacyHashToPath("#pulse-forge")).toBe("/dashboard");
   });
 });

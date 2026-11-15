@@ -1,10 +1,16 @@
-import { useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import { Pencil, Plus, Save, Trash2 } from "lucide-react";
+import { useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useLocation } from "react-router-dom";
+import { Pencil, Plus, Save, Settings, Trash2 } from "lucide-react";
 import { runSemrushSafeFix } from "@/lib/semrush-safe-fix/semrush-safe-fix-api";
+import { runPostsContentGapCheck } from "@/lib/posts-content-gap/posts-content-gap-api";
+import { runBlogIdeasStudioBackgroundJob } from "@/lib/bulk/blog-ideas-studio-background-job";
 import { fetchAgentRun } from "@/lib/agent-runs-api";
 import { trackStartedAgentRun } from "@/lib/task-manager/adapt-agent-run";
+import { startWorkspaceTask } from "@/lib/task-manager/runtime-store";
 import { resolveSemrushProjectIdForSite } from "@/lib/semrush-project-id-defaults";
+import { resolveClientFromClientUrl } from "@/lib/properties/property-dashboard-slug";
 import { useTeam } from "@/contexts/TeamContext";
+import { useWordPressSites } from "@/hooks/use-wordpress-sites";
 import { AgentRunsContext } from "@/contexts/agent-runs-react-context";
 import {
   Button,
@@ -13,6 +19,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogPortal,
   DialogTitle,
   Field,
   SelectField,
@@ -23,6 +30,8 @@ import type { WordPressSite } from "../types";
 import { propertyHostingLabel } from "./property-profile-view-model";
 import { MasterInstructionsSection } from "./MasterInstructionsSection";
 import { ProfileLocationSelect } from "./ProfileServiceAreaFields";
+import { SkillRunClockButton } from "./SkillRunClockButton";
+import type { SkillRunSchedule } from "@/lib/skill-run-schedule";
 import {
   buildSiteAdditionalLocationsPatch,
   buildSiteLocationsPatch,
@@ -50,6 +59,7 @@ import {
   editorialContentPackageShortLabelForSite,
   resolveEditorialContentPackageForSite,
 } from "@/lib/editorial-content-package";
+import { clientVerticalLabels, readSiteBenchmarkCustomTag } from "@/lib/vertical-benchmark/client-tag-from-site";
 import {
   PROPERTIES_OVERVIEW_CHIP_DOT_LITE_CLASS,
   PROPERTIES_OVERVIEW_CHIP_DOT_MUTED_CLASS,
@@ -58,7 +68,6 @@ import {
   PROPERTIES_OVERVIEW_DL_LABEL_CLASS,
   PROPERTIES_OVERVIEW_DL_ROW_CLASS,
   PROPERTIES_OVERVIEW_DL_VALUE_CLASS,
-  PROPERTIES_OVERVIEW_ACTION_PILL_CLASS,
   PROPERTIES_OVERVIEW_IDENTITY_ACTIONS_CLASS,
   PROPERTIES_OVERVIEW_IDENTITY_CLASS,
   PROPERTIES_OVERVIEW_IDENTITY_NAME_CLASS,
@@ -67,9 +76,7 @@ import {
   PROPERTIES_OVERVIEW_PACKAGE_BADGE_CLASS,
   PROPERTIES_OVERVIEW_PANEL_CLASS,
   PROPERTIES_OVERVIEW_PANEL_TITLE_CLASS,
-  PROPERTIES_OVERVIEW_PILL_LABEL_CLASS,
   PROPERTIES_OVERVIEW_PILL_ROW_CLASS,
-  PROPERTIES_OVERVIEW_PILL_VALUE_CLASS,
   PROPERTIES_OVERVIEW_PROFILE_EMPTY_CLASS,
   PROPERTIES_OVERVIEW_STACK_CLASS,
 } from "./wordpress-properties-surfaces";
@@ -77,6 +84,8 @@ import {
 export type PropertyOverviewSectionProps = {
   site: WordPressSite;
   onPatchSite?: (siteId: string, patch: Partial<WordPressSite>) => void;
+  /** Settings sitemap row. Same setter as the sitemap list. */
+  onSetEntitySitemap?: (sitemapUrl: string) => void;
   /** Kept for callers. Edits happen on this screen. */
   onOpenSettingsProfile?: () => void;
   settingsPanel?: ReactNode;
@@ -89,6 +98,14 @@ export type PropertyOverviewSectionProps = {
   /** Keep form logo-box theme aligned when overview swatches patch the live site. */
   onLogoBoxThemeChange?: (theme: "black" | "white") => void;
 };
+
+function isSelectMenuTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof Element)) return false;
+  return Boolean(
+    target.closest("[role='listbox']") ||
+      target.closest("[data-radix-popper-content-wrapper]"),
+  );
+}
 
 function sitemapOptionLabel(url: string): string {
   try {
@@ -218,6 +235,7 @@ function locationOptionLabel(loc: { id: string; city?: string; state?: string; n
 export function PropertyOverviewSection({
   site,
   onPatchSite,
+  onSetEntitySitemap,
   editing = false,
   onToggleEditing,
   onSaveProperty,
@@ -226,15 +244,36 @@ export function PropertyOverviewSection({
 }: PropertyOverviewSectionProps) {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [safeFixBusy, setSafeFixBusy] = useState(false);
+  const [postsGapBusy, setPostsGapBusy] = useState(false);
   const { activeTeam } = useTeam();
+  const { sites } = useWordPressSites();
+  const location = useLocation();
   const agentRuns = useContext(AgentRunsContext);
+
+  /** Every skill Run uses the client URL (`/dashboard/{slug}`), not the header connected site. */
+  const clientFromUrl = useMemo(
+    () => resolveClientFromClientUrl(location.pathname, sites),
+    [location.pathname, sites],
+  );
   const ga4 = site.ga4PropertyId?.trim() ?? "";
   const ads = site.googleAdsCustomerId?.trim() ?? "";
   const gbpRaw = site.gbpLocationId?.trim() ?? "";
   const gbp = gbpDisplayId(gbpRaw);
   const semrush = (site.semrushSiteAuditProjectId ?? site.semrushPositionTrackingProjectId)?.trim() ?? "";
   const editorialTier = editorialContentPackageShortLabelForSite(site);
+  const verticalValue = readSiteBenchmarkCustomTag(site);
+  const verticalOptions = useMemo(() => {
+    const labels = clientVerticalLabels(sites);
+    if (
+      verticalValue &&
+      !labels.some((label) => label.toLocaleLowerCase() === verticalValue.toLocaleLowerCase())
+    ) {
+      return [...labels, verticalValue].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+    }
+    return labels;
+  }, [sites, verticalValue]);
   const editorialPackage = resolveEditorialContentPackageForSite(site);
   const wpEngineAccountId = site.wpEngineAccountId?.trim() ?? "";
   const primaryKeyword = site.primaryLocalKeyword?.trim() ?? "";
@@ -270,13 +309,14 @@ export function PropertyOverviewSection({
   const [adsDraft, setAdsDraft] = useState(ads);
   const [gbpDraft, setGbpDraft] = useState(gbpRaw);
   const [semrushDraft, setSemrushDraft] = useState(semrush);
-  const [sitemapPick, setSitemapPick] = useState(sitemapUrls[0] ?? "");
+  const savedEntitySitemap =
+    site.entitySitemapUrl && sitemapUrls.includes(site.entitySitemapUrl)
+      ? site.entitySitemapUrl
+      : "";
+  const [sitemapPick, setSitemapPick] = useState(savedEntitySitemap);
   const wasEditingRef = useRef(false);
-  /** Sync pick without an empty frame (avoids SelectField flicker on client switch). */
-  const sitemapValue =
-    sitemapUrls.length > 0 && sitemapUrls.includes(sitemapPick)
-      ? sitemapPick
-      : (sitemapUrls[0] ?? "");
+  /** Keep the open menu on a real child sitemap. Fall back to the saved entity sitemap. */
+  const sitemapValue = sitemapUrls.includes(sitemapPick) ? sitemapPick : savedEntitySitemap;
   if (sitemapPick !== sitemapValue) {
     setSitemapPick(sitemapValue);
   }
@@ -285,38 +325,100 @@ export function PropertyOverviewSection({
     onPatchSite?.(site.id, next);
   };
 
+  const pollStartedRun = async (runId: number) => {
+    if (!activeTeam?.id) return null;
+    const teamId = activeTeam.id;
+    let latest = null;
+    for (let attempt = 0; attempt < 90; attempt += 1) {
+      const run = await fetchAgentRun(teamId, runId);
+      if (run) {
+        latest = run;
+        trackStartedAgentRun(run);
+      }
+      if (
+        run &&
+        (run.status === "done" || run.status === "failed" || run.status === "cancelled")
+      ) {
+        break;
+      }
+      await new Promise((resolve) => window.setTimeout(resolve, 2000));
+    }
+    void agentRuns?.refreshRuns();
+    return latest;
+  };
+
   const startSafeFix = () => {
     if (safeFixBusy) return;
+    const client = clientFromUrl;
+    if (!client) {
+      throw new Error("Unknown client URL. Open a client profile to run this skill.");
+    }
     setSafeFixBusy(true);
     void runSemrushSafeFix({
-      siteId: site.id,
-      siteName: site.name,
-      siteUrl: site.siteUrl,
-      username: site.username,
-      appPassword: site.appPassword,
-      semrushSiteAuditProjectId: resolveSemrushProjectIdForSite(site),
+      siteId: client.id,
+      siteName: client.name,
+      siteUrl: client.siteUrl,
+      username: client.username,
+      appPassword: client.appPassword,
+      semrushSiteAuditProjectId: resolveSemrushProjectIdForSite(client),
       teamId: activeTeam?.id,
     })
       .then(async (result) => {
-        if (result.runId && activeTeam?.id) {
-          const teamId = activeTeam.id;
-          const runId = result.runId;
-          for (let attempt = 0; attempt < 90; attempt += 1) {
-            const run = await fetchAgentRun(teamId, runId);
-            if (run) trackStartedAgentRun(run);
-            if (
-              run &&
-              (run.status === "done" || run.status === "failed" || run.status === "cancelled")
-            ) {
-              break;
-            }
-            await new Promise((resolve) => window.setTimeout(resolve, 2000));
-          }
-        }
-        void agentRuns?.refreshRuns();
+        if (result.runId) await pollStartedRun(result.runId);
       })
       .catch(() => ({ ok: false as const, error: "request failed" }))
       .finally(() => setSafeFixBusy(false));
+  };
+
+  const startPostsContentGap = () => {
+    if (postsGapBusy) return;
+    const client = clientFromUrl;
+    if (!client) {
+      throw new Error("Unknown client URL. Open a client profile to run this skill.");
+    }
+    setPostsGapBusy(true);
+    void runPostsContentGapCheck({
+      siteId: client.id,
+      siteName: client.name,
+      siteUrl: client.siteUrl,
+      username: client.username,
+      appPassword: client.appPassword,
+      teamId: activeTeam?.id,
+    })
+      .then(async (result) => {
+        const run = result.runId ? await pollStartedRun(result.runId) : null;
+        const gapResult = run?.result as { goalMet?: boolean; gap?: number; postCount?: number } | undefined;
+        const postCount = Number(gapResult?.postCount ?? gapResult?.gap ?? 0);
+        if (gapResult?.goalMet === true || postCount < 1) return;
+        await startWorkspaceTask({
+          title: "Blog Ideas Studio",
+          kind: "blog_ideas_studio",
+          siteId: client.id,
+          href: location.pathname,
+          run: async (ctx) => {
+            const result = await runBlogIdeasStudioBackgroundJob({
+              site: client,
+              postCount,
+              signal: ctx.signal,
+              onProgress: (step, progress) => {
+                ctx.patch({ step, progress });
+              },
+            });
+            if (result.created < postCount) {
+              throw new Error(
+                `Blog Ideas Studio created ${result.created}/${postCount} posts.`,
+              );
+            }
+            ctx.patch({
+              progress: 100,
+              step: `Created ${result.created} post${result.created === 1 ? "" : "s"}`,
+              logLines: result.urls,
+            });
+          },
+        });
+      })
+      .catch(() => ({ ok: false as const, error: "request failed" }))
+      .finally(() => setPostsGapBusy(false));
   };
 
   const commitPrimaryLocation = (city: string, state: string) => {
@@ -400,10 +502,10 @@ export function PropertyOverviewSection({
   return (
     <div className={PROPERTIES_OVERVIEW_STACK_CLASS}>
       <section className={cn(PROPERTIES_OVERVIEW_IDENTITY_CLASS, "overflow-hidden")} aria-label="Property">
-        <div className="flex h-[6.5rem] min-w-0 flex-1 items-stretch gap-1">
+        <div className="flex h-[4.25rem] min-w-0 flex-1 items-stretch gap-1">
           <div
             className={cn(
-              "flex h-[6.5rem] w-36 shrink-0 items-center justify-center overflow-hidden rounded-none border border-white/15",
+              "flex h-[4.25rem] w-36 shrink-0 items-center justify-center overflow-hidden rounded-none border border-white/15",
               logoTheme === "white" ? "bg-white" : "bg-black",
             )}
             aria-label={logoTheme === "white" ? "Logo box white" : "Logo box black"}
@@ -431,7 +533,7 @@ export function PropertyOverviewSection({
             </FadeText>
           </div>
           <div
-            className="flex h-[6.5rem] w-5 shrink-0 flex-col gap-1"
+            className="flex h-[4.25rem] w-5 shrink-0 flex-col gap-1"
             role="group"
             aria-label="Logo box theme"
           >
@@ -527,28 +629,6 @@ export function PropertyOverviewSection({
                 )}
               </FadeText>
             </div>
-            <div
-              className={cn(
-                PROPERTIES_OVERVIEW_PILL_ROW_CLASS,
-                "h-8 max-h-8 w-full border-0 bg-black px-2",
-              )}
-              title={wpEngineAccountId || undefined}
-            >
-              <span
-                className={PROPERTIES_OVERVIEW_PILL_LABEL_CLASS}
-                style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
-              >
-                WordPress
-              </span>
-              <FadeText fadeKey={contentFadeKey} className="flex h-8 min-w-0 flex-1 items-center justify-end">
-                <span
-                  className={cn(PROPERTIES_OVERVIEW_PILL_VALUE_CLASS, "truncate")}
-                  style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
-                >
-                  {propertyHostingLabel(site)}
-                </span>
-              </FadeText>
-            </div>
           </div>
         </div>
         <div className={PROPERTIES_OVERVIEW_IDENTITY_PILLS_CLASS}>
@@ -574,47 +654,47 @@ export function PropertyOverviewSection({
             />
             <span>{editorialTier ?? "No editorial"}</span>
           </span>
-          <div className={PROPERTIES_OVERVIEW_IDENTITY_ACTIONS_CLASS}>
-            {onToggleEditing ? (
-              <button
-                type="button"
-                className={PROPERTIES_OVERVIEW_ACTION_PILL_CLASS}
-                aria-label={editing ? "Done editing property" : "Edit property"}
-                aria-pressed={editing}
-                onClick={onToggleEditing}
-              >
-                <Pencil aria-hidden />
-              </button>
-            ) : (
-              <span className={PROPERTIES_OVERVIEW_ACTION_PILL_CLASS} aria-hidden />
-            )}
-            {onSaveProperty ? (
-              <button
-                type="button"
-                className={PROPERTIES_OVERVIEW_ACTION_PILL_CLASS}
-                aria-label="Save property"
-                onClick={onSaveProperty}
-              >
-                <Save aria-hidden />
-              </button>
-            ) : (
-              <span className={PROPERTIES_OVERVIEW_ACTION_PILL_CLASS} aria-hidden />
-            )}
-            {onDeleteProperty ? (
-              <button
-                type="button"
-                className={PROPERTIES_OVERVIEW_ACTION_PILL_CLASS}
-                aria-label="Delete property"
-                onClick={() => {
-                  setDeleteConfirmText("");
-                  setDeleteOpen(true);
-                }}
-              >
-                <Trash2 aria-hidden />
-              </button>
-            ) : (
-              <span className={PROPERTIES_OVERVIEW_ACTION_PILL_CLASS} aria-hidden />
-            )}
+          <div className={cn(PROPERTIES_OVERVIEW_IDENTITY_ACTIONS_CLASS, "grid-cols-4 items-center justify-items-center")}>
+            <Button
+              type="button"
+              variant="tool"
+              size="icon"
+              icon={Settings}
+              aria-label="Open property settings"
+              pressed={settingsOpen}
+              onClick={() => setSettingsOpen(true)}
+            />
+            <Button
+              type="button"
+              variant="tool"
+              size="icon"
+              icon={Pencil}
+              aria-label={editing ? "Done editing property" : "Edit property"}
+              pressed={editing}
+              reserved={!onToggleEditing}
+              onClick={onToggleEditing}
+            />
+            <Button
+              type="button"
+              variant="tool"
+              size="icon"
+              icon={Save}
+              aria-label="Save property"
+              reserved={!onSaveProperty}
+              onClick={onSaveProperty}
+            />
+            <Button
+              type="button"
+              variant="tool"
+              size="icon"
+              icon={Trash2}
+              aria-label="Delete property"
+              reserved={!onDeleteProperty}
+              onClick={() => {
+                setDeleteConfirmText("");
+                setDeleteOpen(true);
+              }}
+            />
           </div>
         </div>
       </section>
@@ -664,6 +744,115 @@ export function PropertyOverviewSection({
               Delete
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog modal={false} open={settingsOpen} onOpenChange={setSettingsOpen}>
+        <DialogPortal>
+          <div
+            className="fixed inset-0 z-40 bg-black/80"
+            aria-hidden
+            onClick={() => setSettingsOpen(false)}
+          />
+        </DialogPortal>
+        <DialogContent
+          className="z-50 rounded-none border-0 bg-zinc-950 text-white sm:max-w-lg"
+          onPointerDownOutside={(event) => {
+            if (isSelectMenuTarget(event.target)) event.preventDefault();
+          }}
+          onFocusOutside={(event) => {
+            if (isSelectMenuTarget(event.target)) event.preventDefault();
+          }}
+          onInteractOutside={(event) => {
+            if (isSelectMenuTarget(event.target)) event.preventDefault();
+          }}
+        >
+          <DialogHeader>
+            <DialogTitle className="text-base">Settings</DialogTitle>
+            <DialogDescription className="sr-only">
+              Username, password, vertical, sitemap, and Master Rules for {site.name}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className={PROPERTIES_OVERVIEW_DL_CLASS}>
+            <div className={PROPERTIES_OVERVIEW_DL_ROW_CLASS}>
+              <span
+                className={PROPERTIES_OVERVIEW_DL_LABEL_CLASS}
+                style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
+              >
+                Username
+              </span>
+              <div className="min-w-0 flex-1 [&_input]:text-white [&_input]:[-webkit-text-fill-color:#fff]">
+                <Field
+                  key={`${site.id}-username`}
+                  defaultValue={site.username ?? ""}
+                  onBlur={(e) => {
+                    const next = e.target.value;
+                    if (next !== (site.username ?? "")) patch({ username: next });
+                  }}
+                  placeholder="Username"
+                  aria-label="Username"
+                  autoComplete="off"
+                />
+              </div>
+            </div>
+            <div className={PROPERTIES_OVERVIEW_DL_ROW_CLASS}>
+              <span
+                className={PROPERTIES_OVERVIEW_DL_LABEL_CLASS}
+                style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
+              >
+                Password
+              </span>
+              <div className="min-w-0 flex-1 [&_input]:text-white [&_input]:[-webkit-text-fill-color:#fff]">
+                <Field
+                  key={`${site.id}-password`}
+                  defaultValue={site.appPassword ?? ""}
+                  onBlur={(e) => {
+                    const next = e.target.value;
+                    if (next !== (site.appPassword ?? "")) patch({ appPassword: next });
+                  }}
+                  placeholder="Password"
+                  aria-label="Password"
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+              </div>
+            </div>
+            <SelectField
+              key={`property-overview-vertical-${site.id}`}
+              placeholder="Vertical"
+              tone="data"
+              width="full"
+              value={verticalValue}
+              options={verticalOptions.map((label) => ({ value: label, label }))}
+              onValueChange={(label) => patch({ benchmarkCustomTag: label })}
+            />
+            <SelectField
+              key={`property-overview-sitemap-${site.id}`}
+              placeholder="Sitemap"
+              tone="data"
+              width="full"
+              value={sitemapValue}
+              options={sitemapUrls.map((url) => ({
+                value: url,
+                label: sitemapOptionLabel(url),
+              }))}
+              onValueChange={(url) => {
+                setSitemapPick(url);
+                if (onSetEntitySitemap && url !== site.entitySitemapUrl?.trim()) {
+                  onSetEntitySitemap(url);
+                }
+              }}
+              disabled={sitemapUrls.length === 0}
+            />
+          </div>
+          <MasterInstructionsSection
+            siteId={site.id}
+            siteUrl={site.siteUrl}
+            siteName={site.name}
+            disabled={site.enabled === false}
+            layout="dropdown"
+            editing
+          />
         </DialogContent>
       </Dialog>
 
@@ -918,6 +1107,12 @@ export function PropertyOverviewSection({
                 />
               </>
             )}
+            <IntegrationRow
+              fadeKey={contentFadeKey}
+              label="WordPress"
+              value={propertyHostingLabel(site)}
+              title={wpEngineAccountId || undefined}
+            />
           </dl>
         </section>
 
@@ -975,169 +1170,110 @@ export function PropertyOverviewSection({
         </section>
       </div>
 
-      <div className="grid w-full grid-cols-2 items-stretch gap-3">
-        <section
-          className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)}
-          aria-label="Settings"
-        >
-          <PanelHeading title="Settings" />
-          <div className={PROPERTIES_OVERVIEW_DL_CLASS}>
-            <IntegrationRow fadeKey={contentFadeKey} label="Site URL" value={editing ? undefined : site.siteUrl?.trim() ?? ""}>
-              {editing ? (
-                <Field
-                  defaultValue={site.siteUrl ?? ""}
-                  onBlur={(e) => patch({ siteUrl: e.target.value.trim() })}
-                  placeholder="Site URL"
-                  aria-label="Site URL"
-                />
-              ) : null}
-            </IntegrationRow>
-            <IntegrationRow fadeKey={contentFadeKey} label="Username" value={editing ? undefined : site.username?.trim() ?? ""}>
-              {editing ? (
-                <Field
-                  defaultValue={site.username ?? ""}
-                  onBlur={(e) => patch({ username: e.target.value })}
-                  placeholder="Username"
-                  aria-label="Username"
-                />
-              ) : null}
-            </IntegrationRow>
-            <IntegrationRow fadeKey={contentFadeKey} label="Password" value={editing ? undefined : site.appPassword?.trim() ? "Set" : ""}>
-              {editing ? (
-                <Field
-                  type="password"
-                  defaultValue={site.appPassword ?? ""}
-                  onBlur={(e) => patch({ appPassword: e.target.value })}
-                  placeholder="Password"
-                  aria-label="Password"
-                />
-              ) : null}
-            </IntegrationRow>
-            <IntegrationRow fadeKey={contentFadeKey} label="Editorial" value={editorialTier ?? ""} />
-            <IntegrationRow fadeKey={contentFadeKey} label="Benchmark" value={editing ? undefined : site.benchmarkCustomTag?.trim() ?? ""}>
-              {editing ? (
-                <Field
-                  defaultValue={site.benchmarkCustomTag ?? ""}
-                  onBlur={(e) => patch({ benchmarkCustomTag: e.target.value.trim() || undefined })}
-                  placeholder="Benchmark"
-                  aria-label="Benchmark"
-                />
-              ) : null}
-            </IntegrationRow>
-            <SelectField
-              key="property-overview-sitemap"
-              placeholder="Sitemap"
-              tone="data"
-              width="full"
-              value={sitemapValue}
-              options={sitemapUrls.map((url) => ({
-                value: url,
-                label: sitemapOptionLabel(url),
-              }))}
-              onValueChange={setSitemapPick}
-              disabled={sitemapUrls.length === 0}
-            />
-          </div>
-          <div className="mt-2 flex min-h-0 w-full flex-col gap-2">
-            <div className="flex h-8 shrink-0 items-center">
-              <h3 className={PROPERTIES_OVERVIEW_PANEL_TITLE_CLASS}>Master Rules</h3>
-            </div>
-            <MasterInstructionsSection
-              siteId={site.id}
-              siteUrl={site.siteUrl}
-              siteName={site.name}
-              disabled={site.enabled === false}
-              layout="dropdown"
-              editing={editing}
-              fadeKey={contentFadeKey}
-            />
-          </div>
-        </section>
-
-        <section
-          className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)}
-          aria-label="Skills"
-        >
-          <PanelHeading
-            title="Skills"
-            end={
-              <button
-                type="button"
-                onClick={() => openSkillsLibrary()}
-                className="ml-auto inline-flex h-8 shrink-0 items-center justify-center bg-black px-3 text-base font-medium text-white hover:bg-primary hover:text-black"
+      <section
+        className={cn(PROPERTIES_OVERVIEW_PANEL_CLASS, workspacePanel)}
+        aria-label="Skills"
+      >
+        <PanelHeading
+          title="Skills"
+          end={
+            <button
+              type="button"
+              onClick={() => openSkillsLibrary()}
+              className="ml-auto inline-flex h-8 shrink-0 items-center justify-center bg-black px-3 text-base font-medium text-white hover:bg-primary hover:text-black"
+            >
+              Library
+            </button>
+          }
+        />
+        <dl className={PROPERTIES_OVERVIEW_DL_CLASS}>
+          {ASSIGNABLE_SITE_AGENTS.map((agent) => {
+            const assigned = (site.assignedAgentIds ?? []).includes(agent.id);
+            const setAssigned = (nextOn: boolean) => {
+              if (!onPatchSite) return;
+              const current = site.assignedAgentIds ?? [];
+              const next = nextOn
+                ? current.includes(agent.id)
+                  ? current
+                  : [...current, agent.id]
+                : current.filter((id) => id !== agent.id);
+              patch({ assignedAgentIds: next });
+            };
+            const runBusy =
+              agent.id === "content.posts.gap-check" ? postsGapBusy : safeFixBusy;
+            const runNow = () => {
+              if (agent.id === "content.posts.gap-check") {
+                startPostsContentGap();
+                return;
+              }
+              startSafeFix();
+            };
+            return (
+              <div
+                key={agent.id}
+                className={cn(
+                  PROPERTIES_OVERVIEW_DL_ROW_CLASS,
+                  "h-11 max-h-11 min-h-11 w-full min-w-0 items-center overflow-hidden py-1",
+                )}
               >
-                Library
-              </button>
-            }
-          />
-          <dl className={PROPERTIES_OVERVIEW_DL_CLASS}>
-            {ASSIGNABLE_SITE_AGENTS.map((agent) => {
-              const assigned = (site.assignedAgentIds ?? []).includes(agent.id);
-              const setAssigned = (nextOn: boolean) => {
-                if (!onPatchSite) return;
-                const current = site.assignedAgentIds ?? [];
-                const next = nextOn
-                  ? current.includes(agent.id)
-                    ? current
-                    : [...current, agent.id]
-                  : current.filter((id) => id !== agent.id);
-                patch({ assignedAgentIds: next });
-              };
-              const runNow = () => {
-                startSafeFix();
-              };
-              return (
-                <div
-                  key={agent.id}
-                  className={cn(
-                    PROPERTIES_OVERVIEW_DL_ROW_CLASS,
-                    "h-11 max-h-11 min-h-11 w-full items-center overflow-hidden py-1",
-                  )}
+                <dt
+                  className={PROPERTIES_OVERVIEW_DL_LABEL_CLASS}
+                  style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
                 >
-                  <dt
-                    className={PROPERTIES_OVERVIEW_DL_LABEL_CLASS}
-                    style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
+                  {agent.label}
+                </dt>
+                <dd className="ml-auto flex h-8 shrink-0 items-center gap-0.5">
+                  <SkillRunClockButton
+                    skillLabel={agent.label}
+                    schedule={site.skillSchedules?.[agent.id]}
+                    onScheduleChange={(next: SkillRunSchedule) => {
+                      if (!onPatchSite) return;
+                      const current = site.assignedAgentIds ?? [];
+                      patch({
+                        assignedAgentIds: current.includes(agent.id) ? current : [...current, agent.id],
+                        skillSchedules: {
+                          ...(site.skillSchedules ?? {}),
+                          [agent.id]: next,
+                        },
+                      });
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className={ASSIGNED_AGENT_MODE_BTN_CLASS}
+                    data-active={!assigned ? "true" : "false"}
+                    aria-pressed={!assigned}
+                    disabled={!onPatchSite}
+                    onClick={() => setAssigned(false)}
                   >
-                    {agent.label}
-                  </dt>
-                  <dd className="ml-auto flex h-8 shrink-0 items-center gap-0.5">
-                    <button
-                      type="button"
-                      className={ASSIGNED_AGENT_MODE_BTN_CLASS}
-                      data-active={!assigned ? "true" : "false"}
-                      aria-pressed={!assigned}
-                      disabled={!onPatchSite}
-                      onClick={() => setAssigned(false)}
-                    >
-                      Off
-                    </button>
-                    <button
-                      type="button"
-                      className={ASSIGNED_AGENT_MODE_BTN_CLASS}
-                      data-active={assigned ? "true" : "false"}
-                      aria-pressed={assigned}
-                      disabled={!onPatchSite}
-                      onClick={() => setAssigned(true)}
-                    >
-                      Auto
-                    </button>
-                    <button
-                      type="button"
-                      className={ASSIGNED_AGENT_MODE_BTN_CLASS}
-                      aria-label={`Run ${agent.label} now`}
-                      aria-busy={safeFixBusy}
-                      disabled={safeFixBusy}
-                      onClick={runNow}
-                    >
-                      Run
-                    </button>
-                  </dd>
-                </div>
-              );
-            })}
-          </dl>
-        </section>
-      </div>
+                    Off
+                  </button>
+                  <button
+                    type="button"
+                    className={ASSIGNED_AGENT_MODE_BTN_CLASS}
+                    data-active={assigned ? "true" : "false"}
+                    aria-pressed={assigned}
+                    disabled={!onPatchSite}
+                    onClick={() => setAssigned(true)}
+                  >
+                    Auto
+                  </button>
+                  <button
+                    type="button"
+                    className={ASSIGNED_AGENT_MODE_BTN_CLASS}
+                    aria-label={`Run ${agent.label} now`}
+                    aria-busy={runBusy}
+                    disabled={runBusy}
+                    onClick={runNow}
+                  >
+                    Run
+                  </button>
+                </dd>
+              </div>
+            );
+          })}
+        </dl>
+      </section>
     </div>
   );
 }

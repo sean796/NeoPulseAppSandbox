@@ -29,8 +29,15 @@ class Neo_Pulse_App_Agent_Run_Harness_Post_Creator {
 
 		$site_id = trim( (string) ( $contract['siteId'] ?? $run['context']['siteId'] ?? '' ) );
 		$site    = $site_id !== '' ? Neo_Pulse_App_Task_Execution_Site_Resolver::resolve_by_id( $site_id ) : null;
-		if ( ! $site ) {
+		$plan_site = isset( $plan['site'] ) && is_array( $plan['site'] ) ? $plan['site'] : null;
+		if ( is_array( $plan_site ) ) {
+			$site = is_array( $site ) ? array_merge( $site, $plan_site ) : $plan_site;
+		}
+		if ( ! is_array( $site ) || trim( (string) ( $site['siteUrl'] ?? '' ) ) === '' ) {
 			throw new Exception( 'WordPress site not found for server post creator run.' );
+		}
+		if ( trim( (string) ( $site['username'] ?? '' ) ) === '' || trim( (string) ( $site['appPassword'] ?? '' ) ) === '' ) {
+			throw new Exception( 'WordPress site credentials missing on post creator task.' );
 		}
 
 		switch ( $phase ) {

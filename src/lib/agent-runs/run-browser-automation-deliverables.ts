@@ -1,7 +1,6 @@
 import type { AgentRun } from "@/lib/agent-runs-types";
 import { commitAgentRunDeliverable } from "@/lib/agent-runs/commit-agent-run-deliverable";
 import type { BrowserAutomationProgressDeliverable } from "@/lib/browser-automation-api";
-import { fetchWorkflowStepOutputs } from "@/lib/workflow/workflow-api";
 import type { TaskArchiveFileInput } from "@/lib/task-execution-archive";
 
 export function progressDeliverableCommitSignature(
@@ -22,7 +21,6 @@ export async function commitProgressDeliverable(
   state: {
     saveLocalArchive: boolean;
     committedDeliverableSignatures: Set<string>;
-    workflowOutputs?: Awaited<ReturnType<typeof fetchWorkflowStepOutputs>>;
   },
 ): Promise<void> {
   const content = String(item.content ?? item.base64 ?? "").trim();
@@ -31,14 +29,6 @@ export async function commitProgressDeliverable(
   const signature = progressDeliverableCommitSignature(item, content.length);
   if (state.committedDeliverableSignatures.has(signature)) return;
   state.committedDeliverableSignatures.add(signature);
-
-  if (!state.workflowOutputs) {
-    const workflowId = Number(run.context?.workflowId ?? run.plan?.workflowId ?? 0);
-    const workflowRunId = Number(run.context?.workflowRunId ?? run.plan?.workflowRunId ?? 0);
-    if (workflowId > 0 && workflowRunId > 0) {
-      state.workflowOutputs = await fetchWorkflowStepOutputs(run.teamId, workflowId, workflowRunId);
-    }
-  }
 
   const filename = String(item.filename ?? "deliverable").trim() || "deliverable";
   const mime = String(item.mime ?? "application/octet-stream").trim() || "application/octet-stream";
@@ -54,7 +44,6 @@ export async function commitProgressDeliverable(
     files: [{ fileName: filename, mime, content }],
     textPreview: stepLabel,
     saveLocalArchive: state.saveLocalArchive,
-    workflowOutputs: state.workflowOutputs,
     replaceOutput,
   });
 }
@@ -158,13 +147,6 @@ export async function persistBrowserDeliverables(
     groups.set(stepKey, bucket);
   }
 
-  const workflowId = Number(run.context?.workflowId ?? run.plan?.workflowId ?? 0);
-  const workflowRunId = Number(run.context?.workflowRunId ?? run.plan?.workflowRunId ?? 0);
-  const workflowOutputs =
-    workflowId > 0 && workflowRunId > 0
-      ? await fetchWorkflowStepOutputs(run.teamId, workflowId, workflowRunId)
-      : undefined;
-
   for (const [stepKey, items] of groups) {
     const batchFiles: TaskArchiveFileInput[] = [];
     for (const item of items) {
@@ -182,7 +164,6 @@ export async function persistBrowserDeliverables(
       files: batchFiles,
       textPreview: stepLabel,
       saveLocalArchive,
-      workflowOutputs,
     });
     files.push(...batchFiles);
   }

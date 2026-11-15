@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { CSVRow } from "@/lib/bulk/bulk-csv-parser";
 import { postCreatorPayloadFromContract } from "@/lib/post-creator/post-creator-agent-harness";
-import { applyUpstreamContextToPostCreatorPayload } from "@/lib/workflow/upstream-research-facts";
+import { applyUpstreamContextToPostCreatorPayload } from "@/lib/post-creator/upstream-research-facts";
 
 describe("useUpstreamContext", () => {
   it("defaults off and does not inject previous-agent facts", () => {

@@ -36,6 +36,14 @@ import {
   wordpressSiteCanonicalName,
   wordpressSiteMenuDisplayName,
 } from "@/lib/wordpress-site-display-name";
+import { propertyDashboardPath } from "@/lib/properties/property-dashboard-slug";
+
+/** Profile skills stay on the client URL. They do not switch the header connected site. */
+const PROFILE_SKILL_KINDS = new Set([
+  "blog_ideas_studio",
+  "posts_content_gap_check",
+  "semrush_safe_fix",
+]);
 
 function subscribe(listener: () => void): () => void {
   return subscribeWorkspaceTasks(listener);
@@ -72,6 +80,23 @@ export function TaskManagerProvider({ children }: { children: ReactNode }) {
       const clientName = site
         ? wordpressSiteMenuDisplayName(site) || wordpressSiteCanonicalName(site)
         : "";
+
+      // Profile skills: open Tasks only. Stay on (or return to) the client URL.
+      // Do not read or change the header connected site.
+      if (PROFILE_SKILL_KINDS.has(task.kind)) {
+        setSidebarPanel("tasks");
+        writeSidebarPanel("tasks");
+        setSidebarOpen(true);
+        writeSidebarOpen(true);
+        const clientHref = site
+          ? propertyDashboardPath(site)
+          : task.href?.startsWith("/dashboard/")
+            ? task.href
+            : "";
+        if (clientHref) appNavigate(clientHref);
+        return;
+      }
+
       if (siteId) {
         setActiveWordPressSiteId(siteId);
       }

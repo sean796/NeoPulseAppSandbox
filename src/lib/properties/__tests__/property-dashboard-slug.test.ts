@@ -5,6 +5,7 @@ import {
   propertyDashboardSlug,
   propertyDashboardSlugFromName,
   propertySlugFromDashboardPath,
+  resolveClientFromClientUrl,
 } from "@/lib/properties/property-dashboard-slug";
 
 describe("propertyDashboardSlugFromName", () => {
@@ -68,5 +69,36 @@ describe("findSiteByDashboardSlug", () => {
 
   it("returns undefined when unknown", () => {
     expect(findSiteByDashboardSlug(sites, "missing")).toBeUndefined();
+  });
+});
+
+describe("resolveClientFromClientUrl", () => {
+  const fullSites = [
+    {
+      id: "1",
+      name: "KWB",
+      siteUrl: "https://kwbllp.com",
+      username: "u",
+      appPassword: "p",
+    },
+    {
+      id: "2",
+      name: "Advance Blinds",
+      siteUrl: "https://advanceblindsanddrapery.com",
+      username: "u",
+      appPassword: "p",
+    },
+  ] as const;
+
+  it("resolves every client from /dashboard/{slug}", () => {
+    expect(resolveClientFromClientUrl("/dashboard/kwb", fullSites as never)?.id).toBe("1");
+    expect(
+      resolveClientFromClientUrl("/dashboard/advance-blinds", fullSites as never)?.id,
+    ).toBe("2");
+  });
+
+  it("fails visibly for unknown or empty client URL", () => {
+    expect(resolveClientFromClientUrl("/dashboard", fullSites as never)).toBeNull();
+    expect(resolveClientFromClientUrl("/dashboard/missing", fullSites as never)).toBeNull();
   });
 });

@@ -30,6 +30,7 @@ export function resolveAgentRunRecipeKey(
     key === "browser_automation" ||
     key === "content_gap_check" ||
     key === "semrush_safe_fix" ||
+    key === "posts_content_gap_check" ||
     key === "content_optimizer_bulk" ||
     key === "overview_pages_meta_batch"
   ) {
@@ -69,6 +70,7 @@ export function agentRunProgressHeading(recipeKey: string): string {
   if (recipeKey === "browser_automation") return "Browser automation";
   if (recipeKey === "content_gap_check") return "Content gap check";
   if (recipeKey === "semrush_safe_fix") return "Semrush safe fix";
+  if (recipeKey === "posts_content_gap_check") return "Posts content gap check";
   if (recipeKey === "entity_page_creator" || recipeKey === "entity_generator" || recipeKey === "sap_generator") return "Progress";
   if (recipeKey === "post_creator") return "";
   return "Current post";
@@ -100,6 +102,7 @@ function isKnownNonOptimizerRecipe(recipeKey: string): recipeKey is AgentRunReci
     recipeKey === "browser_automation" ||
     recipeKey === "content_gap_check" ||
     recipeKey === "semrush_safe_fix" ||
+    recipeKey === "posts_content_gap_check" ||
     recipeKey === "content_optimizer_bulk" ||
     recipeKey === "overview_pages_meta_batch"
   );

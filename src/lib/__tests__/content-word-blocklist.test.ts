@@ -145,14 +145,19 @@ describe("sanitizeForbiddenHeadingTitle", () => {
 });
 
 describe("appendUniversalContentRulesToSystemPrompt", () => {
-  it("prepends blacklist once and is idempotent", () => {
+  it("prepends blacklist and Humanizer once and is idempotent", () => {
     const input = "You are a writer.";
     const once = appendUniversalContentRulesToSystemPrompt(input);
     expect(once).toMatch(/^(\[FORBIDDEN_WORDS - MANDATORY GLOBAL\])/);
     expect(once).toMatch(/WORD BLACKLIST \(mandatory/i);
+    expect(once).toMatch(/HUMANIZER \(mandatory/i);
     expect(once).toContain(input);
     expect(once).toMatch(/Obey the WORD BLACKLIST block in the user message/i);
     expect(once.match(/WORD BLACKLIST \(mandatory/g)?.length).toBe(1);
+    expect(once.match(/HUMANIZER \(mandatory/g)?.length).toBe(1);
+    expect(once.indexOf("WORD BLACKLIST (mandatory")).toBeLessThan(
+      once.indexOf("HUMANIZER (mandatory"),
+    );
     const twice = appendUniversalContentRulesToSystemPrompt(once);
     expect(twice).toBe(once);
   });

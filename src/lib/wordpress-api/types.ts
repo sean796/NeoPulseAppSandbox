@@ -226,6 +226,8 @@ export interface WordPressPostContent {
   // This is reliable, unlike sitemap subtypes which can be inconsistent
   postTypeEndpoint?: string; // e.g., 'posts', 'pages', 'service-area'
   postTypeSubtype?: string; // Original subtype from resolution (for reference)
+  /** WordPress featured image source URL when the post has one. */
+  featuredImageUrl?: string;
   // Complete WordPress API response with all fields (featured_media, ACF, meta, author, etc.)
   fullData?: WordPressPostFullData;
 }

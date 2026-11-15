@@ -212,10 +212,6 @@ trait Neo_Pulse_App_Platform_Data_Intent_Checklist_Trait_Planning {
 	 * @return array<string,mixed>
 	 */
 	public static function plan( string $message, array $history, array $body, ?array $module_research = null ): array {
-		if ( self::is_ui_help_message( $message, $body ) ) {
-			return self::plan_workspace_context( $message, $body, $module_research );
-		}
-
 		$fast = self::fast_path_plan( $message, $history );
 		if ( $fast !== null ) {
 			return self::constrain_plan_entity_scope( $fast, $message );

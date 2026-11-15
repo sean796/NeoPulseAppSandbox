@@ -5,8 +5,6 @@ import type {
 } from "@/lib/platform-data/types";
 
 export type AssistSubmode = "ask" | "plan" | "build";
-export type PageContentMode = "seo_blocks" | "elementor_widgets";
-export type AssistTargetScope = "page" | "site";
 
 export type AssistHistoryRole = "user" | "assistant";
 
@@ -21,7 +19,6 @@ export type AssistNavigateTarget =
   | { kind: "managerTab"; tab: string }
   | { kind: "generatorSection"; section: string }
   | { kind: "dashboardCluster"; cluster: string }
-  | { kind: "pulseForge"; hash: string }
   | { kind: "organicReporting" }
   | { kind: "agentRuns"; runId?: number };
 
@@ -137,9 +134,6 @@ export type PulseContextPayload = {
   researchSection?: string;
   sitemapMode?: string;
   contentOptimizerSection?: string;
-  forgeSection?: string;
-  forgeWorkflowId?: number;
-  forgeRecipeKeyword?: string;
   pulseAppUrl: string;
   siteId: string;
   siteName: string;
@@ -221,8 +215,6 @@ export type AssistRequestPayload = {
   history: AssistHistoryMessage[];
   admin_mode: "backend";
   admin_submode: AssistSubmode;
-  page_content_mode: PageContentMode;
-  target_scope: AssistTargetScope;
   post_id: number;
   page_url: string;
   page_title: string;
@@ -234,9 +226,9 @@ export type AssistRequestPayload = {
 
 export const BACKEND_STARTERS = [
   "What can I do on this tab?",
-  "How do I bulk-optimize meta on Overview?",
-  "What property am I working on?",
-  "Explain Page vs Site scope",
+  "How do I run Opt AISEO bulk meta?",
+  "How do I use Blog Studio?",
+  "What does the Semrush Safe Fix skill do?",
 ] as const;
 
 export const ADMIN_SUBMODE_LABELS: Record<AssistSubmode, string> = {
@@ -249,9 +241,4 @@ export const SUBMODE_GREETING: Record<AssistSubmode, string> = {
   ask: "Ask anything about NEO Pulse. Read-only.",
   plan: "Preview a plan before you act. No writes yet.",
   build: "Build executes approved actions such as creating team tasks.",
-};
-
-export const PAGE_CONTENT_MODE_LABELS: Record<PageContentMode, string> = {
-  seo_blocks: "SEO blocks",
-  elementor_widgets: "Elementor",
 };

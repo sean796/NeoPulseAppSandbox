@@ -21,7 +21,9 @@ import {
 } from "@/lib/master-instructions-openrouter-summarize";
 import { loadApiKey } from "@/lib/api";
 
-import { Button, FileInput, RowButton, Progress, SelectField } from "@/ui";
+import { Button, FileInput, RowButton, Progress } from "@/ui";
+import { MasterRulesFilesDialog } from "./MasterRulesFilesDialog";
+import { PROPERTIES_OVERVIEW_PANEL_TITLE_CLASS } from "./wordpress-properties-surfaces";
 
 const COPY = "font-sans text-base text-white";
 
@@ -57,12 +59,10 @@ interface MasterInstructionsSectionProps {
   siteUrl?: string;
   siteName?: string;
   disabled?: boolean;
-  /** `dropdown` fits the property screen: file picker, preview, pencil-gated add/remove. */
+  /** `dropdown` fits the property screen: header icon, fixed drop zone, file list in a dialog. */
   layout?: "page" | "dropdown";
   /** When layout is dropdown, pencil turns on add/remove. */
   editing?: boolean;
-  /** Fade file names only (not drop box chrome). */
-  fadeKey?: string;
 }
 
 export const MasterInstructionsSection: React.FC<MasterInstructionsSectionProps> = ({
@@ -72,13 +72,12 @@ export const MasterInstructionsSection: React.FC<MasterInstructionsSectionProps>
   disabled = false,
   layout = "page",
   editing = false,
-  fadeKey,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const dragDepthRef = useRef(0);
   const [sources, setSources] = useState<MasterInstructionSource[]>([]);
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [filesOpen, setFilesOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [summarizingPhase, setSummarizingPhase] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -296,13 +295,10 @@ export const MasterInstructionsSection: React.FC<MasterInstructionsSectionProps>
     .map((s) => `=== FILE: ${s.name} ===\n${s.content}`)
     .join("\n\n");
 
-  const safeIndex = sources.length === 0 ? 0 : Math.min(selectedIndex, sources.length - 1);
-  const selectedSource = sources[safeIndex];
-
   if (layout === "dropdown") {
     return (
       <div
-        className={`flex min-h-0 w-full flex-1 flex-col gap-1.5 ${COPY}`}
+        className={`mt-2 flex w-full flex-col gap-2 ${COPY}`}
         onDragEnter={onDropZoneDragEnter}
         onDragLeave={onDropZoneDragLeave}
         onDragOver={onDropZoneDragOver}
@@ -316,6 +312,17 @@ export const MasterInstructionsSection: React.FC<MasterInstructionsSectionProps>
           disabled={disabled || busy}
           tabIndex={-1}
         />
+        <div className="flex h-8 shrink-0 items-center">
+          <h3 className={PROPERTIES_OVERVIEW_PANEL_TITLE_CLASS}>Master Rules</h3>
+          <button
+            type="button"
+            className="ml-auto inline-flex h-8 w-8 shrink-0 items-center justify-center text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label="Open master rules files"
+            onClick={() => setFilesOpen(true)}
+          >
+            <FileText className="h-4 w-4" aria-hidden />
+          </button>
+        </div>
         <div
           role="button"
           tabIndex={disabled || busy ? -1 : 0}
@@ -345,34 +352,15 @@ export const MasterInstructionsSection: React.FC<MasterInstructionsSectionProps>
             </>
           )}
         </div>
-        {sources.length > 0 ? (
-          <ul className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto" aria-label="Master rule files">
-            {sources.map((source, index) => (
-              <li
-                key={`${source.name}-${index}`}
-                className="flex h-8 shrink-0 items-center justify-between gap-2 bg-black px-2"
-              >
-                <span
-                  key={fadeKey ? `${fadeKey}-${source.name}` : source.name}
-                  className={`min-w-0 truncate text-base text-white${fadeKey ? " properties-overview-edit-fade" : ""}`}
-                >
-                  {source.name}
-                </span>
-                {editing ? (
-                  <Button
-                    type="button"
-                    variant="quiet"
-                    disabled={disabled || busy}
-                    aria-label={`Remove ${source.name}`}
-                    onClick={() => removeAt(index)}
-                  >
-                    <Trash2 className="h-4 w-4" aria-hidden />
-                  </Button>
-                ) : null}
-              </li>
-            ))}
-          </ul>
-        ) : null}
+        <MasterRulesFilesDialog
+          open={filesOpen}
+          onOpenChange={setFilesOpen}
+          sources={sources}
+          disabled={disabled}
+          editing={editing}
+          busy={busy}
+          onRemoveAt={removeAt}
+        />
       </div>
     );
   }

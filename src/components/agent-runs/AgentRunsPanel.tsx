@@ -4,8 +4,6 @@ import { useAgentRunsContext } from "@/contexts/use-agent-runs-context";
 import { fetchAgentRun } from "@/lib/agent-runs-api";
 import {
   downloadAgentRunsShareBundle,
-  downloadWorkflowRunAgentLogs,
-  workflowRunIdFromAgentRun,
 } from "@/lib/agent-runs/agent-run-log-download";
 import { isAgentRunResumable } from "@/lib/agent-runs/agent-run-checkpoint";
 import {
@@ -223,24 +221,8 @@ export function AgentRunsPanel() {
     [allSiteGroups, isAllClientsFilter],
   );
 
-  const workflowBatch = useMemo(() => {
-    const workflowRunIds = new Map<number, number>();
-    for (const run of runs) {
-      const workflowRunId = workflowRunIdFromAgentRun(run);
-      if (!workflowRunId) continue;
-      workflowRunIds.set(workflowRunId, (workflowRunIds.get(workflowRunId) ?? 0) + 1);
-    }
-    let best: { workflowRunId: number; count: number } | null = null;
-    for (const [workflowRunId, count] of workflowRunIds) {
-      if (!best || count > best.count) best = { workflowRunId, count };
-    }
-    return best;
-  }, [runs]);
-
-  const showAllLogsDownload = isAllClientsFilter
-    ? allClientRows.length > 0
-    : Boolean(workflowBatch && workflowBatch.count > 1);
-  const allLogsCount = isAllClientsFilter ? allClientRows.length : (workflowBatch?.count ?? 0);
+  const showAllLogsDownload = isAllClientsFilter && allClientRows.length > 0;
+  const allLogsCount = allClientRows.length;
 
   const alternateClientHint = useMemo(() => {
     if (!selectedClient || selectedClient.runCount > 0) return null;
@@ -297,22 +279,13 @@ export function AgentRunsPanel() {
                       }
                       onClick={() => {
                         if (!showAllLogsDownload) return;
-                        if (isAllClientsFilter) {
-                          void downloadAgentRunsShareBundle(
-                            activeTeam?.id ?? null,
-                            allClientRows.map(({ client, run }) => ({
-                              run,
-                              clientName: client.label,
-                            })),
-                            { filenamePrefix: "agent-runs-all-clients" },
-                          );
-                          return;
-                        }
-                        if (!workflowBatch) return;
-                        void downloadWorkflowRunAgentLogs(
+                        void downloadAgentRunsShareBundle(
                           activeTeam?.id ?? null,
-                          workflowBatch.workflowRunId,
-                          runs,
+                          allClientRows.map(({ client, run }) => ({
+                            run,
+                            clientName: client.label,
+                          })),
+                          { filenamePrefix: "agent-runs-all-clients" },
                         );
                       }}
                     >

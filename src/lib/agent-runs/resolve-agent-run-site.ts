@@ -170,7 +170,7 @@ export async function loadSitesForAgentRun(
   if (poolHasAgentRunSite(run, afterRestore)) return afterRestore;
 
   const mirror = await fetchWordPressSitesMirror();
-  return mergeSitePool([...afterRestore, ...mirror]);
+  return mergeSitePool([...afterRestore, ...(mirror.ok ? mirror.sites : [])]);
 }
 
 function siteHasPublicUrl(site: WordPressSite): boolean {

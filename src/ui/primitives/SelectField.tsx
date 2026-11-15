@@ -28,6 +28,7 @@ export type SelectFieldProps = {
   disabled?: boolean;
   /** "data" = green on black. */
   tone?: "default" | "data";
+  contentClassName?: string;
 };
 
 /** Dropdown styled as a flat well. Shows the full selected label. */
@@ -39,13 +40,14 @@ export function SelectField({
   width = "md",
   disabled,
   tone = "default",
+  contentClassName,
 }: SelectFieldProps) {
   return (
     <Select value={value} onValueChange={onValueChange} disabled={disabled}>
       <SelectTrigger aria-label={placeholder} className={cn(tone === "data" ? UI_SELECT_TRIGGER_DATA : UI_SELECT_TRIGGER, SELECT_WIDTH[width])}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className={contentClassName}>
         {options.map((option) => (
           <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
             {option.icon ? <option.icon className="mr-2 inline h-4 w-4 shrink-0" /> : null}{option.label}

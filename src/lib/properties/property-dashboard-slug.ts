@@ -58,3 +58,18 @@ export function findSiteByDashboardSlug(
   if (!needle) return undefined;
   return sites.find((s) => propertyDashboardSlug(s) === needle);
 }
+
+/**
+ * Client URL = `/dashboard/{slug}` for the open profile.
+ * Skills resolve the client from this path. The header connected site is not used.
+ */
+export function resolveClientFromClientUrl(
+  pathname: string,
+  sites: readonly WordPressSite[],
+): WordPressSite | null {
+  const slug = propertySlugFromDashboardPath(pathname);
+  if (!slug) return null;
+  const match = findSiteByDashboardSlug(sites, slug);
+  if (!match) return null;
+  return sites.find((s) => s.id === match.id) ?? null;
+}

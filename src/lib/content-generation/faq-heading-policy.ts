@@ -20,6 +20,14 @@ const FAQ_STYLE_PREFIXES = [
   "q and a",
 ];
 
+/**
+ * Explicit `[FAQ]` feature marker only.
+ * Prose that mentions FAQs (`[LIST]: common tax FAQs`) is not this marker.
+ */
+export function featureIsExplicitFaqMarker(feature: string): boolean {
+  return /^\[faq\]/i.test(feature.trim());
+}
+
 /** True when a body H2 title duplicates the appended flo-faq section. */
 export function isFaqStyleHeadingTitle(title: string): boolean {
   const key = normalizeHeadingKey(title);

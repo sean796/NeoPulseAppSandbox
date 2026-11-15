@@ -2,7 +2,7 @@ import { logger } from "@/lib/logger";
 import { TooltipProvider } from "@/ui";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AuthProvider } from "@/contexts/AuthProvider";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -14,7 +14,7 @@ import { LegacyHashRedirect } from "@/components/LegacyHashRedirect";
 import { MANAGER_TAB_ROUTES } from "@/lib/manager-tab-routes";
 
 /** Tabs whose workspace owns deeper path segments (sections, runs, docs). */
-const SUBPATH_TABS = new Set(["dashboard", "generator", "pulse-forge", "pulse-host", "api"]);
+const SUBPATH_TABS = new Set(["dashboard", "generator", "pulse-host", "api"]);
 
 import HuddlePopupPage from "./pages/HuddlePopupPage";
 import OrganicDashboardPage from "./pages/OrganicDashboardPage";
@@ -103,6 +103,14 @@ const App = () => {
                             <div className="flex h-dvh max-h-dvh min-h-0 flex-1 flex-col overflow-hidden">
                               <HuddlePopupPage />
                             </div>
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/pulse-forge/*"
+                        element={
+                          <ProtectedRoute>
+                            <Navigate to="/dashboard" replace />
                           </ProtectedRoute>
                         }
                       />

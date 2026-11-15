@@ -12,7 +12,7 @@ export function MobileAgentsScreen({
   const { setSidebarPanel, selectRun } = useAgentRunsContext();
 
   useEffect(() => {
-    setSidebarPanel("agents");
+    setSidebarPanel("tasks");
   }, [setSidebarPanel]);
 
   useEffect(() => {

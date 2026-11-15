@@ -1,3 +1,5 @@
+import { BOOTSTRAP_SITES } from "virtual:neo-pulse-sites-bootstrap";
+import { hydrateSitesBootstrap } from "@/components/integrations/storage";
 import { createRoot } from "react-dom/client";
 import AppMobile from "./AppMobile.tsx";
 import "./index.css";
@@ -5,6 +7,8 @@ import { logger } from "@/lib/logger";
 import "@/components/pulse-assist/pulse-assist-theme.css";
 import "@/components/agent-runs/agent-runs-theme.css";
 import "@/components/mobile-app/mobile-app-theme.css";
+
+hydrateSitesBootstrap(BOOTSTRAP_SITES);
 
 const rootElement = document.getElementById("root");
 

@@ -7,7 +7,7 @@ order: 0
 
 <!-- manual -->
 
-The automation recipe catalog ships as JSON files under `wordpress-plugins/neo-pulse-app/recipes/`. Each recipe is a WHEN/THEN SEO automation template that installs as a team automation project in **Pulse Forge**.
+The automation recipe catalog ships as JSON files under `wordpress-plugins/neo-pulse-app/recipes/`. Each recipe is a WHEN/THEN SEO automation template that installs as a site-bound team automation project.
 
 ## Routes
 
@@ -59,7 +59,7 @@ Calendar editorial recipes (`monthly-post-creator`, `monthly-3-posts-editorial`)
 
 ## UI
 
-**Teams → Pulse Forge** lists the recipe library, installed automations, and the **Automation Planner** (WHEN/THEN visual editor plus JSON tab). Tasks keeps manual projects and My Tasks only.
+Pulse Assist and the Tasks automation APIs install recipes as automation projects. Manual projects and My Tasks stay under **Teams → Tasks**.
 
 ## Recipe JSON shape
 

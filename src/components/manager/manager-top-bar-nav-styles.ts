@@ -1,3 +1,4 @@
+import { WORKSPACE_PILL_ACTIVE } from "@/components/shared/workspace-pill-styles";
 import { cn } from "@/lib/utils";
 
 /** Square grey nav controls for the manager top bar (#000 background). */
@@ -38,13 +39,16 @@ export const MANAGER_NAV_DROPDOWN_PANEL = cn(
 export const MANAGER_NAV_DROPDOWN_ITEM_BASE =
   "cursor-pointer rounded-none px-3 py-2.5 text-base font-normal outline-none transition-colors focus:!bg-ui-field-hover/90 focus:!text-foreground data-[highlighted]:!bg-ui-field-hover/90 data-[highlighted]:!text-foreground";
 
-/** Subtle stripe for rows; active row matches workspace pill (primary + black text). */
+/** Subtle stripe for rows; active row matches workspace pill (muted grey). */
 export const managerNavDropdownRowClass = (index: number, selected: boolean) =>
   cn(
     !selected && (index % 2 === 0 ? "bg-black" : "bg-ui-field/55"),
     !selected && "text-muted-foreground hover:bg-ui-field-hover/90 hover:text-foreground",
     selected &&
-      "bg-primary text-black hover:bg-primary hover:text-black focus:!bg-primary focus:!text-black data-[highlighted]:!bg-primary data-[highlighted]:!text-black",
+      cn(
+        WORKSPACE_PILL_ACTIVE,
+        "focus:!bg-zinc-600 focus:!text-white data-[highlighted]:!bg-zinc-600 data-[highlighted]:!text-white",
+      ),
   );
 
 /** Square grey icon buttons on the top bar (Knowledge Base, etc.). */

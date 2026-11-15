@@ -1,4 +1,4 @@
-import { BACKEND_API_BASE } from "@/lib/wordpress-api/connection";
+import { resolveBackendApiBase } from "@/lib/wordpress-api/connection";
 import { neoPulseApiHeaders } from "@/lib/neo-pulse-api-headers";
 import type { GscCompetitorDateRange, GscSiteQueryRow } from "@/lib/competitor-research/types";
 
@@ -61,7 +61,7 @@ export async function fetchCompetitorGscQueries(options: {
       ? { startDate: options.startDate, endDate: options.endDate }
       : getDefaultGscCompetitorDateRange();
 
-  const base = (BACKEND_API_BASE || "").replace(/\/$/, "");
+  const base = (resolveBackendApiBase() || "").replace(/\/$/, "");
   const url = `${base}/api/gsc/fetch-queries`;
 
   try {

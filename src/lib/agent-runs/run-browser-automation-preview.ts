@@ -3,7 +3,6 @@ import type { AgentRun, AgentRunStepArtifact } from "@/lib/agent-runs-types";
 import { agentRunBrowserPreviewDataUrl } from "@/lib/agent-runs/agent-run-browser-preview";
 import { patchAgentRunInList } from "@/lib/agent-runs/agent-runs-local-patch";
 import type { BrowserAutomationJobProgress } from "@/lib/browser-automation-api";
-import { fetchWorkflowStepOutputs } from "@/lib/workflow/workflow-api";
 import { commitProgressDeliverable } from "@/lib/agent-runs/run-browser-automation-deliverables";
 
 async function patchBrowserPreviewLocally(
@@ -61,7 +60,6 @@ export async function handleAutomationProgress(
     lastPreviewLabel: string;
     saveLocalArchive: boolean;
     committedDeliverableSignatures: Set<string>;
-    workflowOutputs?: Awaited<ReturnType<typeof fetchWorkflowStepOutputs>>;
   },
 ): Promise<void> {
   const label = progress.label?.trim();

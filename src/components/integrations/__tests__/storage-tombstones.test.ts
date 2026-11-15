@@ -3,10 +3,8 @@ import {
   getDeletedSitesTombstones,
   getStoredSites,
   isSiteTombstoned,
-  PROTECTED_ACTIVE_CLIENT_NAMES,
   recordDeletedSite,
 } from "../storage";
-import { WORDPRESS_SITES_STORAGE_KEY } from "../types";
 
 describe("storage tombstone and recovery hardening", () => {
   let store: Record<string, string>;
@@ -31,12 +29,21 @@ describe("storage tombstone and recovery hardening", () => {
     } satisfies Storage);
   });
 
-  it("never tombstones protected active clients even if partial match occurs", () => {
-    expect(isSiteTombstoned({ name: "In the Shade", siteUrl: "https://intheshadeflorida.com" })).toBe(false);
-    expect(isSiteTombstoned({ name: "Advance Blinds", siteUrl: "https://advanceblindsanddrapery.com" })).toBe(false);
-    expect(isSiteTombstoned({ name: "Blind Magic", siteUrl: "https://blindmagic.com" })).toBe(false);
-    expect(isSiteTombstoned({ name: "DM Interiors", siteUrl: "https://dminteriors.ca" })).toBe(false);
-    expect(isSiteTombstoned({ name: "KWB", siteUrl: "https://kwbllp.com" })).toBe(false);
+  it("records a delete for any property name", () => {
+    recordDeletedSite({
+      id: "wp-generic-1",
+      name: "Generic Property Alpha",
+      siteUrl: "https://generic-alpha.example",
+    });
+    const tombstones = getDeletedSitesTombstones();
+    expect(tombstones.some((t) => t.name === "generic property alpha")).toBe(true);
+    expect(
+      isSiteTombstoned({
+        id: "wp-generic-1",
+        name: "Generic Property Alpha",
+        siteUrl: "https://generic-alpha.example",
+      }),
+    ).toBe(true);
   });
 
   it("correctly tombstones dr. rebecca and ridgeline solar", () => {
@@ -49,21 +56,15 @@ describe("storage tombstone and recovery hardening", () => {
     store["neo-pulse-deleted-wp-sites-v1"] = JSON.stringify([
       { name: "", host: "" },
       { name: "   " },
-      { name: "in the shade" }, // should be filtered out because it is protected
+      { name: "generic property beta", host: "generic-beta.example" },
     ]);
 
     const cleaned = getDeletedSitesTombstones();
-    expect(cleaned.some((t) => t.name === "in the shade")).toBe(false);
     expect(cleaned.some((t) => !t.name && !t.host && !t.id)).toBe(false);
+    expect(cleaned.some((t) => t.name === "generic property beta")).toBe(true);
   });
 
-  it("refuses to record deletion of a protected client", () => {
-    recordDeletedSite({ name: "In the Shade", siteUrl: "https://intheshadeflorida.com" });
-    const tombstones = getDeletedSitesTombstones();
-    expect(tombstones.some((t) => t.name === "in the shade")).toBe(false);
-  });
-
-  it("returns an empty visible list when storage is empty (Wave 0: no bundled seed)", () => {
+  it("returns an empty visible list when storage is empty (no bundled seed)", () => {
     const sites = getStoredSites();
     expect(sites).toEqual([]);
   });

@@ -14,7 +14,6 @@ export type TasksNavSidebarProps = {
   onNewProject: () => void;
   onEditProject: (project: TaskProject) => void;
   onDeleteProject: (projectId: number) => void;
-  onOpenPulseForge?: () => void;
 };
 
 export function TasksNavSidebar({
@@ -26,7 +25,6 @@ export function TasksNavSidebar({
   onNewProject,
   onEditProject,
   onDeleteProject,
-  onOpenPulseForge,
 }: TasksNavSidebarProps): React.ReactElement {
   return (
     <aside className="flex h-full min-h-0 w-52 shrink-0 flex-col bg-black">
@@ -38,14 +36,6 @@ export function TasksNavSidebar({
         >
           My Tasks
         </RowButton>
-        {onOpenPulseForge ? (
-          <RowButton
-            type="button"
-            onClick={onOpenPulseForge}
-          >
-            Pulse Forge
-          </RowButton>
-        ) : null}
         <div className="mt-4 flex items-center justify-between gap-2 px-2">
           <p className="text-base font-semibold text-white">Projects</p>
           <Button

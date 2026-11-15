@@ -23,11 +23,13 @@ class Neo_Pulse_App_Sites_Sync {
 		'clientLogoUrl',
 		'clientLogoBoxTheme',
 		'assignedAgentIds',
+		'skillSchedules',
 	);
 
 	/** Fields preserved as arrays when omitted from a partial sync (not cast to string). */
 	private const PRESERVED_ARRAY_FIELDS = array(
 		'assignedAgentIds',
+		'skillSchedules',
 	);
 
 	/**

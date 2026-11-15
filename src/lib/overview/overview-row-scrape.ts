@@ -259,6 +259,7 @@ export function buildOverviewRowPatchFromInventory(
     ...base,
     ...(faq ? { faq } : {}),
     postId: inv.id,
+    featuredMediaId: inv.featuredMediaId && inv.featuredMediaId > 0 ? inv.featuredMediaId : row.featuredMediaId,
     postType: invMatch.subtype,
     wpDateGmt: inv.date_gmt?.trim() || row.wpDateGmt,
     ...(postContent ? { postContent } : {}),

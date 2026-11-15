@@ -161,6 +161,46 @@ class Neo_Pulse_App_Wp_Media {
 		}
 
 		$normalized = Neo_Pulse_App_Wp_Url_Normalize::normalize_url( $site_url );
+		$media_id   = isset( $body['mediaId'] ) ? (int) $body['mediaId'] : 0;
+		if ( $media_id > 0 ) {
+			$one = Neo_Pulse_App_Wp_Rest_Client::request(
+				'GET',
+				$normalized . '/wp-json/wp/v2/media/' . $media_id,
+				$username,
+				$app_password,
+				array(
+					'timeout' => 20,
+					'params'  => array(
+						'_fields' => 'id,title,alt_text,caption,source_url',
+					),
+				)
+			);
+			if ( $one['is_wp_error'] || (int) $one['status'] !== 200 || ! is_array( $one['body'] ) ) {
+				$msg = is_array( $one['body'] ) && ! empty( $one['body']['message'] ) ? (string) $one['body']['message'] : 'WordPress media lookup failed';
+				return array( 502, array( 'success' => false, 'error' => $msg ) );
+			}
+			$source_url = (string) ( $one['body']['source_url'] ?? '' );
+			if ( strpos( $source_url, 'http' ) !== 0 ) {
+				return array( 404, array( 'success' => false, 'error' => 'Featured image has no URL' ) );
+			}
+			$item_title = Neo_Pulse_App_Wp_Url_Normalize::rendered_text( $one['body']['title'] ?? '' );
+			return array(
+				200,
+				array(
+					'success' => true,
+					'media'   => array(
+						array(
+							'id'        => (int) ( $one['body']['id'] ?? $media_id ),
+							'title'     => trim( wp_strip_all_tags( $item_title ) ),
+							'alt'       => trim( (string) ( $one['body']['alt_text'] ?? '' ) ),
+							'caption'   => '',
+							'sourceUrl' => $source_url,
+						),
+					),
+					'count'   => 1,
+				),
+			);
+		}
 		$catalog    = array();
 		$page       = 1;
 

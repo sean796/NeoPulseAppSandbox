@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  featureIsExplicitFaqMarker,
   filterOutFaqStyleHeadingTitles,
   isFaqStyleHeadingTitle,
   FAQ_CONVERSATIONAL_RULE,
@@ -31,6 +32,15 @@ describe("isFaqStyleHeadingTitle", () => {
       "FAQ",
     ]);
     expect(out).toEqual(["Manual and Cordless Systems"]);
+  });
+});
+
+describe("featureIsExplicitFaqMarker", () => {
+  it("matches only an [FAQ] feature marker", () => {
+    expect(featureIsExplicitFaqMarker("[FAQ]: 2-column Q&A table")).toBe(true);
+    expect(featureIsExplicitFaqMarker("  [faq]: questions")).toBe(true);
+    expect(featureIsExplicitFaqMarker("[LIST]: common tax FAQs homeowners ask")).toBe(false);
+    expect(featureIsExplicitFaqMarker("[CUSTOM]: do not add an FAQ section")).toBe(false);
   });
 });
 

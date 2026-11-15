@@ -70,6 +70,7 @@ export function PropertiesWorkspaceToolbar({
               placeholder="Month"
               value={editorialSelectedMonthKey}
               onValueChange={setEditorialSelectedMonthKey}
+              contentClassName="max-h-none"
               options={monthOptions.map((opt) => ({ value: opt.key, label: opt.label }))}
             />
           </div>

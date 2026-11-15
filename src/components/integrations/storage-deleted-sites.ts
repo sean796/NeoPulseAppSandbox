@@ -14,29 +14,6 @@ const INITIAL_PERMANENTLY_DELETED: DeletedSiteRecord[] = [
   { name: "ridgeline solar", host: "ridgelinesolar.ca" },
 ];
 
-export const PROTECTED_ACTIVE_CLIENT_NAMES = new Set([
-  "advance blinds",
-  "blind magic",
-  "blinds west",
-  "custom shades of london",
-  "dm interiors",
-  "dm interiors & design",
-  "elite shutters & shadings",
-  "in the shade",
-  "interiors by laura",
-  "kwb",
-  "lindsey blinds",
-  "neo digital",
-  "phoenix painting",
-  "posh outdoors",
-  "shutter spot",
-  "superior blinds",
-  "superior blinds: home",
-  "superior tent rentals",
-  "tailored interiors",
-  "you junk it... i dump it",
-]);
-
 export function getDeletedSitesTombstones(): DeletedSiteRecord[] {
   if (typeof localStorage === "undefined") return INITIAL_PERMANENTLY_DELETED;
   try {
@@ -55,10 +32,6 @@ export function getDeletedSitesTombstones(): DeletedSiteRecord[] {
       const id = item.id?.trim();
 
       if (!name && !host && !id) {
-        needsClean = true;
-        continue;
-      }
-      if (name && PROTECTED_ACTIVE_CLIENT_NAMES.has(name)) {
         needsClean = true;
         continue;
       }
@@ -91,8 +64,6 @@ export function recordDeletedSite(site: {
   if (typeof localStorage === "undefined") return;
   try {
     const name = site.name?.trim().toLowerCase();
-    if (name && PROTECTED_ACTIVE_CLIENT_NAMES.has(name)) return;
-
     const tombstones = getDeletedSitesTombstones();
     const host = wordPressSiteHostKey(site.productionSiteUrl || site.siteUrl || "");
     const id = site.id?.trim();
@@ -116,12 +87,8 @@ export function isSiteTombstoned(
   site: { id?: string; name?: string; siteUrl?: string; productionSiteUrl?: string },
   tombstones?: DeletedSiteRecord[],
 ): boolean {
-  const name = site.name?.trim().toLowerCase();
-  if (name && PROTECTED_ACTIVE_CLIENT_NAMES.has(name)) {
-    return false;
-  }
-
   const records = tombstones ?? getDeletedSitesTombstones();
+  const name = site.name?.trim().toLowerCase();
   const id = site.id?.trim();
   const host = wordPressSiteHostKey(site.productionSiteUrl || site.siteUrl || "").toLowerCase();
 

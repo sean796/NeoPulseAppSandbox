@@ -23,7 +23,6 @@ import {
   LineChart,
   Wrench,
   Settings2,
-  Zap,
 } from "lucide-react";
 import type { ManagerSettingsClusterId } from "@/components/manager/manager-settings-cluster";
 import {
@@ -162,21 +161,6 @@ export const MANAGER_NAV_SECTIONS: ManagerNavSection[] = [
             label: "Local Grid",
             description: "Google Maps geo-grid rank studio powered by DataForSEO",
             icon: Crosshair,
-          },
-        ],
-      },
-      {
-        id: "tools-forge",
-        value: "forge",
-        label: "Forge",
-        description: "Workflow automations, recipes, and schedules",
-        icon: Zap,
-        children: [
-          {
-            value: "pulse-forge",
-            label: "Task Builder",
-            description: "Workflow automations, recipes, and schedules",
-            icon: Zap,
           },
         ],
       },

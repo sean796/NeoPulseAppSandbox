@@ -4,6 +4,7 @@ import { useWordPressOptimization } from "@/contexts/wordpress-optimization-cont
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/ui";
 
 import { OverviewTabContent } from "@/components/overview/OverviewTabContent";
+import { SeoStudioLeftDock } from "@/components/content-optimizer/SeoStudioLeftDock";
 import {
   type ContentOptimizerSectionId,
   readStoredContentOptimizerSection,
@@ -65,6 +66,8 @@ export const ContentOptimizerShell: React.FC<ContentOptimizerShellProps> = ({
 
   if (sites.length === 0) {
     return (
+      <div className="flex h-full min-h-0 w-full flex-1 flex-row overflow-hidden">
+        <SeoStudioLeftDock />
       <Card variant="neonFlat" className="w-full">
         <CardHeader>
           <CardTitle className="text-base text-primary">Content Optimizer</CardTitle>
@@ -75,14 +78,22 @@ export const ContentOptimizerShell: React.FC<ContentOptimizerShellProps> = ({
         </CardHeader>
         <CardContent />
       </Card>
+      </div>
     );
   }
 
   if (!site) {
-    return <div className={CONTENT_OPTIMIZER_SHELL_FRAME_CLASS} />;
+    return (
+      <div className="flex h-full min-h-0 w-full flex-1 flex-row overflow-hidden">
+        <SeoStudioLeftDock />
+        <div className={CONTENT_OPTIMIZER_SHELL_FRAME_CLASS} />
+      </div>
+    );
   }
 
   return (
+    <div className="flex h-full min-h-0 w-full flex-1 flex-row overflow-hidden">
+      <SeoStudioLeftDock />
     <div className={CONTENT_OPTIMIZER_SHELL_FRAME_CLASS}>
       <OverviewTabContent
         site={site}
@@ -96,6 +107,7 @@ export const ContentOptimizerShell: React.FC<ContentOptimizerShellProps> = ({
         paginationLayoutTotal={paginationLayoutTotal}
         generatorChrome={generatorChrome}
       />
+    </div>
     </div>
   );
 };

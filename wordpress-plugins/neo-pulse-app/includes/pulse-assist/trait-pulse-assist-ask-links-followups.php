@@ -210,6 +210,7 @@ trait Neo_Pulse_App_Pulse_Assist_Ask_Trait_Links_Followups {
 			'What can I do on this tab?',
 			'What property am I working on?',
 			'Explain Page vs Site scope',
+			'How do I bulk-optimize meta on Overview?',
 		);
 	}
 

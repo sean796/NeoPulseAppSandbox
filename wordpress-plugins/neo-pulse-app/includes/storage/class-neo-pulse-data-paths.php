@@ -127,6 +127,11 @@ class Neo_Pulse_App_Data_Paths {
 		return self::root() . '/sites.json';
 	}
 
+	/** Server-only WordPress app passwords (never returned by public mirror APIs). */
+	public static function sites_secrets_path(): string {
+		return self::root() . '/sites-secrets.json';
+	}
+
 	public static function manager_settings_path(): string {
 		return self::root() . '/manager-settings.json';
 	}
@@ -145,6 +150,10 @@ class Neo_Pulse_App_Data_Paths {
 
 	public static function semrush_safe_fix_schedule_path(): string {
 		return self::root() . '/semrush-safe-fix.json';
+	}
+
+	public static function posts_content_gap_schedule_path(): string {
+		return self::root() . '/posts-content-gap-check.json';
 	}
 
 	public static function careers_applications_path(): string {

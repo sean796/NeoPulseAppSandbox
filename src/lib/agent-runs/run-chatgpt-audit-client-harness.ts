@@ -7,8 +7,8 @@ import { completeTaskExecution, patchTaskExecutionProgress } from "@/lib/tasks-a
 import type { TaskExecutionClientRunContract, TaskExecutionPayload } from "@/lib/tasks-types";
 import { effectiveSaveLocalArchive } from "@/lib/schedule-output-destination";
 import { automationTitleFromRun } from "@/lib/automation-email-delivery";
-import { completeAgentRunExecution } from "@/lib/workflow/workflow-deliveries-skip";
-import { ensureChatGptAuditExecutionPayload } from "@/lib/workflow/resolve-chatgpt-audit-workflow-payload";
+import { completeAgentRunExecution } from "@/lib/agent-runs/complete-agent-run-execution";
+import { ensureChatGptAuditExecutionPayload } from "@/lib/chatgpt-audit/ensure-chatgpt-audit-execution-payload";
 import { clientUrlFromSite, resolveSite } from "@/lib/agent-runs/run-chatgpt-audit-client-harness-helpers";
 import { runChatGptAuditSession } from "@/lib/agent-runs/run-chatgpt-audit-client-harness-session";
 

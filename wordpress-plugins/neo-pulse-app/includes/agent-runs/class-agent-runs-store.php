@@ -108,15 +108,20 @@ class Neo_Pulse_App_Agent_Runs_Store {
 		}
 
 		$site_id = trim( (string) ( $context['siteId'] ?? '' ) );
-		if ( $site_id !== '' && in_array( $recipe_key, array( 'post_creator', 'content_gap_check' ), true ) ) {
+		if ( $site_id !== '' && in_array( $recipe_key, array( 'post_creator', 'content_gap_check', 'posts_content_gap_check' ), true ) ) {
 			$existing = self::find_active_run_for_site( $team_id, $recipe_key, $site_id );
 			if ( is_array( $existing ) ) {
 				return $existing;
 			}
 		}
 
-		$uses_server = in_array( $recipe_key, array( 'post_creator' ), true )
-			|| ( sanitize_key( (string) ( $plan['executionMode'] ?? '' ) ) === 'server' );
+		// Explicit client = Blog Ideas Studio browser harness (Integrations sites in the app).
+		$plan_mode   = sanitize_key( (string) ( $plan['executionMode'] ?? '' ) );
+		$uses_server = $plan_mode !== 'client'
+			&& (
+				$plan_mode === 'server'
+				|| in_array( $recipe_key, array( 'post_creator', 'posts_content_gap_check' ), true )
+			);
 		$initial_status = $uses_server ? 'running' : 'queued';
 
 		global $wpdb;
@@ -164,7 +169,7 @@ class Neo_Pulse_App_Agent_Runs_Store {
 	public static function find_active_run_for_site( int $team_id, string $recipe_key, string $site_id ): ?array {
 		$recipe_key = sanitize_key( $recipe_key );
 		$site_id    = trim( $site_id );
-		if ( $team_id <= 0 || $site_id === '' || ! in_array( $recipe_key, array( 'post_creator', 'content_gap_check' ), true ) ) {
+		if ( $team_id <= 0 || $site_id === '' || ! in_array( $recipe_key, array( 'post_creator', 'content_gap_check', 'posts_content_gap_check' ), true ) ) {
 			return null;
 		}
 
@@ -394,9 +399,6 @@ class Neo_Pulse_App_Agent_Runs_Store {
 		$updated = self::get_run( $team_id, $run_id );
 		if ( $updated && class_exists( 'Neo_Pulse_App_Push_Events' ) ) {
 			Neo_Pulse_App_Push_Events::on_agent_run_terminal( $updated, $previous_status );
-		}
-		if ( $updated && class_exists( 'Neo_Pulse_App_Workflow_Trigger_Agent_Done' ) ) {
-			Neo_Pulse_App_Workflow_Trigger_Agent_Done::on_agent_run_terminal( $updated, $previous_status );
 		}
 		return $updated;
 	}
@@ -726,11 +728,14 @@ class Neo_Pulse_App_Agent_Runs_Store {
 		$result = is_array( $run['result'] ?? null ) ? $run['result'] : array();
 		$plan_mode   = sanitize_key( (string) ( $plan['executionMode'] ?? '' ) );
 		$result_mode = sanitize_key( (string) ( $result['executionMode'] ?? '' ) );
+		if ( $plan_mode === 'client' ) {
+			return false;
+		}
 		if ( $plan_mode === 'server' || $result_mode === 'server' ) {
 			return true;
 		}
 		$recipe = sanitize_key( (string) ( $run['recipeKey'] ?? '' ) );
-		return in_array( $recipe, array( 'post_creator' ), true );
+		return in_array( $recipe, array( 'post_creator', 'posts_content_gap_check' ), true );
 	}
 
 	/**

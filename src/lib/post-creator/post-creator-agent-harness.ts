@@ -12,7 +12,7 @@ import {
 } from "@/lib/post-creator/post-creator-schedule";
 import type { PostCreatorExecutionPayload } from "@/lib/tasks-types";
 import type { CSVRow } from "@/lib/bulk/bulk-csv-parser";
-import { applyUpstreamContextToPostCreatorPayload } from "@/lib/workflow/upstream-research-facts";
+import { applyUpstreamContextToPostCreatorPayload } from "@/lib/post-creator/upstream-research-facts";
 import type { PostCreatorServerPreflight } from "@/lib/post-creator/post-creator-server-preflight";
 
 export type PostCreatorUploadedPost = {

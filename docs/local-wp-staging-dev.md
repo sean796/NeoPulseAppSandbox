@@ -119,7 +119,7 @@ Local staging:
 2. Edit `.env.localdominator` with your Local Dominator login.
 3. Run `npm run sync:local-wp` so the **Research** recipe (25 total) is copied into the WP container.
 4. Optional CLI smoke test: `npm run setup:local-dominator:smoke` or `npm run localdominator:export:json`.
-5. Install **Local Dominator grid export** in Pulse Forge, click **Execute**, then confirm the CSV on the automation **Archive** tab.
+5. Install the **Local Dominator grid export** recipe via Assist or the automation recipes API, run it, then confirm the CSV deliverable on the agent run.
 
 If Node/Puppeteer is unavailable inside the WP container, the API returns `LD_EXPORT_EXEC_BLOCKED`.
 

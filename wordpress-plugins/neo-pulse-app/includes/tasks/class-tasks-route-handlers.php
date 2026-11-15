@@ -630,18 +630,6 @@ class Neo_Pulse_App_Tasks_Route_Handlers {
 			Neo_Pulse_App_Api_Dispatcher::send_json( array( 'ok' => false, 'error' => 'Upload failed' ), 400 );
 			return;
 		}
-		if ( class_exists( 'Neo_Pulse_App_Workflow_Trigger_Evaluator' ) ) {
-			Neo_Pulse_App_Workflow_Trigger_Evaluator::on_document_received(
-				$team_id,
-				array(
-					'source' => 'task_file',
-					'name'   => $file_name,
-					'mime'   => $mime,
-					'taskId' => $task_id,
-					'fileId' => (int) ( $file['id'] ?? 0 ),
-				)
-			);
-		}
 		Neo_Pulse_App_Api_Dispatcher::send_json( array( 'ok' => true, 'file' => $file ) );
 	}
 }

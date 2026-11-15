@@ -9,8 +9,6 @@ import { commitAgentRunDeliverable } from "@/lib/agent-runs/commit-agent-run-del
 import type { ChatGptAuditQueryResponse } from "@/lib/chatgpt-audit-api";
 import { chatgptAuditCsvFileName } from "@/lib/chatgpt-audit-csv";
 import { chatgptAuditCumulativeCsvFile, type TaskArchiveFileInput } from "@/lib/task-execution-archive";
-import { fetchWorkflowStepOutputs } from "@/lib/workflow/workflow-api";
-import { fetchAppApiText } from "@/lib/proxy-fetch-text";
 import { syncAgentRunHostedFilesFromBulk } from "@/lib/agent-runs/agent-run-hosted-files";
 import type { BulkGeneratedFile } from "@/lib/bulk-file-manager";
 
@@ -40,26 +38,7 @@ export function readWorkflowBinding(run: AgentRun): {
   return { workflowId, workflowRunId };
 }
 
-export async function loadExistingChatGptAuditCsv(run: AgentRun): Promise<string | undefined> {
-  const binding = readWorkflowBinding(run);
-  if (!binding) return undefined;
-
-  const fileName = chatgptAuditCsvFileName({
-    runId: run.id,
-    workflowRunId: binding.workflowRunId,
-  });
-  const outputs = await fetchWorkflowStepOutputs(
-    run.teamId,
-    binding.workflowId,
-    binding.workflowRunId,
-  );
-
-  for (const output of [...outputs].reverse()) {
-    for (const ref of output.fileRefs ?? []) {
-      if (ref.name !== fileName || !ref.url?.trim()) continue;
-      return fetchAppApiText(ref.url);
-    }
-  }
+export async function loadExistingChatGptAuditCsv(_run: AgentRun): Promise<string | undefined> {
   return undefined;
 }
 

@@ -94,11 +94,65 @@ class Neo_Pulse_App_Pulse_Assist_Ask {
 
 		$research = null;
 		$data_research = null;
+		$empty_research = array(
+			'block'            => '',
+			'label'            => '',
+			'moduleIds'        => array(),
+			'primaryModuleIds' => array(),
+			'featureIds'       => array(),
+			'modules'          => array(),
+			'primaryModules'   => array(),
+			'features'         => array(),
+		);
+		$empty_data_research = array(
+			'block'            => '',
+			'label'            => '',
+			'toolIds'          => array(),
+			'rows'             => array(),
+			'classifierReason' => '',
+			'inventorySource'  => '',
+			'acfComplete'      => false,
+			'sliceTeam'        => array(),
+			'leadAgentUsed'    => false,
+			'intentSummary'    => '',
+			'researchArtifacts'=> null,
+		);
+
+		$pulse = isset( $body['pulse_context'] ) && is_array( $body['pulse_context'] ) ? $body['pulse_context'] : array();
+		$emit(
+			array(
+				'status' => 'phase',
+				'phase'  => 'modules',
+				'label'  => 'Choosing Assist route…',
+			)
+		);
+		$route_decision = Neo_Pulse_App_Pulse_Assist_Route_Decision::decide( $message, $pulse );
+		if ( empty( $route_decision['ok'] ) ) {
+			Neo_Pulse_App_Chat_Openrouter::clear_request_api_key();
+			$emit(
+				array(
+					'status' => 'done',
+					'card'   => self::error_card(
+						isset( $route_decision['error'] ) && is_string( $route_decision['error'] )
+							? $route_decision['error']
+							: 'Assist route decision failed.'
+					),
+				)
+			);
+			return;
+		}
+
+		$route       = (string) ( $route_decision['route'] ?? 'site_data' );
+		$target_ids  = isset( $route_decision['targetIds'] ) && is_array( $route_decision['targetIds'] )
+			? $route_decision['targetIds']
+			: array();
+		$product_help = $route === 'product_help';
 
 		$skip_modules = Neo_Pulse_App_Platform_Data_Intent_Checklist::wants_inventory_listing( $message )
 			|| Neo_Pulse_App_Platform_Data_Intent_Checklist::wants_scheduled_listing( $message )
 			|| Neo_Pulse_App_Platform_Data_Intent_Checklist::wants_draft_listing( $message );
-		if ( ! $skip_modules ) {
+
+		if ( $product_help || ! $skip_modules ) {
 			$emit(
 				array(
 					'status' => 'phase',
@@ -106,27 +160,31 @@ class Neo_Pulse_App_Pulse_Assist_Ask {
 					'label'  => $submode === 'plan' ? 'Researching modules for plan…' : 'Researching modules…',
 				)
 			);
-			$research = self::research_modules_for_message( $message, $history, $body );
-		} else {
-			$research = array(
-				'block'            => '',
-				'label'            => '',
-				'moduleIds'        => array(),
-				'primaryModuleIds' => array(),
-				'featureIds'       => array(),
-				'modules'          => array(),
-				'primaryModules'   => array(),
-				'features'         => array(),
+			$research = self::research_modules_for_message(
+				$message,
+				$history,
+				$body,
+				$product_help ? $target_ids : null
 			);
+		} else {
+			$research = $empty_research;
 		}
 
-		$data_research = Neo_Pulse_App_Pulse_Assist_Data_Tools::research_for_message(
-			$message,
-			$history,
-			$body,
-			$research,
-			$emit
-		);
+		if ( $product_help ) {
+			$data_research = $empty_data_research;
+			$data_research['classifierReason'] = 'product_help';
+			$data_research['intentSummary']    = isset( $route_decision['reason'] ) && is_string( $route_decision['reason'] )
+				? $route_decision['reason']
+				: 'Product help';
+		} else {
+			$data_research = Neo_Pulse_App_Pulse_Assist_Data_Tools::research_for_message(
+				$message,
+				$history,
+				$body,
+				$research,
+				$emit
+			);
+		}
 
 		$action_result = Neo_Pulse_App_Pulse_Assist_Action_Orchestrator::run( $message, $history, $body, $submode, $user_id, $emit );
 		if ( ! empty( $action_result['handled'] ) && is_array( $action_result['card'] ) ) {

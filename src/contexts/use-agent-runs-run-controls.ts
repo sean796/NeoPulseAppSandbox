@@ -1,6 +1,4 @@
 import { useCallback, type Dispatch, type SetStateAction } from "react";
-import { cancelWorkflowRunForAgentRun } from "@/lib/workflow/workflow-runner";
-import { ackPendingWorkflowTrigger, fetchPendingWorkflowTriggers } from "@/lib/workflow/workflow-api";
 import {
   cancelAllRegisteredLocalDominatorExportJobs,
   cancelLocalDominatorExportJobForAgentRun,
@@ -64,9 +62,6 @@ export function useAgentRunsRunControls({
       markAgentRunCancelledLocally(runId, teamId);
       patchRunInList(runId, { status: "cancelled", errorMessage: "Cancelled" });
       void cancelLocalDominatorExportJobForAgentRun(runId);
-      if (existing) {
-        void cancelWorkflowRunForAgentRun(teamId, existing);
-      }
       const executionId = existing?.plan?.taskExecutionId;
       if (executionId) {
         void cancelTaskExecution(teamId, executionId);
@@ -127,11 +122,6 @@ export function useAgentRunsRunControls({
     setRuns([]);
     try {
       await cancelAllRegisteredLocalDominatorExportJobs();
-      const pending = await fetchPendingWorkflowTriggers(teamId);
-      await Promise.all(
-        pending.map((item) => ackPendingWorkflowTrigger(teamId, item.workflowId)),
-      );
-      await Promise.all(active.map((run) => cancelWorkflowRunForAgentRun(teamId, run)));
       await Promise.all(active.map((run) => cancelAgentRun(teamId, run.id)));
       await clearAgentRuns(teamId);
     } finally {
@@ -148,7 +138,6 @@ export function useAgentRunsRunControls({
     for (const run of active) {
       patchRunInList(run.id, { status: "cancelled", errorMessage: "Cancelled" });
       void cancelLocalDominatorExportJobForAgentRun(run.id);
-      void cancelWorkflowRunForAgentRun(teamId, run);
       const executionId = run.plan?.taskExecutionId;
       if (executionId) {
         void cancelTaskExecution(teamId, executionId);

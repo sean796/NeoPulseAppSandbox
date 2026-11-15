@@ -45,8 +45,6 @@
     "deploy:flowbie-test": "node scripts/deploy-flowbie-test.cjs",
     "port:neodigital-data": "node scripts/port-neo-pulse-data-to-neodigital.cjs",
     "smoke:neo-pulse": "node scripts/neo-pulse-smoke.cjs",
-    "verify:workflow-test": "node scripts/verify-workflow-test-run.mjs",
-    "verify:workflow-insert": "node scripts/verify-workflow-insert-agent.mjs",
     "test:neo-pulse-app": "vitest run wordpress-plugins/neo-pulse-app/tests",
     "docs:api:generate": "node scripts/generate-api-docs.mjs",
     "check:no-secrets": "node scripts/check-no-secrets.mjs",

@@ -15,6 +15,7 @@ export interface SkillsLibraryPayload {
 /** Path slug without dots (WP API paths truncate after `.`). */
 export function skillsLibraryPathSlug(skillId: string): string {
   if (skillId === "reporting.semrush.safe-fix") return "semrush-safe-fix";
+  if (skillId === "content.posts.gap-check") return "content-posts-gap-check";
   return skillId.replace(/\./g, "-");
 }
 

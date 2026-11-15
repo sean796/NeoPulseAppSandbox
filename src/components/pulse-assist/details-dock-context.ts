@@ -6,8 +6,10 @@ export type DetailsDockValue = {
   /** Number of mounted workspaces that publish Details content. */
   count: number;
   register: () => () => void;
-  /** Sidebar is open on the Details tab. */
+  /** SEO studio left dock, or the right sidebar Details tab, is showing Details. */
   open: boolean;
+  /** Content Optimizer left dock sets this while its Details tab is open. */
+  setStudioOpen: (open: boolean) => void;
 };
 
 export const DetailsDockContext = createContext<DetailsDockValue | null>(null);

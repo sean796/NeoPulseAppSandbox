@@ -87,32 +87,47 @@ export function useWordPressSiteCrud({ sites, setSites, runAutoSetupForNewSite }
   }, []);
 
   const handleDeleteSite = useCallback((id: string) => {
+    const previous = sites;
     const targetSite = sites.find((s) => s.id === id);
-    if (targetSite) {
-      recordDeletedSite(targetSite);
-    }
     const updated = sites.filter((s) => s.id !== id);
     setSites(updated);
-    saveSites(updated);
-    clearEntitySiteWarmCache(id);
-    notify.success(NOTIFY_SITE_CONNECTION_DELETED);
+    void (async () => {
+      const ok = await saveSites(updated);
+      if (!ok) {
+        setSites(previous);
+        notify.error("Could not save property delete");
+        return;
+      }
+      if (targetSite) {
+        recordDeletedSite(targetSite);
+      }
+      clearEntitySiteWarmCache(id);
+      notify.success(NOTIFY_SITE_CONNECTION_DELETED);
+    })();
   }, [sites, setSites]);
 
   const handleDeleteSitesBulk = useCallback((ids: string[]) => {
     if (ids.length === 0) return;
+    const previous = sites;
     const idSet = new Set(ids);
-    for (const site of sites) {
-      if (idSet.has(site.id)) {
-        recordDeletedSite(site);
-      }
-    }
+    const removed = sites.filter((s) => idSet.has(s.id));
     const updated = sites.filter((s) => !idSet.has(s.id));
     setSites(updated);
-    saveSites(updated);
-    for (const id of ids) {
-      clearEntitySiteWarmCache(id);
-    }
-    notify.success(notifyDeletedXSiteS(ids.length));
+    void (async () => {
+      const ok = await saveSites(updated);
+      if (!ok) {
+        setSites(previous);
+        notify.error("Could not save property delete");
+        return;
+      }
+      for (const site of removed) {
+        recordDeletedSite(site);
+      }
+      for (const id of ids) {
+        clearEntitySiteWarmCache(id);
+      }
+      notify.success(notifyDeletedXSiteS(ids.length));
+    })();
   }, [sites, setSites]);
 
   const handleToggleEnabled = useCallback((site: WordPressSite) => {

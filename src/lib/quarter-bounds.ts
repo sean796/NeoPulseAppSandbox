@@ -56,29 +56,41 @@ export function getDefaultDashboardEditorialMonthKey(now = new Date()): string {
   return formatLocalCalendarMonthKey(next);
 }
 
-const DASHBOARD_MONTH_PAST_MONTHS = 36;
-const DASHBOARD_MONTH_FUTURE_MONTHS = 12;
+const DASHBOARD_MONTH_NAMES = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+] as const;
 
-/** Property dashboard month pill label, e.g. `M09` for `2026-09`. */
+/** Property dashboard month label, e.g. `09 Sep` for `2026-09`. */
 export function formatDashboardEditorialMonthShort(monthKey: string): string {
   const match = /^(\d{4})-(\d{2})$/.exec(monthKey.trim());
-  if (!match) return "M??";
-  return `M${match[2]}`;
+  if (!match) return monthKey.trim();
+  const monthIndex = Number(match[2]) - 1;
+  const name = DASHBOARD_MONTH_NAMES[monthIndex];
+  if (!name) return monthKey.trim();
+  return `${match[2]} ${name}`;
 }
 
-/** Recent + upcoming month keys for the property dashboard month selector (includes next month). */
+/** The twelve months of the current year. Fixed list, not a scrolling history. */
 export function buildDashboardEditorialMonthOptions(now = new Date()): Array<{ key: string; label: string }> {
-  const anchor = new Date(now.getFullYear(), now.getMonth(), 1);
-  const out: Array<{ key: string; label: string }> = [];
-  for (let i = -DASHBOARD_MONTH_PAST_MONTHS; i <= DASHBOARD_MONTH_FUTURE_MONTHS; i++) {
-    const d = new Date(anchor.getFullYear(), anchor.getMonth() + i, 1);
-    const key = formatLocalCalendarMonthKey(d);
-    out.push({ key, label: formatDashboardEditorialMonthShort(key) });
-  }
-  return out;
+  const year = now.getFullYear();
+  return DASHBOARD_MONTH_NAMES.map((name, index) => {
+    const month = String(index + 1).padStart(2, "0");
+    return { key: `${year}-${month}`, label: `${month} ${name}` };
+  });
 }
 
-/** Dashboard property-row counts always use the selected calendar month (`M01` picker). */
+/** Dashboard property-row counts always use the selected calendar month (`01 Jan` picker). */
 export function resolveEditorialCountsRangeForDashboard(
   _editorialCountsPeriodStartYmd: string | undefined | null,
   selectedMonthKey: string,

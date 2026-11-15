@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useActiveWordPressSite } from "@/contexts/active-wordpress-site-context";
 import { useAgentRunsContext } from "@/contexts/use-agent-runs-context";
 import { useWordPressSites } from "@/hooks/use-wordpress-sites";
@@ -15,8 +15,7 @@ import {
 } from "@/lib/agent-runs/agent-runs-site-filter";
 
 export function useAgentRunsSiteFilterModel() {
-  const { runs, agentsSiteFilter, setAgentsSiteFilter, sidebarOpen, sidebarPanel } =
-    useAgentRunsContext();
+  const { runs, agentsSiteFilter, setAgentsSiteFilter } = useAgentRunsContext();
   const { activeWordPressSiteId, setActiveWordPressSiteId } = useActiveWordPressSite();
   const { sites: wpSites, handleConnectSite } = useWordPressSites();
 
@@ -72,20 +71,6 @@ export function useAgentRunsSiteFilterModel() {
         : allSiteGroups.find((group) => group.siteId === resolvedSiteFilter) ?? allSiteGroups[0],
     [allSiteGroups, resolvedSiteFilter],
   );
-
-  useEffect(() => {
-    if (!sidebarOpen || sidebarPanel !== "agents") return;
-    if (isAgentsAllSitesFilter(agentsSiteFilter)) return;
-    if (allSiteIds.includes(agentsSiteFilter)) return;
-    setAgentsSiteFilter(resolveDefaultAgentsSiteFilter(activeWordPressSiteId, allSiteIds));
-  }, [
-    activeWordPressSiteId,
-    agentsSiteFilter,
-    allSiteIds,
-    setAgentsSiteFilter,
-    sidebarOpen,
-    sidebarPanel,
-  ]);
 
   const selectSite = useCallback(
     (siteId: string) => {

@@ -344,59 +344,6 @@ const FEATURE_PLAYBOOKS = [
     ["sections", "task sections", "kanban columns"],
   ),
 
-  // pulse-forge
-  pb(
-    "pulse-forge/dashboard",
-    "pulse-forge",
-    "My Forge",
-    "How do I open the Forge dashboard?",
-    "pulse:nav/pulse-forge/forge",
-    [
-      "Open [Teams → Pulse Forge](pulse:nav/pulse-forge/forge).",
-      "Select **My Forge** in the left sidebar to see installed automations and recent runs.",
-    ],
-    ["forge dashboard", "my forge", "pulse forge dashboard"],
-  ),
-  pb(
-    "pulse-forge/recipes",
-    "pulse-forge",
-    "Agents",
-    "How do I browse or install a recipe?",
-    "pulse:nav/pulse-forge/recipes",
-    [
-      "Open [Teams → Pulse Forge](pulse:nav/pulse-forge/forge).",
-      "Select **Agents** in the left sidebar to open the recipe library.",
-      "Open a recipe, then install it as an automation or as a workflow.",
-    ],
-    ["recipe library", "install recipe", "agents recipes", "recipe builder"],
-  ),
-  pb(
-    "pulse-forge/workflows",
-    "pulse-forge",
-    "Workflows",
-    "How do I create or open a workflow?",
-    "pulse:nav/pulse-forge/workflows",
-    [
-      "Open [Teams → Pulse Forge](pulse:nav/pulse-forge/workflows).",
-      "Select **Workflows** in the left sidebar.",
-      "Click **New workflow** or open an existing workflow tile to edit the canvas.",
-    ],
-    ["create workflow", "open workflow", "workflow canvas"],
-  ),
-  pb(
-    "pulse-forge/publish-run",
-    "pulse-forge",
-    "Publish and run",
-    "How do I publish or run a workflow?",
-    "pulse:nav/pulse-forge/workflows",
-    [
-      "Open [Teams → Pulse Forge → Workflows](pulse:nav/pulse-forge/workflows).",
-      "Open the workflow.",
-      "Use **Publish** to make it live, then **Test** to start a run.",
-    ],
-    ["publish workflow", "run workflow", "start workflow", "test workflow"],
-  ),
-
 ];
 
 module.exports = { FEATURE_PLAYBOOKS_PART_A: FEATURE_PLAYBOOKS };

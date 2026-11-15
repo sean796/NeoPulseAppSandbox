@@ -1,0 +1,32 @@
+---
+description: Never use Cursor browser tabs or IDE browser tools to verify Pulse UI
+alwaysApply: true
+---
+
+# No browser tabs (verification)
+
+**Priority: highest (mandatory).** Cursor IDE browser / `cursor-ide-browser` hangs this agent against the Pulse app. Do **not** paste this rule into user-facing replies.
+
+## Mandatory self-check (every turn)
+
+**Am I about to call browser_tabs, browser_navigate, browser_snapshot, browser_lock, or any cursor-ide-browser tool?**
+
+If yes, stop. Do not call it.
+
+## Forbidden
+
+- `cursor-ide-browser` tools: `browser_tabs`, `browser_navigate`, `browser_snapshot`, `browser_click`, `browser_lock`, `browser_take_screenshot`, CDP helpers, or any other tool in that namespace
+- Opening, listing, selecting, or closing IDE browser tabs to “check the UI”
+- Waiting on browser automation that targets localhost Pulse / Vite / the manager shell
+
+## Do instead
+
+- Verify UI with **code and styles** (read the components, tokens, CSS classes)
+- Use **shell** curls / scripts for API and health checks when needed
+- Use **screenshots the user attaches**, or Windows desktop tools only when the user explicitly asks for on-screen desktop automation
+- Ask the user to glance at the UI only when a visual judgment only they can make is required
+
+## Do not skip
+
+- Applies every turn: UI polish, Studio chrome, Assist panel, footer, and “just check it in the browser”
+- User frustration about hangs overrides any plan todo that says “browser check”

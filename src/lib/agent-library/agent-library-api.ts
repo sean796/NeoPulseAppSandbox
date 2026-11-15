@@ -25,6 +25,10 @@ export const ASSIGNABLE_SITE_AGENTS = [
     id: "reporting.semrush.safe-fix",
     label: "Semrush Safe Fix Agent",
   },
+  {
+    id: "content.posts.gap-check",
+    label: "Posts Content Gap Check",
+  },
 ] as const;
 
 export type AssignableSiteAgentId = (typeof ASSIGNABLE_SITE_AGENTS)[number]["id"];

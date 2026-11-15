@@ -30,7 +30,7 @@ import {
   googleDriveFolderIsConfigured,
 } from "@/lib/google-drive/resolve-google-drive-folder";
 import { readConfiguredGoogleDriveTargetFolder } from "@/lib/automation-google-drive-delivery";
-import type { WorkflowStepOutput } from "@/lib/workflow/workflow-types";
+import type { AgentRunStepOutputSnapshot } from "@/lib/agent-runs/step-output-types";
 
 describe("google-drive-folder-hierarchy", () => {
   it("normalizes client folder name from site name", () => {
@@ -253,13 +253,8 @@ describe("resolve-google-drive-folder helpers", () => {
   });
 
   it("extracts folder ids from workflow outputs", () => {
-    const output: WorkflowStepOutput = {
-      id: 1,
-      runId: 1,
-      nodeId: "node-1",
-      createdAt: "2026-01-01T00:00:00.000Z",
+    const output: AgentRunStepOutputSnapshot = {
       variableKey: "upstream_folder",
-      label: "Folder",
       scope: "run",
       textPreview: "https://drive.google.com/drive/folders/abc123456789",
       fileRefs: [],

@@ -33,7 +33,6 @@ import {
 import { NEO_PULSE_OPEN_MASTER_RULES_EVENT } from "@/lib/open-master-rules-settings";
 import { NEO_PULSE_OPEN_SKILLS_LIBRARY_EVENT } from "@/lib/open-skills-library";
 import { isApiTabPath } from "@/lib/api-docs/api-docs-route";
-import { isPulseForgePath, parsePulseForgeRoute, setPulseForgeRoute } from "@/lib/pulse-forge/pulse-forge-route";
 import { isPulseHostPath } from "@/lib/hosting/pulse-host-route";
 import { propertySlugFromDashboardPath } from "@/lib/properties/property-dashboard-slug";
 import {
@@ -152,10 +151,6 @@ export function useIndexManagerNavigation({
       }
       if (tab === "api") {
         navigate(isApiTabPath(location.pathname) ? location.pathname : "/api");
-        return;
-      }
-      if (tab === "pulse-forge") {
-        navigate(isPulseForgePath(location.pathname) ? location.pathname : "/pulse-forge/forge");
         return;
       }
       if (tab === "pulse-host") {
@@ -312,10 +307,6 @@ export function useIndexManagerNavigation({
           navigateToGeneratorSection(section as BlogGeneratorSectionId),
         onDashboardClusterChange: (cluster) =>
           handleManagerDashboardClusterChange(cluster as ManagerSettingsClusterId),
-        onPulseForgeHash: (hash) => {
-          const body = hash.replace(/^#/, "").replace(/^\//, "");
-          setPulseForgeRoute(parsePulseForgeRoute(`/${body}`));
-        },
         onOrganicReporting: navigateToOrganicReporting,
       });
     },

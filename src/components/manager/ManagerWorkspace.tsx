@@ -6,7 +6,6 @@ import { BlogGeneratorShell } from "@/components/blog-generator/BlogGeneratorShe
 import { IntegrationsTab } from "@/components/IntegrationsTab";
 import { ChatTabContent } from "@/components/chat/ChatTabContent";
 import { TasksTabContent } from "@/components/manager/tasks/TasksTabContent";
-import { PulseForgeTabContent } from "@/components/manager/pulse-forge/PulseForgeTabContent";
 import { UsersTabContent } from "@/components/manager/UsersTabContent";
 import { SupportTabContent } from "@/components/manager/support/SupportTabContent";
 import { SitemapOptimizerResearchTab } from "@/components/research/sitemap-optimizer/SitemapOptimizerResearchTab";
@@ -85,7 +84,6 @@ export const ManagerWorkspace: React.FC<ManagerWorkspaceProps> = ({
       managerTab === "pulse-host" ||
       managerTab === "chat" ||
       managerTab === "tasks" ||
-      managerTab === "pulse-forge" ||
       managerTab === "image-generator" ||
       managerTab === "video-generator" ||
       managerTab === "generator" ||
@@ -96,8 +94,8 @@ export const ManagerWorkspace: React.FC<ManagerWorkspaceProps> = ({
   const embeddedTabPanelStretch = embedded ? "flex h-full min-h-0 flex-1 flex-col overflow-hidden" : undefined;
   const showResetToolbar = embedded && onResetBlueprint && onResetWorkspace;
 
-  /** Embedded: small air gap below the sticky mega menu; overlay keeps classic inset. */
-  const embeddedTabPanelTopClass = embedded ? "mt-1.5" : "mt-2";
+  /** Embedded panels sit flush under the sticky header. Overlay keeps the classic inset. */
+  const embeddedTabPanelTopClass = embedded ? "mt-0" : "mt-2";
   const embeddedMainColumnTopClass = embedded ? "pt-3 md:pt-4" : "pt-2 md:pt-3";
   /** Keeps content width static beside docked rail without shifting when sidebar drawer opens. */
   const embeddedAssistAwareInsetClass = "pr-[var(--neo-pulse-shortcut-rail-width)]";
@@ -179,7 +177,6 @@ export const ManagerWorkspace: React.FC<ManagerWorkspaceProps> = ({
                   managerTab === "generator" ||
                   managerTab === "chat" ||
                   managerTab === "tasks" ||
-                  managerTab === "pulse-forge" ||
                   managerTab === "image-generator" ||
                   managerTab === "video-generator" ||
                   managerTab === "api" ||
@@ -269,11 +266,7 @@ export const ManagerWorkspace: React.FC<ManagerWorkspaceProps> = ({
         </TabsContent>
 
         <TabsContent value="tasks" className={cn(embeddedTabPanelTopClass, "data-[state=inactive]:hidden", embeddedTabPanelStretch)}>
-          {managerTab === "tasks" ? <TasksTabContent onOpenPulseForge={() => onManagerTabChange("pulse-forge")} /> : null}
-        </TabsContent>
-
-        <TabsContent value="pulse-forge" className={cn(embeddedTabPanelTopClass, "data-[state=inactive]:hidden", embeddedTabPanelStretch)}>
-          {managerTab === "pulse-forge" ? <PulseForgeTabContent /> : null}
+          {managerTab === "tasks" ? <TasksTabContent /> : null}
         </TabsContent>
 
         <TabsContent value="support" className={cn(embeddedTabPanelTopClass, "data-[state=inactive]:hidden", embeddedTabPanelStretch)}>

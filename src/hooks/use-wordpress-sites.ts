@@ -12,7 +12,6 @@ import {
   ensureSitesLoadedFromServer,
   getStoredSites,
   hasSitesServerHydrated,
-  restoreOriginalPropertyNamesOnce,
 } from "@/components/integrations/storage";
 import { type WordPressSite } from "@/components/integrations/types";
 import { wordpressSiteMenuDisplayName } from "@/lib/wordpress-site-display-name";
@@ -63,13 +62,12 @@ function useWordPressSitesState() {
   useEffect(() => {
     let cancelled = false;
     void (async () => {
-      // Quiet revalidate from live API; never clear the painted bootstrap list first.
       const loaded = await ensureSitesLoadedFromServer();
       if (cancelled) return;
-      if (loaded.length > 0) setSites(loaded);
+      // Successful load replaces the painted list, including a shorter roster.
+      // Failed load leaves ensureSitesLoadedFromServer returning the painted rows.
+      setSites(loaded);
       setSitesReady(true);
-      const restoredNames = await restoreOriginalPropertyNamesOnce();
-      if (!cancelled && restoredNames) setSites(getStoredSites());
     })();
     return () => {
       cancelled = true;

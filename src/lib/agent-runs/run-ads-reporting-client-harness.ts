@@ -2,7 +2,6 @@ import type { WordPressSite } from "@/components/integrations/types";
 import type { AgentRunHarnessContext } from "@/lib/agent-runs/harness-registry";
 import { resolveGscReportingSite } from "@/lib/agent-runs/resolve-agent-run-site";
 import { commitAgentRunDeliverable } from "@/lib/agent-runs/commit-agent-run-deliverable";
-import { fetchWorkflowStepOutputs } from "@/lib/workflow/workflow-api";
 import { runAdsReportingAgentHarness } from "@/lib/ads-reporting/ads-reporting-agent-harness";
 import { downloadAdsReportingArtifacts } from "@/lib/ads-reporting/ads-reporting-download";
 import type { AgentRun, AgentRunResult } from "@/lib/agent-runs-types";
@@ -18,7 +17,7 @@ import {
 import { automationTitleFromRun } from "@/lib/automation-email-delivery";
 import { AGENT_RUN_STEP_KEYS } from "@/lib/agent-runs/agent-run-step-keys";
 import { resolveAdsAgentProgressStepKey } from "@/lib/ads-reporting/ads-reporting-progress-log";
-import { completeAgentRunExecution } from "@/lib/workflow/workflow-deliveries-skip";
+import { completeAgentRunExecution } from "@/lib/agent-runs/complete-agent-run-execution";
 
 function executionPayloadFromSource(
   source: TaskExecutionClientRunContract | TaskExecutionPayload | Record<string, unknown>,
@@ -31,12 +30,6 @@ async function persistAdsReportingDeliverables(
   archiveFiles: TaskArchiveFileInput[],
   saveLocalArchive: boolean,
 ): Promise<void> {
-  const workflowId = Number(run.context?.workflowId ?? run.plan?.workflowId ?? 0);
-  const workflowRunId = Number(run.context?.workflowRunId ?? run.plan?.workflowRunId ?? 0);
-  const workflowOutputs =
-    workflowId > 0 && workflowRunId > 0
-      ? await fetchWorkflowStepOutputs(run.teamId, workflowId, workflowRunId)
-      : undefined;
   const deliverableFiles = archiveFiles.filter((file) => file.fileName.trim() && file.content.trim());
   let savedCount = 0;
   for (const file of deliverableFiles) {
@@ -48,7 +41,6 @@ async function persistAdsReportingDeliverables(
       files: [file],
       textPreview: file.fileName,
       saveLocalArchive,
-      workflowOutputs,
     });
   }
 }

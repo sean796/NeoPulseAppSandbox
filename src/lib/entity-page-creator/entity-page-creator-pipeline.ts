@@ -29,11 +29,8 @@ import {
 import type { AgentRun } from "@/lib/agent-runs-types";
 import { commitAgentRunDeliverable } from "@/lib/agent-runs/commit-agent-run-deliverable";
 import { fetchAppApiText, fetchUrlTextViaApi, isAppApiUrl } from "@/lib/proxy-fetch-text";
-import type { WorkflowStepOutput } from "@/lib/workflow/workflow-types";
-
 export type EntityGridRunArchiveContext = {
   run: AgentRun;
-  workflowOutputs?: WorkflowStepOutput[];
   saveLocalArchive?: boolean;
 };
 
@@ -102,7 +99,7 @@ export async function generateEntityLocationsGrid(args: {
   const wikipediaSearchAugment = wikipediaSearchAugmentFromGridRows(parsed.rows);
 
   if (args.archiveContext) {
-    const { run, workflowOutputs, saveLocalArchive } = args.archiveContext;
+    const { run, saveLocalArchive } = args.archiveContext;
     await commitAgentRunDeliverable({
       run,
       stepKey: "grid_csv_input",
@@ -116,7 +113,6 @@ export async function generateEntityLocationsGrid(args: {
       ],
       textPreview: `Grid CSV (${parsed.rows.length} rows)`,
       saveLocalArchive,
-      workflowOutputs,
     });
     await commitAgentRunDeliverable({
       run,
@@ -131,7 +127,6 @@ export async function generateEntityLocationsGrid(args: {
       ],
       textPreview: "Grid scan summary for entity pick",
       saveLocalArchive,
-      workflowOutputs,
     });
   }
 
@@ -200,7 +195,6 @@ export async function generateEntityLocationsGrid(args: {
       ],
       textPreview: `${clusterResult.clusterWikipedia.length} Wikipedia picks from grid`,
       saveLocalArchive: args.archiveContext.saveLocalArchive,
-      workflowOutputs: args.archiveContext.workflowOutputs,
     });
   }
 
@@ -317,6 +311,19 @@ export async function resolveGridCsvText(args: {
   workflowRunId?: number;
 }): Promise<string> {
   const payload = ensureEntityPageCreatorPayload(args.payload);
+
+  if (payload.gridCsvBase64?.trim()) {
+    return atob(payload.gridCsvBase64.trim());
+  }
+
+  const gridUrl = payload.gridCsvUrl?.trim();
+  if (gridUrl) {
+    const text = isAppApiUrl(gridUrl) ? await fetchAppApiText(gridUrl) : await fetchUrlTextViaApi(gridUrl);
+    if (!text.trim()) {
+      throw new Error("Grid CSV is empty.");
+    }
+    return text;
+  }
 
   const { resolveUpstreamGridCsvFromWorkflow } = await import(
     "@/lib/entity-page-creator/resolve-upstream-grid-csv"

@@ -17,8 +17,7 @@ import {
   executionKindFromRun,
 } from "@/lib/automation-email-delivery";
 import { commitAgentRunDeliverable } from "@/lib/agent-runs/commit-agent-run-deliverable";
-import { fetchWorkflowStepOutputs } from "@/lib/workflow/workflow-api";
-import { completeAgentRunExecution } from "@/lib/workflow/workflow-deliveries-skip";
+import { completeAgentRunExecution } from "@/lib/agent-runs/complete-agent-run-execution";
 import {
   entityPageCreatorPayloadFromContract,
 } from "@/lib/entity-page-creator/entity-page-creator-schedule";
@@ -207,12 +206,6 @@ export async function runEntityPageCreatorClientHarness(
       content: result.bulkCsv,
     },
   ];
-  const workflowId = Number(run.context?.workflowId ?? run.plan?.workflowId ?? 0);
-  const workflowRunId = Number(run.context?.workflowRunId ?? run.plan?.workflowRunId ?? 0);
-  const workflowOutputs =
-    workflowId > 0 && workflowRunId > 0
-      ? await fetchWorkflowStepOutputs(run.teamId, workflowId, workflowRunId)
-      : undefined;
   await commitAgentRunDeliverable({
     run,
     stepKey: "entity_bulk_csv",
@@ -220,7 +213,6 @@ export async function runEntityPageCreatorClientHarness(
     files: entityArchiveFiles,
     textPreview: message,
     saveLocalArchive,
-    workflowOutputs,
   });
 
   const emailResult = await completeAgentRunExecution({

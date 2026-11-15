@@ -19,6 +19,7 @@ import { mergePromptBulkIdeaSlots } from '@/lib/bulk/merge-prompt-bulk-idea-slot
 import { seedPromptBlogSlots } from '@/lib/bulk/prompt-blog-slots';
 import { normalizeBulkSitemapScopeTags } from '@/lib/bulk/bulk-sitemap-mode';
 import { generateSimplePromptIdeas } from '@/lib/bulk/prompt-bulk-ideas-simple';
+import { openRouterMaxOutputTokens } from '@/lib/openrouter-stream-token-limits';
 import type { BulkSiteSitemapConfig } from '@/components/keyword-research/bulk/BulkGeneratorSitemapMenu';
 
 export interface UsePromptBulkGenerateProps {
@@ -102,22 +103,23 @@ export function usePromptBulkGenerate({
    * Generate checklist from settings (no user prompt required)
    * @param keepIndices Optional array of indices to keep from existing generatedRows
    */
-  const handleGenerateChecklist = useCallback(async (keepIndices?: number[]): Promise<CSVRow[] | undefined> => {
+  const handleGenerateChecklist = useCallback(async (keepIndices?: number[], countOverride?: number): Promise<CSVRow[] | undefined> => {
+    const blogTarget = countOverride && countOverride > 0 ? countOverride : numberOfBlogs;
     const effectiveOpenRouterKey = (await resolveOpenRouterApiKeyForHarness()).trim();
 
     setIsGeneratingChecklist(true);
     setLastInventorySentToAiCount(null);
 
     const allSlotKeywords = generatedRows
-      .slice(0, numberOfBlogs)
+      .slice(0, blogTarget)
       .map((r) => r.keyword?.trim() ?? "");
     const allSlotModifiers = generatedRows
-      .slice(0, numberOfBlogs)
+      .slice(0, blogTarget)
       .map((r) => r.modifier?.trim() ?? "");
 
     // Calculate how many new blogs to generate
     const keptCount = keepIndices ? keepIndices.length : 0;
-    const blogsToGenerate = numberOfBlogs - keptCount;
+    const blogsToGenerate = blogTarget - keptCount;
 
     const slotKeywordsForGeneration =
       keepIndices && keepIndices.length > 0
@@ -193,7 +195,7 @@ export function usePromptBulkGenerate({
         slotKeywords: slotKeywordsForGeneration,
         slotModifiers: slotModifiersForGeneration,
         temperature: Math.min(temperature ?? 1, 0.35),
-        maxTokens: Math.min(maxTokens || 4000, 8192),
+        maxTokens: openRouterMaxOutputTokens(),
         connectedSite: ideasContext?.connectedSite ?? null,
         siteInventoryJson: ideasContext?.siteInventoryJson,
         gscKeywords: ideasContext?.gscKeywords,
@@ -280,7 +282,7 @@ export function usePromptBulkGenerate({
       let finalRows: CSVRow[];
       if (keepIndices && keepIndices.length > 0) {
         const keptRows = keepIndices.map(idx => generatedRows[idx]).filter(Boolean);
-        finalRows = [...keptRows, ...cappedParsedRows].slice(0, numberOfBlogs);
+        finalRows = [...keptRows, ...cappedParsedRows].slice(0, blogTarget);
       } else {
         finalRows = cappedParsedRows;
       }

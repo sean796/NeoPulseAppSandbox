@@ -14,7 +14,7 @@ import type { TaskExecutionClientRunContract, TaskExecutionPayload } from "@/lib
 import { patchTaskExecutionProgress } from "@/lib/tasks-api";
 import { effectiveSaveLocalArchive } from "@/lib/schedule-output-destination";
 import { automationTitleFromRun } from "@/lib/automation-email-delivery";
-import { completeAgentRunExecution } from "@/lib/workflow/workflow-deliveries-skip";
+import { completeAgentRunExecution } from "@/lib/agent-runs/complete-agent-run-execution";
 import { patchAgentRunInList } from "@/lib/agent-runs/agent-runs-local-patch";
 
 function resolveSite(siteId: string, sites: WordPressSite[]): WordPressSite {

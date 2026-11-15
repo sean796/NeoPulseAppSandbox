@@ -25,10 +25,10 @@ class Neo_Pulse_App_Loader {
 		Neo_Pulse_App_Proposal_Route_Handlers::register();
 		Neo_Pulse_App_Task_Trigger_Cron::init();
 		Neo_Pulse_App_Task_Schedule_Cron::init();
-		Neo_Pulse_App_Workflow_Trigger_Cron::init();
 		Neo_Pulse_App_Agent_Run_Worker_Cron::init();
 		Neo_Pulse_App_Changelog_Newsletter_Cron::init();
 		Neo_Pulse_App_Semrush_Safe_Fix_Cron::init();
+		Neo_Pulse_App_Posts_Content_Gap_Cron::init();
 		if ( class_exists( 'Neo_Pulse_App_Agent_Run_Worker_Cron' ) ) {
 			Neo_Pulse_App_Agent_Run_Worker_Cron::activate();
 		}
@@ -41,7 +41,6 @@ class Neo_Pulse_App_Loader {
 		Neo_Pulse_App_Tasks_Store::install_tables();
 		Neo_Pulse_App_Task_Execution_Store::install_tables();
 		Neo_Pulse_App_Agent_Runs_Store::install_tables();
-		Neo_Pulse_App_Workflows_Store::install_tables();
 		Neo_Pulse_App_Support_Store::install_tables();
 		if ( class_exists( 'Neo_Pulse_App_Chat_Flo' ) ) {
 			Neo_Pulse_App_Chat_Flo::ensure_global_user();
@@ -59,20 +58,20 @@ class Neo_Pulse_App_Loader {
 		Neo_Pulse_App_Api_Dispatcher::register_rewrites();
 		Neo_Pulse_App_Task_Trigger_Cron::activate();
 		Neo_Pulse_App_Task_Schedule_Cron::activate();
-		Neo_Pulse_App_Workflow_Trigger_Cron::activate();
 		Neo_Pulse_App_Agent_Run_Worker_Cron::activate();
 		Neo_Pulse_App_Changelog_Newsletter_Cron::activate();
 		Neo_Pulse_App_Semrush_Safe_Fix_Cron::activate();
+		Neo_Pulse_App_Posts_Content_Gap_Cron::activate();
 		flush_rewrite_rules();
 	}
 
 	public static function deactivate(): void {
 		Neo_Pulse_App_Task_Trigger_Cron::deactivate();
 		Neo_Pulse_App_Task_Schedule_Cron::deactivate();
-		Neo_Pulse_App_Workflow_Trigger_Cron::deactivate();
 		Neo_Pulse_App_Agent_Run_Worker_Cron::deactivate();
 		Neo_Pulse_App_Changelog_Newsletter_Cron::deactivate();
 		Neo_Pulse_App_Semrush_Safe_Fix_Cron::deactivate();
+		Neo_Pulse_App_Posts_Content_Gap_Cron::deactivate();
 		flush_rewrite_rules();
 	}
 
@@ -113,6 +112,7 @@ class Neo_Pulse_App_Loader {
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-overview-json.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-position-tracking-compare.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-route-handlers.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/skills/class-skill-run-schedule.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-safe-fix-schedule.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-safe-fix-audit.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-safe-fix-sheet.php';
@@ -122,6 +122,12 @@ class Neo_Pulse_App_Loader {
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-safe-fix-runner.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-safe-fix-route.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/semrush/class-semrush-safe-fix-cron.php';
+
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/posts-content-gap/class-posts-content-gap-schedule.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/posts-content-gap/class-posts-content-gap-pipeline.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/posts-content-gap/class-posts-content-gap-runner.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/posts-content-gap/class-posts-content-gap-route.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/posts-content-gap/class-posts-content-gap-cron.php';
 
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/proposal/class-proposal-lighthouse-parse.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/proposal/class-proposal-faq-inventory.php';
@@ -257,17 +263,6 @@ class Neo_Pulse_App_Loader {
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/task-triggers/class-task-trigger-evaluator.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/task-triggers/class-task-trigger-cron.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/task-triggers/class-task-schedule-cron.php';
-		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/workflows/class-workflows-store.php';
-		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/workflows/class-workflow-summarize.php';
-		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/workflows/class-workflow-trigger-pending-store.php';
-		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/workflows/class-workflow-cron-expression.php';
-		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/workflows/class-workflow-trigger-evaluator.php';
-		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/workflows/class-workflow-trigger-agent-done.php';
-		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/workflows/class-workflow-ld-grid-deliverable.php';
-		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/workflows/class-workflow-ld-continue-watchdog.php';
-		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/workflows/class-workflow-server-dispatch.php';
-		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/workflows/class-workflow-trigger-cron.php';
-		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/workflows/class-workflows-route-handlers.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/support/class-support-store.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/support/class-support-ai.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/support/class-support-route-handlers.php';
@@ -285,6 +280,7 @@ class Neo_Pulse_App_Loader {
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/platform-data/class-platform-data-post-creator-tools.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/platform-data/class-platform-data-tools.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/pulse-assist/class-pulse-assist-module-catalog.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/pulse-assist/class-pulse-assist-route-decision.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/pulse-assist/class-pulse-assist-data-tools.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/pulse-assist/class-pulse-assist-secretary.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/pulse-assist/action/class-pulse-assist-action-registry.php';
@@ -292,7 +288,6 @@ class Neo_Pulse_App_Loader {
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/pulse-assist/action/class-pulse-assist-action-tools-executions.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/pulse-assist/action/class-pulse-assist-action-tools-templates.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/pulse-assist/action/class-pulse-assist-action-tools-recipes.php';
-		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/pulse-assist/action/class-pulse-assist-action-tools-forge.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/pulse-assist/action/class-pulse-assist-action-executor.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/pulse-assist/action/class-pulse-assist-action-intent.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/pulse-assist/action/class-pulse-assist-automation-intent.php';

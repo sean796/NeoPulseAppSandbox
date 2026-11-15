@@ -7,14 +7,6 @@ import type { CSVRow } from "@/lib/bulk/bulk-csv-parser";
 import { parseCsvStaticText } from "@/lib/bulk/bulk-csv-parser";
 import type { EntityPageCreatorExecutionPayload } from "@/lib/tasks-types";
 import { effectiveSaveLocalArchive } from "@/lib/schedule-output-destination";
-import { commitAgentRunDeliverable } from "@/lib/agent-runs/commit-agent-run-deliverable";
-import { fetchWorkflowStepOutputs } from "@/lib/workflow/workflow-api";
-import type { SeoContentBriefV1 } from "@/lib/overview-seo-content-brief";
-import {
-  serpResearchBriefArtifactName,
-  serpResearchKeywordSlug,
-  serializeWorkflowSerpResearchBrief,
-} from "@/lib/workflow/workflow-serp-research-cache";
 import { syncPostCreatorProof } from "@/lib/agent-runs/agent-run-post-creator-proof";
 import { runPostCreatorBulkRows } from "@/lib/post-creator/post-creator-bulk-runner";
 import { loadBulkSitemapInventoryForSite } from "@/lib/bulk/bulk-sitemap-inventory-session";
@@ -35,8 +27,6 @@ import {
   assertConfiguredEntityRowCount,
   configuredEntityPageTotal,
 } from "@/lib/local-analysis/entity-ad-group-budget";
-import { takeWorkflowGridKeyword } from "@/lib/workflow/workflow-grid-csv-stash";
-
 export type EntityUploadedPost = {
   url: string;
   postId?: number;
@@ -91,25 +81,15 @@ export async function generateEntityLocationRows(args: {
 
   args.onProgress?.("Generating entity locations…", 0.05);
 
-  const workflowId = Number(args.run.context?.workflowId ?? args.run.plan?.workflowId ?? 0);
-  const workflowRunId = Number(args.run.context?.workflowRunId ?? args.run.plan?.workflowRunId ?? 0) || undefined;
-
   const gridCsvText = await resolveGridCsvText({
     payload,
     teamId: args.run.teamId,
-    workflowId: workflowId || undefined,
-    workflowRunId,
   });
   const gridKeyword =
-    (workflowRunId ? takeWorkflowGridKeyword(workflowRunId) : undefined) ||
     payload.focusKeyword?.trim() ||
     args.site.name?.trim() ||
     "";
   const saveLocalArchive = effectiveSaveLocalArchive("entity_generator", payload as Record<string, unknown>);
-  const workflowOutputs =
-    workflowId > 0 && workflowRunId
-      ? await fetchWorkflowStepOutputs(args.run.teamId, workflowId, workflowRunId)
-      : undefined;
   const locationResult = await generateEntityLocationsGrid({
     site: args.site,
     payload,
@@ -118,7 +98,6 @@ export async function generateEntityLocationRows(args: {
     gridKeyword,
     archiveContext: {
       run: args.run,
-      workflowOutputs,
       saveLocalArchive,
     },
     onProgress: (p) =>
@@ -145,13 +124,9 @@ export async function loadEntityRowsFromCsvInput(args: {
   run: AgentRun;
 }): Promise<CSVRow[]> {
   const payload = ensureEntityPageCreatorPayload(args.payload);
-  const workflowId = Number(args.run.context?.workflowId ?? args.run.plan?.workflowId ?? 0) || undefined;
-  const workflowRunId = Number(args.run.context?.workflowRunId ?? args.run.plan?.workflowRunId ?? 0) || undefined;
   const csvText = await resolveEntityCsvText({
     payload,
     teamId: args.run.teamId,
-    workflowId,
-    workflowRunId,
   });
   const rows = parseCsvStaticText(csvText);
   if (rows.length === 0) {
@@ -229,33 +204,6 @@ export async function hydrateAndPublishEntityPages(args: {
 
     assertConfiguredEntityRowCount(hydratedRows.length, configuredTotal, "Entity page creator");
 
-    const workflowId = Number(args.run.context?.workflowId ?? args.run.plan?.workflowId ?? 0);
-    const workflowRunId = Number(args.run.context?.workflowRunId ?? args.run.plan?.workflowRunId ?? 0);
-    const workflowOutputs =
-      workflowId > 0 && workflowRunId > 0
-        ? await fetchWorkflowStepOutputs(args.run.teamId, workflowId, workflowRunId)
-        : undefined;
-    const saveLocalArchive = effectiveSaveLocalArchive(args.executionKind, payload as Record<string, unknown>);
-
-    if (workflowOutputs) {
-      const hydratedCsv = buildEntityBulkCsvContent(hydratedRows);
-      await commitAgentRunDeliverable({
-        run: args.run,
-        stepKey: "entity_hydrated_rows",
-        stepLabel: "Entity hydrated rows",
-        files: [
-          {
-            fileName: "entity-hydrated.csv",
-            mime: "text/csv",
-            content: hydratedCsv,
-          },
-        ],
-        textPreview: `${hydratedRows.length} hydrated entity rows`,
-        saveLocalArchive,
-        workflowOutputs,
-      });
-    }
-
     args.onProgress?.(
       "Publishing entity pages…",
       0.65,
@@ -271,60 +219,6 @@ export async function hydrateAndPublishEntityPages(args: {
   const bulkCsv = buildEntityBulkCsvContent(hydratedRows);
   const schedule = resolveEntityPageCreatorSchedule(payload);
   const wordPressPosting = buildEntityPageCreatorWordPressPosting(args.site, hydratedRows.length, payload);
-
-  const workflowId = Number(args.run.context?.workflowId ?? args.run.plan?.workflowId ?? 0);
-  const workflowRunId = Number(args.run.context?.workflowRunId ?? args.run.plan?.workflowRunId ?? 0);
-  let workflowOutputsForSerp =
-    workflowId > 0 && workflowRunId > 0
-      ? await fetchWorkflowStepOutputs(args.run.teamId, workflowId, workflowRunId)
-      : undefined;
-  const saveLocalArchiveForSerp = effectiveSaveLocalArchive(args.executionKind, payload as Record<string, unknown>);
-
-  const workflowSerpResearch =
-    workflowId > 0 && workflowRunId > 0
-      ? {
-          getOutputs: () => workflowOutputsForSerp,
-          commitBrief: async (
-            keyword: string,
-            brief: SeoContentBriefV1,
-            storedFile: string | null,
-          ) => {
-            const refreshed = await fetchWorkflowStepOutputs(
-              args.run.teamId,
-              workflowId,
-              workflowRunId,
-            );
-            await commitAgentRunDeliverable({
-              run: args.run,
-              stepKey: `serp_research_${serpResearchKeywordSlug(keyword)}`,
-              stepLabel: `SERP research: ${keyword}`,
-              files: [
-                {
-                  fileName: serpResearchBriefArtifactName(keyword),
-                  mime: "application/json",
-                  content: serializeWorkflowSerpResearchBrief(brief, storedFile),
-                },
-              ],
-              textPreview: `SERP brief: ${keyword}`,
-              saveLocalArchive: saveLocalArchiveForSerp,
-              workflowOutputs: refreshed,
-            });
-            workflowOutputsForSerp = await fetchWorkflowStepOutputs(
-              args.run.teamId,
-              workflowId,
-              workflowRunId,
-            );
-          },
-        }
-      : undefined;
-
-  const workflowDfsArticleAudit =
-    workflowId > 0 && workflowRunId > 0
-      ? {
-          getOutputs: () => workflowOutputsForSerp,
-          outputs: workflowOutputsForSerp,
-        }
-      : undefined;
 
   let inventoryContext;
   try {
@@ -343,8 +237,6 @@ export async function hydrateAndPublishEntityPages(args: {
     priorUploadedPosts: priorUploaded,
     clearMapsCache: resumePhase !== "bulk",
     isCancelled: args.isCancelled,
-    workflowSerpResearch,
-    workflowDfsArticleAudit,
     onProgress: (p) => {
       if (p.uploadedPosts?.length) {
         syncPostCreatorProof(args.run.id, {

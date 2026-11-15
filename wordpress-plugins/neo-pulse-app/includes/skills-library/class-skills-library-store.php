@@ -10,9 +10,11 @@ defined( 'ABSPATH' ) || exit;
 class Neo_Pulse_App_Skills_Library_Store {
 
 	const SKILL_SAFE_FIX = 'reporting.semrush.safe-fix';
+	const SKILL_POSTS_GAP = 'content.posts.gap-check';
 
 	/** URL path slug (no dots — WP rewrites truncate dotted segments). */
-	const SKILL_SAFE_FIX_SLUG = 'semrush-safe-fix';
+	const SKILL_SAFE_FIX_SLUG  = 'semrush-safe-fix';
+	const SKILL_POSTS_GAP_SLUG = 'content-posts-gap-check';
 
 	const FILES = array( 'schema.json', 'prompts.json', 'evals.json' );
 
@@ -25,6 +27,9 @@ class Neo_Pulse_App_Skills_Library_Store {
 		$token = trim( $token );
 		if ( $token === self::SKILL_SAFE_FIX || $token === self::SKILL_SAFE_FIX_SLUG ) {
 			return self::SKILL_SAFE_FIX;
+		}
+		if ( $token === self::SKILL_POSTS_GAP || $token === self::SKILL_POSTS_GAP_SLUG ) {
+			return self::SKILL_POSTS_GAP;
 		}
 		return new WP_Error( 'neo-pulse_skills_unknown', 'Unknown skill id', array( 'status' => 404 ) );
 	}
@@ -129,7 +134,7 @@ class Neo_Pulse_App_Skills_Library_Store {
 		$skill_id = $resolved;
 		$root = self::read_root();
 		if ( ! isset( $root['skills'][ $skill_id ] ) || ! is_array( $root['skills'][ $skill_id ] ) ) {
-			$root['skills'][ $skill_id ] = self::default_skill_bundle();
+			$root['skills'][ $skill_id ] = self::default_skill_bundle( $skill_id );
 			self::write_root( $root );
 		}
 		$bundle = $root['skills'][ $skill_id ];
@@ -138,7 +143,7 @@ class Neo_Pulse_App_Skills_Library_Store {
 				return new WP_Error( 'neo-pulse_skills_corrupt', 'Skill library file is missing or invalid: ' . $file, array( 'status' => 500 ) );
 			}
 		}
-		$prompts_err = self::validate_prompts( $bundle['prompts.json'] );
+		$prompts_err = self::validate_prompts( $bundle['prompts.json'], $skill_id );
 		if ( is_wp_error( $prompts_err ) ) {
 			return $prompts_err;
 		}
@@ -171,7 +176,7 @@ class Neo_Pulse_App_Skills_Library_Store {
 			return new WP_Error( 'neo-pulse_skills_file', 'Unknown skill file', array( 'status' => 404 ) );
 		}
 		if ( $file === 'prompts.json' ) {
-			$check = self::validate_prompts( $document );
+			$check = self::validate_prompts( $document, $skill_id );
 			if ( is_wp_error( $check ) ) {
 				return $check;
 			}
@@ -183,7 +188,7 @@ class Neo_Pulse_App_Skills_Library_Store {
 		}
 		$root = self::read_root();
 		if ( ! isset( $root['skills'][ $skill_id ] ) || ! is_array( $root['skills'][ $skill_id ] ) ) {
-			$root['skills'][ $skill_id ] = self::default_skill_bundle();
+			$root['skills'][ $skill_id ] = self::default_skill_bundle( $skill_id );
 		}
 		$root['skills'][ $skill_id ][ $file ] = $document;
 		if ( ! self::write_root( $root ) ) {
@@ -230,7 +235,14 @@ class Neo_Pulse_App_Skills_Library_Store {
 	/**
 	 * @return array{schema.json:array,prompts.json:array,evals.json:array}
 	 */
-	private static function default_skill_bundle(): array {
+	private static function default_skill_bundle( string $skill_id = self::SKILL_SAFE_FIX ): array {
+		if ( $skill_id === self::SKILL_POSTS_GAP ) {
+			return array(
+				'schema.json'  => self::default_posts_gap_schema(),
+				'prompts.json' => self::default_posts_gap_prompts(),
+				'evals.json'   => self::default_posts_gap_evals(),
+			);
+		}
 		return array(
 			'schema.json'  => self::default_schema(),
 			'prompts.json' => self::default_prompts(),
@@ -239,12 +251,85 @@ class Neo_Pulse_App_Skills_Library_Store {
 	}
 
 	/**
-	 * @param mixed $doc
+	 * @return array<string,mixed>
+	 */
+	private static function default_posts_gap_schema(): array {
+		return array(
+			'id'          => self::SKILL_POSTS_GAP,
+			'label'       => 'Posts Content Gap Check',
+			'category'    => 'blog',
+			'domain'      => 'blog-generator',
+			'temperature' => 0.3,
+			'maxTokens'   => 512,
+			'schedule'    => array(
+				'input'  => array(
+					'month'           => 'string (YYYY-MM)',
+					'gap'             => 'number',
+					'occupiedDates'   => 'array of YYYY-MM-DD',
+					'lastAllowedDay'  => 'string (YYYY-MM-DD)',
+					'publishTimeHint' => 'string (HH:MM)',
+				),
+				'output' => array(
+					'publishDates' => 'array of YYYY-MM-DD',
+					'publishTime'  => 'string (HH:MM)',
+				),
+			),
+			'skillPath'   => 'skills/posts-content-gap-check',
+		);
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_posts_gap_prompts(): array {
+		return array(
+			'schedule' => array(
+				'system'       => 'Return one JSON object only: {"publishDates":["YYYY-MM-DD"],"publishTime":"HH:MM"}. Follow the schedule rules in the user message. Never use an em dash.',
+				'userTemplate' => "Read skills/posts-content-gap-check/references/schedule-rules.md.\n\nCount JSON:\n{countJson}",
+			),
+		);
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_posts_gap_evals(): array {
+		return array(
+			'skill_name' => 'content-posts-gap-check',
+			'evals'      => array(
+				array(
+					'id'              => 1,
+					'prompt'          => 'Given gap 2, month 2026-12, occupiedDates [2026-12-02], lastAllowedDay 2026-12-26, pick publishDates and publishTime.',
+					'expected_output' => 'JSON with exactly 2 unique YYYY-MM-DD dates inside 2026-12, on or before 2026-12-26, not 2026-12-02, plus HH:MM publishTime.',
+					'assertions'      => array(
+						'Output is valid JSON with publishDates and publishTime',
+						'publishDates length equals gap',
+					),
+				),
+			),
+		);
+	}
+
+	/**
+	 * @param mixed  $doc
+	 * @param string $skill_id
 	 * @return true|WP_Error
 	 */
-	public static function validate_prompts( $doc ) {
+	public static function validate_prompts( $doc, string $skill_id = self::SKILL_SAFE_FIX ) {
 		if ( ! is_array( $doc ) ) {
 			return new WP_Error( 'neo-pulse_skills_prompts', 'prompts.json must be an object', array( 'status' => 400 ) );
+		}
+		if ( $skill_id === self::SKILL_POSTS_GAP ) {
+			$schedule = $doc['schedule'] ?? null;
+			if ( ! is_array( $schedule ) ) {
+				return new WP_Error( 'neo-pulse_skills_prompts', 'prompts.json requires schedule object', array( 'status' => 400 ) );
+			}
+			foreach ( array( 'system', 'userTemplate' ) as $key ) {
+				if ( ! isset( $schedule[ $key ] ) || ! is_string( $schedule[ $key ] ) || trim( $schedule[ $key ] ) === '' ) {
+					return new WP_Error( 'neo-pulse_skills_prompts', 'schedule.' . $key . ' must be a non-empty string', array( 'status' => 400 ) );
+				}
+			}
+			return true;
 		}
 		$fc = $doc['fieldCopy'] ?? null;
 		$cl = $doc['checklist'] ?? null;

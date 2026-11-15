@@ -13,7 +13,7 @@ export function MobileAssistScreen() {
   return (
     <div className="mobile-screen mobile-screen--assist flex h-full min-h-0 flex-col overflow-hidden">
       <MobileAssistInventoryWarm />
-      <PulseAssistChatPanel sidebarOpen hidePageScope defaultTargetScope="site" />
+      <PulseAssistChatPanel sidebarOpen />
     </div>
   );
 }

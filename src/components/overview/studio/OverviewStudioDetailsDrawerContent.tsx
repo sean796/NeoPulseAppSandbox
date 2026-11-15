@@ -6,6 +6,7 @@ import type { BulkGeneratorDetailsPanelProps } from "@/components/keyword-resear
 import { BulkGeneratorDetailsDrawer } from "@/components/keyword-research/bulk/BulkGeneratorDetailsDrawer";
 import { BulkSitemapInventoryRunDetail } from "@/components/keyword-research/bulk/BulkSitemapInventoryRunDetail";
 import { WordBlacklistRunDetail } from "@/components/keyword-research/bulk/WordBlacklistRunDetail";
+import { HumanizerRunDetail } from "@/components/keyword-research/bulk/HumanizerRunDetail";
 import type { useOverviewSiteWarmDetails } from "@/hooks/overview/use-overview-site-warm-details";
 import type { StudioDrawerStepRow } from "@/components/overview/studio/use-overview-studio-drawer-steps";
 import { notify } from "@/lib/app-notifications";
@@ -61,6 +62,9 @@ export function OverviewStudioDetailsDrawerContent({
             <WordBlacklistRunDetail />
           </div>
           <div className={contentOptimizerRowStripeClass(1)}>
+            <HumanizerRunDetail />
+          </div>
+          <div className={contentOptimizerRowStripeClass(2)}>
             <BulkSitemapInventoryRunDetail
               links={siteWarm.sitemapInventoryLinks}
               gscHostedLink={siteWarm.gscHostedLink}

@@ -1,6 +1,8 @@
 import { cn } from "@/lib/utils";
-import { FORGE_DASHBOARD_PANEL_SHELL_CLASS } from "@/components/manager/pulse-forge/forge-dashboard-styles";
-import { ORGANIC_DASHBOARD_GRID_BACKDROP_CLASS } from "@/components/organic-dashboard/organic-dashboard-styles";
+import {
+  ORGANIC_DASHBOARD_GRID_BACKDROP_CLASS,
+  ORGANIC_DASHBOARD_PANEL_SHELL_CLASS,
+} from "@/components/organic-dashboard/organic-dashboard-styles";
 
 /** Pulse cyberpunk client report (matches Reporting Performance tab). */
 
@@ -10,7 +12,7 @@ export const DECK_PAGE_CLASS = cn(
 
 /** Full-width title card (no fixed hero height). */
 export const DECK_HERO_SHELL_CLASS = cn(
-  FORGE_DASHBOARD_PANEL_SHELL_CLASS,
+  ORGANIC_DASHBOARD_PANEL_SHELL_CLASS,
   "relative w-full overflow-hidden rounded-none border-l-0",
 );
 
@@ -28,7 +30,7 @@ export const DECK_HERO_BODY_CLASS = "relative flex flex-col gap-4 p-5 md:p-6";
 export const DECK_GRID_BACKDROP_CLASS = ORGANIC_DASHBOARD_GRID_BACKDROP_CLASS;
 
 export const DECK_PANEL_SHELL_CLASS = cn(
-  FORGE_DASHBOARD_PANEL_SHELL_CLASS,
+  ORGANIC_DASHBOARD_PANEL_SHELL_CLASS,
   "overflow-hidden rounded-none",
 );
 

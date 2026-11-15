@@ -13,15 +13,10 @@ import {
   localDominatorArchiveFiles,
   persistTaskArchiveFiles,
 } from "@/lib/task-execution-archive";
-import { fetchWorkflow, fetchWorkflowStepOutputs } from "@/lib/workflow/workflow-api";
-import { syncWorkflowRunArchiveDeliverables } from "@/lib/workflow/workflow-rag-archive";
 import { syncAgentRunHostedFilesFromBulk } from "@/lib/agent-runs/agent-run-hosted-files";
 import type { BulkGeneratedFile } from "@/lib/bulk-file-manager";
 import { automationTitleFromRun } from "@/lib/automation-email-delivery";
-import { chainWorkflowOnGridExport } from "@/lib/workflow/workflow-grid-export-chain";
-import { completeAgentRunExecution } from "@/lib/workflow/workflow-deliveries-skip";
-import { readWorkflowAgentBinding } from "@/lib/workflow/workflow-agent-binding";
-import { stashWorkflowGridCsv } from "@/lib/workflow/workflow-grid-csv-stash";
+import { completeAgentRunExecution } from "@/lib/agent-runs/complete-agent-run-execution";
 import {
   dominantKeywordFromRows,
   parseLocalDominatorCsv,
@@ -120,7 +115,6 @@ function syncLocalDominatorHostedFile(
 async function persistLocalDominatorDeliverable(
   run: AgentRun,
   archiveFiles: ReturnType<typeof localDominatorArchiveFiles>,
-  onChainStep?: (label: string, status: "running" | "error") => void | Promise<void>,
 ): Promise<void> {
   const file = archiveFiles[0];
   if (!file) return;
@@ -134,44 +128,8 @@ async function persistLocalDominatorDeliverable(
   if (!artifact?.url) {
     throw new Error("Could not save grid export CSV to run archive.");
   }
-  const fileRefs = [{ name: file.fileName, url: artifact.url, mime: file.mime }];
   if (run.taskId > 0) {
     await persistTaskArchiveFiles(run.teamId, run.taskId, archiveFiles);
-  }
-  const binding = readWorkflowAgentBinding(run);
-  if (binding) {
-    const contract = executionPayloadFromRun(run);
-    const siteId = String(run.context?.siteId ?? "").trim();
-    const site = siteId ? resolveSite(siteId, getStoredSites()) : undefined;
-    const { businessName, storedKeyword } = contractFields(contract, site);
-    const effectiveKeyword = resolveEffectiveGridKeyword(storedKeyword, file.content, businessName);
-    stashWorkflowGridCsv(binding.workflowRunId, file.content, fileRefs, effectiveKeyword);
-    const workflow = await fetchWorkflow(run.teamId, binding.workflowId);
-    if (workflow) {
-      const outputs = await fetchWorkflowStepOutputs(
-        run.teamId,
-        binding.workflowId,
-        binding.workflowRunId,
-      );
-      await syncWorkflowRunArchiveDeliverables({
-        teamId: run.teamId,
-        workflowId: binding.workflowId,
-        workflowRunId: binding.workflowRunId,
-        nodes: workflow.nodes,
-        outputs,
-        agentRunId: run.id,
-        textPreview: "Grid export CSV",
-        extraFileRefs: fileRefs,
-      });
-    }
-    await onChainStep?.("Chaining entity pages…", "running");
-    try {
-      await chainWorkflowOnGridExport(run, { fileRefs });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Workflow chain failed";
-      await onChainStep?.(message, "error");
-      throw err instanceof Error ? err : new Error(message);
-    }
   }
 }
 
@@ -180,7 +138,6 @@ async function finalizeLocalGridExport(
   site: WordPressSite,
   contract: TaskExecutionClientRunContract | Record<string, unknown>,
   exportResult: Awaited<ReturnType<typeof runLocalGridExportForSite>>,
-  onChainStep?: (label: string, status: "running" | "error") => void | Promise<void>,
 ): Promise<{ csvContent: string; archiveFiles: ReturnType<typeof localDominatorArchiveFiles> }> {
   const { businessName, storedKeyword } = contractFields(contract, site);
   const csvContent = exportResult.csvContent;
@@ -211,13 +168,12 @@ async function finalizeLocalGridExport(
     effectiveKeyword,
   );
 
-  await onChainStep?.("Saving Local Grid draft…", "running");
   const savedScan = await saveLocalGridScanOnServer(site.id, exportResult.scan);
   if (!savedScan) {
     throw new Error("Local Grid draft could not be saved. Open Local Grid for this property and retry.");
   }
 
-  await persistLocalDominatorDeliverable(run, archiveFiles, onChainStep);
+  await persistLocalDominatorDeliverable(run, archiveFiles);
 
   return { csvContent, archiveFiles };
 }
@@ -244,9 +200,7 @@ export async function runLocalDominatorExportDirectHarness(
     shouldAbort: async () => (await ctx.isCancelled?.()) ?? false,
   });
 
-  await finalizeLocalGridExport(run, site, contract, exportResult, (label, status) =>
-    ctx.onStep?.(label, status === "error" ? "error" : "running"),
-  );
+  await finalizeLocalGridExport(run, site, contract, exportResult);
 
   return {
     updated: 1,
@@ -290,13 +244,7 @@ export async function runLocalDominatorExportClientHarness(
     shouldAbort: async () => (await ctx.isCancelled?.()) ?? false,
   });
 
-  const { archiveFiles } = await finalizeLocalGridExport(
-    run,
-    site,
-    contract,
-    exportResult,
-    (label, status) => ctx.onStep?.(label, status === "error" ? "error" : "running"),
-  );
+  const { archiveFiles } = await finalizeLocalGridExport(run, site, contract, exportResult);
 
   const saveLocalArchive = effectiveSaveLocalArchive("local_dominator_export", contract);
   const fileName = archiveFiles[0]?.fileName ?? exportResult.fileName;

@@ -305,8 +305,8 @@ export function createBlogHarnessSectionRuntime(args: {
           ? "[ILLUSTRATIVE]"
           : titleForCb;
 
-    // Section call failure fails the row visibly. No synthesized substitute
-    // section is generated.
+    // Throws on empty/invalid HTML so the isolation runner can retry or drop
+    // this section. No synthesized substitute section is generated here.
     const result = await runHarnessOpenRouterSection({
       sectionIndex,
       apiKey: options.openRouterApiKey,
@@ -339,8 +339,7 @@ export function createBlogHarnessSectionRuntime(args: {
     if (!harnessSectionPreparedValid(prepared, { isIllustrative })) {
       logger.warn(`[Bulk Harness] Section "${sectionLabel}" did not strictly match illustrative sub-tags; keeping section HTML.`);
     }
-    // Publish gate: truncated or incomplete sections fail the row here,
-    // before stitching and WordPress upload.
+    // Publish gate for this section; isolation runner catches and may retry/drop.
     validateHarnessSectionOrThrow(prepared, {
       title: titleForCb,
       finishReason,

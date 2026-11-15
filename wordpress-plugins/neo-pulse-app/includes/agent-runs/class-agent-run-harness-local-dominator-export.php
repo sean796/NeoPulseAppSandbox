@@ -170,15 +170,6 @@ class Neo_Pulse_App_Agent_Run_Harness_Local_Dominator_Export {
 
 		$artifact_url = (string) $saved['artifact']['url'];
 		$fresh        = Neo_Pulse_App_Agent_Runs_Store::get_run( $team_id, $run_id, true );
-		if ( $fresh ) {
-			Neo_Pulse_App_Workflow_Ld_Grid_Deliverable::save_from_agent_run(
-				$team_id,
-				$fresh,
-				$file_name,
-				$csv_content,
-				$artifact_url
-			);
-		}
 
 		Neo_Pulse_App_Agent_Runs_Store::patch_run(
 			$team_id,
@@ -229,11 +220,8 @@ class Neo_Pulse_App_Agent_Run_Harness_Local_Dominator_Export {
 			);
 		}
 
-		if ( $fresh ) {
-			Neo_Pulse_App_Workflow_Server_Dispatch::enqueue_continue_after_ld( $team_id, $fresh );
-			if ( class_exists( 'Neo_Pulse_App_Agent_Run_Worker_Cron' ) ) {
-				Neo_Pulse_App_Agent_Run_Worker_Cron::kick();
-			}
+		if ( $fresh && class_exists( 'Neo_Pulse_App_Agent_Run_Worker_Cron' ) ) {
+			Neo_Pulse_App_Agent_Run_Worker_Cron::kick();
 		}
 	}
 
@@ -337,12 +325,8 @@ class Neo_Pulse_App_Agent_Run_Harness_Local_Dominator_Export {
 			Neo_Pulse_App_Local_Dominator_Export::cleanup_job_after_finalize( $job_id );
 		}
 
-		$fresh_for_chain = Neo_Pulse_App_Agent_Runs_Store::get_run( $team_id, $run_id, true );
-		if ( $fresh_for_chain ) {
-			Neo_Pulse_App_Workflow_Server_Dispatch::enqueue_continue_after_ld( $team_id, $fresh_for_chain );
-			if ( class_exists( 'Neo_Pulse_App_Agent_Run_Worker_Cron' ) ) {
-				Neo_Pulse_App_Agent_Run_Worker_Cron::kick();
-			}
+		if ( class_exists( 'Neo_Pulse_App_Agent_Run_Worker_Cron' ) ) {
+			Neo_Pulse_App_Agent_Run_Worker_Cron::kick();
 		}
 
 		return true;

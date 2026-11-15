@@ -1,8 +1,12 @@
 import { cn } from "@/lib/utils";
-import {
-  FORGE_DASHBOARD_HERO_CARD_SHELL_CLASS,
-  FORGE_DASHBOARD_PANEL_SHELL_CLASS,
-} from "@/components/manager/pulse-forge/forge-dashboard-styles";
+
+const ORGANIC_DASHBOARD_HERO_CARD_SHELL_CLASS = cn(
+  "rounded-lg border-0 border-t border-b border-primary/55 bg-card shadow-tile transition-shadow hover:shadow-tile-pop",
+  "flex h-[13rem] min-h-[13rem] flex-col overflow-hidden",
+);
+
+export const ORGANIC_DASHBOARD_PANEL_SHELL_CLASS =
+  "overflow-hidden rounded-lg border-0 border-l-[length:var(--tile-accent-width)] border-l-primary bg-card shadow-tile";
 
 export const ORGANIC_DASHBOARD_PAGE_CLASS = cn(
   "relative flex min-h-0 flex-1 flex-col overflow-hidden bg-black font-sans",
@@ -11,10 +15,10 @@ export const ORGANIC_DASHBOARD_PAGE_CLASS = cn(
 export const ORGANIC_DASHBOARD_SCROLL_CLASS =
   "relative flex min-h-0 w-full min-w-0 flex-1 flex-col gap-4 overflow-y-auto px-0 py-4";
 
-export const ORGANIC_DASHBOARD_HERO_CARD_CLASS = FORGE_DASHBOARD_HERO_CARD_SHELL_CLASS;
+export const ORGANIC_DASHBOARD_HERO_CARD_CLASS = ORGANIC_DASHBOARD_HERO_CARD_SHELL_CLASS;
 
 export const ORGANIC_DASHBOARD_SECTION_PANEL_CLASS = cn(
-  FORGE_DASHBOARD_PANEL_SHELL_CLASS,
+  ORGANIC_DASHBOARD_PANEL_SHELL_CLASS,
   "flex min-h-0 flex-col gap-3 p-4",
 );
 

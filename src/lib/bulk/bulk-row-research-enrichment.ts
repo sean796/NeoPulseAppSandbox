@@ -16,9 +16,10 @@ import type { SeoContentBriefV1 } from "@/lib/overview-seo-content-brief";
 import { runTopicResearchFanout } from "@/lib/content-optimization/topic-research-fanout";
 import { firstPartyAuthorityBlockFromBrief, swotTextFromResearchFields } from "@/lib/content-optimization/first-party-authority-prompt";
 import { resolveLlmAuditAuthorityLinksForChecklist } from "@/lib/llm-audit/llm-audit-authority-links";
-import { loadWorkflowSerpResearchBrief, parseSeoContentBriefFromRow } from "@/lib/workflow/workflow-serp-research-cache";
-import { loadWorkflowDfsArticleAudit } from "@/lib/workflow/workflow-dfs-article-audit-cache";
-import { formatDfsArticleAuditHarnessPromptBlock } from "@/lib/dfs-article-audit/format-dfs-article-audit-harness";
+import {
+  loadSerpResearchBriefFromOutputs,
+  parseSeoContentBriefFromRow,
+} from "@/lib/bulk/serp-research-brief-artifact";
 import { resolveSerpLocationName } from "@/lib/llm-audit/fetch-seo-content-brief-wave";
 import type { BulkProcessingOptions, PrefetchedBulkKeywordResearch } from "./bulk-auto-generate-types";
 import type { CSVRow } from "./bulk-csv-parser";
@@ -245,7 +246,7 @@ export async function runBulkRowResearchEnrichmentPhase(input: {
       ?? options.workflowSerpResearch?.outputs;
     const cachedRowBrief = parseSeoContentBriefFromRow(enrichedRow);
     const cachedWorkflowBrief = workflowSerpOutputs?.length && serpKeyword
-      ? await loadWorkflowSerpResearchBrief(workflowSerpOutputs, serpKeyword).catch(() => null)
+      ? await loadSerpResearchBriefFromOutputs(workflowSerpOutputs, serpKeyword).catch(() => null)
       : null;
 
     const briefFromRowCache =
@@ -397,15 +398,7 @@ export async function runBulkRowResearchEnrichmentPhase(input: {
     }
 
     llmAuditSummaryPrompt = llmAuditGuidanceFromBrief(serpLlmBrief);
-    const workflowDfsOutputs =
-      options.workflowDfsArticleAudit?.getOutputs?.()
-      ?? options.workflowDfsArticleAudit?.outputs;
-    const cachedWorkflowArticleAudit = workflowDfsOutputs?.length
-      ? await loadWorkflowDfsArticleAudit(workflowDfsOutputs, serpPageUrl)
-      : null;
-    dfsArticleAuditBlock = cachedWorkflowArticleAudit?.audit
-      ? formatDfsArticleAuditHarnessPromptBlock(cachedWorkflowArticleAudit.audit)
-      : "";
+    dfsArticleAuditBlock = "";
     serpLlmBriefJson = JSON.stringify(serpLlmBrief, null, 2);
     enrichedRow = { ...enrichedRow, seo_research: serpLlmBriefJson };
 

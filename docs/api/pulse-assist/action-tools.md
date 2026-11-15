@@ -20,10 +20,6 @@ Task manager tools for Pulse Assist Build mode. Ask and Plan preview actions; Bu
 - `tasks_list_templates`
 - `recipes_list` (filters: category, bucket, execution, signal, vertical, q)
 - `recipes_describe` (keyword)
-- `forge_dashboard` (installed automations, workflows, recent runs)
-- `workflows_list`
-- `workflows_get` (workflowId; uses `pulse_context.forgeWorkflowId` when omitted)
-- `workflows_list_runs` (workflowId)
 
 ## Write tools (Build only)
 
@@ -33,13 +29,8 @@ Task manager tools for Pulse Assist Build mode. Ask and Plan preview actions; Bu
 - `tasks_create_project` (supports `templateKeyword`, `taskClients`, `wordpressSiteId`)
 - `tasks_save_template`
 - `tasks_delete_template`
-- `recipes_install` (keyword, wordpressSiteId, optional title) — site-bound automation project on My Forge
+- `recipes_install` (keyword, wordpressSiteId, optional title) — site-bound automation project
 - `recipes_run` (mode: `evaluate`, `now`, `install_only`; keyword; wordpressSiteId; optional taskId)
-- `workflows_create` (name, wordpressSiteId, optional recipeKeyword)
-- `workflows_update` (workflowId; name, description, wordpressSiteId)
-- `workflows_publish` (workflowId)
-- `workflows_delete` (workflowId)
-- `workflows_run` (workflowId; optional simulated)
 - `executions_start` (taskId; optional executionKind and executionPayload overrides)
 - `gsc_reporting_execute` (comparePreset: `mom` | `yoy`; saveToDisk; wordpressSiteId)
 - `ads_reporting_execute` (comparePreset: `mom` | `yoy`; saveToDisk; wordpressSiteId)
@@ -113,34 +104,23 @@ Create a project from a template:
 { "tool": "tasks_create_project", "args": { "title": "Monthly Tasks", "templateKeyword": "monthly-seo", "taskClients": [{ "taskKeyword": "audit", "clientSiteId": "site-id" }] } }
 ```
 
-Build returns **Saved template**, **Deleted template**, **Created project**, **Installed automation**, **Created workflow**, **Published workflow**, **Deleted workflow**, or **Started workflow** cards with past-tense summaries.
+Build returns **Saved template**, **Deleted template**, **Created project**, or **Installed automation** cards with past-tense summaries.
 
 See [Automation recipes](../automation-recipes/overview.md) for the JSON catalog and install flow.
 
-## Pulse Forge
+## Automation recipes
 
-Ask and Plan can read My Forge, Agents recipes, and Workflows. Build writes workflows and recipe installs.
+Ask and Plan can list and describe recipes. Build installs and runs them.
 
-- `recipes_install` creates a site-bound automation project and opens **My Forge**.
-- `workflows_create` with `recipeKeyword` builds a linear canvas from the recipe trigger and action blocks. Missing recipe or missing blocks return an error. Do not emit `nodes` or `edges`.
+- `recipes_install` creates a site-bound automation project and links to **Tasks**.
 
 ```json
-{ "tool": "workflows_create", "args": { "name": "Monthly GSC MoM", "recipeKeyword": "gsc-monthly-mom-report", "wordpressSiteId": "site-id" } }
+{ "tool": "recipes_install", "args": { "keyword": "gsc-monthly-mom-report", "wordpressSiteId": "site-id" } }
 ```
 
 ```json
-{ "tool": "workflows_create", "args": { "name": "Monthly PPC MoM", "recipeKeyword": "ads-monthly-mom-report", "wordpressSiteId": "site-id" } }
+{ "tool": "recipes_install", "args": { "keyword": "ads-monthly-mom-report", "wordpressSiteId": "site-id" } }
 ```
-
-```json
-{ "tool": "workflows_publish", "args": { "workflowId": 12 } }
-```
-
-```json
-{ "tool": "workflows_run", "args": { "workflowId": 12 } }
-```
-
-Cards deep-link with `navigate.kind: pulseForge` to `#pulse-forge/forge`, `#pulse-forge/recipes`, or `#pulse-forge/workflows/{id}`.
 
 ## Request context
 

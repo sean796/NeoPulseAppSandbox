@@ -7,7 +7,7 @@ import { auditQuestionsForSave } from "@/lib/chatgpt-audit-questions";
 import type { WordPressSite } from "@/components/integrations/types";
 import { resolveTaskExecutionBucket } from "@/lib/task-execution-bucket";
 import { resolveTaskExecutionBucketUrls } from "@/lib/task-execution-resolve-bucket-urls";
-import { ensureChatGptAuditExecutionPayload } from "@/lib/workflow/resolve-chatgpt-audit-workflow-payload";
+import { ensureChatGptAuditExecutionPayload } from "@/lib/chatgpt-audit/ensure-chatgpt-audit-execution-payload";
 import type { AgentRun } from "@/lib/agent-runs-types";
 import type { TaskExecutionClientRunContract, TaskExecutionPayload } from "@/lib/tasks-types";
 

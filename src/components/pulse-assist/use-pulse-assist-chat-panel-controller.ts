@@ -18,12 +18,8 @@ import { buildAssistPayload } from "@/lib/pulse-assist/context";
 import {
   loadPulseAssistHistory,
   readSubmode,
-  readPageContentMode,
-  readTargetScope,
   savePulseAssistHistory,
-  writePageContentMode,
   writeSubmode,
-  writeTargetScope,
 } from "@/lib/pulse-assist/storage";
 import { turnsFromAssistHistory } from "@/lib/pulse-assist/history";
 import { applyStreamEvent, INITIAL_WORKFLOW, isAgentWorkflowEvent, WorkflowPacer } from "@/lib/pulse-assist/stream";
@@ -31,17 +27,13 @@ import type {
   AssistCard,
   AssistHistoryMessage,
   AssistSubmode,
-  PageContentMode,
   AssistStreamEvent,
-  AssistTargetScope,
 } from "@/lib/pulse-assist/types";
 import type { PulseAssistDebugTurn } from "@/lib/pulse-assist/debug-log";
 import type { Turn } from "./pulse-assist-chat-panel-types";
 
 type UsePulseAssistChatPanelControllerArgs = {
   userId: number;
-  hidePageScope: boolean;
-  defaultTargetScope?: AssistTargetScope;
   canAssist: boolean;
   hasOpenRouterKey: boolean;
   context: ReturnType<typeof usePulseAssistContext>;
@@ -50,9 +42,21 @@ type UsePulseAssistChatPanelControllerArgs = {
 };
 
 export function usePulseAssistChatPanelController(args: UsePulseAssistChatPanelControllerArgs) {
-  const { userId, hidePageScope, defaultTargetScope, canAssist, hasOpenRouterKey, context, activeTeam, members } = args;
-  const { activeSite, activeSiteId, allSites, managerTab, dashboardCluster, generatorSection, researchSection, sitemapMode, contentOptimizerSection, overview, tasks, siteDisplayName } =
-    context;
+  const { userId, canAssist, hasOpenRouterKey, context, activeTeam, members } = args;
+  const {
+    activeSite,
+    activeSiteId,
+    allSites,
+    managerTab,
+    dashboardCluster,
+    generatorSection,
+    researchSection,
+    sitemapMode,
+    contentOptimizerSection,
+    overview,
+    tasks,
+    siteDisplayName,
+  } = context;
 
   const [taskProjects, setTaskProjects] = useState<TaskProject[]>([]);
   const [pulseAssignedTasks, setPulseAssignedTasks] = useState<TeamContextPulseTask[]>([]);
@@ -75,43 +79,21 @@ export function usePulseAssistChatPanelController(args: UsePulseAssistChatPanelC
     };
   }, [activeTeam?.id]);
 
-
   const [submode, setSubmodeState] = useState<AssistSubmode>(() => readSubmode());
-  const [pageContentMode, setPageContentModeState] = useState<PageContentMode>(() =>
-    readPageContentMode(),
-  );
-  const [targetScope, setTargetScopeState] = useState<AssistTargetScope>(
-    () => defaultTargetScope ?? readTargetScope(),
-  );
   const [input, setInput] = useState("");
   const [history, setHistory] = useState<AssistHistoryMessage[]>([]);
   const [turns, setTurns] = useState<Turn[]>([]);
   const [loading, setLoading] = useState(false);
-  const [buildProgress, setBuildProgress] = useState<{ completed: number; total: number; label: string } | null>(null);
+  const [buildProgress, setBuildProgress] = useState<{
+    completed: number;
+    total: number;
+    label: string;
+  } | null>(null);
 
   const setSubmode = useCallback((next: AssistSubmode) => {
     setSubmodeState(next);
     writeSubmode(next);
   }, []);
-
-  const setPageContentMode = useCallback((next: PageContentMode) => {
-    setPageContentModeState(next);
-    writePageContentMode(next);
-  }, []);
-
-  const setTargetScope = useCallback(
-    (next: AssistTargetScope) => {
-      const scope = hidePageScope && next === "page" ? "site" : next;
-      setTargetScopeState(scope);
-      writeTargetScope(scope);
-    },
-    [hidePageScope],
-  );
-
-  useEffect(() => {
-    if (!hidePageScope || targetScope === "site") return;
-    setTargetScope("site");
-  }, [hidePageScope, targetScope, setTargetScope]);
 
   useEffect(() => {
     const loaded = loadPulseAssistHistory(userId);
@@ -196,8 +178,6 @@ export function usePulseAssistChatPanelController(args: UsePulseAssistChatPanelC
         expandedPageTitle: overview.expandedPageTitle,
         postId: overview.postId,
         submode: effectiveSubmode,
-        pageContentMode,
-        targetScope,
         message: trimmed,
         history,
         team: activeTeam,
@@ -376,14 +356,12 @@ export function usePulseAssistChatPanelController(args: UsePulseAssistChatPanelC
       managerTab,
       members,
       overview,
-      pageContentMode,
       pulseAssignedTasks,
       researchSection,
       setSubmode,
       siteDisplayName,
       sitemapMode,
       submode,
-      targetScope,
       taskProjects,
       tasks,
     ],
@@ -417,10 +395,6 @@ export function usePulseAssistChatPanelController(args: UsePulseAssistChatPanelC
   return {
     submode,
     setSubmode,
-    pageContentMode,
-    setPageContentMode,
-    targetScope,
-    setTargetScope,
     input,
     setInput,
     history,

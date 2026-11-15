@@ -29,8 +29,8 @@ const DOCK_COUNTS_SLOT_CLASS =
   "inline-flex h-6 min-h-6 max-h-6 w-[6rem] min-w-[6rem] max-w-[6rem] shrink-0 items-center justify-start overflow-hidden";
 
 /**
- * Flat muted two-bar mark (BulkSplashVisual language). Soft rounded bars, subtle pulse.
- * Slot stays h-6 × 6rem. No gloss / no vertical gradient.
+ * Flat muted two-bar mark. One shared silver sheen, same timing on every row.
+ * Slot stays h-6 × 6rem.
  */
 function DockRowCountMark() {
   return (
@@ -38,8 +38,8 @@ function DockRowCountMark() {
       className="dock-count-fade inline-flex h-6 max-h-6 w-[6rem] max-w-[6rem] flex-col justify-center gap-1.5 overflow-hidden"
       aria-hidden
     >
-      <span className="dock-count-pulse h-2.5 w-[3.6rem] shrink-0 rounded-sm bg-zinc-700" />
-      <span className="dock-count-pulse dock-count-pulse-delay h-2.5 w-full shrink-0 rounded-sm bg-zinc-700" />
+      <span className="dock-count-sheen h-2.5 w-[3.6rem] shrink-0 rounded-sm bg-zinc-700" />
+      <span className="dock-count-sheen h-2.5 w-full shrink-0 rounded-sm bg-zinc-700" />
     </span>
   );
 }
@@ -51,15 +51,18 @@ export function QuarterEditorialCountsStrip({
   countsBatchPending = false,
   variant = "default",
   dockActive = false,
+  dockFadeIndex = 0,
 }: {
   site: WordPressSite;
   stats: QuarterEditorialTileStats | undefined;
   rowDisplay?: WordPressPropertyRowDisplay;
-  /** Parent batch flag — keep splash until every site finishes, then fade together. */
+  /** Parent batch flag — keep splash until every site finishes, then cascade the fade. */
   countsBatchPending?: boolean;
   /** Dock palette: plain trailing counts, no black frames. */
   variant?: "default" | "dock";
   dockActive?: boolean;
+  /** Visual row index. Dock number fade waits this many steps so the list cascades. */
+  dockFadeIndex?: number;
 }) {
   if (!siteHasWpCredentials(site) || !stats) return null;
 
@@ -135,7 +138,11 @@ export function QuarterEditorialCountsStrip({
         title={stripSummaryTitle}
         onClick={stop}
         onPointerDown={stop}
-        style={{ color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
+        style={{
+          color: "#ffffff",
+          WebkitTextFillColor: "#ffffff",
+          ["--dock-count-fade-delay" as string]: `${dockFadeIndex * 0.08}s`,
+        }}
       >
         <span
           className={countClass}

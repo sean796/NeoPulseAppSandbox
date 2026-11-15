@@ -393,15 +393,7 @@ export const PULSE_AGENT_REGISTRY: readonly PulseRegisteredAgentEntry[] = [
     sourceModule: "src/lib/wikipedia/validate-wikipedia-place-page-openrouter.ts",
   },
 
-  // 12. Forge Workflow & Automation Agents
-  {
-    id: "workflow.csv.proposed-questions",
-    label: "Workflow CSV Proposed Questions Extractor",
-    category: "research",
-    domain: "aiseo",
-    reason: "Extracts proposed conversational search and FAQ questions from upstream CSV research cells for DFS LLM article audits.",
-    sourceModule: "src/lib/workflow/extract-csv-proposed-questions.ts",
-  },
+  // 12. Automation & delivery agents
   {
     id: "reporting.automation.email-intro",
     label: "Automation Email Intro & Meeting Notes Agent",
@@ -443,6 +435,15 @@ export const PULSE_AGENT_REGISTRY: readonly PulseRegisteredAgentEntry[] = [
     reason:
       "Applies no-approval Semrush Site Audit fixes (missing title/meta/alt, broken internal links and images) via Neo MCP, then rescans for HTTP 200.",
     sourceModule: "src/lib/semrush-safe-fix/semrush-safe-fix-agent.ts",
+  },
+  {
+    id: "content.posts.gap-check",
+    label: "Posts Content Gap Check",
+    category: "blog",
+    domain: "blog-generator",
+    reason:
+      "Counts next-month published and scheduled blog posts for one site, and when short of the site blog quota starts Blog Ideas (GSC) until WordPress upload finishes.",
+    sourceModule: "skills/posts-content-gap-check/SKILL.md",
   },
 ] as const;
 

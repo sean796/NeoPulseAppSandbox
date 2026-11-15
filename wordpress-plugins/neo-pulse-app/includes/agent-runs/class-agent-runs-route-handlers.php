@@ -479,7 +479,7 @@ class Neo_Pulse_App_Agent_Runs_Route_Handlers {
 
 		if ( in_array( (string) ( $run['status'] ?? '' ), array( 'queued', 'running' ), true ) ) {
 			$recipe = sanitize_key( (string) ( $run['recipeKey'] ?? '' ) );
-			$ticks  = $recipe === 'semrush_safe_fix' ? 1 : 24;
+			$ticks  = in_array( $recipe, array( 'semrush_safe_fix', 'posts_content_gap_check' ), true ) ? 1 : 24;
 			for ( $i = 0; $i < $ticks; $i++ ) {
 				$current = Neo_Pulse_App_Agent_Runs_Store::get_run( $team_id, $run_id, true );
 				if ( ! $current ) {

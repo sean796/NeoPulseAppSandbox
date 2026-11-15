@@ -18,7 +18,7 @@ import {
 import { patchTaskExecutionProgress } from "@/lib/tasks-api";
 import type { TaskArchiveFileInput } from "@/lib/task-execution-archive";
 import type { TaskExecutionClientRunContract } from "@/lib/tasks-types";
-import { inferAutomationDeliveryStepKey } from "@/lib/workflow/automation-delivery-log";
+import { inferAutomationDeliveryStepKey } from "@/lib/agent-runs/complete-agent-run-execution";
 import {
   isGscMeetingNotesDeliverable,
   resolveDriveUploadDeliverables,

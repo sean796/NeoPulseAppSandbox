@@ -10,7 +10,6 @@ import {
   fetchClientSiteLogoUrl,
   resolveClientSiteOrigin,
 } from "@/lib/integrations/client-site-logo";
-import { BOOTSTRAP_SITES } from "virtual:neo-pulse-sites-bootstrap";
 import type { WordPressSite } from "./types";
 import { WORDPRESS_SITES_STORAGE_KEY } from "./types";
 import { getDeletedSitesTombstones, isSiteTombstoned } from "./storage-deleted-sites";
@@ -19,15 +18,13 @@ import {
   isStalePhoenixArizonaLocation,
   minimalSiteForLocalStorage,
   normalizeSiteEntry,
-  restoreOriginalIntegrationsSiteName,
   stripInlineClientLogoFromSite,
 } from "./storage-site-normalize";
-import { fetchWordPressSitesMirror, syncWordPressSitesToServer } from "./storage-server-sync";
-import { DEFAULT_PROPERTIES_SEED_SITES } from "./default-properties-seed";
+import { fetchWordPressSitesMirror } from "./storage-server-sync";
+import seedFile from "./default-properties-seed.json";
 
 export {
   DELETED_WP_SITES_STORAGE_KEY,
-  PROTECTED_ACTIVE_CLIENT_NAMES,
   getDeletedSitesTombstones,
   recordDeletedSite,
   isSiteTombstoned,
@@ -45,10 +42,7 @@ export {
   syncActiveWordPressSiteToServer,
   fetchWordPressSitesMirror,
 } from "./storage-server-sync";
-
-/** One-time undo for header display-name edits that overwrote or shortened property names. */
-export const WP_SITES_RESTORE_ORIGINAL_NAMES_ONCE_KEY =
-  "neo-pulse-wp-sites-restore-original-names-v1";
+export type { WordPressSitesMirrorResult } from "./storage-server-sync";
 
 /** Node worker override for server post creator harness (no browser localStorage). */
 let serverHarnessSitesOverride: WordPressSite[] | null = null;
@@ -59,6 +53,29 @@ let sitesServerHydrationDone = false;
 /** Shared in-flight/completed hydration so boot does not flash an empty roster. */
 let sitesServerHydrationPromise: Promise<WordPressSite[]> | null = null;
 
+type SeedPasswordRow = { siteUrl?: string; appPassword?: string };
+
+/** Passwords for rows already on the mirror. Does not add or reshape a property. */
+function seedPasswordRows(): SeedPasswordRow[] {
+  const raw = seedFile as { sites?: SeedPasswordRow[] } | SeedPasswordRow[];
+  if (Array.isArray(raw)) return raw;
+  if (raw && Array.isArray(raw.sites)) return raw.sites;
+  return [];
+}
+
+function seedPasswordByHost(): Map<string, string> {
+  const byHost = new Map<string, string>();
+  for (const site of seedPasswordRows()) {
+    const host = wordPressSiteHostKey(site.siteUrl);
+    const pass = site.appPassword?.trim();
+    if (!host || !pass || byHost.has(host)) continue;
+    byHost.set(host, pass);
+  }
+  return byHost;
+}
+
+const SEED_PASSWORD_BY_HOST = seedPasswordByHost();
+
 function applySiteIntegrationDefaults(site: WordPressSite): WordPressSite {
   return applySemrushProjectDefaults(
     applyGa4PropertyIdDefaults(
@@ -67,16 +84,18 @@ function applySiteIntegrationDefaults(site: WordPressSite): WordPressSite {
   );
 }
 
-function seedMemoryFromBootstrap(): void {
+/**
+ * Vite-only first paint: main.tsx passes virtual:neo-pulse-sites-bootstrap.
+ * Node workers (post creator / tsx) never import that virtual module.
+ */
+export function hydrateSitesBootstrap(sites: WordPressSite[] | null | undefined): void {
   if (memorySitesStore) return;
-  if (!Array.isArray(BOOTSTRAP_SITES) || BOOTSTRAP_SITES.length === 0) return;
+  if (!Array.isArray(sites) || sites.length === 0) return;
   const tombstones = getDeletedSitesTombstones();
-  memorySitesStore = BOOTSTRAP_SITES.filter((s) => !isSiteTombstoned(s, tombstones)).map(
+  memorySitesStore = sites.filter((s) => !isSiteTombstoned(s, tombstones)).map(
     applySiteIntegrationDefaults,
   );
 }
-
-seedMemoryFromBootstrap();
 
 export function setServerHarnessSitesOverride(sites: WordPressSite[] | null): void {
   serverHarnessSitesOverride = sites;
@@ -98,45 +117,23 @@ export function ensureSitesLoadedFromServer(): Promise<WordPressSite[]> {
 
 /**
  * Always load the Properties roster from the server mirror into memory.
- * Keeps seed-only properties (e.g. Custom Shades) when the mirror lacks them.
+ * A successful load replaces memory with the mirror only (no bundled seed).
+ * A failed load leaves the painted roster in place.
  */
 export async function loadSitesFromServerAlways(): Promise<WordPressSite[]> {
   purgeLegacyLocalStorageCaches();
   const tombstones = getDeletedSitesTombstones();
-  const mirror = await fetchWordPressSitesMirror();
-  const filteredMirror = mirror
-    .filter((s) => !isSiteTombstoned(s, tombstones))
-    .map(applySiteIntegrationDefaults);
+  const mirrorResult = await fetchWordPressSitesMirror();
+  if (!mirrorResult.ok) {
+    sitesServerHydrationDone = true;
+    return getStoredSites();
+  }
 
-  const seed = DEFAULT_PROPERTIES_SEED_SITES.filter((s) => !isSiteTombstoned(s, tombstones)).map(
-    applySiteIntegrationDefaults,
-  );
-  const byHost = new Map<string, WordPressSite>();
   const hostOf = (s: WordPressSite) => wordPressSiteHostKey(s.siteUrl) || s.id;
-  for (const s of filteredMirror) byHost.set(hostOf(s), s);
-  for (const s of seed) {
-    const host = hostOf(s);
-    const cur = byHost.get(host);
-    if (!cur) {
-      byHost.set(host, s);
-      continue;
-    }
-    byHost.set(host, {
-      ...cur,
-      ...s,
-      appPassword: s.appPassword?.trim() ? s.appPassword : cur.appPassword,
-      locations: s.locations?.length ? s.locations : cur.locations,
-      napInfo: s.napInfo ?? cur.napInfo,
-      primaryLocalKeyword: s.primaryLocalKeyword || cur.primaryLocalKeyword,
-      localKeywords: s.localKeywords?.length ? s.localKeywords : cur.localKeywords,
-      sitemaps: s.sitemaps ?? cur.sitemaps,
-      entitySitemapUrl: s.entitySitemapUrl || cur.entitySitemapUrl,
-      manualEndpoint: s.manualEndpoint || cur.manualEndpoint,
-      clientLogoUrl: s.clientLogoUrl || cur.clientLogoUrl,
-      clientLogoSource: s.clientLogoSource || cur.clientLogoSource,
-      clientLogoFetchedAt: s.clientLogoFetchedAt || cur.clientLogoFetchedAt,
-      wpEngineInstall: s.wpEngineInstall || cur.wpEngineInstall,
-    });
+  const byHost = new Map<string, WordPressSite>();
+  for (const s of mirrorResult.sites) {
+    if (isSiteTombstoned(s, tombstones)) continue;
+    byHost.set(hostOf(s), applySiteIntegrationDefaults(s));
   }
 
   // Prefer bootstrap/local memory credentials when mirror rows are secret-stripped.
@@ -149,6 +146,12 @@ export async function loadSitesFromServerAlways(): Promise<WordPressSite[]> {
         byHost.set(host, { ...cur, appPassword: local.appPassword });
       }
     }
+  }
+  for (const [host, cur] of byHost) {
+    if (cur.appPassword?.trim()) continue;
+    const pass = SEED_PASSWORD_BY_HOST.get(host);
+    if (!pass) continue;
+    byHost.set(host, { ...cur, appPassword: pass });
   }
 
   memorySitesStore = [...byHost.values()];
@@ -206,7 +209,7 @@ export function getStoredSites(): WordPressSite[] {
       .filter((s) => !isSiteTombstoned(s, tombstones))
       .map(normalizeSiteEntry);
   }
-  if (memorySitesStore && memorySitesStore.length > 0) {
+  if (memorySitesStore !== null) {
     return memorySitesStore
       .filter((s) => !isSiteTombstoned(s, tombstones))
       .map(normalizeSiteEntry);
@@ -235,16 +238,12 @@ export function getStoredSites(): WordPressSite[] {
   return [];
 }
 
-export function saveSites(sites: WordPressSite[]): void {
+/** Persist the roster with one awaited server write. Returns false when the write fails. */
+export async function saveSites(sites: WordPressSite[]): Promise<boolean> {
   const tombstones = getDeletedSitesTombstones();
   const filtered = sites.filter((s) => !isSiteTombstoned(s, tombstones));
-
-  const target = sites.length > 0 && filtered.length === 0 ? sites : filtered;
-  const persisted = target.map((s) => normalizeSiteEntry(stripInlineClientLogoFromSite(s)));
+  const persisted = filtered.map((s) => normalizeSiteEntry(stripInlineClientLogoFromSite(s)));
   memorySitesStore = persisted;
-
-  void syncWordPressSitesToServer(persisted);
-  void saveWordPressProperties(persisted).catch(() => {});
 
   const minimalJson = JSON.stringify(persisted.map(minimalSiteForLocalStorage));
   if (!tryPersistSitesJson(minimalJson)) {
@@ -254,50 +253,9 @@ export function saveSites(sites: WordPressSite[]): void {
       /* ignore */
     }
   }
-}
 
-/**
- * Restores Integrations property names from NAP + server mirror (longest label wins).
- * Clears header-only `menuDisplayName` overrides. Runs once per browser profile.
- */
-export async function restoreOriginalPropertyNamesOnce(): Promise<boolean> {
-  if (typeof localStorage === "undefined") return false;
-  if (localStorage.getItem(WP_SITES_RESTORE_ORIGINAL_NAMES_ONCE_KEY)) return false;
-
-  const stored = localStorage.getItem(WORDPRESS_SITES_STORAGE_KEY);
-  if (!stored) {
-    localStorage.setItem(WP_SITES_RESTORE_ORIGINAL_NAMES_ONCE_KEY, "1");
-    return false;
-  }
-
-  let sites: WordPressSite[];
-  try {
-    sites = JSON.parse(stored) as WordPressSite[];
-  } catch {
-    localStorage.setItem(WP_SITES_RESTORE_ORIGINAL_NAMES_ONCE_KEY, "1");
-    return false;
-  }
-
-  const serverSites = await fetchWordPressSitesMirror();
-  let changed = false;
-  const restored = sites.map((site) => {
-    const mirror = findMirrorSiteRow(site, serverSites);
-    const before = JSON.stringify({ name: site.name, menuDisplayName: site.menuDisplayName });
-    let next = restoreOriginalIntegrationsSiteName(site, mirror);
-    next = applySemrushProjectDefaults(
-      applyGa4PropertyIdDefaults(
-        applyWpEngineHostingDefaults(applyShutterSpotDisplayNameMigration(next)),
-      ),
-    );
-    if (JSON.stringify({ name: next.name, menuDisplayName: next.menuDisplayName }) !== before) {
-      changed = true;
-    }
-    return next;
-  });
-
-  localStorage.setItem(WP_SITES_RESTORE_ORIGINAL_NAMES_ONCE_KEY, "1");
-  if (changed) saveSites(restored);
-  return changed;
+  const result = await saveWordPressProperties(persisted);
+  return result.ok;
 }
 
 function findMirrorSiteRow(local: WordPressSite, serverSites: WordPressSite[]): WordPressSite | undefined {
@@ -327,8 +285,9 @@ const MIRROR_INTEGRATION_ID_FIELDS = [
 
 /** Merge server-mirrored integration IDs (GBP, GA4, Google Ads, Semrush, WP Engine) onto local sites when the browser copy is missing them. */
 export async function mergeServerGbpLocationIdsIntoLocalSites(): Promise<boolean> {
-  const serverSites = await fetchWordPressSitesMirror();
-  if (serverSites.length === 0) return false;
+  const mirrorResult = await fetchWordPressSitesMirror();
+  if (!mirrorResult.ok || mirrorResult.sites.length === 0) return false;
+  const serverSites = mirrorResult.sites;
 
   const local = getStoredSites();
   if (local.length === 0) return false;
@@ -382,8 +341,7 @@ export async function mergeServerGbpLocationIdsIntoLocalSites(): Promise<boolean
   // Pushing serverSite back into local was resurrecting deleted properties!
 
   if (!changed) return false;
-  saveSites(merged);
-  return true;
+  return saveSites(merged);
 }
 
 /** Homepage logo fetch for properties missing `clientLogoUrl` (same as Profile “Fetch from site”). */
@@ -414,8 +372,7 @@ export async function fetchAndPersistMissingClientLogos(
   }
 
   if (!changed) return false;
-  saveSites([...byId.values()]);
-  return true;
+  return saveSites([...byId.values()]);
 }
 
 export function hasUsableLocalSites(sites: WordPressSite[]): boolean {
@@ -438,10 +395,10 @@ export async function restoreSitesFromServerMirrorIfEmpty(): Promise<WordPressSi
 
   const tombstones = getDeletedSitesTombstones();
   const mirror = await fetchWordPressSitesMirror();
-  if (mirror.length > 0) {
-    const filteredMirror = mirror.filter((s) => !isSiteTombstoned(s, tombstones));
+  if (mirror.ok && mirror.sites.length > 0) {
+    const filteredMirror = mirror.sites.filter((s) => !isSiteTombstoned(s, tombstones));
     if (filteredMirror.length > 0) {
-      saveSites(filteredMirror);
+      await saveSites(filteredMirror);
     }
   }
 

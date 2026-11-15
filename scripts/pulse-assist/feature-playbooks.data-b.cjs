@@ -10,7 +10,7 @@ const FEATURE_PLAYBOOKS = [
     "How do I switch between Pages, Posts, and SAP?",
     "pulse:nav/generator/opt",
     [
-      "Open [SEO → Generator → Opt](pulse:nav/generator/opt) (Overview).",
+      "Open [Tools → SEO → Opt](pulse:nav/generator/opt).",
       "On the black toolbar, click **Pages**, **Posts**, or **SAP** sitemap source pills.",
     ],
     ["pages posts sap", "sitemap source", "sitemap pills"],
@@ -19,10 +19,10 @@ const FEATURE_PLAYBOOKS = [
     "generator/opt/aiseo-bulk-meta",
     "generator/opt",
     "AISEO bulk meta",
-    "How do I bulk-optimize meta on Overview?",
+    "How do I run Opt AISEO bulk meta?",
     "pulse:nav/generator/opt",
     [
-      "Open [SEO → Generator → Opt](pulse:nav/generator/opt) (Overview).",
+      "Open [Tools → SEO → Opt](pulse:nav/generator/opt).",
       "Select rows with checkboxes.",
       "Open the **AISEO** flyout on the black toolbar → **Meta** → **All Meta** or **MD**.",
       "Run the bulk job on selected rows.",
@@ -33,10 +33,10 @@ const FEATURE_PLAYBOOKS = [
     "generator/opt/row-expansion",
     "generator/opt",
     "Row expansion",
-    "How do I expand an Overview row?",
+    "How do I expand an Opt row?",
     "pulse:nav/generator/opt",
     [
-      "Open [SEO → Generator → Opt](pulse:nav/generator/opt) (Overview).",
+      "Open [Tools → SEO → Opt](pulse:nav/generator/opt).",
       "Click a row in the grid to expand row details.",
       "Use row actions such as **AI meta** for single-page optimization.",
     ],
@@ -49,7 +49,7 @@ const FEATURE_PLAYBOOKS = [
     "How do I run AI meta on one page?",
     "pulse:nav/generator/opt",
     [
-      "Open [SEO → Generator → Opt](pulse:nav/generator/opt) (Overview).",
+      "Open [Tools → SEO → Opt](pulse:nav/generator/opt).",
       "Expand the page row.",
       "Click **AI meta** in row details (pages: meta + FAQs; posts: **AI title** then meta).",
     ],
@@ -62,7 +62,7 @@ const FEATURE_PLAYBOOKS = [
     "How do I optimize a page title?",
     "pulse:nav/generator/opt",
     [
-      "Open [SEO → Generator → Opt](pulse:nav/generator/opt) (Overview).",
+      "Open [Tools → SEO → Opt](pulse:nav/generator/opt).",
       "Use **Pages**, **Posts**, or **SAP** pills to find the URL.",
       "Expand the row and edit **SEO title** (posts: use **AI title** or **AI meta**).",
       "Click **Save**.",
@@ -70,27 +70,28 @@ const FEATURE_PLAYBOOKS = [
     ["page title", "optimize title", "seo title", "title tag", "optimizae"],
   ),
   pb(
+    "generator/opt/multi-site",
     "generator/opt",
     "Multi-site pill",
-    "How do I use multi-site Overview?",
+    "How do I use multi-site Opt?",
     "pulse:nav/generator/opt",
     [
-      "Open [SEO → Generator → Opt](pulse:nav/generator/opt) (Overview).",
+      "Open [Tools → SEO → Opt](pulse:nav/generator/opt).",
       "Switch the content optimizer section to **Multi-site** when available.",
       "Compare or bulk work across connected properties from the multi-site grid.",
     ],
     ["multi-site", "multi site overview"],
   ),
 
-  // generator bulk sections
+  // generator bulk sections (legacy ids open Blog Studio)
   pb(
     "generator/bulk-csv/csv-upload",
-    "generator/bulk-csv",
+    "generator/bulk-prompt",
     "CSV upload",
     "How do I bulk generate from CSV?",
-    "pulse:nav/generator/bulk-csv",
+    "pulse:nav/generator/bulk-prompt",
     [
-      "Open [SEO → Generator → CSV](pulse:nav/generator/bulk-csv).",
+      "Open [Tools → SEO → Studio](pulse:nav/generator/bulk-prompt).",
       "Upload a CSV with blog generation columns.",
       "Configure options and run **Bulk generate**.",
     ],
@@ -101,9 +102,9 @@ const FEATURE_PLAYBOOKS = [
     "generator/bulk-csv",
     "Bulk generate",
     "How do I run CSV bulk generation?",
-    "pulse:nav/generator/bulk-csv",
+    "pulse:nav/generator/bulk-prompt",
     [
-      "Open [SEO → Generator → CSV](pulse:nav/generator/bulk-csv).",
+      "Open [SEO → Generator → CSV](pulse:nav/generator/bulk-prompt).",
       "After CSV upload, start the bulk generation run from the toolbar.",
     ],
     ["bulk generate", "run csv bulk"],
@@ -115,7 +116,7 @@ const FEATURE_PLAYBOOKS = [
     "How do I bulk generate from prompts?",
     "pulse:nav/generator/bulk-prompt",
     [
-      "Open [SEO → Generator → Prompt](pulse:nav/generator/bulk-prompt).",
+      "Open [Tools → SEO → Studio](pulse:nav/generator/bulk-prompt).",
       "Configure prompt templates and run bulk generation.",
     ],
     ["prompt bulk", "bulk prompt"],
@@ -125,9 +126,9 @@ const FEATURE_PLAYBOOKS = [
     "generator/bulk-blog-import",
     "Blog import",
     "How do I import blog posts?",
-    "pulse:nav/generator/bulk-blog-import",
+    "pulse:nav/generator/bulk-prompt",
     [
-      "Open [SEO → Generator → Import](pulse:nav/generator/bulk-blog-import).",
+      "Open [Tools → SEO → Studio](pulse:nav/generator/bulk-prompt).",
       "Import existing WordPress posts for optimization workflows.",
     ],
     ["blog import", "import posts"],
@@ -139,7 +140,7 @@ const FEATURE_PLAYBOOKS = [
     "How do I generate press releases in bulk?",
     "pulse:nav/generator/bulk-press-release",
     [
-      "Open [SEO → Generator → PR](pulse:nav/generator/bulk-press-release).",
+      "Open [Tools → SEO → PR](pulse:nav/generator/bulk-press-release).",
       "Configure press release rows and run the bulk PR generator.",
     ],
     ["press release", "pr generator"],
@@ -149,9 +150,9 @@ const FEATURE_PLAYBOOKS = [
     "generator/entity",
     "Entity SAP generator",
     "How do I generate SAP entity pages?",
-    "pulse:nav/generator/entity",
+    "pulse:nav/generator/bulk-prompt",
     [
-      "Open [SEO → Generator → Entity](pulse:nav/generator/entity).",
+      "Open [Tools → SEO → Studio](pulse:nav/generator/bulk-prompt).",
       "Configure entity/location pages and run SAP generation.",
     ],
     ["entity", "sap", "location pages"],
@@ -161,9 +162,9 @@ const FEATURE_PLAYBOOKS = [
     "generator/competitor",
     "Competitor generator",
     "How do I run competitor content generation?",
-    "pulse:nav/generator/competitor",
+    "pulse:nav/generator/bulk-prompt",
     [
-      "Open [SEO → Generator → Competitor](pulse:nav/generator/competitor).",
+      "Open [Tools → SEO → Studio](pulse:nav/generator/bulk-prompt).",
       "Configure competitor research inputs and generate content.",
     ],
     ["competitor generator", "competitor content"],
@@ -175,7 +176,7 @@ const FEATURE_PLAYBOOKS = [
     "How do I use Free Flow?",
     "pulse:nav/generator/flow",
     [
-      "Open [SEO → Generator → Flow](pulse:nav/generator/flow).",
+      "Open [Tools → SEO → Flow](pulse:nav/generator/flow).",
       "Enter a freeform prompt and generate sectioned content in the Flow workspace.",
     ],
     ["free flow", "flow", "freeform writing"],
@@ -187,7 +188,7 @@ const FEATURE_PLAYBOOKS = [
     "How do I generate AI images?",
     "pulse:nav/generator/image",
     [
-      "Open [SEO → Generator → Image](pulse:nav/generator/image).",
+      "Open [Tools → Media → Image](pulse:nav/generator/image).",
       "Enter image prompts and generate assets for content.",
     ],
     ["image generator", "ai images"],
@@ -201,7 +202,7 @@ const FEATURE_PLAYBOOKS = [
     "How do I run proposal research?",
     "pulse:nav/generator/research",
     [
-      "Open [SEO → Generator → Research](pulse:nav/generator/research).",
+      "Open [Tools → SEO → Research](pulse:nav/generator/research).",
       "Select the **Proposal** research section.",
       "Configure inputs and run the proposal research pipeline.",
     ],
@@ -214,7 +215,7 @@ const FEATURE_PLAYBOOKS = [
     "How do I run citation research?",
     "pulse:nav/generator/research",
     [
-      "Open [SEO → Generator → Research](pulse:nav/generator/research).",
+      "Open [Tools → SEO → Research](pulse:nav/generator/research).",
       "Select the **Citation** research section.",
       "Run citation discovery for the active property.",
     ],
@@ -227,7 +228,7 @@ const FEATURE_PLAYBOOKS = [
     "How do I run backlinking research?",
     "pulse:nav/generator/research",
     [
-      "Open [SEO → Generator → Research](pulse:nav/generator/research).",
+      "Open [Tools → SEO → Research](pulse:nav/generator/research).",
       "Select the **Backlinking** research section.",
       "Run backlink opportunity research.",
     ],
@@ -253,9 +254,9 @@ const FEATURE_PLAYBOOKS = [
     "How do I generate a Google Ads PPC report?",
     "pulse:nav/reporting/performance",
     [
-      "Use Pulse Forge recipes **ads-monthly-mom-report** or **ads-monthly-yoy-report** for automated PPC markdown reports.",
+      "Install recipes **ads-monthly-mom-report** or **ads-monthly-yoy-report** for automated PPC markdown reports.",
       "Assign a property with a 10-digit Google Ads customer ID on Dashboard → Properties.",
-      "Track runs under Forge → Task Builder or agent runs.",
+      "Track runs under the Agents rail.",
     ],
     ["ppc report", "ads report", "google ads report", "monthly ppc", "ppc mom", "ppc yoy"],
   ),
@@ -403,6 +404,46 @@ const FEATURE_PLAYBOOKS = [
       "Browse endpoint groups in the API documentation browser.",
     ],
     ["api docs", "api documentation", "endpoints"],
+  ),
+
+  // Skills Library
+  pb(
+    "reporting.semrush.safe-fix",
+    "dashboard/skills-library",
+    "Semrush Safe Fix",
+    "What does the Semrush Safe Fix skill do?",
+    "pulse:nav/dashboard/skills-library",
+    [
+      "Open [Dashboard → Settings → Skills Library](pulse:nav/dashboard/skills-library).",
+      "Find **Semrush Safe Fix Agent** (id `reporting.semrush.safe-fix`).",
+      "Enable it on the property profile when you want no-approval Semrush Site Audit fixes (missing title/meta/alt, broken internal links and images) via Neo MCP, then a rescan for HTTP 200.",
+    ],
+    [
+      "semrush safe fix",
+      "sem rush fix",
+      "semrush fix agent",
+      "semrush fix",
+      "safe fix agent",
+      "what does the semrush fix agent do",
+    ],
+  ),
+  pb(
+    "content.posts.gap-check",
+    "dashboard/skills-library",
+    "Posts Content Gap Check",
+    "What does the Posts Content Gap Check skill do?",
+    "pulse:nav/dashboard/skills-library",
+    [
+      "Open [Dashboard → Settings → Skills Library](pulse:nav/dashboard/skills-library).",
+      "Find **Posts Content Gap Check** (id `content.posts.gap-check`).",
+      "Enable it on the property profile when you want next-month published and scheduled blog counts checked against the site blog quota, and Blog Ideas (GSC) started when short until WordPress upload finishes.",
+    ],
+    [
+      "posts content gap check",
+      "content gap check",
+      "blog gap check",
+      "content gap skill",
+    ],
   ),
 ];
 

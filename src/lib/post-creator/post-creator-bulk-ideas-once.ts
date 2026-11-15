@@ -13,11 +13,11 @@ import type {
   PostCreatorEntityMode,
   PostCreatorExecutionPayload,
 } from "@/lib/tasks-types";
+import { openRouterMaxOutputTokens } from "@/lib/openrouter-stream-token-limits";
 import { getPublicSiteUrl } from "@/lib/wordpress-site-public-url";
-import { formatUpstreamResearchFactsUserBlock } from "@/lib/workflow/upstream-research-facts";
+import { formatUpstreamResearchFactsUserBlock } from "@/lib/post-creator/upstream-research-facts";
 
 const DEFAULT_TEMPERATURE = 1.0;
-const DEFAULT_MAX_TOKENS = 4000;
 const DEFAULT_TOP_P = 0.9;
 
 export type PostCreatorBulkIdeasOnceArgs = {
@@ -100,7 +100,6 @@ export async function runPostCreatorBulkIdeasOnce(
 
   let checklistContent = "";
   const model = getResearchModel(site.id);
-  const safeMaxTokens = Math.min(DEFAULT_MAX_TOKENS, 16000);
 
   await streamChatCompletion({
     apiKey,
@@ -110,7 +109,7 @@ export async function runPostCreatorBulkIdeasOnce(
       { role: "user", content: userPrompt },
     ],
     temperature: DEFAULT_TEMPERATURE,
-    maxTokens: safeMaxTokens,
+    maxTokens: openRouterMaxOutputTokens(),
     topP: DEFAULT_TOP_P,
     onContentChunk: (chunk) => {
       checklistContent += chunk;

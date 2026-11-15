@@ -7,6 +7,7 @@ function parseImageFeature(feature: string): { alt: string; url: string } | null
   return null;
 }
 
+import { featureIsExplicitFaqMarker } from "@/lib/content-generation/faq-heading-policy";
 import { TABLE_NO_LINK_ONLY_COLUMN_RULE } from "@/lib/prompt-builders/table-prompt-rules";
 import {
   MIN_INTERNAL_LINKS_PER_BODY_H2,
@@ -94,8 +95,8 @@ export const mapFeatureToInstruction = (
       : "[LIST - MANDATORY]: HTML only. Labeled bullets: <ul><li><strong>Label</strong>: one sentence.</li></ul>. Numbered steps: <ol><li><strong>Step</strong>: one sentence.</li></ol>. Forbidden: **Label**:, - bullets, or 1. markdown in HTML.";
   }
 
-  // 2. Check for FAQ feature — body FAQ is appended later as flo-faq Question/Answer table (Content Opt parity).
-  if (normalizedFeature.includes('[faq]') || normalizedFeature.includes('faq')) {
+  // 2. Explicit [FAQ] marker only. A feature that merely mentions FAQs stays as written.
+  if (featureIsExplicitFaqMarker(feature)) {
     return useMarkdown
       ? `[FAQ: Do NOT write an FAQ section in this body. FAQ is appended later as H2 "FAQ" + intro + Question/Answer table. Omit FAQ headings, tables, and Q/A pairs here.]`
       : `[FAQ: Do NOT write an FAQ section in this body. FAQ is appended later as flo-faq with H2 id="faq" "FAQ" + intro + HTML Question/Answer table. Omit FAQ headings, tables, and Q/A pairs here.]`;

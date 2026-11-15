@@ -19,13 +19,13 @@ import {
   resolveDriveFolderPath,
 } from "@/lib/google-drive/drive-folder-api";
 import type { TaskExecutionClientRunContract, TaskExecutionPayload, GoogleDriveFolderSource } from "@/lib/tasks-types";
-import { outputMatchesRagVariableKey } from "@/lib/workflow/workflow-client-context";
-import type { WorkflowStepOutput } from "@/lib/workflow/workflow-types";
+import { outputMatchesRagVariableKey } from "@/lib/rag-variable-key-match";
+import type { AgentRunStepOutputSnapshot } from "@/lib/agent-runs/step-output-types";
 
 export type { GoogleDriveFolderSource };
 
 export type ResolveGoogleDriveFolderContext = {
-  outputs?: WorkflowStepOutput[];
+  outputs?: AgentRunStepOutputSnapshot[];
   siteId?: string;
   clientSiteIds?: string[];
   teamSettings?: GoogleDriveTeamSettings;
@@ -140,7 +140,7 @@ function normalizeGoogleDriveFolderSource(
   return "manual";
 }
 
-export function extractFolderIdFromStepOutput(output: WorkflowStepOutput): string | null {
+export function extractFolderIdFromStepOutput(output: AgentRunStepOutputSnapshot): string | null {
   const preview = String(output.textPreview ?? "").trim();
   const fromPreview = parseGoogleDriveFolderId(preview);
   if (fromPreview) return fromPreview;

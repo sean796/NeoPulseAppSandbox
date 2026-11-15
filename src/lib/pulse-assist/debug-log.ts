@@ -2,7 +2,7 @@ import type { WordPressSite } from "@/components/integrations/types";
 import type { PulseAssistOverviewBridge } from "@/contexts/pulse-assist-context";
 import { buildPropertiesContext, buildPulseContext } from "./context";
 import type { PlatformDataResearchMeta } from "@/lib/platform-data/types";
-import type { AssistCardStep, AssistHistoryMessage, AssistSubmode, AssistTargetScope, AssistCard } from "./types";
+import type { AssistCardStep, AssistHistoryMessage, AssistSubmode, AssistCard } from "./types";
 
 export type PulseAssistDebugTurn =
   | { kind: "user"; text: string }
@@ -20,7 +20,6 @@ export type PulseAssistDebugLog = {
   session: {
     userId: string | number;
     submode: AssistSubmode;
-    targetScope: AssistTargetScope;
   };
   workspace: {
     managerTab: string;
@@ -36,7 +35,6 @@ export type PulseAssistDebugLog = {
 export type PulseAssistDebugLogInput = {
   userId: string | number;
   submode: AssistSubmode;
-  targetScope: AssistTargetScope;
   managerTab: string;
   generatorSection: string;
   overview: PulseAssistOverviewBridge;
@@ -59,7 +57,6 @@ export function buildPulseAssistDebugLog(input: PulseAssistDebugLogInput): Pulse
     session: {
       userId: input.userId,
       submode: input.submode,
-      targetScope: input.targetScope,
     },
     workspace: {
       managerTab: input.managerTab,

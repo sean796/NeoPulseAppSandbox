@@ -47,8 +47,9 @@ export function resolveGa4PropertyIdForReporting(site: WordPressSite): string {
 export async function resolveGa4PropertyIdForReportingAsync(site: WordPressSite): Promise<string> {
   const sync = resolveGa4PropertyIdForReporting(site);
   if (sync) return sync;
-  const serverSites = await fetchWordPressSitesMirror();
-  if (serverSites.length === 0) return sync;
+  const mirrorResult = await fetchWordPressSitesMirror();
+  if (!mirrorResult.ok || mirrorResult.sites.length === 0) return sync;
+  const serverSites = mirrorResult.sites;
   const row = mirrorRowForSite(site, serverSites);
   const fromMirror = pickGa4PropertyIdFromSite(row);
   if (!fromMirror) return sync;

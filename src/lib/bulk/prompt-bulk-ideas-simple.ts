@@ -2,6 +2,7 @@ import type { CSVRow } from "@/lib/bulk-auto-generate";
 import { GEMINI_FLASH_MODEL } from "@/lib/global-agent-models";
 import type { BulkSitemapScopeTag } from "@/lib/bulk/bulk-sitemap-mode";
 import { postOpenRouterAppChat } from "@/lib/openrouter-app-api";
+import { openRouterMaxOutputTokens } from "@/lib/openrouter-stream-token-limits";
 import type { PromptBulkKwConnectedSiteContext } from "@/lib/bulk/prompt-bulk-kw-research-agent";
 import { appendUniversalContentRulesToSystemPrompt } from "@/lib/content-word-blocklist";
 import { GLOBAL_BLOCKED_TOPIC_PROMPT_BLOCK } from "@/lib/content-topic-blocklist";
@@ -229,7 +230,7 @@ export async function generateSimplePromptIdeas(args: {
     system: buildPromptBulkIdeasSystemPrompt(),
     user,
     temperature: args.temperature ?? 0.35,
-    maxTokens: args.maxTokens ?? Math.max(2048, count * 512),
+    maxTokens: args.maxTokens ?? openRouterMaxOutputTokens(),
     responseFormat: buildPromptBulkIdeasResponseFormat(count),
   });
 

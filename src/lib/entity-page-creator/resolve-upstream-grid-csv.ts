@@ -1,24 +1,22 @@
 import { fetchAgentRunCsvContent } from "@/lib/agent-runs-api";
-import { fetchWorkflowStepOutputs } from "@/lib/workflow/workflow-api";
-import type { WorkflowStepOutput, WorkflowStepOutputFileRef } from "@/lib/workflow/workflow-types";
-import {
-  peekWorkflowGridCsvText,
-  takeWorkflowGridCsvText,
-} from "@/lib/workflow/workflow-grid-csv-stash";
+import type {
+  AgentRunStepOutputFileRef,
+  AgentRunStepOutputSnapshot,
+} from "@/lib/agent-runs/step-output-types";
 
-export function isGridCsvFileRef(file: WorkflowStepOutputFileRef): boolean {
+export function isGridCsvFileRef(file: AgentRunStepOutputFileRef): boolean {
   const name = file.name?.trim().toLowerCase() ?? "";
   const mime = file.mime?.trim().toLowerCase() ?? "";
   return mime === "text/csv" || name.endsWith(".csv");
 }
 
 function pickGridCsvAgentRunId(
-  outputs: WorkflowStepOutput[],
+  outputs: AgentRunStepOutputSnapshot[],
   ragInputKeys?: string[],
 ): number | undefined {
   const runScoped = outputs.filter((output) => output.scope === "run");
 
-  const tryPick = (list: WorkflowStepOutput[]): number | undefined => {
+  const tryPick = (list: AgentRunStepOutputSnapshot[]): number | undefined => {
     for (const output of list) {
       const hasCsv = (output.fileRefs ?? []).some((file) => file.url && isGridCsvFileRef(file));
       if (hasCsv && output.agentRunId) {
@@ -39,12 +37,12 @@ function pickGridCsvAgentRunId(
 }
 
 function pickGridCsvUrlFromOutputs(
-  outputs: WorkflowStepOutput[],
+  outputs: AgentRunStepOutputSnapshot[],
   ragInputKeys?: string[],
 ): string | undefined {
   const runScoped = outputs.filter((output) => output.scope === "run");
 
-  const tryPick = (list: WorkflowStepOutput[]): string | undefined => {
+  const tryPick = (list: AgentRunStepOutputSnapshot[]): string | undefined => {
     for (const output of list) {
       const csvRef = (output.fileRefs ?? []).find((file) => file.url && isGridCsvFileRef(file));
       if (csvRef?.url) return csvRef.url;
@@ -62,20 +60,10 @@ function pickGridCsvUrlFromOutputs(
   return tryPick(runScoped);
 }
 
-function pickGridCsvUrl(outputs: WorkflowStepOutput[], ragInputKeys?: string[]): string {
+function pickGridCsvUrl(outputs: AgentRunStepOutputSnapshot[], ragInputKeys?: string[]): string {
   const url = pickGridCsvUrlFromOutputs(outputs, ragInputKeys);
   if (url) return url;
   throw new Error("Upstream Local Dominator export did not produce a grid CSV.");
-}
-
-async function resolveStashedGridCsv(workflowRunId: number): Promise<string | undefined> {
-  const peekedText = peekWorkflowGridCsvText(workflowRunId)?.trim();
-  if (peekedText) return peekedText;
-
-  const takenText = takeWorkflowGridCsvText(workflowRunId)?.trim();
-  if (takenText) return takenText;
-
-  return undefined;
 }
 
 export async function resolveUpstreamGridCsvFromWorkflow(args: {
@@ -83,35 +71,29 @@ export async function resolveUpstreamGridCsvFromWorkflow(args: {
   workflowId?: number;
   workflowRunId?: number;
   ragInputKeys?: string[];
+  /** When upstream step outputs are already available (non-workflow runs). */
+  outputs?: AgentRunStepOutputSnapshot[];
 }): Promise<string> {
-  const workflowRunId = args.workflowRunId;
-  if (workflowRunId) {
-    const stashed = await resolveStashedGridCsv(workflowRunId);
-    if (stashed) return stashed;
+  const outputs = args.outputs ?? [];
+  if (outputs.length > 0) {
+    const agentRunId = pickGridCsvAgentRunId(outputs, args.ragInputKeys);
+    if (agentRunId && args.teamId) {
+      const csvText = await fetchAgentRunCsvContent(args.teamId, agentRunId);
+      if (csvText?.trim()) return csvText;
+    }
+    const url = pickGridCsvUrlFromOutputs(outputs, args.ragInputKeys);
+    if (url) {
+      const { fetchAppApiText } = await import("@/lib/proxy-fetch-text");
+      const text = await fetchAppApiText(url);
+      if (text.trim()) return text;
+    }
   }
 
-  const teamId = args.teamId;
-  const workflowId = args.workflowId;
-  if (!teamId || !workflowId || !workflowRunId) {
-    throw new Error("Workflow context is required to resolve upstream grid CSV.");
-  }
-
-  const outputs = await fetchWorkflowStepOutputs(teamId, workflowId, workflowRunId);
-  const agentRunId = pickGridCsvAgentRunId(outputs, args.ragInputKeys);
-  if (!agentRunId) {
-    throw new Error("Upstream Local Dominator export did not produce a grid CSV.");
-  }
-
-  const csvText = await fetchAgentRunCsvContent(teamId, agentRunId);
-  if (!csvText) {
-    throw new Error("Grid CSV is not available from the Local Dominator export run.");
-  }
-
-  return csvText;
+  throw new Error("Grid CSV is required. Upload grid CSV on the task or provide upstream export outputs.");
 }
 
 export function resolveUpstreamGridCsvUrlFromOutputs(
-  outputs: WorkflowStepOutput[],
+  outputs: AgentRunStepOutputSnapshot[],
   ragInputKeys?: string[],
 ): string {
   return pickGridCsvUrl(outputs, ragInputKeys);

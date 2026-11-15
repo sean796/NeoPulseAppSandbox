@@ -66,44 +66,13 @@ class Neo_Pulse_App_Platform_Data_Intent_Checklist {
 	use Neo_Pulse_App_Platform_Data_Intent_Checklist_Trait_Slice_Team;
 
 	/**
-	 * Tab / workspace help: module catalog + optional site data, not a hard skip.
+	 * Product vs site routing is owned by Neo_Pulse_App_Pulse_Assist_Route_Decision.
+	 * Kept for callers that still probe UI-help; always false.
 	 *
 	 * @param array<string,mixed> $body
 	 */
 	public static function is_ui_help_message( string $message, array $body = array() ): bool {
-		$lower = strtolower( trim( $message ) );
-		if ( $lower === '' ) {
-			return false;
-		}
-
-		$needles = array(
-			'what can i do on this tab',
-			'what can i do here',
-			'what can i do on this page',
-			'what can you do on this tab',
-			'what is this tab',
-			'what does this tab',
-			'how do i use this tab',
-			'what am i looking at',
-			'help on this tab',
-			'features on this tab',
-			'what can i do in this section',
-		);
-		foreach ( $needles as $needle ) {
-			if ( str_contains( $lower, $needle ) ) {
-				return true;
-			}
-		}
-
-		if ( str_contains( $lower, 'what can i do' ) && str_contains( $lower, 'tab' ) ) {
-			return true;
-		}
-
-		$pulse = isset( $body['pulse_context'] ) && is_array( $body['pulse_context'] ) ? $body['pulse_context'] : array();
-		if ( str_contains( $lower, 'what can i do' ) && ! empty( $pulse['locationSummary'] ) ) {
-			return true;
-		}
-
+		unset( $message, $body );
 		return false;
 	}
 

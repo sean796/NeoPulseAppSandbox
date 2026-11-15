@@ -157,7 +157,7 @@ describe("loadSitesForAgentRun", () => {
     const ridgeline = site("wp-1786635952128-13", "Ridgeline Solar");
     vi.spyOn(storage, "getStoredSites").mockReturnValue([]);
     vi.spyOn(storage, "loadSitesFromServerAlways").mockResolvedValue([]);
-    vi.spyOn(storage, "fetchWordPressSitesMirror").mockResolvedValue([ridgeline]);
+    vi.spyOn(storage, "fetchWordPressSitesMirror").mockResolvedValue({ ok: true, sites: [ridgeline] });
     const pool = await loadSitesForAgentRun(
       run({ context: { siteId: "wp-1786635952128-13" } }),
       [],

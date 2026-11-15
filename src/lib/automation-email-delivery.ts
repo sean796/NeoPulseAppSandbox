@@ -9,7 +9,7 @@ import { patchTaskExecutionProgress } from "@/lib/tasks-api";
 import type { AgentRun } from "@/lib/agent-runs-types";
 import type { TaskArchiveFileInput } from "@/lib/task-execution-archive";
 import type { TaskExecutionClientRunContract, TaskExecutionKind } from "@/lib/tasks-types";
-import { inferAutomationDeliveryStepKey } from "@/lib/workflow/automation-delivery-log";
+import { inferAutomationDeliveryStepKey } from "@/lib/agent-runs/complete-agent-run-execution";
 
 export type AutomationEmailTokenContext = {
   siteName: string;

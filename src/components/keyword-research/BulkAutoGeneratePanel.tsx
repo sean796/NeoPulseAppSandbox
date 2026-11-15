@@ -29,7 +29,6 @@ import { Field, Card, RadioGroup, RadioGroupItem } from "@/ui";
 import { useBulkSiteAndSapScheduleSync } from "./bulk/use-bulk-site-and-sap-schedule-sync";
 import { useBulkCsvSitemapAndRowHandlers } from "./bulk/use-bulk-csv-sitemap-and-row-handlers";
 import { usePublishBulkWorkspaceBindings } from "./bulk/use-publish-bulk-workspace-bindings";
-
 interface BulkAutoGeneratePanelProps {
   openRouterApiKey?: string;
   /** Non-generator integrations (SAP, legacy bulk) may still pass DataForSEO. */
@@ -88,7 +87,7 @@ export const BulkAutoGeneratePanel: React.FC<BulkAutoGeneratePanelProps> = ({
   bulkGeneratorWorkspace = false,
   onBulkGeneratorWorkspaceBindings,
 }) => {
-  const { activeWordPressSiteId } = useActiveWordPressSite();
+  const { activeWordPressSiteId, setActiveWordPressSiteId } = useActiveWordPressSite();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [csvParsing, setCsvParsing] = useState(false);
@@ -109,7 +108,7 @@ export const BulkAutoGeneratePanel: React.FC<BulkAutoGeneratePanelProps> = ({
   const siteSchedule = useBulkSiteAndSapScheduleSync({
     sapMode, forcedInputMode, activeWordPressSiteId, initialBulkPostDestination,
   });
-  const { wordPressSite, connectedSite, selectedWordPressSites, setSelectedWordPressSites, siteConfigs, setSiteConfigs, scheduleFrequency, setScheduleFrequency, customInterval, setCustomInterval, rowOrder, setRowOrder, dayOfWeek, setDayOfWeek, startDateOption, setStartDateOption, customStartDate, setCustomStartDate, startTime, setStartTime, useCsvPublishDates, setUseCsvPublishDates, wordpressDraftOnly, setWordpressDraftOnly, bulkPostDestination, setBulkPostDestination, featuredImagePerBlog, setFeaturedImagePerBlog, featuredImageType, setFeaturedImageType } = siteSchedule;
+  const { wordPressSite, setWordPressSite, connectedSite, setConnectedSite, selectedWordPressSites, setSelectedWordPressSites, siteConfigs, setSiteConfigs, scheduleFrequency, setScheduleFrequency, customInterval, setCustomInterval, rowOrder, setRowOrder, dayOfWeek, setDayOfWeek, startDateOption, setStartDateOption, customStartDate, setCustomStartDate, startTime, setStartTime, useCsvPublishDates, setUseCsvPublishDates, wordpressDraftOnly, setWordpressDraftOnly, bulkPostDestination, setBulkPostDestination, featuredImagePerBlog, setFeaturedImagePerBlog, featuredImageType, setFeaturedImageType } = siteSchedule;
   const siteScheduleRef = useRef(siteSchedule);
   siteScheduleRef.current = siteSchedule;
 

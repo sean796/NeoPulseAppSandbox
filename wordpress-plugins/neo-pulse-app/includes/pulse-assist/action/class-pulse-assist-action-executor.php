@@ -123,9 +123,6 @@ class Neo_Pulse_App_Pulse_Assist_Action_Executor {
 	 * @return array<string,mixed>
 	 */
 	private static function run_tool( string $tool_id, array $args, array $body, int $user_id ): array {
-		if ( Neo_Pulse_App_Pulse_Assist_Action_Tools_Forge::is_forge_tool( $tool_id ) ) {
-			return Neo_Pulse_App_Pulse_Assist_Action_Tools_Forge::run( $tool_id, $args, $body, $user_id );
-		}
 		if ( Neo_Pulse_App_Pulse_Assist_Action_Tools_Recipes::is_recipe_tool( $tool_id ) ) {
 			return Neo_Pulse_App_Pulse_Assist_Action_Tools_Recipes::run( $tool_id, $args, $body, $user_id );
 		}

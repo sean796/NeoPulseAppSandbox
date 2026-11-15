@@ -18,7 +18,7 @@ import { chatgptAuditArchiveFiles, type TaskArchiveFileInput } from "@/lib/task-
 import type { TaskExecutionClientRunContract, TaskExecutionPayload } from "@/lib/tasks-types";
 import { resolveTaskExecutionBucket, TASK_EXECUTION_TARGET_BUCKET_LABELS } from "@/lib/task-execution-bucket";
 import { effectiveSaveLocalArchive } from "@/lib/schedule-output-destination";
-import { ensureChatGptAuditExecutionPayload } from "@/lib/workflow/resolve-chatgpt-audit-workflow-payload";
+import { ensureChatGptAuditExecutionPayload } from "@/lib/chatgpt-audit/ensure-chatgpt-audit-execution-payload";
 import {
   clientUrlFromSite,
   loadExistingChatGptAuditCsv,

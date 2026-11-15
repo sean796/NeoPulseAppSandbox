@@ -8,10 +8,10 @@ import {
 } from "@/lib/manager-tab-routes";
 
 describe("manager tab routes (Wave 4)", () => {
-  it("registers all 24 manager tabs with a unique segment each", () => {
-    expect(MANAGER_TAB_ROUTES).toHaveLength(24);
+  it("registers all 23 manager tabs with a unique segment each", () => {
+    expect(MANAGER_TAB_ROUTES).toHaveLength(23);
     const segments = MANAGER_TAB_ROUTES.map((r) => r.segment);
-    expect(new Set(segments).size).toBe(24);
+    expect(new Set(segments).size).toBe(23);
     for (const route of MANAGER_TAB_ROUTES) {
       expect(isManagerTabId(route.id)).toBe(true);
       expect(managerTabFromPathname(`/${route.segment}`)).toBe(route.id);
@@ -37,7 +37,7 @@ describe("manager tab routes (Wave 4)", () => {
     expect(legacyHashToPath("#generator/opt/agent-run/42")).toBe("/generator/opt/agent-run/42");
     expect(legacyHashToPath("#api-docs/getting-started")).toBe("/api/getting-started");
     expect(legacyHashToPath("#api")).toBe("/api");
-    expect(legacyHashToPath("#pulse-forge/workflows/7")).toBe("/pulse-forge/workflows/7");
+    expect(legacyHashToPath("#pulse-forge/workflows/7")).toBe("/dashboard");
     expect(legacyHashToPath("#pulse-host/sites/g1")).toBe("/pulse-host/sites/g1");
     expect(legacyHashToPath("#tasks")).toBe("/tasks");
     expect(legacyHashToPath("#m123")).toBe("/chat?message=123");

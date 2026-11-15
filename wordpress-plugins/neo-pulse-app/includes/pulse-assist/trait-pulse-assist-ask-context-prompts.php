@@ -234,16 +234,14 @@ trait Neo_Pulse_App_Pulse_Assist_Ask_Trait_Context_Prompts {
 			}
 		}
 
-		$scope = isset( $body['target_scope'] ) ? sanitize_key( (string) $body['target_scope'] ) : 'page';
-		$lines[] = '- Target scope: ' . $scope;
-		if ( $scope === 'page' && ! empty( $body['page_title'] ) ) {
-			$lines[] = '- Page title: ' . sanitize_text_field( (string) $body['page_title'] );
+		if ( ! empty( $body['page_title'] ) ) {
+			$lines[] = '- Focused page title: ' . sanitize_text_field( (string) $body['page_title'] );
 		}
-		if ( $scope === 'page' && ! empty( $body['page_url'] ) ) {
-			$lines[] = '- Page URL: ' . esc_url_raw( (string) $body['page_url'] );
+		if ( ! empty( $body['page_url'] ) ) {
+			$lines[] = '- Focused page URL: ' . esc_url_raw( (string) $body['page_url'] );
 		}
-		if ( $scope === 'page' && ! empty( $body['post_id'] ) && (int) $body['post_id'] > 0 ) {
-			$lines[] = '- Post id: ' . (int) $body['post_id'];
+		if ( ! empty( $body['post_id'] ) && (int) $body['post_id'] > 0 ) {
+			$lines[] = '- Focused post id: ' . (int) $body['post_id'];
 		}
 		if ( ! empty( $body['siteUrl'] ) ) {
 			$lines[] = '- Connected site URL: ' . esc_url_raw( (string) $body['siteUrl'] );

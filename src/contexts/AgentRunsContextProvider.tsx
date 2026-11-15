@@ -9,7 +9,6 @@ import { useActiveWordPressSite } from "@/contexts/active-wordpress-site-context
 import type { SidebarPanel } from "@/lib/pulse-assist/storage";
 import { useAgentRunsList } from "@/contexts/use-agent-runs-list";
 import { useAgentRunsStartRun } from "@/contexts/use-agent-runs-start-run";
-import { useAgentRunsWorkflowDispatch } from "@/contexts/use-agent-runs-workflow-dispatch";
 import { useAgentRunsRunControls } from "@/contexts/use-agent-runs-run-controls";
 import { useAgentRunsLifecycle } from "@/contexts/use-agent-runs-lifecycle";
 
@@ -28,7 +27,7 @@ export function AgentRunsContextProvider({
   sidebarPanel,
   setSidebarPanel,
 }: AgentRunsContextProviderProps) {
-  const { activeTeam, myTasks, members, refreshTasksWorkspace } = useTeam();
+  const { activeTeam } = useTeam();
   const { activeWordPressSiteId } = useActiveWordPressSite();
   const teamId = activeTeam?.id ?? null;
 
@@ -39,16 +38,12 @@ export function AgentRunsContextProvider({
     setSelectedRunId,
     runsRef,
     sites,
-    agentsSiteIds,
     kickClientAgentRuns,
     agentsSiteFilter,
     setAgentsSiteFilter,
-    setAgentsSiteFilterState,
     refreshRuns,
     patchRunInList,
     openSidebar,
-    seedOptimisticWorkflowAgent,
-    patchOptimisticWorkflowAgentProgress,
   } = useAgentRunsList({
     teamId,
     activeWordPressSiteId,
@@ -58,10 +53,7 @@ export function AgentRunsContextProvider({
 
   const {
     startRun,
-    mapStartRunResult,
-    startRunForWorkflow,
     startRunFromTask,
-    startRunFromTaskForWorkflow,
   } = useAgentRunsStartRun({
     teamId,
     activeWordPressSiteId,
@@ -72,24 +64,6 @@ export function AgentRunsContextProvider({
     patchRunInList,
     refreshRuns,
     setRuns,
-  });
-
-  const { dispatchWorkflowRun } = useAgentRunsWorkflowDispatch({
-    teamId,
-    activeWordPressSiteId,
-    agentsSiteIds,
-    setAgentsSiteFilterState,
-    refreshRuns,
-    refreshTasksWorkspace,
-    myTasks,
-    members,
-    patchOptimisticWorkflowAgentProgress,
-    mapStartRunResult,
-    startRun,
-    startRunForWorkflow,
-    startRunFromTask,
-    startRunFromTaskForWorkflow,
-    runs,
   });
 
   const {
@@ -133,14 +107,11 @@ export function AgentRunsContextProvider({
       agentsSiteFilter,
       setAgentsSiteFilter,
       openSidebar,
-      seedOptimisticWorkflowAgent,
-      patchOptimisticWorkflowAgentProgress,
       selectRun: setSelectedRunId,
       refreshRuns,
       patchRunInList,
       startRun,
       startRunFromTask,
-      dispatchWorkflowRun,
       cancelRun,
       resumeRun,
       clearHistory,
@@ -154,8 +125,6 @@ export function AgentRunsContextProvider({
       clearHistory,
       hasTerminalHistory,
       openSidebar,
-      seedOptimisticWorkflowAgent,
-      patchOptimisticWorkflowAgentProgress,
       patchRunInList,
       refreshRuns,
       resumeRun,
@@ -170,7 +139,6 @@ export function AgentRunsContextProvider({
       setSelectedRunId,
       startRun,
       startRunFromTask,
-      dispatchWorkflowRun,
     ],
   );
 

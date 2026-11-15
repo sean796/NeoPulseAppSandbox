@@ -1,45 +1,21 @@
-﻿import { useEffect, useRef, useState, type CSSProperties, type ReactElement, type ReactNode } from "react";
+﻿import { useEffect, useRef, type CSSProperties, type ReactElement, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { ChevronRight, FileDown, Search, Sparkles, X } from "lucide-react";
+import { ChevronRight, CircleHelp, Download, Sparkles, Trash2, X } from "lucide-react";
 import { useAgentRunsContext } from "@/contexts/use-agent-runs-context";
 import { useTaskManagerOptional } from "@/contexts/task-manager-context";
 import { cn } from "@/lib/utils";
 import { usePulseAssistSidebarResize } from "@/hooks/use-pulse-assist-sidebar-resize";
 import { NEO_PULSE_ASSIST_LABEL } from "./PulseAssistBrandTitle";
-import { RUNNING_AGENTS_LABEL } from "@/components/agent-runs/AgentRunsBrandTitle";
 import { PulseAssistLauncherBrand } from "./PulseAssistLauncherBrand";
-import { AgentRunsLauncherBrand } from "@/components/agent-runs/AgentRunsLauncherBrand";
 import { TaskManagerLauncherBrand } from "@/components/task-manager/TaskManagerLauncherBrand";
 import { PulseAssistSidebarResizeHandle } from "./PulseAssistSidebarResizeHandle";
 import { PulseAssistClock } from "./PulseAssistClock";
+import { PulseAssistHeaderActionsProvider, usePulseAssistHeaderActions } from "./pulse-assist-header-actions";
 import { WorkspacePill } from "@/components/shared/WorkspacePill";
 import type { PulseAssistLayout } from "./PulseAssistRoot";
-import {
-  DEFAULT_SEO_SIDEBAR_WIDTH,
-  type SidebarPanel,
-} from "@/lib/pulse-assist/storage";
+import { type SidebarPanel } from "@/lib/pulse-assist/storage";
 import "./pulse-assist-theme.css";
 import { Button } from "@/ui";
-
-export const SEO_INSPECTOR_LABEL = "Page SEO";
-
-function SeoLauncherBrand({ className }: { className?: string }): ReactElement {
-  return (
-    <span className={cn("pulse-assist-launcher-brand", className)}>
-      <Search className="pulse-assist-launcher-brand__spark" aria-hidden />
-      <span className="pulse-assist-launcher-brand__label">SEO</span>
-    </span>
-  );
-}
-
-function DetailsLauncherBrand({ className }: { className?: string }): ReactElement {
-  return (
-    <span className={cn("pulse-assist-launcher-brand", className)}>
-      <FileDown className="pulse-assist-launcher-brand__spark" aria-hidden />
-      <span className="pulse-assist-launcher-brand__label">Details</span>
-    </span>
-  );
-}
 
 type PulseAssistSidebarShellProps = {
   layout?: PulseAssistLayout;
@@ -47,8 +23,6 @@ type PulseAssistSidebarShellProps = {
   onOpenChange: (open: boolean) => void;
   panel: SidebarPanel;
   onPanelChange: (panel: SidebarPanel) => void;
-  showSeo?: boolean;
-  showDetails?: boolean;
   children: ReactNode;
 };
 
@@ -88,52 +62,18 @@ function MobileAssistCircle({ onOpen }: { onOpen: () => void }): ReactElement | 
 
 function ShortcutLaunchers({
   docked,
-  showSeo = true,
-  showDetails = false,
-  onOpenSeo,
-  onOpenDetails,
   onOpenTasks,
-  onOpenAgents,
   onOpenAssist,
   tasksHasRunning = false,
   tasksShowDone = false,
 }: {
   docked: boolean;
-  showSeo?: boolean;
-  showDetails?: boolean;
-  onOpenSeo: () => void;
-  onOpenDetails: () => void;
   onOpenTasks: () => void;
-  onOpenAgents: () => void;
   onOpenAssist: () => void;
   tasksHasRunning?: boolean;
   tasksShowDone?: boolean;
 }): ReactElement {
   const launcherClass = cn("pulse-assist-launcher", docked && "pulse-assist-launcher--docked");
-
-  const seoButton = (
-    <button type="button"
-      onClick={onOpenSeo}
-      className={launcherClass}
-      aria-label={`Open ${SEO_INSPECTOR_LABEL}`}
-      aria-expanded={false}
-      aria-controls="neo-pulse-sidebar-panel"
-    >
-      <SeoLauncherBrand />
-    </button>
-  );
-
-  const detailsButton = (
-    <button type="button"
-      onClick={onOpenDetails}
-      className={launcherClass}
-      aria-label="Open Details"
-      aria-expanded={false}
-      aria-controls="neo-pulse-sidebar-panel"
-    >
-      <DetailsLauncherBrand />
-    </button>
-  );
 
   const tasksButton = (
     <button type="button"
@@ -144,18 +84,6 @@ function ShortcutLaunchers({
       aria-controls="neo-pulse-sidebar-panel"
     >
       <TaskManagerLauncherBrand hasRunning={tasksHasRunning} showDone={tasksShowDone} />
-    </button>
-  );
-
-  const agentsButton = (
-    <button type="button"
-      onClick={onOpenAgents}
-      className={launcherClass}
-      aria-label={`Open ${RUNNING_AGENTS_LABEL}`}
-      aria-expanded={false}
-      aria-controls="neo-pulse-sidebar-panel"
-    >
-      <AgentRunsLauncherBrand />
     </button>
   );
 
@@ -174,10 +102,7 @@ function ShortcutLaunchers({
   if (docked) {
     return (
       <aside className="pulse-assist-shortcut-rail" aria-label="Sidebar shortcuts">
-        {showSeo ? seoButton : null}
-        {showDetails ? detailsButton : null}
         {tasksButton}
-        {agentsButton}
         {assistButton}
       </aside>
     );
@@ -185,10 +110,7 @@ function ShortcutLaunchers({
 
   return (
     <>
-      {showSeo ? seoButton : null}
-      {showDetails ? detailsButton : null}
       {tasksButton}
-      {agentsButton}
       {assistButton}
     </>
   );
@@ -200,31 +122,17 @@ export function PulseAssistSidebarShell({
   onOpenChange,
   panel,
   onPanelChange,
-  showSeo = true,
-  showDetails = false,
   children,
 }: PulseAssistSidebarShellProps): ReactElement {
   const panelRef = useRef<HTMLDivElement>(null);
-  const { width, isResizing, isMobile, ensureWidthAtLeast, handleProps } =
-    usePulseAssistSidebarResize(open);
+  const { width, isResizing, isMobile, handleProps } = usePulseAssistSidebarResize(open);
   const panelLabel =
-    panel === "tasks"
-      ? "Task Manager"
-      : panel === "agents"
-        ? RUNNING_AGENTS_LABEL
-        : panel === "seo"
-          ? SEO_INSPECTOR_LABEL
-          : panel === "details"
-            ? "Details"
-            : NEO_PULSE_ASSIST_LABEL;
-  const { clearHistory, cancelActiveRuns } = useAgentRunsContext();
+    panel === "tasks" ? "Task Manager" : NEO_PULSE_ASSIST_LABEL;
+  const { clearHistory } = useAgentRunsContext();
   const taskManager = useTaskManagerOptional();
   const tasksHasRunning = Boolean(taskManager?.hasRunning);
   const tasksShowDone = Boolean(!tasksHasRunning && taskManager?.latestTerminal?.status === "done");
-  const [clearingHistory, setClearingHistory] = useState(false);
-  const [cancellingRuns, setCancellingRuns] = useState(false);
-  const [clearingTasks, setClearingTasks] = useState(false);
-  const [cancellingTasks, setCancellingTasks] = useState(false);
+  const clearingTasks = useRef(false);
   const docked = layout === "docked";
   const useDockedChrome = docked && !isMobile;
 
@@ -253,18 +161,13 @@ export function PulseAssistSidebarShell({
     };
   }, []);
 
-  useEffect(() => {
-    if (panel === "seo" && open && !isMobile) {
-      ensureWidthAtLeast(DEFAULT_SEO_SIDEBAR_WIDTH);
-    }
-  }, [panel, open, isMobile, ensureWidthAtLeast]);
-
   const openPanel = (next: SidebarPanel) => {
     onPanelChange(next);
     onOpenChange(true);
   };
 
   return (
+    <PulseAssistHeaderActionsProvider>
     <div
       className={cn(
         "fai-sidebar-root fai-sidebar-root--right pulse-assist-root",
@@ -279,12 +182,7 @@ export function PulseAssistSidebarShell({
       {!open && !isMobile ? (
         <ShortcutLaunchers
           docked={useDockedChrome}
-          showSeo={showSeo}
-          showDetails={showDetails}
-          onOpenSeo={() => openPanel("seo")}
-          onOpenDetails={() => openPanel("details")}
           onOpenTasks={() => openPanel("tasks")}
-          onOpenAgents={() => openPanel("agents")}
           onOpenAssist={() => openPanel("assist")}
           tasksHasRunning={tasksHasRunning}
           tasksShowDone={tasksShowDone}
@@ -307,141 +205,117 @@ export function PulseAssistSidebarShell({
         aria-modal="true"
         aria-label={panelLabel}
       >
-        {open && !isMobile ? (
-          <Button
-            size="icon"
-            icon={ChevronRight}
-            variant="tool"
-            onClick={() => onOpenChange(false)}
-            aria-label="Close sidebar and minimize to dock"
-            title="Minimize to dock"
-          />
-        ) : null}
         {open && !isMobile ? <PulseAssistSidebarResizeHandle {...handleProps} /> : null}
         {open ? (
           <div
-            className="pulse-assist-panel-tablist flex min-h-[2.75rem] min-w-0 shrink-0 items-center gap-1 bg-black px-3 py-2"
+            className="pulse-assist-panel-tablist flex h-8 w-full min-w-0 shrink-0 flex-nowrap items-center gap-1 overflow-hidden bg-black px-1"
             role="tablist"
             aria-label="Sidebar panel"
           >
+            {!isMobile ? (
+              <Button
+                size="icon"
+                icon={ChevronRight}
+                variant="tool"
+                onClick={() => onOpenChange(false)}
+                aria-label="Close sidebar and minimize to dock"
+                title="Minimize to dock"
+              />
+            ) : null}
             <WorkspacePill
               label="Assist"
               active={panel === "assist"}
               square
+              className="h-8 w-auto min-w-0 flex-1 px-2"
               onClick={() => onPanelChange("assist")}
             />
             <WorkspacePill
               label="Tasks"
               active={panel === "tasks"}
               square
+              className="h-8 w-auto min-w-0 flex-1 px-2"
               onClick={() => onPanelChange("tasks")}
             />
-            <WorkspacePill
-              label="Agents"
-              active={panel === "agents"}
-              square
-              onClick={() => onPanelChange("agents")}
-            />
-            {/* Always mounted pill chrome: zero CLS; disabled when unavailable. */}
-            <WorkspacePill
-              label="Details"
-              active={panel === "details"}
-              square
-              disabled={!showDetails}
-              onClick={() => {
-                if (!showDetails) return;
-                onPanelChange("details");
+            <SidebarIconCluster
+              panel={panel}
+              isMobile={isMobile}
+              onClose={() => onOpenChange(false)}
+              onClearTasks={() => {
+                if (clearingTasks.current) return;
+                clearingTasks.current = true;
+                taskManager?.clearAllTasks();
+                void clearHistory().finally(() => {
+                  clearingTasks.current = false;
+                });
               }}
             />
-            <WorkspacePill
-              label="SEO"
-              active={panel === "seo"}
-              square
-              disabled={!showSeo}
-              onClick={() => {
-                if (!showSeo) return;
-                onPanelChange("seo");
-              }}
-            />
-            {isMobile ? (
-              <Button
-                size="icon"
-                icon={X}
-                variant="tool"
-                onClick={() => onOpenChange(false)}
-                aria-label="Close sidebar"
-              />
-            ) : null}
-            <PulseAssistClock />
-            {/* Equal action wells + same gap-1 as tabs (no ml-auto void). */}
-            <span className="inline-flex h-8 w-[5.75rem] shrink-0 [&>button]:w-full">
-              <Button
-                variant="tool"
-                type="button"
-                reserved={panel !== "tasks" && panel !== "agents"}
-                disabled={
-                  panel === "tasks"
-                    ? cancellingTasks || clearingTasks || !tasksHasRunning
-                    : cancellingRuns || clearingHistory
-                }
-                onClick={() => {
-                  if (panel === "tasks") {
-                    setCancellingTasks(true);
-                    taskManager?.cancelRunningTasks();
-                    void cancelActiveRuns().finally(() => setCancellingTasks(false));
-                    return;
-                  }
-                  if (panel !== "agents") return;
-                  setCancellingRuns(true);
-                  void cancelActiveRuns().finally(() => setCancellingRuns(false));
-                }}
-              >
-                {panel === "tasks"
-                  ? cancellingTasks
-                    ? "Cancel…"
-                    : "Cancel"
-                  : cancellingRuns
-                    ? "Cancel…"
-                    : "Cancel"}
-              </Button>
-            </span>
-            <span className="inline-flex h-8 w-[5.75rem] shrink-0 [&>button]:w-full">
-              <Button
-                variant="tool"
-                type="button"
-                reserved={panel !== "tasks" && panel !== "agents"}
-                disabled={
-                  panel === "tasks"
-                    ? clearingTasks || cancellingTasks || !taskManager?.tasks.length
-                    : clearingHistory || cancellingRuns
-                }
-                onClick={() => {
-                  if (panel === "tasks") {
-                    setClearingTasks(true);
-                    taskManager?.clearAllTasks();
-                    void clearHistory().finally(() => setClearingTasks(false));
-                    return;
-                  }
-                  if (panel !== "agents") return;
-                  setClearingHistory(true);
-                  void clearHistory().finally(() => setClearingHistory(false));
-                }}
-              >
-                {panel === "tasks"
-                  ? clearingTasks
-                    ? "Clear…"
-                    : "Clear all"
-                  : clearingHistory
-                    ? "Clear…"
-                    : "Clear all"}
-              </Button>
-            </span>
           </div>
         ) : null}
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           {open ? children : null}
         </div>
       </div>
+    </div>
+    </PulseAssistHeaderActionsProvider>
+  );
+}
+
+/** Clock, help, download, and clear. Same four slots on Assist and Tasks. */
+function SidebarIconCluster({
+  panel,
+  isMobile,
+  onClose,
+  onClearTasks,
+}: {
+  panel: SidebarPanel;
+  isMobile: boolean;
+  onClose: () => void;
+  onClearTasks: () => void;
+}): ReactElement {
+  const actions = usePulseAssistHeaderActions();
+
+  return (
+    <div className="flex h-8 shrink-0 items-center gap-1">
+      <PulseAssistClock className="shrink-0" />
+      <Button
+        size="icon"
+        icon={CircleHelp}
+        variant="tool"
+        aria-label="Create a ticket"
+        title="Create a ticket"
+        onClick={() => actions?.get().createTicket()}
+      />
+      <Button
+        size="icon"
+        icon={Download}
+        variant="tool"
+        aria-label="Download debug log"
+        title="Download debug log"
+        onClick={() => actions?.get().downloadDebug()}
+      />
+      <Button
+        size="icon"
+        icon={Trash2}
+        variant="tool"
+        aria-label={panel === "tasks" ? "Clear all" : "Clear chat history"}
+        title={panel === "tasks" ? "Clear all" : "Clear chat history"}
+        onClick={() => {
+          if (panel === "tasks") {
+            onClearTasks();
+            return;
+          }
+          actions?.get().clearChat();
+        }}
+      />
+      {isMobile ? (
+        <Button
+          size="icon"
+          icon={X}
+          variant="tool"
+          onClick={onClose}
+          aria-label="Close sidebar"
+        />
+      ) : null}
     </div>
   );
 }

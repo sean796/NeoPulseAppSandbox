@@ -55,6 +55,8 @@ describe("post-creator GSC ideation agent (single pass)", () => {
     expect(callOpenRouterChatCompletion).toHaveBeenCalledTimes(1);
     expect(rows).toHaveLength(3);
     expect(rows[0]?.keyword).toBe("elementor help");
+    const call = vi.mocked(callOpenRouterChatCompletion).mock.calls[0]?.[0];
+    expect(call?.maxTokens).toBe(200_000);
   });
 
   it("puts SITE_INVENTORY_CACHE before SITE_KW_JSON in the user prompt", async () => {

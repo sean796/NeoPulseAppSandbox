@@ -4,7 +4,7 @@ import type { WordPressSite } from "@/components/integrations/types";
 vi.mock("@/components/integrations/storage", () => ({
   getStoredSites: vi.fn(() => []),
   saveSites: vi.fn(),
-  fetchWordPressSitesMirror: vi.fn(async () => []),
+  fetchWordPressSitesMirror: vi.fn(async () => ({ ok: true, sites: [] })),
 }));
 
 vi.mock("@/lib/agent-runs/resolve-agent-run-site", () => ({

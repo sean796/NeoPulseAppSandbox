@@ -19,7 +19,7 @@ import { useTasksShellTaskHandlers } from "@/components/manager/tasks/use-tasks-
 import { useTasksShellProjectHandlers } from "@/components/manager/tasks/use-tasks-shell-project-handlers";
 import { useTasksShellDetailHandlers } from "@/components/manager/tasks/use-tasks-shell-detail-handlers";
 
-export function TasksShell({ onOpenPulseForge }: TasksShellProps = {}): React.ReactElement {
+export function TasksShell(_props: TasksShellProps = {}): React.ReactElement {
   const {
     activeTeam,
     members,
@@ -98,7 +98,7 @@ export function TasksShell({ onOpenPulseForge }: TasksShellProps = {}): React.Re
     automationProjectForTask,
     canExecuteTask,
     displayTasks,
-  } = useTasksShellViewModel({ onOpenPulseForge });
+  } = useTasksShellViewModel();
 
   const {
     patchTaskInView,
@@ -291,7 +291,6 @@ export function TasksShell({ onOpenPulseForge }: TasksShellProps = {}): React.Re
           setProjectDialogOpen(true);
         }}
         onDeleteProject={(projectId) => void handleDeleteProject(projectId)}
-        onOpenPulseForge={onOpenPulseForge}
       />
       <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
         <TasksContextHeader

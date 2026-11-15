@@ -29,10 +29,6 @@ class Neo_Pulse_App_Pulse_Assist_Action_Registry {
 			'tasks_list_templates' => 'List task project templates.',
 			'recipes_list'         => 'List automation recipe catalog entries with optional filters.',
 			'recipes_describe'     => 'Describe one automation recipe by keyword (actions, triggers, prerequisites).',
-			'forge_dashboard'      => 'Pulse Forge dashboard snapshot: installed automations, workflows, and recent runs.',
-			'workflows_list'       => 'List team Pulse Forge workflows (id, name, status, site).',
-			'workflows_get'        => 'Get one workflow by workflowId (uses pulse_context.forgeWorkflowId when omitted).',
-			'workflows_list_runs'  => 'List runs for a workflow (requires workflowId).',
 		);
 
 		foreach ( $read as $id => $desc ) {
@@ -59,11 +55,6 @@ class Neo_Pulse_App_Pulse_Assist_Action_Registry {
 			'post_creator_execute' => 'Queue a post creator agent run. Params: postCount, keywordSource, optionalPrompt, scheduleTimesPerMonth, scheduleStartDay, scheduleStartTime, featuredImage, postDestination, wordpressSiteId.',
 			'recipes_install'      => 'Install an automation recipe as a site-bound automation project.',
 			'recipes_run'          => 'Evaluate or run an automation recipe (mode: evaluate, now, install_only).',
-			'workflows_create'     => 'Create a Forge canvas workflow. Optional recipeKeyword builds a linear trigger plus action graph.',
-			'workflows_update'     => 'Update workflow name, description, or wordpressSiteId. Requires workflowId.',
-			'workflows_publish'    => 'Publish a draft workflow. Requires workflowId.',
-			'workflows_delete'     => 'Delete a workflow. Requires workflowId.',
-			'workflows_run'        => 'Start a workflow run (optional simulated). Requires workflowId.',
 		);
 
 		foreach ( $write as $id => $desc ) {

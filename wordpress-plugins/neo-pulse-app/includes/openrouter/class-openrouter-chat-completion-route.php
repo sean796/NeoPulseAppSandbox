@@ -89,7 +89,7 @@ class Neo_Pulse_App_Openrouter_Chat_Completion_Route {
 			'model'       => $model,
 			'messages'    => $messages,
 			'temperature' => isset( $body['temperature'] ) ? (float) $body['temperature'] : 0.5,
-			'max_tokens'  => isset( $body['maxTokens'] ) ? (int) $body['maxTokens'] : ( isset( $body['max_tokens'] ) ? (int) $body['max_tokens'] : 8192 ),
+			'max_tokens'  => isset( $body['maxTokens'] ) ? (int) $body['maxTokens'] : ( isset( $body['max_tokens'] ) ? (int) $body['max_tokens'] : 200000 ),
 			'stream'      => ! empty( $body['stream'] ),
 		);
 		if ( isset( $body['models'] ) && is_array( $body['models'] ) && count( $body['models'] ) > 0 ) {
@@ -124,8 +124,8 @@ class Neo_Pulse_App_Openrouter_Chat_Completion_Route {
 		} else {
 			$payload['reasoning'] = array( 'effort' => 'low' );
 		}
-		if ( ! empty( $payload['response_format'] ) && is_array( $payload['response_format'] ) && $payload['max_tokens'] < 4096 ) {
-			$payload['max_tokens'] = 4096;
+		if ( ! empty( $payload['response_format'] ) && is_array( $payload['response_format'] ) && $payload['max_tokens'] < 200000 ) {
+			$payload['max_tokens'] = 200000;
 		}
 		if ( isset( $body['webSearchOptions'] ) && is_array( $body['webSearchOptions'] ) ) {
 			$payload['web_search_options'] = $body['webSearchOptions'];
@@ -264,14 +264,28 @@ class Neo_Pulse_App_Openrouter_Chat_Completion_Route {
 	 * @return array{content:string,parsed:?array<string,mixed>,finishReason:?string,nativeFinishReason:?string,raw:array<string,mixed>|null}
 	 */
 	private static function json_openrouter( array $payload, string $api_key ): array {
+		// Same contract as streaming: a max-token completion may run a long time.
+		// Give up only when the connection stalls, not on a fixed clock.
+		@set_time_limit( 0 );
+		$curl_hook = static function( $handle ) {
+			if ( ! is_resource( $handle ) && ! ( is_object( $handle ) && get_class( $handle ) === 'CurlHandle' ) ) {
+				return;
+			}
+			curl_setopt( $handle, CURLOPT_CONNECTTIMEOUT, 30 );
+			curl_setopt( $handle, CURLOPT_TIMEOUT, 0 );
+			curl_setopt( $handle, CURLOPT_LOW_SPEED_LIMIT, 1 );
+			curl_setopt( $handle, CURLOPT_LOW_SPEED_TIME, 120 );
+		};
+		add_action( 'http_api_curl', $curl_hook, 999, 1 );
 		$response = wp_remote_post(
 			Neo_Pulse_App_Chat_Openrouter::CHAT_URL,
 			array(
-				'timeout' => 300,
+				'timeout' => 86400,
 				'headers' => Neo_Pulse_App_Openrouter_Attribution::request_headers( $api_key ),
 				'body'    => wp_json_encode( $payload, JSON_UNESCAPED_SLASHES ),
 			)
 		);
+		remove_action( 'http_api_curl', $curl_hook, 999 );
 
 		if ( is_wp_error( $response ) ) {
 			throw new Exception( $response->get_error_message() );

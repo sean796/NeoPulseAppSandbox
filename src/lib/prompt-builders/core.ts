@@ -1,6 +1,8 @@
 import { AgentConfig } from "@/types/agent-config";
 import { ARTICLE_MAX_WORDS } from "@/lib/content-generation/article-length-policy";
+import { featureIsExplicitFaqMarker } from "@/lib/content-generation/faq-heading-policy";
 import { FORBIDDEN_WORDS_USER_PROMPT_REMINDER } from "@/lib/content-word-blocklist";
+import { HUMANIZER_USER_PROMPT_REMINDER } from "@/lib/content-humanizer";
 import { extractChecklistItemTitle } from "@/lib/post-creator/post-creator-checklist-post-process";
 import { HTML_QUOTE_OUTPUT_RULE, MARKDOWN_QUOTE_OUTPUT_RULE, mapFeatureToInstruction } from "../feature-mapping";
 import { BLOG_HARNESS_SUMMARY_AGENT_ID } from "@/lib/bulk/blog-harness-summary-agent";
@@ -112,7 +114,7 @@ export const generateSingleSectionPrompt = (
   if (agent.id === BLOG_HARNESS_ANSWER_AGENT_ID) {
     return `<h2>Answer</h2>
 Rules:
-- Output <h2>Answer</h2> then exactly one <p> with two or three sentences total.
+- Output <h2>Answer</h2> then exactly one <p>...</p> with two or three sentences total. REQUIRED: the sentences MUST be inside a single <p> element. Bare text after </h2> without <p> is invalid.
 ${comparisonAnswerBlock}- Sentence 1: ${primaryKeyword?.trim() && isComparisonPrimaryKeyword(primaryKeyword) ? "Direct comparison verdict (see COMPARISON ANSWER above)." : "STAT/FACT FIRST. Open with a sourced number, range, named spec, process constraint, or installer measurement from VERIFIED FACTS, FIRST-PARTY CLAIMS, audit blocks, or this prompt. Then answer the question. Weave the writing keyword later in the paragraph if needed, not as the first clause."}
 - Forbidden sentence-1 shapes: "{keyword} offers/are/is/provide/give"; dictionary definitions; generic benefit stacks (privacy, light control, energy efficiency, aesthetic appeal) as the whole answer; "This article/guide provides/explores/covers"; company-name greeting with no fact.
 - Sentence 2 (mandatory when VERIFIED FACTS lists confirmed cost, efficiency, rate, payback, or export rows): one confirmed numeric anchor with units and explicit CAD or USD, qualified as illustrative when Tier 2. Cost/install bands must name the primary service city from PRIMARY LOCAL CONTEXT (e.g. Edmonton) — forbidden: Calgary, Toronto, Vancouver, or any other city when primary city is set unless the page keyword targets that city. Discard SERP or brief facts from other cities. When stating payback or savings, name at least one variance driver (system size, usage, export rates, equipment). Forbidden: universal payback lines ("recoup within X–Y years", "pays back in 5–10 years") without depends-on framing. Never invent figures. When no confirmed economic row exists, one concrete installer detail from FIRST-PARTY or audit blocks instead (mount type, room constraint, product tier, regional pattern) — never hollow "our team" filler.
@@ -122,7 +124,8 @@ ${comparisonAnswerBlock}- Sentence 1: ${primaryKeyword?.trim() && isComparisonPr
 - TRANSACTIONAL MONEY PAGE LINK (mandatory when PAGE SITEMAP / ASSIGNED PAGE LINKS are provided): weave 1 contextual internal link ([[LINK:query|anchor]] or <a href="...">anchor</a>) to a page-sitemap product/service money page that supports the customer's transaction (never a blog post, never a service-area URL).
 - FORBIDDEN: lists, tables, extra headings, Overview-style bullets, or a fourth sentence.
 - HTML only. Stop after </p>.
-${FORBIDDEN_WORDS_USER_PROMPT_REMINDER}`;
+${FORBIDDEN_WORDS_USER_PROMPT_REMINDER}
+${HUMANIZER_USER_PROMPT_REMINDER}`;
   }
 
   if (agent.id === BLOG_HARNESS_SUMMARY_AGENT_ID) {
@@ -149,7 +152,8 @@ Rules:
 ${overviewLinkRulesMd}
 - Use exact #ids from IN-PAGE ANCHORS in the user prompt. Stop after the bullet list.
 - Markdown only.
-${FORBIDDEN_WORDS_USER_PROMPT_REMINDER}`;
+${FORBIDDEN_WORDS_USER_PROMPT_REMINDER}
+${HUMANIZER_USER_PROMPT_REMINDER}`;
     }
     return `<h2>Overview</h2>
 Rules:
@@ -159,16 +163,12 @@ ${overviewLinkRulesHtml}
 - Use exact #ids from IN-PAGE ANCHORS in the user prompt. Stop after </ul>.
 - HTML only. Every bullet must be <li><strong>Label</strong>: sentence with <a href="#id">2-4 words</a> woven before the period.
 ${HARNESS_LABELED_LIST_HTML_RULE}
-${FORBIDDEN_WORDS_USER_PROMPT_REMINDER}`;
+${FORBIDDEN_WORDS_USER_PROMPT_REMINDER}
+${HUMANIZER_USER_PROMPT_REMINDER}`;
   }
 
   const hasFAQFeature =
-    agent.features?.some((f) => {
-      if (typeof f !== 'string') return false;
-      const lower = f.toLowerCase().trim();
-      if (lower.startsWith('[forbidden_words')) return false;
-      return lower.includes('[faq]') || lower.includes('faq');
-    }) ?? false;
+    agent.features?.some((f) => typeof f === "string" && featureIsExplicitFaqMarker(f)) ?? false;
 
   if (hasFAQFeature) {
     if (useMarkdown) {
@@ -440,7 +440,7 @@ ${illustrativeHarnessContract}
     }
   }
 
-  return `${sectionPrompt}\n${FORBIDDEN_WORDS_USER_PROMPT_REMINDER}`;
+  return `${sectionPrompt}\n${FORBIDDEN_WORDS_USER_PROMPT_REMINDER}\n${HUMANIZER_USER_PROMPT_REMINDER}`;
 };
 
 export const generateSectionsPrompt = (agents: AgentConfig[], format: 'markdown' | 'html' = 'html'): string => {

@@ -39,23 +39,17 @@ function resolveSitesJsonPath(repoRoot) {
 }
 
 function readBootstrapSites(repoRoot) {
-  const candidates = [
-    resolveSitesJsonPath(repoRoot),
-    path.join(repoRoot, "src", "components", "integrations", "default-properties-seed.json"),
-  ];
-  for (const filePath of candidates) {
-    try {
-      if (!filePath || !fs.existsSync(filePath)) continue;
-      const raw = JSON.parse(fs.readFileSync(filePath, "utf8"));
-      const sites = Array.isArray(raw?.sites) ? raw.sites : Array.isArray(raw) ? raw : [];
-      if (sites.length > 0) {
-        return { sites, source: filePath };
-      }
-    } catch {
-      /* try next */
+  const filePath = resolveSitesJsonPath(repoRoot);
+  try {
+    if (!filePath || !fs.existsSync(filePath)) {
+      return { sites: [], source: null };
     }
+    const raw = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    const sites = Array.isArray(raw?.sites) ? raw.sites : Array.isArray(raw) ? raw : [];
+    return { sites, source: filePath };
+  } catch {
+    return { sites: [], source: null };
   }
-  return { sites: [], source: null };
 }
 
 export function sitesBootstrapPlugin(repoRoot = process.cwd()) {

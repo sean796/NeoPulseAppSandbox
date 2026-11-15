@@ -1,4 +1,5 @@
 import type { AgentConfig } from "@/types/agent-config";
+import { featureIsExplicitFaqMarker } from "@/lib/content-generation/faq-heading-policy";
 import { extractChecklistItemTitle } from "@/lib/post-creator/post-creator-checklist-post-process";
 
 /**
@@ -29,12 +30,7 @@ export function agentHasIllustrativeFeature(agent: { features?: string[] }): boo
 }
 
 export function agentHasFaqFeature(agent: AgentConfig): boolean {
-  return (
-    agent.features?.some((f) => {
-      const s = typeof f === "string" ? f.toLowerCase().trim() : "";
-      return s.includes("[faq]") || s.includes("faq");
-    }) ?? false
-  );
+  return agent.features?.some((f) => typeof f === "string" && featureIsExplicitFaqMarker(f)) ?? false;
 }
 
 export function buildBulkHarnessOutlineFromAgents(agents: AgentConfig[]): BulkHarnessOutlineSection[] {

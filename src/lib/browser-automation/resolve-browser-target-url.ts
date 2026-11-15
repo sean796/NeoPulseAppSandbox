@@ -1,12 +1,12 @@
 import type { WordPressSite } from "@/components/integrations/types";
 import type { BrowserTargetUrlSource, TaskExecutionPayload } from "@/lib/tasks-types";
-import { outputMatchesRagVariableKey } from "@/lib/workflow/workflow-client-context";
-import type { WorkflowStepOutput } from "@/lib/workflow/workflow-types";
+import { outputMatchesRagVariableKey } from "@/lib/rag-variable-key-match";
+import type { AgentRunStepOutputSnapshot } from "@/lib/agent-runs/step-output-types";
 
 export type BrowserSiteSource = Pick<WordPressSite, "name" | "siteUrl" | "productionSiteUrl"> | null | undefined;
 
 export type ResolveBrowserTargetContext = {
-  outputs?: WorkflowStepOutput[];
+  outputs?: AgentRunStepOutputSnapshot[];
   siteId?: string;
   clientSiteIds?: string[];
 };
@@ -36,7 +36,7 @@ function parseHttpUrl(value: string): string | null {
   }
 }
 
-export function extractUrlFromStepOutput(output: WorkflowStepOutput): string | null {
+export function extractUrlFromStepOutput(output: AgentRunStepOutputSnapshot): string | null {
   const previewUrl = parseHttpUrl(output.textPreview ?? "");
   if (previewUrl) return previewUrl;
 

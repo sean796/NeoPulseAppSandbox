@@ -21,3 +21,19 @@ export function applyCustomTagsFromSites(sites: WordPressSite[]): {
   }
   return { tagBySiteId, labelBySiteId };
 }
+
+/** Distinct vertical labels already assigned to portfolio clients. */
+export function clientVerticalLabels(sites: readonly WordPressSite[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const site of sites) {
+    const label = readSiteBenchmarkCustomTag(site);
+    if (!label) continue;
+    const key = label.toLocaleLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(label);
+  }
+  out.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+  return out;
+}

@@ -2,44 +2,12 @@ import {
   isAgentRunCancelledLocally,
   markAgentRunCancelledLocally,
 } from "@/lib/agent-runs/executor";
-import type { AgentRun, StartAgentRunPayload } from "@/lib/agent-runs-types";
+import type { AgentRun } from "@/lib/agent-runs-types";
 import { isAgentRunTerminal } from "@/lib/agent-runs-types";
 
 export type StartRunOptions = {
   openSidebar?: boolean;
-  workflowBinding?: {
-    workflowId: number;
-    workflowRunId: number;
-    workflowNodeId: string;
-    ragVariableKey?: string;
-    workflowThenDelivery?: boolean;
-  };
 };
-
-export function applyWorkflowBinding(
-  payload: StartAgentRunPayload,
-  binding: StartRunOptions["workflowBinding"],
-): StartAgentRunPayload {
-  if (!binding) return payload;
-  return {
-    ...payload,
-    source: "workflow",
-    context: {
-      ...payload.context,
-      workflowId: binding.workflowId,
-      workflowRunId: binding.workflowRunId,
-      workflowNodeId: binding.workflowNodeId,
-    },
-    plan: {
-      ...payload.plan,
-      workflowId: binding.workflowId,
-      workflowRunId: binding.workflowRunId,
-      workflowNodeId: binding.workflowNodeId,
-      ragVariableKey: binding.ragVariableKey,
-      workflowThenDelivery: binding.workflowThenDelivery === true,
-    },
-  };
-}
 
 export function applyCancelledRunState(run: AgentRun, teamId: number): AgentRun {
   if (run.status === "cancelled" || isAgentRunCancelledLocally(run.id, teamId)) {

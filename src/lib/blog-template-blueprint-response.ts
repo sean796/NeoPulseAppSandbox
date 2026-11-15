@@ -14,6 +14,7 @@ import {
   isLlmAuditAuthorityDumpTitle,
 } from "@/lib/content-optimization/harness-heading-titles";
 import { ensureConnectedSiteHarnessMarkers } from "@/lib/bulk/connected-site-harness-markers";
+import { featureIsExplicitFaqMarker } from "@/lib/content-generation/faq-heading-policy";
 import { LINK_FEATURE_PLACEHOLDER } from "./blog-template-checklist-prompts";
 import { agentFromChecklistRow, buildBlueprintFromChecklistRows } from "./blog-template-checklist-rows";
 import type { BlogTemplateContext } from "./blog-template-builder-types";
@@ -100,12 +101,7 @@ export function parseBlueprintModelResponse(args: {
           const agentTitle =
             modelTitle || checklistTitle || beforeMarker || afterNumber.slice(0, 80).trim();
 
-          const isFAQ =
-            features?.some(
-              (f: string) =>
-                typeof f === "string" &&
-                (f.toLowerCase().includes("[faq]") || f.toLowerCase().includes("faq")),
-            ) ?? false;
+          const isFAQ = features.some((f) => featureIsExplicitFaqMarker(f));
           return {
             id: agent.id || `agent-${index + 1}`,
             step: agent.step || index + 1,

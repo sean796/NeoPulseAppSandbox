@@ -113,11 +113,11 @@ export const PROPERTIES_OVERVIEW_PACKAGE_SLOT_WIDTH =
   "w-[8.75rem] min-w-[8.75rem] max-w-[8.75rem]";
 
 /**
- * Package badge + edit/save/delete: same outer height as brand field stack (6.5rem).
+ * Package badge + edit/save/delete: same outer height as brand field stack (name + URL).
  * Badge and button row share height evenly (flex-1 each), flush top/bottom.
  */
 export const PROPERTIES_OVERVIEW_IDENTITY_PILLS_CLASS = cn(
-  "ml-auto flex h-[6.5rem] shrink-0 flex-col items-stretch gap-1",
+  "ml-auto flex h-[4.25rem] shrink-0 flex-col items-stretch gap-1",
   PROPERTIES_OVERVIEW_PACKAGE_SLOT_WIDTH,
 );
 

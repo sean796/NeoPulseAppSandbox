@@ -38,38 +38,16 @@ describe("pulse assist action tools", () => {
     expect(routes).toContain("automation-recipes");
   });
 
-  it("registers Pulse Forge dashboard and workflow tools with build write gate", () => {
+  it("does not register Pulse Forge workflow tools", () => {
     const registry = readPhp("includes/pulse-assist/action/class-pulse-assist-action-registry.php");
-    expect(registry).toContain("forge_dashboard");
-    expect(registry).toContain("workflows_list");
-    expect(registry).toContain("workflows_get");
-    expect(registry).toContain("workflows_list_runs");
-    expect(registry).toContain("workflows_create");
-    expect(registry).toContain("workflows_publish");
-    expect(registry).toContain("workflows_run");
-
-    const forge = readPhp("includes/pulse-assist/action/class-pulse-assist-action-tools-forge.php");
-    expect(forge).toContain("graph_from_recipe_keyword");
-    expect(forge).toContain("Recipe has no trigger or action blocks.");
-    expect(forge).toContain("Valid recipe keyword is required.");
-    expect(forge).toContain("'nodes'");
-    expect(forge).toContain("'edges'");
+    expect(registry).not.toContain("forge_dashboard");
+    expect(registry).not.toContain("workflows_list");
+    expect(registry).not.toContain("workflows_create");
+    expect(registry).not.toContain("workflows_run");
 
     const loader = readPhp("includes/class-neo-pulse-app-loader.php");
-    expect(loader).toContain("class-pulse-assist-action-tools-forge.php");
-
-    const intent = readPhp("includes/pulse-assist/action/class-pulse-assist-action-intent.php");
-    expect(intent).toContain("is_forge_message");
-    expect(intent).toContain("forge_resolver");
-
-    const lead = readPhp("includes/pulse-assist/action/class-pulse-assist-action-lead-agent.php");
-    expect(lead).toContain("workflows_create");
-    expect(lead).toContain("Do not emit nodes or edges");
-
-    const orchestrator = readPhp("includes/pulse-assist/action/class-pulse-assist-action-orchestrator.php");
-    expect(orchestrator).toContain("Created workflow");
-    expect(orchestrator).toContain("pulseForge");
-    expect(orchestrator).toContain("pulse-forge/forge");
+    expect(loader).not.toContain("class-pulse-assist-action-tools-forge.php");
+    expect(loader).not.toContain("includes/workflows/");
   });
 
   it("defines read and write task tools with build gate", () => {

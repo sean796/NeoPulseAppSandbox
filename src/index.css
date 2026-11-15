@@ -428,21 +428,6 @@ All colors MUST be HSL.
     font-weight: 400;
   }
 
-  /** Pulse Forge: Lato + 1rem floor (same as Properties / API tab). */
-  .neo-pulse-forge-shell {
-    font-family: "Lato", sans-serif;
-    font-size: var(--font-size-min);
-    line-height: 1.5;
-  }
-
-  .neo-pulse-forge-shell :where(input, textarea, button, select, option, label, p, span, a, h1, h2, h3, h4, li) {
-    font-family: inherit;
-  }
-
-  .neo-pulse-forge-shell :where(input, textarea, button, select, option) {
-    font-size: inherit;
-  }
-
   /** Chrome autofill: keep black field + inherited text. */
   .local-analysis-panel input:-webkit-autofill,
   .local-analysis-panel input:-webkit-autofill:hover,
@@ -741,9 +726,9 @@ All colors MUST be HSL.
  * Primary run buttons keep black label on lime (do not force white fill).
  */
 .properties-dock,
-.properties-dock *:not(.dock-count-fade):not(.dock-count-pulse):not(.bg-primary),
-.properties-dock *:not(.dock-count-fade):not(.dock-count-pulse):not(.bg-primary)::before,
-.properties-dock *:not(.dock-count-fade):not(.dock-count-pulse):not(.bg-primary)::after,
+.properties-dock *:not(.dock-count-fade):not(.dock-count-pulse):not(.dock-count-sheen):not(.bg-primary),
+.properties-dock *:not(.dock-count-fade):not(.dock-count-pulse):not(.dock-count-sheen):not(.bg-primary)::before,
+.properties-dock *:not(.dock-count-fade):not(.dock-count-pulse):not(.dock-count-sheen):not(.bg-primary)::after,
 .properties-dock input,
 .properties-dock input::placeholder {
   color: #ffffff !important;
@@ -790,7 +775,8 @@ All colors MUST be HSL.
 }
 
 .properties-dock .dock-count-fade {
-  animation: dock-count-fade-in 1.15s ease-in-out both !important;
+  opacity: 1 !important;
+  animation: none !important;
 }
 
 /** Properties overview view ↔ edit mode (same fade language as dock counts). */
@@ -815,6 +801,46 @@ All colors MUST be HSL.
 
 .properties-dock .dock-count-pulse-delay {
   animation-delay: 0.2s !important;
+}
+
+/** One shared silver sweep. Brightens at the midpoint, dims at both ends. */
+@keyframes dock-count-sheen {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.22;
+  }
+  50% {
+    transform: translateX(40%);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(180%);
+    opacity: 0.22;
+  }
+}
+
+.properties-dock .dock-count-sheen {
+  position: relative;
+  overflow: hidden;
+}
+
+.properties-dock .dock-count-sheen::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 70%;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(198, 208, 218, 0.12) 22%,
+    rgba(244, 247, 250, 0.72) 50%,
+    rgba(198, 208, 218, 0.12) 78%,
+    transparent 100%
+  );
+  animation: dock-count-sheen 2.4s linear infinite;
 }
 
 /**

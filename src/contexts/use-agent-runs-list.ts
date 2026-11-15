@@ -12,10 +12,6 @@ import {
 } from "@/lib/agent-runs-api";
 import { agentRunSiteId } from "@/lib/agent-runs/agent-run-batch-key";
 import {
-  applyOptimisticWorkflowAgentProgress,
-  createOptimisticWorkflowAgentRun,
-} from "@/lib/agent-runs/optimistic-workflow-agent-run";
-import {
   resolveDefaultAgentsSiteFilter,
 } from "@/lib/agent-runs/agent-runs-site-filter";
 import { agentRunHasResumeProgress } from "@/lib/agent-runs/agent-run-resume";
@@ -70,7 +66,14 @@ export function useAgentRunsList({
           && !isAgentRunInflight(run.id)
           && !isAgentRunActive(run.id)
           && agentRunHasResumeProgress(run);
-        if (run.status !== "queued" && !stalledRunning) continue;
+        // Client post_creator marked running with no harness progress (misrouted to /process).
+        const stuckClientStart =
+          run.status === "running"
+          && !isAgentRunInflight(run.id)
+          && !isAgentRunActive(run.id)
+          && !agentRunHasResumeProgress(run)
+          && !hasClientRunAttempted(run.id);
+        if (run.status !== "queued" && !stalledRunning && !stuckClientStart) continue;
         if (hasClientRunAttempted(run.id) && !stalledRunning) continue;
         if (isAgentRunInflight(run.id)) continue;
         if (stalledRunning) {
@@ -169,8 +172,8 @@ export function useAgentRunsList({
 
   const openSidebar = useCallback(
     (runId?: number) => {
-      setSidebarPanel("agents");
-      writeSidebarPanel("agents");
+      setSidebarPanel("tasks");
+      writeSidebarPanel("tasks");
       setSidebarOpen(true);
       writeSidebarOpen(true);
       writeAgentRunsSidebarOpen(true);
@@ -178,32 +181,6 @@ export function useAgentRunsList({
     },
     [setSidebarOpen, setSidebarPanel],
   );
-
-  const seedOptimisticWorkflowAgent = useCallback(
-    (title: string, siteId?: string | readonly string[]) => {
-      if (!teamId) {
-        openSidebar();
-        return;
-      }
-      const siteIds = Array.isArray(siteId) ? siteId : siteId ? [siteId] : [undefined];
-      const now = Date.now();
-      const nextRuns = siteIds.map((id, index) =>
-        createOptimisticWorkflowAgentRun({
-          teamId,
-          title,
-          siteId: id,
-          id: -(now + index + 1),
-        }),
-      );
-      setRuns((prev) => [...nextRuns, ...prev.filter((item) => item.id > 0)]);
-      openSidebar(nextRuns[0]?.id);
-    },
-    [openSidebar, teamId],
-  );
-
-  const patchOptimisticWorkflowAgentProgress = useCallback((message: string, siteId?: string) => {
-    setRuns((prev) => applyOptimisticWorkflowAgentProgress(prev, message, siteId));
-  }, []);
 
   return {
     runs,
@@ -220,7 +197,5 @@ export function useAgentRunsList({
     refreshRuns,
     patchRunInList,
     openSidebar,
-    seedOptimisticWorkflowAgent,
-    patchOptimisticWorkflowAgentProgress,
   };
 }

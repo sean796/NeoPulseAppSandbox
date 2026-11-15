@@ -15,6 +15,7 @@ import { resolveHarnessHttpReferer } from '@/lib/bulk/harness-openrouter-worker-
 import {
   assertStitchedHarnessArticle,
 } from '@/lib/bulk/harness-section-validate';
+import { runHarnessSectionIsolated } from '@/lib/bulk/harness-section-isolation';
 import { runHarnessHtmlQualityControl } from '@/lib/content-generation/harness-html-quality-control';
 import { findImportedSectionBody } from '@/lib/bulk/blog-import-parser';
 import {
@@ -43,6 +44,7 @@ import type { HarnessPromptEnv } from '@/lib/bulk/bulk-markdown-content-harness-
 import { agentHasIllustrativeFeature, stripTrailingCopyrightBoilerplate } from '@/lib/bulk/bulk-markdown-content-harness-utils';
 import { runPressReleaseHarnessContent } from '@/lib/bulk/bulk-markdown-content-harness-press';
 import { createBlogHarnessSectionRuntime } from '@/lib/bulk/bulk-markdown-content-harness-blog-section';
+import { logger } from '@/lib/logger';
 
 export type { HarnessPromptEnv } from '@/lib/bulk/bulk-markdown-content-harness-types';
 export { stripTrailingCopyrightBoilerplate } from '@/lib/bulk/bulk-markdown-content-harness-utils';
@@ -87,12 +89,22 @@ export async function generateMarkdownContentHarnessed(
   const finalizeStitchedHarnessHtml = async (stitchedHtml: string): Promise<string> => {
     if (isPressReleaseHarness) return stitchedHtml;
     options.onProgress?.(harnessRowIndex, 0, 'Quality control: checking HTML...');
-    // QC failure throws and fails the row; un-QC'd HTML never uploads.
-    return runHarnessHtmlQualityControl({
-      html: stitchedHtml,
-      apiKey: options.openRouterApiKey,
-      model: getBlogModel(promptEnv?.siteId),
-    });
+    try {
+      return await runHarnessHtmlQualityControl({
+        html: stitchedHtml,
+        apiKey: options.openRouterApiKey,
+        model: getBlogModel(promptEnv?.siteId),
+      });
+    } catch (qcErr) {
+      const msg = qcErr instanceof Error ? qcErr.message : String(qcErr);
+      logger.warn(`[Bulk Harness] Quality control failed; posting stitched HTML: ${msg}`);
+      options.onProgress?.(harnessRowIndex, 0, 'Quality control failed; posting draft as generated.');
+      return stitchedHtml;
+    }
+  };
+
+  const sectionProgress = (message: string) => {
+    options.onProgress?.(harnessRowIndex, 0, message);
   };
 
   const entityFromRow =
@@ -162,7 +174,9 @@ export async function generateMarkdownContentHarnessed(
       : `\n${formatSapPageWriterBlock(entity)}`;
   }
 
-  const totalBudget = options.maxTokens || 16000;
+  const { openRouterMaxOutputTokens } = await import("@/lib/openrouter-stream-token-limits");
+  const totalBudget =
+    options.maxTokens && options.maxTokens > 0 ? options.maxTokens : openRouterMaxOutputTokens();
   const httpReferer = resolveHarnessHttpReferer();
   const harnessFormat = isPressReleaseHarness ? ("markdown" as const) : ("html" as const);
 
@@ -294,27 +308,38 @@ export async function generateMarkdownContentHarnessed(
     if (overviewMaxTokens == null) {
       throw new Error("Harness: missing token budget for Overview");
     }
-    const sequentialPieces: string[] = [
-      await runBlogHarnessSection(answerAgent, 0, "Answer", {
-        maxTokens: answerMaxTokens,
-        isOverviewSection: false,
-        isAnswerSection: true,
-        publishedPlanIndex: 0,
-        otherSectionTitles: ["Overview", ...bodyOutline.map((x) => x.displayTitle)],
-      }),
-    ];
-    const answerMd = sequentialPieces[0] ?? "";
+    let anyDropped = false;
+    const answerIsolated = await runHarnessSectionIsolated({
+      title: "Answer",
+      onProgress: sectionProgress,
+      run: () =>
+        runBlogHarnessSection(answerAgent, 0, "Answer", {
+          maxTokens: answerMaxTokens,
+          isOverviewSection: false,
+          isAnswerSection: true,
+          publishedPlanIndex: 0,
+          otherSectionTitles: ["Overview", ...bodyOutline.map((x) => x.displayTitle)],
+        }),
+    });
+    anyDropped = anyDropped || answerIsolated.dropped;
+    const sequentialPieces: string[] = [answerIsolated.html];
+    const answerMd = answerIsolated.html;
     await ensureIllustrativePersonaCached(answerMd);
-    sequentialPieces.push(
-      await runBlogHarnessSection(overviewAgent, 1, "Overview", {
-        maxTokens: overviewMaxTokens,
-        isOverviewSection: true,
-        inPageAnchorBlock: overviewInPageAnchorBlock,
-        publishedPlanIndex: 1,
-        otherSectionTitles: bodyOutline.map((x) => x.displayTitle),
-        answerSectionHtml: answerMd,
-      }),
-    );
+    const overviewIsolated = await runHarnessSectionIsolated({
+      title: "Overview",
+      onProgress: sectionProgress,
+      run: () =>
+        runBlogHarnessSection(overviewAgent, 1, "Overview", {
+          maxTokens: overviewMaxTokens,
+          isOverviewSection: true,
+          inPageAnchorBlock: overviewInPageAnchorBlock,
+          publishedPlanIndex: 1,
+          otherSectionTitles: bodyOutline.map((x) => x.displayTitle),
+          answerSectionHtml: answerMd,
+        }),
+    });
+    anyDropped = anyDropped || overviewIsolated.dropped;
+    sequentialPieces.push(overviewIsolated.html);
     for (let bi = 0; bi < bodyAgents.length; bi++) {
       const agent = bodyAgents[bi]!;
       const o = bodyOutline[bi]!;
@@ -324,19 +349,29 @@ export async function generateMarkdownContentHarnessed(
       if (maxTokens == null) {
         throw new Error(`Harness: missing token budget for section "${titleForCb}"`);
       }
-      sequentialPieces.push(
-        await runBlogHarnessSection(agent, bi + 2, titleForCb, {
-          maxTokens,
-          isOverviewSection: false,
-          publishedPlanIndex: bi + 2,
-          otherSectionTitles,
-          answerSectionHtml: answerMd,
-        }),
-      );
+      const bodyIsolated = await runHarnessSectionIsolated({
+        title: titleForCb,
+        onProgress: sectionProgress,
+        run: () =>
+          runBlogHarnessSection(agent, bi + 2, titleForCb, {
+            maxTokens,
+            isOverviewSection: false,
+            publishedPlanIndex: bi + 2,
+            otherSectionTitles,
+            answerSectionHtml: answerMd,
+          }),
+      });
+      anyDropped = anyDropped || bodyIsolated.dropped;
+      sequentialPieces.push(bodyIsolated.html);
     }
-    const requireIllustrative = bodyAgents.some(agentHasIllustrativeFeature);
     const sequentialHtml = stripTrailingCopyrightBoilerplate(stitchHarnessSections(sequentialPieces));
-    assertStitchedHarnessArticle(sequentialHtml, { requireIllustrative });
+    if (!sequentialHtml?.trim()) {
+      throw new Error("Harness: stitched article is empty");
+    }
+    if (!anyDropped) {
+      const requireIllustrative = bodyAgents.some(agentHasIllustrativeFeature);
+      assertStitchedHarnessArticle(sequentialHtml, { requireIllustrative });
+    }
     logTokenBudgetSummary();
     return finalizeStitchedHarnessHtml(sequentialHtml);
   }
@@ -353,20 +388,30 @@ export async function generateMarkdownContentHarnessed(
 
   await ensureIllustrativePersonaCached();
 
-  const [answerMd, overviewMd, ...bodyPieces] = await Promise.all([
-    runBlogHarnessSection(answerAgent, 0, 'Answer', {
-      maxTokens: answerMaxTokens,
-      isOverviewSection: false,
-      isAnswerSection: true,
-      publishedPlanIndex: 0,
-      otherSectionTitles: ['Overview', ...bodyOutline.map((x) => x.displayTitle)],
+  const [answerIsolated, overviewIsolated, ...bodyIsolated] = await Promise.all([
+    runHarnessSectionIsolated({
+      title: "Answer",
+      onProgress: sectionProgress,
+      run: () =>
+        runBlogHarnessSection(answerAgent, 0, 'Answer', {
+          maxTokens: answerMaxTokens,
+          isOverviewSection: false,
+          isAnswerSection: true,
+          publishedPlanIndex: 0,
+          otherSectionTitles: ['Overview', ...bodyOutline.map((x) => x.displayTitle)],
+        }),
     }),
-    runBlogHarnessSection(overviewAgent, 1, 'Overview', {
-      maxTokens: overviewMaxTokens,
-      isOverviewSection: true,
-      inPageAnchorBlock: overviewInPageAnchorBlock,
-      publishedPlanIndex: 1,
-      otherSectionTitles: bodyOutline.map((x) => x.displayTitle),
+    runHarnessSectionIsolated({
+      title: "Overview",
+      onProgress: sectionProgress,
+      run: () =>
+        runBlogHarnessSection(overviewAgent, 1, 'Overview', {
+          maxTokens: overviewMaxTokens,
+          isOverviewSection: true,
+          inPageAnchorBlock: overviewInPageAnchorBlock,
+          publishedPlanIndex: 1,
+          otherSectionTitles: bodyOutline.map((x) => x.displayTitle),
+        }),
     }),
     ...bodyAgents.map((agent, bi) => {
       const titleForCb = bodyOutline[bi]!.displayTitle;
@@ -375,22 +420,37 @@ export async function generateMarkdownContentHarnessed(
       if (maxTokens == null) {
         throw new Error(`Harness: missing token budget for section "${titleForCb}"`);
       }
-      return runBlogHarnessSection(agent, bi + 2, titleForCb, {
-        maxTokens,
-        isOverviewSection: false,
-        publishedPlanIndex: bi + 2,
-        otherSectionTitles,
+      return runHarnessSectionIsolated({
+        title: titleForCb,
+        onProgress: sectionProgress,
+        run: () =>
+          runBlogHarnessSection(agent, bi + 2, titleForCb, {
+            maxTokens,
+            isOverviewSection: false,
+            publishedPlanIndex: bi + 2,
+            otherSectionTitles,
+          }),
       });
     }),
   ]);
 
-  const stitched = stitchHarnessSections([answerMd, overviewMd, ...bodyPieces]);
+  const anyDropped =
+    answerIsolated.dropped ||
+    overviewIsolated.dropped ||
+    bodyIsolated.some((p) => p.dropped);
+  const stitched = stitchHarnessSections([
+    answerIsolated.html,
+    overviewIsolated.html,
+    ...bodyIsolated.map((p) => p.html),
+  ]);
   if (!stitched?.trim()) {
     throw new Error("Harness: stitched article is empty");
   }
   const html = stripTrailingCopyrightBoilerplate(stitched);
-  const requireIllustrativeParallel = bodyAgents.some(agentHasIllustrativeFeature);
-  assertStitchedHarnessArticle(html, { requireIllustrative: requireIllustrativeParallel });
+  if (!anyDropped) {
+    const requireIllustrativeParallel = bodyAgents.some(agentHasIllustrativeFeature);
+    assertStitchedHarnessArticle(html, { requireIllustrative: requireIllustrativeParallel });
+  }
   logTokenBudgetSummary();
   return finalizeStitchedHarnessHtml(html);
 }

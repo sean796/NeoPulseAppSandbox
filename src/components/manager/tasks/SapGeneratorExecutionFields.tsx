@@ -6,7 +6,7 @@ import {
   TaskFormPanel,
 } from "@/components/manager/tasks/TaskFormLayout";
 import { EntitySapPageCountFields } from "@/components/manager/tasks/EntitySapPageCountFields";
-import { PulseForgePostSchedulePanel } from "@/components/manager/tasks/planner/PulseForgePostSchedulePanel";
+import { TaskPostSchedulePanel } from "@/components/manager/tasks/planner/TaskPostSchedulePanel";
 import { ensureEntityPageCreatorPayload } from "@/lib/entity-page-creator/entity-page-creator-defaults";
 import { entityInspectorPayloadForClientSite } from "@/lib/editorial/sync-editorial-sap-payload-from-site";
 import type { EntityPageCreatorExecutionPayload, TaskExecutionPayload } from "@/lib/tasks-types";
@@ -94,7 +94,7 @@ export function SapGeneratorExecutionFields({
         onChange={(next) => onChange(next)}
       />
 
-      <PulseForgePostSchedulePanel
+      <TaskPostSchedulePanel
         executionKind="sap_generator"
         executionPayload={payload}
         disabled={disabled}

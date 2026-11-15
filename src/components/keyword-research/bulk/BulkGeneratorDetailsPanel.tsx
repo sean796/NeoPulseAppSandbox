@@ -30,6 +30,7 @@ import type { BulkOptimizationState } from "@/hooks/content-optimization/use-opt
 import type { ResearchBatchSignals } from "@/lib/overview/overview-bulk-pipeline-titles";
 import { BulkSitemapInventoryRunDetail } from "@/components/keyword-research/bulk/BulkSitemapInventoryRunDetail";
 import { WordBlacklistRunDetail } from "@/components/keyword-research/bulk/WordBlacklistRunDetail";
+import { HumanizerRunDetail } from "@/components/keyword-research/bulk/HumanizerRunDetail";
 import { SitemapInventoryLinksList } from "@/components/keyword-research/bulk/SitemapInventoryLinksList";
 import { Button, Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/ui";
 
@@ -414,6 +415,7 @@ export function BulkGeneratorDetailsPanel(props: BulkGeneratorDetailsPanelProps)
         {variant === "prompt" || variant === "csv" ? (
           <>
             <WordBlacklistRunDetail />
+            <HumanizerRunDetail />
             <BulkSitemapInventoryRunDetail
               links={props.sitemapInventoryLinks ?? []}
               gscHostedLink={props.siteKwHostedLink ?? null}

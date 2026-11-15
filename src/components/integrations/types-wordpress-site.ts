@@ -171,6 +171,11 @@ export interface WordPressSite {
    * Missing or empty = none. Example: `reporting.semrush.safe-fix`.
    */
   assignedAgentIds?: string[];
+  /**
+   * When each assigned skill runs (hourly, daily, weekly, or monthly).
+   * Missing skill uses daily at 07:00.
+   */
+  skillSchedules?: Record<string, import("@/lib/skill-run-schedule").SkillRunSchedule>;
 }
 
 /** Bulk / keyword flows: `siteUrl` is the WordPress connection base; optional production URL for display. */

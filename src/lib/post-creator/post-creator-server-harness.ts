@@ -17,6 +17,7 @@ import {
   buildPostCreatorServerPreflightFromPayload,
   preflightFromWorkerCheckpoint,
 } from "@/lib/post-creator/post-creator-server-preflight";
+import { setSessionToken } from "@/lib/auth-device";
 import { setPostCreatorWorkerApiBase } from "@/lib/wordpress-api/connection";
 import { setServerHarnessSitesOverride } from "@/components/integrations/storage";
 
@@ -44,6 +45,10 @@ export type PostCreatorServerJobResult = {
 };
 
 function applyServerEnvKeys(payload: PostCreatorServerJobPayload): void {
+  // Same account auth as the user who started the task (OpenRouter app proxy, etc.).
+  if (payload.bearerToken?.trim()) {
+    setSessionToken(payload.bearerToken.trim());
+  }
   if (payload.apiBase?.trim()) {
     setPostCreatorWorkerApiBase(payload.apiBase);
     process.env.VITE_BACKEND_API_BASE = payload.apiBase.trim();

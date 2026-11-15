@@ -73,6 +73,7 @@ function recipeBucketKey(run: AgentRun): AgentRunRecipeBucketKey | null {
   if (recipe === "browser_automation") return "research";
   if (recipe === "dfs_llm_article_audit") return "dfs_llm_article_audit";
   if (recipe === "content_gap_check") return "editorial";
+  if (recipe === "posts_content_gap_check") return "editorial";
   if (recipe === "post_creator") return "editorial";
   if (recipe === "entity_page_creator" || recipe === "entity_generator" || recipe === "sap_generator") {
     return "editorial";

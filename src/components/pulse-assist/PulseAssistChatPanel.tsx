@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { usePulseAssistHeaderActions } from "./pulse-assist-header-actions";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTeam } from "@/contexts/TeamContext";
 import { usePulseAssistContext } from "@/contexts/pulse-assist-context";
@@ -13,11 +14,9 @@ import {
   type PulseAssistDebugLog,
   type PulseAssistDebugTurn,
 } from "@/lib/pulse-assist/debug-log";
-import type { AssistTargetScope } from "@/lib/pulse-assist/types";
 import { BACKEND_STARTERS, SUBMODE_GREETING } from "@/lib/pulse-assist/types";
 import { NEO_PULSE_ASSIST_LABEL } from "./PulseAssistBrandTitle";
 import { PulseAssistComposer } from "./PulseAssistComposer";
-import { PulseAssistPanelHeader } from "./PulseAssistPanelHeader";
 import {
   PulseAssistAckBubble,
   PulseAssistCard,
@@ -29,15 +28,7 @@ import { CreateSupportTicketDialog } from "./CreateSupportTicketDialog";
 import { Button } from "@/ui";
 import { usePulseAssistChatPanelController } from "./use-pulse-assist-chat-panel-controller";
 
-export function PulseAssistChatPanel({
-  sidebarOpen = false,
-  hidePageScope = false,
-  defaultTargetScope,
-}: {
-  sidebarOpen?: boolean;
-  hidePageScope?: boolean;
-  defaultTargetScope?: AssistTargetScope;
-}) {
+export function PulseAssistChatPanel({ sidebarOpen = false }: { sidebarOpen?: boolean }) {
   const { user } = useAuth();
   const { activeTeam, members } = useTeam();
   const context = usePulseAssistContext();
@@ -54,10 +45,6 @@ export function PulseAssistChatPanel({
   const {
     submode,
     setSubmode,
-    pageContentMode,
-    setPageContentMode,
-    targetScope,
-    setTargetScope,
     input,
     setInput,
     history,
@@ -70,8 +57,6 @@ export function PulseAssistChatPanel({
     handleUndo,
   } = usePulseAssistChatPanelController({
     userId,
-    hidePageScope,
-    defaultTargetScope,
     canAssist: context.canAssist,
     hasOpenRouterKey,
     context,
@@ -124,7 +109,6 @@ export function PulseAssistChatPanel({
     const log = buildPulseAssistDebugLog({
       userId,
       submode,
-      targetScope,
       managerTab,
       generatorSection,
       overview,
@@ -140,7 +124,6 @@ export function PulseAssistChatPanel({
     turns,
     userId,
     submode,
-    targetScope,
     managerTab,
     generatorSection,
     overview,
@@ -150,7 +133,6 @@ export function PulseAssistChatPanel({
     activeSiteId,
     history,
   ]);
-
 
   const handleCreateTicket = useCallback(() => {
     const debugTurns: PulseAssistDebugTurn[] = turns.map((turn) => {
@@ -176,7 +158,6 @@ export function PulseAssistChatPanel({
       buildPulseAssistDebugLog({
         userId,
         submode,
-        targetScope,
         managerTab,
         generatorSection,
         overview,
@@ -193,7 +174,6 @@ export function PulseAssistChatPanel({
     turns,
     userId,
     submode,
-    targetScope,
     managerTab,
     generatorSection,
     overview,
@@ -204,6 +184,28 @@ export function PulseAssistChatPanel({
     history,
   ]);
 
+  const clearChat = useCallback(() => {
+    clearPulseAssistHistory(userId);
+    setHistory([]);
+    setTurns([]);
+  }, [setHistory, setTurns, userId]);
+
+  const headerActions = usePulseAssistHeaderActions();
+  useEffect(() => {
+    if (!headerActions) return;
+    headerActions.set({
+      createTicket: handleCreateTicket,
+      downloadDebug: handleDownloadDebug,
+      clearChat,
+    });
+    return () => {
+      headerActions.set({
+        createTicket: () => {},
+        downloadDebug: () => {},
+        clearChat: () => {},
+      });
+    };
+  }, [clearChat, handleCreateTicket, handleDownloadDebug, headerActions]);
 
   if (!canAssist) {
     return (
@@ -232,85 +234,70 @@ export function PulseAssistChatPanel({
       />
 
       <div className="fcw-body pulse-assist-body">
-      <PulseAssistPanelHeader
-        targetScope={targetScope}
-        onTargetScopeChange={setTargetScope}
-        hidePageScope={hidePageScope}
-        onCreateTicket={handleCreateTicket}
-        onDownloadDebug={handleDownloadDebug}
-        onClearHistory={() => {
-          clearPulseAssistHistory(userId);
-          setHistory([]);
-          setTurns([]);
-        }}
-      />
-
-      {buildProgress ? (
-        <div className="fcw-harness-progress">
-          <div className="fcw-harness-progress__label">{buildProgress.label}</div>
-          <div className="fcw-harness-progress__track">
-            <div
-              className="fcw-harness-progress__fill"
-              style={{ width: `${(buildProgress.completed / buildProgress.total) * 100}%` }}
-            />
-          </div>
-        </div>
-      ) : null}
-
-      <div ref={messagesScrollRef} className="fcw-messages pulse-assist-messages">
-        {turns.length === 0 ? (
-          <div className="fcw-empty">
-            <div className="fcw-empty__sub">{SUBMODE_GREETING[submode]}</div>
-            <div className="fcw-starters">
-              {BACKEND_STARTERS.map((starter) => (
-                <Button
-                  variant="quiet"
-                  key={starter}
-                  onClick={() => void sendMessage(starter)}
-                  disabled={loading}
-                >
-                  {starter}
-                </Button>
-              ))}
+        {buildProgress ? (
+          <div className="fcw-harness-progress">
+            <div className="fcw-harness-progress__label">{buildProgress.label}</div>
+            <div className="fcw-harness-progress__track">
+              <div
+                className="fcw-harness-progress__fill"
+                style={{ width: `${(buildProgress.completed / buildProgress.total) * 100}%` }}
+              />
             </div>
           </div>
         ) : null}
 
-        {turns.map((turn, i) => {
-          if (turn.kind === "user") return <PulseAssistUserBubble key={`u-${i}`} text={turn.text} />;
-          if (turn.kind === "ack") return <PulseAssistAckBubble key={`a-${i}`} text={turn.text} />;
-          if (turn.kind === "thinking") {
+        <div ref={messagesScrollRef} className="fcw-messages pulse-assist-messages">
+          {turns.length === 0 ? (
+            <div className="fcw-empty">
+              <div className="fcw-empty__sub">{SUBMODE_GREETING[submode]}</div>
+              <div className="fcw-starters">
+                {BACKEND_STARTERS.map((starter) => (
+                  <Button
+                    variant="quiet"
+                    key={starter}
+                    onClick={() => void sendMessage(starter)}
+                    disabled={loading}
+                  >
+                    {starter}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {turns.map((turn, i) => {
+            if (turn.kind === "user") return <PulseAssistUserBubble key={`u-${i}`} text={turn.text} />;
+            if (turn.kind === "ack") return <PulseAssistAckBubble key={`a-${i}`} text={turn.text} />;
+            if (turn.kind === "thinking") {
+              return (
+                <div key={`t-${i}`} className="fcw-msg fcw-msg--assistant">
+                  <PulseAssistThinkingCard title={turn.title} steps={turn.steps} />
+                </div>
+              );
+            }
             return (
-              <div key={`t-${i}`} className="fcw-msg fcw-msg--assistant">
-                <PulseAssistThinkingCard title={turn.title} steps={turn.steps} />
+              <div key={`c-${i}`} className="fcw-msg fcw-msg--assistant">
+                <PulseAssistCard
+                  card={turn.card}
+                  onSubmodeSwitch={handleSubmodeSwitchFromCard}
+                  onTopicClick={(topic) => void sendMessage(topic)}
+                  onUndo={(postId) => void handleUndo(postId)}
+                />
+                {hasAgentsPanel(turn) ? <PulseAssistAgentsAccordion meta={turn} /> : null}
               </div>
             );
-          }
-          return (
-            <div key={`c-${i}`} className="fcw-msg fcw-msg--assistant">
-              <PulseAssistCard
-                card={turn.card}
-                onSubmodeSwitch={handleSubmodeSwitchFromCard}
-                onTopicClick={(topic) => void sendMessage(topic)}
-                onUndo={(postId) => void handleUndo(postId)}
-              />
-              {hasAgentsPanel(turn) ? <PulseAssistAgentsAccordion meta={turn} /> : null}
-            </div>
-          );
-        })}
-      </div>
+          })}
+        </div>
 
-      <PulseAssistComposer
-        value={input}
-        onChange={setInput}
-        submode={submode}
-        onSubmodeChange={setSubmode}
-        pageContentMode={pageContentMode}
-        onPageContentModeChange={setPageContentMode}
-        onSend={() => void sendMessage(input)}
-        disabled={loading}
-        autoFocus={sidebarOpen}
-      />
+        <PulseAssistComposer
+          value={input}
+          onChange={setInput}
+          submode={submode}
+          onSubmodeChange={setSubmode}
+          onSend={() => void sendMessage(input)}
+          disabled={loading}
+          autoFocus={sidebarOpen}
+        />
       </div>
     </>
   );

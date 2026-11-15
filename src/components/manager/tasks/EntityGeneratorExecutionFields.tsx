@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { EntitySapPageCountFields } from "@/components/manager/tasks/EntitySapPageCountFields";
-import { ForgeWhatPublishScheduleFields } from "@/components/manager/tasks/ForgeWhatPublishScheduleFields";
+import { WhatPublishScheduleFields } from "@/components/manager/tasks/WhatPublishScheduleFields";
 import {
   TaskFormPlaceholderCell,
 } from "@/components/manager/tasks/TaskFormLayout";
@@ -61,7 +61,7 @@ export function EntityGeneratorExecutionFields({
       </TaskFormPlaceholderCell>
 
       {surface === "what" ? (
-        <ForgeWhatPublishScheduleFields
+        <WhatPublishScheduleFields
           payload={payload}
           disabled={disabled}
           onChange={(next) => onChange(ensureEntityPageCreatorPayload({ ...payload, ...next }))}

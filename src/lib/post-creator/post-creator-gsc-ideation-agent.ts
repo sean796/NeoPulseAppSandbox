@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { CSVRow } from "@/lib/bulk/bulk-csv-parser";
 import { callOpenRouterChatCompletion } from "@/lib/competitor-research/competitor-report-openrouter";
 import { parseModelJson } from "@/lib/model-json";
+import { openRouterMaxOutputTokens } from "@/lib/openrouter-stream-token-limits";
 import { getResearchModel } from "@/lib/optimization-settings-storage";
 import {
   BENCHMARK_SEO_CONTENT_SPECIALIST_PERSONA,
@@ -116,7 +117,7 @@ export async function runPostCreatorGscIdeationAgent(args: {
     model: getResearchModel(args.siteId),
     system: buildSystemPrompt(),
     user: buildUserPrompt(args),
-    maxTokens: 4096,
+    maxTokens: openRouterMaxOutputTokens(),
     temperature: 0.35,
     responseFormat: { type: "json_object" },
   });

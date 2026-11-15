@@ -20,8 +20,6 @@ import {
 } from "@/lib/dfs-article-audit/dfs-article-audit-types";
 import { fetchDfsArticleAudit } from "@/lib/dfs-article-audit/fetch-dfs-article-audit";
 import { formatDfsArticleAuditHarnessPromptBlock } from "@/lib/dfs-article-audit/format-dfs-article-audit-harness";
-import { findWorkflowDfsArticleAuditFileRef } from "@/lib/workflow/workflow-dfs-article-audit-cache";
-
 vi.mock("@/lib/llm-audit/dataforseo-llm-responses-live", () => ({
   dataforseoLlmResponsesLive: vi.fn(),
 }));
@@ -222,28 +220,6 @@ describe("formatDfsArticleAuditHarnessPromptBlock", () => {
     });
     expect(block).toContain("DFS ARTICLE AUDIT");
     expect(block).toContain("annotated measuring diagram");
-  });
-});
-
-describe("findWorkflowDfsArticleAuditFileRef", () => {
-  it("matches artifact by URL slug", () => {
-    const ref = findWorkflowDfsArticleAuditFileRef(
-      [
-        {
-          id: 1,
-          runId: 1,
-          nodeId: "a1",
-          variableKey: "dfs_llm_article_audit_1",
-          scope: "run",
-          label: "Audit",
-          textPreview: "",
-          fileRefs: [{ name: "dfs-article-audit-my-post.json", url: "https://x.test/a.json" }],
-          createdAt: "",
-        },
-      ],
-      "https://example.com/my-post/",
-    );
-    expect(ref?.name).toBe("dfs-article-audit-my-post.json");
   });
 });
 

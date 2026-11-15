@@ -81,21 +81,11 @@ class Neo_Pulse_App_Agentmail_Webhook {
 			$downloaded[] = array_merge( $meta, array( 'binary' => $binary ) );
 		}
 
-		$enqueued = 0;
-		if ( class_exists( 'Neo_Pulse_App_Workflow_Trigger_Evaluator' ) ) {
-			$enqueued = Neo_Pulse_App_Workflow_Trigger_Evaluator::on_agentmail_received(
-				$sender,
-				$inbox,
-				$message,
-				$downloaded
-			);
-		}
-
 		Neo_Pulse_App_Agentmail_Inbound_Store::mark_processed( $message_id );
 		self::send_json(
 			array(
 				'ok'       => true,
-				'enqueued' => $enqueued,
+				'enqueued' => 0,
 			),
 			200
 		);

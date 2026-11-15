@@ -44,7 +44,8 @@ export type AgentRunRecipeKey =
   | "dfs_llm_article_audit"
   | "browser_automation"
   | "content_gap_check"
-  | "semrush_safe_fix";
+  | "semrush_safe_fix"
+  | "posts_content_gap_check";
 
 export type AgentRunStepArtifact = {
   id: string;

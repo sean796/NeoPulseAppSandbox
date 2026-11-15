@@ -11,5 +11,6 @@ export async function resolveSiteForClientReport(
   if (fromLocal) return fromLocal;
   if (!siteId.trim()) return undefined;
   const mirror = await fetchWordPressSitesMirror();
-  return mirror.find((s) => s.id === siteId && s.enabled !== false);
+  if (!mirror.ok) return undefined;
+  return mirror.sites.find((s) => s.id === siteId && s.enabled !== false);
 }

@@ -51,16 +51,12 @@ Rules:
 - Use tasks_create_project with templateKeyword to create a project from a saved template. Pass taskClients when the user names a client for specific tasks.
 - Template previewTable for create-from-template: columns ["Task","Project","Client"].
 - Automation recipe catalog tools: recipes_list (filters: category, bucket, execution, signal, vertical, q), recipes_describe (keyword), recipes_install (keyword/recipeKeyword, wordpressSiteId, title), recipes_run (mode: evaluate|now|install_only, keyword, wordpressSiteId, optional taskId).
-- recipes_install creates a site-bound automation project on My Forge. Do not use it to create a canvas workflow.
-- Pulse Forge tools: forge_dashboard, workflows_list, workflows_get (workflowId), workflows_list_runs (workflowId), workflows_create (name, wordpressSiteId, optional recipeKeyword), workflows_update, workflows_publish, workflows_delete, workflows_run (optional simulated).
-- When the user wants a Forge canvas workflow from a recipe, use workflows_create with recipeKeyword. Do not emit nodes or edges.
-- When the user asks what is on Forge or My Forge, call forge_dashboard then summarize in previewBody.
-- Workflow previewTable columns: ["Workflow","Status","Site"]. Recipe install previewTable columns: ["Recipe","Action"].
-- When user asks to install an automation recipe for a client site (not a workflow), use recipes_install with the recipe keyword and wordpressSiteId from team_context properties.
+- recipes_install creates a site-bound automation project. Recipe install previewTable columns: ["Recipe","Action"].
+- When user asks to install an automation recipe for a client site, use recipes_install with the recipe keyword and wordpressSiteId from team_context properties.
 - When user asks what automations exist, use recipes_list first, then summarize in previewBody.
 - Post creator: use post_creator_execute for immediate runs (postCount, optionalPrompt, scheduleTimesPerMonth, scheduleStartDay, wordpressSiteId). Install monthly-post-creator or monthly-3-posts-editorial via recipes_install for recurring calendar automations.
-- GSC reporting: use gsc_reporting_execute for an immediate MoM or YoY Search Console report (comparePreset mom|yoy, saveToDisk, wordpressSiteId). Install gsc-monthly-mom-report or gsc-monthly-yoy-report via recipes_install for a monthly calendar automation. Create a canvas with workflows_create recipeKeyword gsc-monthly-mom-report or gsc-monthly-yoy-report.
-- PPC / Google Ads reporting: use ads_reporting_execute for an immediate MoM or YoY Ads spend report (comparePreset mom|yoy, saveToDisk, wordpressSiteId). Requires a 10-digit Google Ads customer ID on the property. Install ads-monthly-mom-report or ads-monthly-yoy-report via recipes_install for a monthly calendar automation. Create a canvas with workflows_create recipeKeyword ads-monthly-mom-report or ads-monthly-yoy-report. Do not use gsc_reporting_execute for Ads or PPC spend. Do not send PPC report requests to the PPC Google campaign builder.';
+- GSC reporting: use gsc_reporting_execute for an immediate MoM or YoY Search Console report (comparePreset mom|yoy, saveToDisk, wordpressSiteId). Install gsc-monthly-mom-report or gsc-monthly-yoy-report via recipes_install for a monthly calendar automation.
+- PPC / Google Ads reporting: use ads_reporting_execute for an immediate MoM or YoY Ads spend report (comparePreset mom|yoy, saveToDisk, wordpressSiteId). Requires a 10-digit Google Ads customer ID on the property. Install ads-monthly-mom-report or ads-monthly-yoy-report via recipes_install for a monthly calendar automation. Do not use gsc_reporting_execute for Ads or PPC spend. Do not send PPC report requests to the PPC Google campaign builder.';
 
 		$user = "Submode: {$submode}\nExecute writes: " . ( $execute_writes ? 'yes' : 'no' ) . "\n";
 		$user .= "User message:\n{$message}\n\n";

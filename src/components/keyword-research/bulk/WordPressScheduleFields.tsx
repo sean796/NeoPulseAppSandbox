@@ -128,6 +128,12 @@ export type WordPressScheduleFieldsProps = {
   packageQuickPresets?: BulkNamedSchedulePreset[];
   /** Highlights the preset that matches the connected property tier. */
   activePackagePresetId?: string | null;
+  /** Skill schedule hides the destination select. Blog Ideas keeps it. */
+  hideOutputDestination?: boolean;
+  /** Skill schedule hides saved presets. Blog Ideas keeps them. */
+  hideSavedPresets?: boolean;
+  /** Start options to omit. Blog Ideas passes none. */
+  hiddenStartPresets?: Array<(typeof START_PRESET_OPTIONS)[number]["value"]>;
 };
 
 export function WordPressScheduleFields({
@@ -166,6 +172,9 @@ export function WordPressScheduleFields({
   onApplySchedulePreset,
   packageQuickPresets,
   activePackagePresetId,
+  hideOutputDestination = false,
+  hideSavedPresets = false,
+  hiddenStartPresets,
 }: WordPressScheduleFieldsProps) {
   const [namedPresets, setNamedPresets] = useState<BulkNamedSchedulePreset[]>(() =>
     listBulkSchedulePresets(),
@@ -335,21 +344,27 @@ export function WordPressScheduleFields({
     setWordpressDraftOnly(mode === "draft");
   };
 
+  const startPresetOptions = hiddenStartPresets?.length
+    ? START_PRESET_OPTIONS.filter((option) => !hiddenStartPresets.includes(option.value))
+    : START_PRESET_OPTIONS;
+
   return (
     <div className={gridClass}>
-      <div className={cn("min-w-0", layout === "grid" && "sm:col-span-2")}>
-        <SelectField
-          placeholder="Run output destination"
-          width="full"
-          value={outputMode}
-          disabled={isDisabled}
-          options={destinationOptions}
-          onValueChange={handleDestinationChange}
-        />
-      </div>
+      {hideOutputDestination ? null : (
+        <div className={cn("min-w-0", layout === "grid" && "sm:col-span-2")}>
+          <SelectField
+            placeholder="Run output destination"
+            width="full"
+            value={outputMode}
+            disabled={isDisabled}
+            options={destinationOptions}
+            onValueChange={handleDestinationChange}
+          />
+        </div>
+      )}
       {!showPlatformSchedule ? null : (
         <>
-          {quickPresets.length > 0 ? (
+          {quickPresets.length > 0 && !hideSavedPresets ? (
             <div className={cn("flex min-w-0 flex-wrap gap-1", layout === "grid" && "sm:col-span-2")}>
               {quickPresets.map((preset) => (
                 <Pill
@@ -363,22 +378,24 @@ export function WordPressScheduleFields({
               ))}
             </div>
           ) : null}
-          <div className={cn("flex min-w-0 gap-2", layout === "grid" && "sm:col-span-2")}>
-            <SelectField
-              placeholder="Saved presets"
-              width="full"
-              value=""
-              disabled={isDisabled}
-              options={namedPresets.map((preset) => ({ value: preset.id, label: preset.label }))}
-              onValueChange={(id) => {
-                const preset = namedPresets.find((item) => item.id === id);
-                if (preset) applyNamedPreset(preset);
-              }}
-            />
-            <Button disabled={isDisabled} onClick={saveCurrentPreset}>
-              Save preset
-            </Button>
-          </div>
+          {hideSavedPresets ? null : (
+            <div className={cn("flex min-w-0 gap-2", layout === "grid" && "sm:col-span-2")}>
+              <SelectField
+                placeholder="Saved presets"
+                width="full"
+                value=""
+                disabled={isDisabled}
+                options={namedPresets.map((preset) => ({ value: preset.id, label: preset.label }))}
+                onValueChange={(id) => {
+                  const preset = namedPresets.find((item) => item.id === id);
+                  if (preset) applyNamedPreset(preset);
+                }}
+              />
+              <Button disabled={isDisabled} onClick={saveCurrentPreset}>
+                Save preset
+              </Button>
+            </div>
+          )}
           <div className="min-w-0">
             <SelectField
               placeholder="Post frequency"
@@ -441,7 +458,7 @@ export function WordPressScheduleFields({
                   width="full"
                   value={startPreset}
                   disabled={isDisabled}
-                  options={START_PRESET_OPTIONS}
+                  options={startPresetOptions}
                   onValueChange={(v) => handleStartPresetChange(v as BulkScheduleStartPreset)}
                 />
               </div>

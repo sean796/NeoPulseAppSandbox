@@ -6,6 +6,10 @@ import { getDeletedSitesTombstones, isSiteTombstoned } from "./storage-deleted-s
 
 const ACTIVE_WP_SITE_STORAGE_KEY = "neo-pulse-active-wp-site-id";
 
+export type WordPressSitesMirrorResult =
+  | { ok: true; sites: WordPressSite[] }
+  | { ok: false; sites: WordPressSite[] };
+
 function readActiveSiteIdFromStorage(): string | null {
   try {
     return localStorage.getItem(ACTIVE_WP_SITE_STORAGE_KEY);
@@ -15,10 +19,10 @@ function readActiveSiteIdFromStorage(): string | null {
 }
 
 /**
- * Writes the same WordPress credentials the app uses (Integrations) to server/data/neo-pulse-wordpress-sites.json
- * so the Flo email worker can use them without a manual file or CLI.
+ * Writes WordPress site credentials to the server integrations sync route.
+ * Posts every kept row (including rows with no app password).
  */
-export async function syncWordPressSitesToServer(sites: WordPressSite[]): Promise<void> {
+export async function syncWordPressSitesToServer(sites: WordPressSite[]): Promise<boolean> {
   const base = (BACKEND_API_BASE || "").replace(/\/$/, "");
   const path = "/api/integrations/sync-wordpress-sites";
   const url = base ? `${base}${path}` : path;
@@ -45,7 +49,7 @@ export async function syncWordPressSitesToServer(sites: WordPressSite[]): Promis
       competitorEntitySitemapUrl: s.competitorEntitySitemapUrl,
       manualEndpoint: s.manualEndpoint,
     }))
-    .filter((s) => s.siteUrl?.trim() && s.username?.trim() && s.appPassword?.trim());
+    .filter((s) => Boolean(s.siteUrl?.trim()));
   const activeSiteId = readActiveSiteIdFromStorage();
   try {
     const res = await fetch(url, {
@@ -56,9 +60,12 @@ export async function syncWordPressSitesToServer(sites: WordPressSite[]): Promis
     });
     if (!res.ok) {
       logger.warn("[Integrations] Server sync failed:", res.status);
+      return false;
     }
+    return true;
   } catch (e) {
     logger.warn("[Integrations] Server sync error:", e);
+    return false;
   }
 }
 
@@ -82,8 +89,8 @@ export async function syncActiveWordPressSiteToServer(activeSiteId: string | nul
   }
 }
 
-/** Load property mirror from WordPress (sites.json) or Render Hub fallback. */
-export async function fetchWordPressSitesMirror(): Promise<WordPressSite[]> {
+/** Load property mirror from WordPress (sites.json). Distinguishes success from failure. */
+export async function fetchWordPressSitesMirror(): Promise<WordPressSitesMirrorResult> {
   const base = (BACKEND_API_BASE || "").replace(/\/$/, "");
   const path = "/api/manager-wordpress-properties/load";
   const url = base ? `${base}${path}` : path;
@@ -97,16 +104,17 @@ export async function fetchWordPressSitesMirror(): Promise<WordPressSite[]> {
       signal: ctrl.signal,
     });
     clearTimeout(timer);
-    if (res.ok) {
-      const data = (await res.json().catch(() => ({}))) as { sites?: WordPressSite[] };
-      const rawSites = Array.isArray(data.sites) ? data.sites : [];
-      if (rawSites.length > 0) {
-        const tombstones = getDeletedSitesTombstones();
-        return rawSites.filter((s) => !isSiteTombstoned(s, tombstones));
-      }
+    if (!res.ok) {
+      return { ok: false, sites: [] };
     }
+    const data = (await res.json().catch(() => ({}))) as { sites?: WordPressSite[] };
+    const rawSites = Array.isArray(data.sites) ? data.sites : [];
+    const tombstones = getDeletedSitesTombstones();
+    return {
+      ok: true,
+      sites: rawSites.filter((s) => !isSiteTombstoned(s, tombstones)),
+    };
   } catch {
-    // Mirror unreachable: empty list, visible in the UI. No seed fallback.
+    return { ok: false, sites: [] };
   }
-  return [];
 }

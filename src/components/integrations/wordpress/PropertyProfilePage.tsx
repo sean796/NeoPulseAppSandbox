@@ -81,6 +81,7 @@ export function PropertyProfilePage({
       <PropertyOverviewSection
         site={site}
         onPatchSite={onPatchSite}
+        onSetEntitySitemap={onSetEntitySitemap}
         editing={editing}
         onToggleEditing={onToggleEditing}
         onSaveProperty={onSaveProperty}

@@ -14,8 +14,6 @@ export type AgentRunsContextValue = {
   agentsSiteFilter: string;
   setAgentsSiteFilter: (siteId: string) => void;
   openSidebar: (runId?: number) => void;
-  seedOptimisticWorkflowAgent: (title: string, siteId?: string | readonly string[]) => void;
-  patchOptimisticWorkflowAgentProgress: (message: string, siteId?: string) => void;
   selectRun: (runId: number | null) => void;
   refreshRuns: () => Promise<void>;
   patchRunInList: (runId: number, patch: AgentRunListPatch) => void;
@@ -23,38 +21,14 @@ export type AgentRunsContextValue = {
     payload: StartAgentRunPayload,
     options?: {
       openSidebar?: boolean;
-      workflowBinding?: {
-        workflowId: number;
-        workflowRunId: number;
-        workflowNodeId: string;
-        ragVariableKey?: string;
-        workflowThenDelivery?: boolean;
-      };
     },
   ) => Promise<{ ok: boolean; run?: AgentRun; error?: string }>;
   startRunFromTask: (
     task: TeamTask,
     options?: {
       openSidebar?: boolean;
-      workflowBinding?: {
-        workflowId: number;
-        workflowRunId: number;
-        workflowNodeId: string;
-        ragVariableKey?: string;
-        workflowThenDelivery?: boolean;
-      };
     },
   ) => Promise<{ ok: boolean; run?: AgentRun; error?: string }>;
-  dispatchWorkflowRun: (
-    workflowId: number,
-    runId: number,
-    options?: {
-      openAgentSidebar?: boolean;
-      stopAfterNodeId?: string;
-      clientSiteId?: string;
-      skipSetupSteps?: boolean;
-    },
-  ) => Promise<{ ok: boolean; error?: string }>;
   cancelRun: (runId: number) => Promise<void>;
   resumeRun: (runId: number) => Promise<void>;
   clearHistory: () => Promise<void>;

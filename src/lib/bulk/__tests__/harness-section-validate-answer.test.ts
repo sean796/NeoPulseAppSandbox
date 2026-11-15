@@ -67,6 +67,21 @@ describe("Answer harness validation", () => {
     expect(out).toContain(`id="${HARNESS_ANSWER_ANCHOR_ID}"`);
   });
 
+  it("prepareHarnessSectionHtml wraps bare Answer prose in one <p>", () => {
+    const out = prepareHarnessSectionHtml(
+      "<h2>Answer</h2>\nArched openings need a template fit first. Custom Shades of London sizes the curve on site.",
+      { title: "Answer", isOverview: false, isAnswer: true },
+    );
+    expect(out).toMatch(/<p>[^<]*Arched openings[^<]*<\/p>/i);
+    expect(() =>
+      validateHarnessSectionOrThrow(out, {
+        title: "Answer",
+        isOverview: false,
+        isAnswer: true,
+      }),
+    ).not.toThrow();
+  });
+
   it("trimAnswerSectionToContract drops extra headings after Answer paragraph", () => {
     const noisy =
       `<h2>Answer</h2><p>One. Two.</p><h2>Bin Rental Tips For Home Renovations</h2><h2>Navigating</h2>`;

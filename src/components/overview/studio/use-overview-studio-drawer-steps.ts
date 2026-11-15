@@ -6,6 +6,7 @@ import type { OverviewTabController } from "@/hooks/overview/use-overview-tab-co
 import { resolveSerpBriefDownloadable, type BulkDetailsDownloadable } from "@/components/shared/bulk-details-tile-sections-helpers";
 import { generatedFilesForUrl } from "@/lib/content-optimization/content-optimizer-bulk-generator-bindings";
 import { buildWordBlacklistDownloadText } from "@/lib/content-word-blocklist";
+import { buildHumanizerDownloadText } from "@/lib/content-humanizer";
 import { resolveStudioDrawerElementorHeaders } from "@/lib/overview/overview-studio-drawer-section-headers";
 import { stripTrailingFaqSection } from "@/lib/overview/overview-blog-faq-append";
 import { extractAnswerSectionHtml, extractOverviewSectionHtml, stripLeadingAnswerSection, stripLeadingOverviewSection } from "@/lib/overview/overview-blog-overview-prepend";
@@ -135,6 +136,12 @@ export function useOverviewStudioDrawerSteps({
       mimeType: "text/plain;charset=utf-8",
     };
 
+    const humanizerDownload: BulkDetailsDownloadable = {
+      name: "humanizer.txt",
+      content: buildHumanizerDownloadText(),
+      mimeType: "text/plain;charset=utf-8",
+    };
+
     // 1. Word Blacklist (read before SERP brief and all generation)
     items.push({
       id: "step-word-blacklist",
@@ -144,7 +151,16 @@ export function useOverviewStudioDrawerSteps({
       downloadFile: wordBlacklistDownload,
     });
 
-    // 2. SERP Research Brief
+    // 2. Humanizer (same mandatory level as Word Blacklist)
+    items.push({
+      id: "step-humanizer",
+      title: "Humanizer",
+      isActive: false,
+      isDone: true,
+      downloadFile: humanizerDownload,
+    });
+
+    // 3. SERP Research Brief
     items.push({
       id: "step-research",
       title: "SERP Research Brief",

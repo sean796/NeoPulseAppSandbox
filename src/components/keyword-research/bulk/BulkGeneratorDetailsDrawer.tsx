@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MetaOptimizerPageRowCompact } from "@/components/overview/MetaOptimizerPageRowCompact";
 import { BulkSitemapInventoryRunDetail } from "@/components/keyword-research/bulk/BulkSitemapInventoryRunDetail";
 import { WordBlacklistRunDetail } from "@/components/keyword-research/bulk/WordBlacklistRunDetail";
+import { HumanizerRunDetail } from "@/components/keyword-research/bulk/HumanizerRunDetail";
 import {
   csvRowToEntitySapOverviewRowDisplay,
   csvRowToOverviewRowDisplay,
@@ -277,6 +278,9 @@ export function BulkGeneratorDetailsDrawer(props: BulkGeneratorDetailsPanelProps
               <>
                 <div className={contentOptimizerRowStripeClass(rowStripeBase++)}>
                   <WordBlacklistRunDetail />
+                </div>
+                <div className={contentOptimizerRowStripeClass(rowStripeBase++)}>
+                  <HumanizerRunDetail />
                 </div>
                 <div className={contentOptimizerRowStripeClass(rowStripeBase++)}>
                   <BulkSitemapInventoryRunDetail

@@ -12,45 +12,69 @@ trait Neo_Pulse_App_Pulse_Assist_Ask_Trait_Module_Research {
 	/**
 	 * @param array<int,array<string,mixed>> $history
 	 * @param array<string,mixed>            $body
+	 * @param array<int,string>|null         $route_target_ids Module or feature/skill ids from the route decision.
 	 * @return array{block:string,label:string,moduleIds:array<int,string>,primaryModuleIds:array<int,string>,featureIds:array<int,string>,modules:array<int,array<string,mixed>>,primaryModules:array<int,array<string,mixed>>,features:array<int,array<string,mixed>>}
 	 */
-	private static function research_modules_for_message( string $message, array $history, array $body ): array {
+	private static function research_modules_for_message( string $message, array $history, array $body, ?array $route_target_ids = null ): array {
 		$pulse = isset( $body['pulse_context'] ) && is_array( $body['pulse_context'] ) ? $body['pulse_context'] : array();
 
 		$module_queries = array();
+		$features       = array();
+		$seen_feat      = array();
 
-		$current = Neo_Pulse_App_Pulse_Assist_Module_Catalog::current_module_id_from_context( $pulse );
-		if ( $current !== null && $current !== '' ) {
-			$module_queries[] = $current;
-		}
+		if ( is_array( $route_target_ids ) && count( $route_target_ids ) > 0 ) {
+			foreach ( $route_target_ids as $raw_id ) {
+				$id = sanitize_text_field( (string) $raw_id );
+				if ( $id === '' ) {
+					continue;
+				}
+				$feat = Neo_Pulse_App_Pulse_Assist_Module_Catalog::feature_by_id( $id );
+				if ( $feat !== null && ! empty( $feat['id'] ) ) {
+					$fid = (string) $feat['id'];
+					if ( ! isset( $seen_feat[ $fid ] ) ) {
+						$features[]        = $feat;
+						$seen_feat[ $fid ] = true;
+					}
+					if ( ! empty( $feat['moduleId'] ) ) {
+						$module_queries[] = (string) $feat['moduleId'];
+					}
+					continue;
+				}
+				$module_queries[] = $id;
+			}
+		} else {
+			$current = Neo_Pulse_App_Pulse_Assist_Module_Catalog::current_module_id_from_context( $pulse );
+			if ( $current !== null && $current !== '' ) {
+				$module_queries[] = $current;
+			}
 
-		$classify = self::classify_research_targets( $message, $pulse );
-		foreach ( $classify['moduleIds'] as $id ) {
-			$module_queries[] = $id;
-		}
+			$classify = self::classify_research_targets( $message, $pulse );
+			foreach ( $classify['moduleIds'] as $id ) {
+				$module_queries[] = $id;
+			}
 
-		$features = Neo_Pulse_App_Pulse_Assist_Module_Catalog::lookup_features( array( $message ), 2 );
-		$seen_feat = array();
-		foreach ( $features as $feat ) {
-			if ( ! empty( $feat['id'] ) ) {
-				$seen_feat[ (string) $feat['id'] ] = true;
+			$features = Neo_Pulse_App_Pulse_Assist_Module_Catalog::lookup_features( array( $message ), 2 );
+			foreach ( $features as $feat ) {
+				if ( ! empty( $feat['id'] ) ) {
+					$seen_feat[ (string) $feat['id'] ] = true;
+				}
 			}
-		}
-		foreach ( $classify['featureIds'] as $id ) {
-			$feat = Neo_Pulse_App_Pulse_Assist_Module_Catalog::feature_by_id( (string) $id );
-			if ( $feat === null || empty( $feat['id'] ) ) {
-				continue;
+			foreach ( $classify['featureIds'] as $id ) {
+				$feat = Neo_Pulse_App_Pulse_Assist_Module_Catalog::feature_by_id( (string) $id );
+				if ( $feat === null || empty( $feat['id'] ) ) {
+					continue;
+				}
+				$fid = (string) $feat['id'];
+				if ( isset( $seen_feat[ $fid ] ) ) {
+					continue;
+				}
+				$features[]        = $feat;
+				$seen_feat[ $fid ] = true;
 			}
-			$fid = (string) $feat['id'];
-			if ( isset( $seen_feat[ $fid ] ) ) {
-				continue;
-			}
-			$features[]       = $feat;
-			$seen_feat[ $fid ] = true;
-		}
-		foreach ( $features as $feat ) {
-			if ( ! empty( $feat['moduleId'] ) ) {
-				$module_queries[] = (string) $feat['moduleId'];
+			foreach ( $features as $feat ) {
+				if ( ! empty( $feat['moduleId'] ) ) {
+					$module_queries[] = (string) $feat['moduleId'];
+				}
 			}
 		}
 

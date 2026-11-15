@@ -57,39 +57,6 @@ class Neo_Pulse_App_Agent_Run_Worker_Cron {
 			return;
 		}
 		Neo_Pulse_App_Agent_Run_Worker::process_pending_runs();
-		if ( class_exists( 'Neo_Pulse_App_Workflow_Trigger_Cron' ) ) {
-			Neo_Pulse_App_Workflow_Trigger_Cron::run();
-		}
-		self::drain_workflow_pending();
-	}
-
-	private static function drain_workflow_pending(): void {
-		if ( ! class_exists( 'Neo_Pulse_App_Workflow_Server_Dispatch' ) ) {
-			return;
-		}
-		$teams_base = Neo_Pulse_App_Data_Paths::subdir( 'teams' );
-		if ( ! is_dir( $teams_base ) ) {
-			return;
-		}
-		$paths = glob( trailingslashit( $teams_base ) . '*/workflow-trigger-pending.json' );
-		if ( ! is_array( $paths ) ) {
-			return;
-		}
-		foreach ( $paths as $path ) {
-			if ( ! is_string( $path ) || ! preg_match( '#/teams/(\d+)/workflow-trigger-pending\.json$#', str_replace( '\\', '/', $path ), $matches ) ) {
-				continue;
-			}
-			$team_id = (int) ( $matches[1] ?? 0 );
-			if ( $team_id <= 0 ) {
-				continue;
-			}
-			$data = Neo_Pulse_App_Json_File_Store::read( $path );
-			$pending = isset( $data['pending'] ) && is_array( $data['pending'] ) ? $data['pending'] : array();
-			if ( empty( $pending ) ) {
-				continue;
-			}
-			Neo_Pulse_App_Workflow_Server_Dispatch::drain_pending( $team_id );
-		}
 	}
 
 	public static function kick(): void {

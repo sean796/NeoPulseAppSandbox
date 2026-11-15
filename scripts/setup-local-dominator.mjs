@@ -132,7 +132,7 @@ function main() {
   console.log("Next:");
   console.log("  1. Edit .env.localdominator with your Local Dominator login");
   console.log("  2. npm run sync:local-wp   (copies plugin + recipe into neopulse.local)");
-  console.log("  3. npm run dev             then open Pulse Forge > Recipes > Research");
+  console.log("  3. npm run dev             then install the Research Local Dominator recipe via Assist or the recipes API");
   console.log("  4. npm run localdominator:export:json   (CLI export anytime)");
   if (!runSmoke) {
     console.log("  Optional: npm run setup:local-dominator:smoke");

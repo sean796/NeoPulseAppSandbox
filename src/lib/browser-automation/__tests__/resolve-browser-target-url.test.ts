@@ -6,7 +6,7 @@ import {
   extractUrlFromStepOutput,
   resolveBrowserTargetUrl,
 } from "@/lib/browser-automation/resolve-browser-target-url";
-import type { WorkflowStepOutput } from "@/lib/workflow/workflow-types";
+import type { AgentRunStepOutputSnapshot } from "@/lib/agent-runs/step-output-types";
 
 describe("resolveBrowserTargetUrl", () => {
   it("uses manual targetUrl by default", () => {
@@ -34,18 +34,12 @@ describe("resolveBrowserTargetUrl", () => {
   });
 
   it("resolves variable source from textPreview URL", () => {
-    const outputs: WorkflowStepOutput[] = [
+    const outputs: AgentRunStepOutputSnapshot[] = [
       {
-        id: 1,
-        runId: 1,
-        nodeId: "a1",
         variableKey: "step_a1__site-a",
         scope: "run",
-        siteId: "site-a",
-        label: "Prior step",
         textPreview: "https://prior.example/home",
         fileRefs: [],
-        createdAt: "",
       },
     ];
     const url = resolveBrowserTargetUrl(
@@ -57,16 +51,11 @@ describe("resolveBrowserTargetUrl", () => {
   });
 
   it("extractUrlFromStepOutput prefers file ref URL", () => {
-    const output: WorkflowStepOutput = {
-      id: 1,
-      runId: 1,
-      nodeId: "a1",
+    const output: AgentRunStepOutputSnapshot = {
       variableKey: "step_a1",
       scope: "run",
-      label: "Drive",
       textPreview: "Uploaded report",
       fileRefs: [{ name: "report.csv", url: "https://drive.example/file" }],
-      createdAt: "",
     };
     expect(extractUrlFromStepOutput(output)).toBe("https://drive.example/file");
   });

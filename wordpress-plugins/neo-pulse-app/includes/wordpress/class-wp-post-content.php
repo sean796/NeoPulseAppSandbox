@@ -321,7 +321,12 @@ class Neo_Pulse_App_Wp_Post_Content {
 			$normalized . '/wp-json/wp/v2/' . rawurlencode( $endpoint ) . '/' . $id,
 			$username,
 			$app_password,
-			array( 'timeout' => 25 )
+			array(
+				'timeout' => 25,
+				'params'  => array(
+					'_embed' => 'wp:featuredmedia',
+				),
+			)
 		);
 		if ( $resp['is_wp_error'] || (int) $resp['status'] !== 200 || ! is_array( $resp['body'] ) ) {
 			return null;
@@ -368,6 +373,14 @@ class Neo_Pulse_App_Wp_Post_Content {
 	 */
 	private static function map_post( $post, $endpoint, $normalized ) {
 		$subtype = $endpoint === 'posts' ? 'post' : ( $endpoint === 'pages' ? 'page' : $endpoint );
+		$featured_url = '';
+		$embedded     = isset( $post['_embedded']['wp:featuredmedia'] ) ? $post['_embedded']['wp:featuredmedia'] : null;
+		if ( is_array( $embedded ) && isset( $embedded[0] ) && is_array( $embedded[0] ) ) {
+			$candidate = (string) ( $embedded[0]['source_url'] ?? '' );
+			if ( strpos( $candidate, 'http' ) === 0 ) {
+				$featured_url = $candidate;
+			}
+		}
 		return array(
 			'id'               => (int) ( $post['id'] ?? 0 ),
 			'slug'             => (string) ( $post['slug'] ?? '' ),
@@ -381,6 +394,7 @@ class Neo_Pulse_App_Wp_Post_Content {
 			'tags'             => isset( $post['tags'] ) && is_array( $post['tags'] ) ? $post['tags'] : array(),
 			'postTypeEndpoint' => $endpoint,
 			'postTypeSubtype'  => $subtype,
+			'featuredImageUrl' => $featured_url,
 			'fullData'         => $post,
 		);
 	}

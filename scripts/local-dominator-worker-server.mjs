@@ -8,6 +8,7 @@ import {
   handleResidentialProxyStatusRequest,
 } from "./browser-automation-jobs.mjs";
 import { handlePostCreatorServerRequest } from "./post-creator-server-jobs.mjs";
+import { handleBlogIdeasStudioRequest } from "./blog-ideas-studio-jobs.mjs";
 
 const port = Number(process.env.PORT || 10000);
 const wpCronUrl = process.env.LOCAL_WP_CRON_URL || "https://neopulse.local/wp-cron.php?doing_wp_cron";
@@ -70,6 +71,9 @@ const server = http.createServer(async (req, res) => {
 
   const postCreatorHandled = await handlePostCreatorServerRequest(req, res, pathname);
   if (postCreatorHandled) return;
+
+  const blogIdeasHandled = await handleBlogIdeasStudioRequest(req, res, pathname);
+  if (blogIdeasHandled) return;
 
   sendJson(res, 404, { ok: false, error: "Not found." });
 });

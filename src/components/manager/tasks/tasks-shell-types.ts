@@ -1,3 +1,1 @@
-export type TasksShellProps = {
-  onOpenPulseForge?: () => void;
-};
+export type TasksShellProps = Record<string, never>;

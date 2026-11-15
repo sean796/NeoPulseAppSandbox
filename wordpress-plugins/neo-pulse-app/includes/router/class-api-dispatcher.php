@@ -295,6 +295,11 @@ class Neo_Pulse_App_Api_Dispatcher {
 			return;
 		}
 
+		if ( str_starts_with( $route, 'posts-content-gap-check/' ) ) {
+			Neo_Pulse_App_Posts_Content_Gap_Route::dispatch_http( substr( $route, strlen( 'posts-content-gap-check/' ) ), $method, $body );
+			return;
+		}
+
 		if ( 0 === strpos( $route, 'semrush/' ) ) {
 			Neo_Pulse_App_Semrush_Route_Handlers::dispatch_http( substr( $route, 8 ), $method, $body );
 			return;
@@ -357,7 +362,8 @@ class Neo_Pulse_App_Api_Dispatcher {
 		}
 
 		if ( 0 === strpos( $route, 'skills-library/' ) || $route === 'skills-library' ) {
-			$skills_lib_route = $route === 'skills-library' ? '' : substr( $route, 16 );
+			// strlen('skills-library/') === 15 — do not use 16 (truncates first char of skill slug).
+			$skills_lib_route = $route === 'skills-library' ? '' : substr( $route, 15 );
 			Neo_Pulse_App_Skills_Library_Route::dispatch_http( $skills_lib_route, $method, $body );
 			return;
 		}

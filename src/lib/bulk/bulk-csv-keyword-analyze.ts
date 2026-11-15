@@ -236,15 +236,24 @@ export async function analyzeBulkCsvKeyword(
 
   const [aiKeywordData, semanticData] = await Promise.all([
     allAiKeywords.length > 0
-      ? getKeywordOverview(allAiKeywords, options.location || "United States", options.language || "en")
+      ? getKeywordOverview(
+          allAiKeywords,
+          options.location || "United States",
+          options.language || "en",
+        ).catch((e) => {
+          logger.warn("[Bulk CSV keyword analyze] DataForSEO AI-keyword overview failed:", e);
+          return [] as KeywordData[];
+        })
       : Promise.resolve([] as KeywordData[]),
     getSemanticKeywordSuggestions(
       kw,
       options.location || "United States",
       options.language || "en",
-    ),
+    ).catch((e) => {
+      logger.warn("[Bulk CSV keyword analyze] DataForSEO semantic keywords failed:", e);
+      return [] as KeywordData[];
+    }),
   ]);
-
   const aiGeneratedKeywordsWithData = aiKeywordData ?? [];
   const semanticKeywords = [
     ...aiGeneratedKeywordsWithData,

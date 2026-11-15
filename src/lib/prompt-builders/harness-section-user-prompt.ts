@@ -4,6 +4,7 @@ import {
   TARGET_INTERNAL_LINKS_PER_BODY_H2,
 } from "@/lib/content-generation/link-anchor-text-case";
 import { buildBlacklistRagBlock, FORBIDDEN_WORDS_USER_PROMPT_REMINDER } from "../content-word-blocklist";
+import { HUMANIZER_USER_PROMPT_REMINDER } from "../content-humanizer";
 import { buildKeywordPunctuationPromptBlock, resolveWritingKeyword } from "./keyword-canonical-punctuation";
 import { formatDfsArticleAuditHarnessPromptBlockFromText } from "@/lib/dfs-article-audit/format-dfs-article-audit-harness";
 import type { ExternalLinkPair } from "@/lib/content-generation/external-link-placeholders";
@@ -325,6 +326,7 @@ No entity. General post; no locations or placeholders. ${ENTITY_FORBIDDEN}`;
     buildBlacklistRagBlock(),
     scopeRule,
     FORBIDDEN_WORDS_USER_PROMPT_REMINDER,
+    HUMANIZER_USER_PROMPT_REMINDER,
     lengthRule,
     isPressReleaseHarness ? "" : INSTALLER_EXPERTISE_GATE_RULE,
     isPressReleaseHarness ? "" : FORBIDDEN_HOLLOW_AUTHORITY_RULE,

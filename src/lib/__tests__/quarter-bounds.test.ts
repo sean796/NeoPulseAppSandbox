@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildDashboardEditorialMonthOptions,
   formatDashboardEditorialMonthShort,
   formatQuarterLabel,
   getDefaultDashboardEditorialMonthKey,
@@ -165,8 +166,16 @@ describe("dashboard editorial month default", () => {
     expect(range.quarterLabel).toBe(getLocalCalendarMonthAfterBeforeForMonthKey("2026-10").label);
   });
 
-  it("formats dashboard month pill as M01", () => {
-    expect(formatDashboardEditorialMonthShort("2026-01")).toBe("M01");
-    expect(formatDashboardEditorialMonthShort("2026-10")).toBe("M10");
+  it("formats dashboard month pill as 01 Jan", () => {
+    expect(formatDashboardEditorialMonthShort("2026-01")).toBe("01 Jan");
+    expect(formatDashboardEditorialMonthShort("2026-10")).toBe("10 Oct");
+    expect(formatDashboardEditorialMonthShort("2026-12")).toBe("12 Dec");
+  });
+
+  it("lists the twelve months of the year as 01 Jan through 12 Dec", () => {
+    const options = buildDashboardEditorialMonthOptions(new Date(2026, 10, 15));
+    expect(options).toHaveLength(12);
+    expect(options[0]).toEqual({ key: "2026-01", label: "01 Jan" });
+    expect(options[11]).toEqual({ key: "2026-12", label: "12 Dec" });
   });
 });

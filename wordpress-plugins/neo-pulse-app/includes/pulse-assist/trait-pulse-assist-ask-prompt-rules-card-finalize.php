@@ -68,11 +68,11 @@ trait Neo_Pulse_App_Pulse_Assist_Ask_Trait_Prompt_Rules_Card_Finalize {
 				'- Valid href forms: `pulse:nav/users`, `pulse:nav/generator/opt`, `#users`, `#chat`, `#settings`.',
 				'- Use markdown `[Teams → Users](pulse:nav/users)` or `[Teams → Users](#users)` inside numbered steps.',
 				'- Every app module you name as a destination MUST include a markdown link in body AND a matching links array entry with pulseNav from the researched module doc.',
-				'- If you tell the user to open Chat, Users, Integrations, Overview, or any other module, link it. Never describe a destination without a clickable link.',
-				'- Never say "open Overview" when the destination is Chat, Users, Integrations, or another specific module.',
+				'- If you tell the user to open Chat, Users, Integrations, Opt, Studio, Skills Library, or any other module, link it. Never describe a destination without a clickable link.',
+				'- Never say "open Overview" when the destination is Opt, Studio, Chat, Users, Integrations, or another specific module. Use Opt for the content optimizer.',
 				'- Flyouts (AISEO bulk menus) cannot be deep-linked; use **bold** for those labels.',
 				'- When a primary destination helps the user, add a links array entry: {"label":"Teams → Users","url":"pulse:nav/users","action":"navigate"}.',
-				'- links array: include only destinations you tell the user to open in this answer (usually one). Do not add Chat, Overview/Opt, or other modules unless the body directs the user there.',
+				'- links array: include only destinations you tell the user to open in this answer (usually one). Do not add Chat, Opt, or other modules unless the body directs the user there.',
 			)
 		);
 	}
@@ -99,6 +99,8 @@ trait Neo_Pulse_App_Pulse_Assist_Ask_Trait_Prompt_Rules_Card_Finalize {
 				'- For general questions (e.g. "Is there a chat feature?", "Can I chat with users?"), answer from module docs. Do not lead with unrelated playbook steps.',
 				'- Never dump multiple feature playbooks into the answer unless the user asked about each one.',
 				'- When a playbook applies, use its numbered steps with exact UI labels. Do not invent steps.',
+				'- Only describe a skill, agent, or screen that appears in the researched module or feature playbook block. Never invent an agent that is not listed there.',
+				'- Semrush Safe Fix and Posts Content Gap Check live in Skills Library, not Agent Library.',
 				'- body is required. Never return an empty body.',
 			)
 		);

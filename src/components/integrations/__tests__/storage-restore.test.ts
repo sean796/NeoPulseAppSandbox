@@ -68,7 +68,7 @@ describe("loadSitesFromServerAlways", () => {
     expect(restored).toHaveLength(2);
     expect(restored.map((s) => s.name).sort()).toEqual(["Heritage Dental Center", "Sunnydale Solar"]);
     expect(getStoredSites()).toHaveLength(2);
-    expect(store[WORDPRESS_SITES_STORAGE_KEY]).toBeUndefined();
+    expect(getStoredSites().some((s) => s.name === "Other Client")).toBe(false);
     expect(fetch).toHaveBeenCalled();
   });
 
@@ -81,12 +81,78 @@ describe("loadSitesFromServerAlways", () => {
     expect(fetch).toHaveBeenCalled();
   });
 
-  it("restoreSitesFromServerMirrorIfEmpty delegates to always-load", async () => {
-    store[WORDPRESS_SITES_STORAGE_KEY] = JSON.stringify([site("other", "Other Client")]);
-    const { restoreSitesFromServerMirrorIfEmpty, getStoredSites } = await import("../storage");
-    const restored = await restoreSitesFromServerMirrorIfEmpty();
-    expect(restored).toHaveLength(2);
-    expect(getStoredSites().some((s) => s.name === "Other Client")).toBe(false);
+  it("keeps a deleted property gone after reload when the mirror no longer has it", async () => {
+    const { hydrateSitesBootstrap, loadSitesFromServerAlways, recordDeletedSite, getStoredSites } =
+      await import("../storage");
+    const alpha = site("alpha", "Generic Property Alpha");
+    const beta = site("beta", "Generic Property Beta");
+    hydrateSitesBootstrap([alpha, beta]);
+    recordDeletedSite(alpha);
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) => {
+        const url = String(input);
+        if (url.includes("/api/manager-wordpress-properties/load")) {
+          return {
+            ok: true,
+            json: async () => ({ sites: [beta] }),
+          };
+        }
+        return { ok: true, json: async () => ({ ok: true }) };
+      }),
+    );
+
+    const loaded = await loadSitesFromServerAlways();
+    expect(loaded).toHaveLength(1);
+    expect(loaded[0]?.name).toBe("Generic Property Beta");
+    expect(getStoredSites().some((s) => s.name === "Generic Property Alpha")).toBe(false);
+  });
+
+  it("leaves the painted roster in place when the mirror fetch fails", async () => {
+    const { hydrateSitesBootstrap, loadSitesFromServerAlways, getStoredSites } =
+      await import("../storage");
+    const painted = [site("painted", "Painted Property")];
+    hydrateSitesBootstrap(painted);
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        throw new Error("network down");
+      }),
+    );
+
+    const loaded = await loadSitesFromServerAlways();
+    expect(loaded).toHaveLength(1);
+    expect(loaded[0]?.name).toBe("Painted Property");
+    expect(getStoredSites()).toHaveLength(1);
+  });
+
+  it("replace with a shorter successful mirror", async () => {
+    const { hydrateSitesBootstrap, loadSitesFromServerAlways } = await import("../storage");
+    hydrateSitesBootstrap([
+      site("one", "One"),
+      site("two", "Two"),
+      site("three", "Three"),
+    ]);
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) => {
+        const url = String(input);
+        if (url.includes("/api/manager-wordpress-properties/load")) {
+          return {
+            ok: true,
+            json: async () => ({ sites: [site("one", "One")] }),
+          };
+        }
+        return { ok: true, json: async () => ({ ok: true }) };
+      }),
+    );
+
+    const loaded = await loadSitesFromServerAlways();
+    expect(loaded).toHaveLength(1);
+    expect(loaded[0]?.name).toBe("One");
   });
 });
 
@@ -119,7 +185,7 @@ describe("loadSitesFromServerAlways credential merge", () => {
     vi.resetModules();
   });
 
-  it("merges workspace credentials onto the public server mirror", async () => {
+  it("merges painted credentials onto the public server mirror", async () => {
     const csol = site("csol", "Custom Shades of London");
     csol.siteUrl = "https://www.customshadesoflondon.ca/";
     csol.id = "wp-csol";
@@ -135,31 +201,33 @@ describe("loadSitesFromServerAlways credential merge", () => {
             json: async () => ({ sites: [publicRow] }),
           };
         }
-        if (url.includes("/api/auth/me") || url.includes("/auth/me")) {
-          return { ok: true, json: async () => ({ ok: true, activeTeam: { id: 1 } }) };
-        }
-        if (url.includes("/manager-cloud-settings/load")) {
+        return { ok: true, json: async () => ({}) };
+      }),
+    );
+
+    const { hydrateSitesBootstrap, loadSitesFromServerAlways, getStoredSites } =
+      await import("../storage");
+    hydrateSitesBootstrap([csol]);
+    const loaded = await loadSitesFromServerAlways();
+
+    expect(loaded).toHaveLength(1);
+    expect(getStoredSites()[0]?.appPassword).toBe("pass");
+    expect(getStoredSites()[0]?.name).toBe("Custom Shades of London");
+  });
+
+  it("keeps a password on a saved property when the mirror omits it", async () => {
+    const row = site("advance", "Advance Blinds");
+    row.siteUrl = "https://advanceblindsanddrapery.com";
+    row.appPassword = "";
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) => {
+        const url = String(input);
+        if (url.includes("/api/manager-wordpress-properties/load")) {
           return {
             ok: true,
-            json: async () => ({
-              ok: true,
-              snapshot: {
-                version: 1,
-                keys: { wordpress_sites: JSON.stringify([csol]) },
-              },
-            }),
-          };
-        }
-        if (url.includes("/teams/1/workspace")) {
-          return {
-            ok: true,
-            json: async () => ({
-              ok: true,
-              snapshot: {
-                version: 1,
-                keys: { wordpress_sites: JSON.stringify([csol]) },
-              },
-            }),
+            json: async () => ({ sites: [row] }),
           };
         }
         return { ok: true, json: async () => ({}) };
@@ -170,7 +238,7 @@ describe("loadSitesFromServerAlways credential merge", () => {
     const loaded = await loadSitesFromServerAlways();
 
     expect(loaded).toHaveLength(1);
-    expect(getStoredSites()[0]?.appPassword).toBe("pass");
-    expect(getStoredSites()[0]?.name).toBe("Custom Shades of London");
+    expect(getStoredSites()[0]?.name).toBe("Advance Blinds");
+    expect(getStoredSites()[0]?.appPassword?.trim().length).toBeGreaterThan(0);
   });
 });

@@ -290,6 +290,28 @@ export function normalizeOverviewProseHtml(html: string): string {
   return `${head}\n${wrapped}${afterUl ? `\n${afterUl}` : ""}`;
 }
 
+/** Answer contract: one H2 + one <p>. Wrap bare prose after </h2> when the model omitted <p>. */
+export function normalizeAnswerProseHtml(html: string): string {
+  const cleaned = stripHarnessModelContamination(html);
+  const lower = cleaned.toLowerCase();
+  const h2Open = lower.search(/<h2\b/);
+  if (h2Open < 0) return cleaned;
+  const h2End = lower.indexOf("</h2>", h2Open);
+  if (h2End < 0) return cleaned;
+
+  const head = cleaned.slice(0, h2End + 5);
+  const tail = cleaned.slice(h2End + 5).trim();
+  if (!tail || /<p\b/i.test(tail)) {
+    return head + (tail ? `\n${tail}` : "");
+  }
+  if (/<(?:ul|ol|table|h2|h3)\b/i.test(tail)) {
+    return cleaned;
+  }
+  const prose = tail.replace(/\s+/g, " ").trim();
+  if (!prose) return head;
+  return `${head}\n<p>${prose}</p>`;
+}
+
 export function normalizeIllustrativeHarnessHtml(html: string, forcedH2?: string): string {
   const h2Title = resolveIllustrativeH2Title(forcedH2);
   let s = (html ?? "").trim();
@@ -371,6 +393,7 @@ export function finalizeHarnessSectionHtml(
   s = stripHarnessSectionTrailingGarbage(s);
   if (opts.isAnswer) {
     s = enforceHarnessSectionHeadingTitle(s, "Answer");
+    s = normalizeAnswerProseHtml(s);
     s = trimAnswerSectionToContract(s);
     s = injectHarnessSectionH2AnchorId(s, HARNESS_ANSWER_ANCHOR_ID);
   } else if (opts.isOverview) {

@@ -125,7 +125,6 @@ export function CreateSupportTicketDialog({
         url: chatLog.app.url,
         deployGitSha: chatLog.app.deployGitSha,
         submode: chatLog.session.submode,
-        targetScope: chatLog.session.targetScope,
       },
     });
 

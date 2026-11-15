@@ -49,7 +49,6 @@ export type LocationSummaryInput = {
   researchSection?: string;
   sitemapMode?: string;
   contentOptimizerSection?: string;
-  forgeSection?: string;
 };
 
 export function resolveCurrentModuleId(input: LocationSummaryInput): string | undefined {
@@ -79,15 +78,6 @@ export function buildLocationSummary(input: LocationSummaryInput): string {
     }
     if (input.sitemapMode && mod.id === "sitemap-optimizer") {
       path += ` → ${input.sitemapMode}`;
-    }
-    if (mod.id === "pulse-forge" && input.forgeSection) {
-      const forgeLabel =
-        input.forgeSection === "recipes"
-          ? "Agents"
-          : input.forgeSection === "workflows"
-            ? "Workflows"
-            : "My Forge";
-      path += ` → ${forgeLabel}`;
     }
     return path;
   }

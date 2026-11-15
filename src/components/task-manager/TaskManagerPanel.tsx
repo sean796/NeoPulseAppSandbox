@@ -1,6 +1,6 @@
 import type { MouseEvent } from "react";
 import { useMemo, useState } from "react";
-import { ChevronDown, Download, X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { useTaskManager } from "@/contexts/task-manager-context";
 import { useWordPressSites } from "@/hooks/use-wordpress-sites";
 import { AgentRunsHeaderSiteFilter } from "@/components/agent-runs/AgentRunsHeaderSiteFilter";
@@ -167,12 +167,6 @@ export function TaskManagerPanel() {
                   width="full"
                 />
               </div>
-              <span className="agent-runs-site-picker-row__logs">
-                <Button variant="quiet" type="button" reserved disabled>
-                  <Download className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                  All logs (0)
-                </Button>
-              </span>
             </div>
           </div>
 

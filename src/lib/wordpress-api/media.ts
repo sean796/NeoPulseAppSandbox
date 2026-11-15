@@ -101,3 +101,23 @@ export async function listWordPressMedia(
   return { media: data.media ?? [], count: data.count ?? 0 };
 }
 
+/** One attachment (featured image) from the connected WordPress site. */
+export async function getWordPressMediaById(
+  siteUrl: string,
+  username: string,
+  appPassword: string,
+  mediaId: number,
+): Promise<WordPressMediaCatalogItem | null> {
+  const url = backendApiUrl("/wordpress/list-media");
+  const response = await fetch(url, {
+    method: "POST",
+    headers: neoPulseApiHeaders({ "Content-Type": "application/json" }),
+    body: JSON.stringify({ siteUrl, username, appPassword, mediaId }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || !data.success) {
+    throw new Error(data?.error ?? response.statusText ?? "Failed to load WordPress media");
+  }
+  return (data.media ?? []).find((item: WordPressMediaCatalogItem) => item.id === mediaId) ?? null;
+}
+

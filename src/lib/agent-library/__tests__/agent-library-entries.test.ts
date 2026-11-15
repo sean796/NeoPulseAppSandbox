@@ -29,8 +29,22 @@ describe("agent library entries", () => {
     expect(safeFix?.appPath).toBeUndefined();
   });
 
+  it("keeps Posts Content Gap Check out of the agent library and in the skills library", () => {
+    const agents = buildUnifiedAgentLibraryEntries([], {});
+    const skills = buildSkillsLibraryEntries([], {});
+    expect(agents.some((e) => e.id === "content.posts.gap-check")).toBe(false);
+    const gap = skills.find((e) => e.id === "content.posts.gap-check");
+    expect(gap).toBeDefined();
+    expect(gap?.label).toBe("Posts Content Gap Check");
+    expect(gap?.appPath).toBeUndefined();
+  });
+
   it("lists Semrush Safe Fix as an assignable site agent", () => {
     expect(ASSIGNABLE_SITE_AGENTS.some((a) => a.id === "reporting.semrush.safe-fix")).toBe(true);
+  });
+
+  it("lists Posts Content Gap Check as an assignable site agent", () => {
+    expect(ASSIGNABLE_SITE_AGENTS.some((a) => a.id === "content.posts.gap-check")).toBe(true);
   });
 
   it("leaves plain agents without an Open path", () => {

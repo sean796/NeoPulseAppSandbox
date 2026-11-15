@@ -1,18 +1,23 @@
 /**
- * Global forbidden-word blocklist.
+ * Global forbidden-word blocklist + mandatory Humanizer writing contract.
  * OpenRouter system prompts: prepended once via appendUniversalContentRulesToSystemPrompt.
  * Saved artifacts: checklist header + blueprint forbiddenWordsPolicy once (never per-agent features).
  *
  * POLICY (NON-NEGOTIABLE FOR FUTURE AUDITS):
  * Do NOT call `assertNoForbiddenWordViolations` inside Auto SEO, Content Optimizer, Elementor,
  * or blog section rewrite/generation pipelines to block or discard model output when a single word
- * or phrase appears. Enforce word rules via the prompt (`appendUniversalContentRulesToSystemPrompt` /
+ * or phrase appears. Enforce word rules and Humanizer via the prompt (`appendUniversalContentRulesToSystemPrompt` /
  * `injectBlacklistRagIntoMessages`), never by throwing away a user's optimized section.
  */
 
-import { isFaqStyleHeadingTitle } from "@/lib/content-generation/faq-heading-policy";
+import { featureIsExplicitFaqMarker, isFaqStyleHeadingTitle } from "@/lib/content-generation/faq-heading-policy";
 import { stripIllustrativeMarkersFromChecklistItem } from "@/lib/content-optimization/illustrative-h2";
 import { isLlmAuditAuthorityDumpChecklistItem } from "@/lib/content-optimization/harness-heading-titles";
+import {
+  ensureHumanizerOnSystemPrompt,
+  buildHumanizerRagBlock,
+  userPromptHasHumanizerRag,
+} from "@/lib/content-humanizer";
 
 import {
   ACTIVE_VOICE_HEADING_RULE,
@@ -56,21 +61,36 @@ export function buildWordBlacklistDownloadText(): string {
   return `${FORBIDDEN_WORDS_MANDATORY_TAG}\n${GLOBAL_FORBIDDEN_WORDS_PROMPT_BLOCK}\n\n${ARTICLE_WORD_FREQUENCY_CHECKLIST_ITEM}`;
 }
 
-/** Read-only RAG doc prepended to content harness user prompts. */
+/** Read-only RAG doc prepended to content harness user prompts (blacklist + Humanizer). */
 export function buildBlacklistRagBlock(): string {
   return `${BLACKLIST_RAG_OPEN}
 ${GLOBAL_FORBIDDEN_WORDS_PROMPT_BLOCK}
 ${BLACKLIST_RAG_CLOSE}
 
-You MUST read and obey the WORD BLACKLIST above before writing anything. Zero tolerance for banned words and phrases.`;
+You MUST read and obey the WORD BLACKLIST above before writing anything. Zero tolerance for banned words and phrases.
+
+${buildHumanizerRagBlock()}`;
 }
 
-/** Idempotent: prepends blacklist RAG block to a user prompt. */
+const BLACKLIST_RAG_OBEY =
+  "You MUST read and obey the WORD BLACKLIST above before writing anything. Zero tolerance for banned words and phrases.";
+
+/** Idempotent: prepends blacklist then Humanizer RAG blocks to a user prompt. */
 export function prependBlacklistRagToUserPrompt(userPrompt: string): string {
-  if (userPrompt.includes(BLACKLIST_RAG_OPEN)) {
+  if (userPrompt.includes(BLACKLIST_RAG_OPEN) && userPromptHasHumanizerRag(userPrompt)) {
     return userPrompt;
   }
-  return `${buildBlacklistRagBlock()}\n\n${userPrompt}`;
+  if (!userPrompt.includes(BLACKLIST_RAG_OPEN)) {
+    return `${buildBlacklistRagBlock()}\n\n${userPrompt}`;
+  }
+  // Blacklist present, Humanizer missing: insert Humanizer after the blacklist obey line.
+  if (userPrompt.includes(BLACKLIST_RAG_OBEY)) {
+    return userPrompt.replace(
+      BLACKLIST_RAG_OBEY,
+      `${BLACKLIST_RAG_OBEY}\n\n${buildHumanizerRagBlock()}`,
+    );
+  }
+  return `${userPrompt}\n\n${buildHumanizerRagBlock()}`;
 }
 
 export type BlacklistRagMessage = { role: string; content: string };
@@ -87,15 +107,17 @@ export function injectBlacklistRagIntoMessages<T extends BlacklistRagMessage>(me
 const SYSTEM_OBEY_USER_BLACKLIST_LINE =
   "Obey the WORD BLACKLIST block in the user message before any output. Zero banned words in titles, headings, body, meta, FAQ, and link text.";
 
-/** Prepend word blacklist once to OpenRouter system prompts (idempotent). */
+/** Prepend word blacklist + Humanizer once to OpenRouter system prompts (idempotent). */
 export function appendUniversalContentRulesToSystemPrompt(systemPrompt: string): string {
-  if (systemPrompt.includes(WORD_BLACKLIST_MARKER)) {
-    if (!systemPrompt.includes(SYSTEM_OBEY_USER_BLACKLIST_LINE)) {
-      return `${SYSTEM_OBEY_USER_BLACKLIST_LINE}\n\n${systemPrompt}`;
+  let next = systemPrompt;
+  if (next.includes(WORD_BLACKLIST_MARKER)) {
+    if (!next.includes(SYSTEM_OBEY_USER_BLACKLIST_LINE)) {
+      next = `${SYSTEM_OBEY_USER_BLACKLIST_LINE}\n\n${next}`;
     }
-    return systemPrompt;
+  } else {
+    next = `${SYSTEM_PROMPT_BLACKLIST_PREFIX}${SYSTEM_OBEY_USER_BLACKLIST_LINE}\n\n${next}`;
   }
-  return `${SYSTEM_PROMPT_BLACKLIST_PREFIX}${SYSTEM_OBEY_USER_BLACKLIST_LINE}\n\n${systemPrompt}`;
+  return ensureHumanizerOnSystemPrompt(next);
 }
 
 const FORBIDDEN_HEADING_PREFIX_RE =
@@ -344,9 +366,7 @@ export function stripForbiddenWordsFeatures(features: unknown[]): unknown[] {
 }
 
 function agentHasFaqFeature(features: unknown[]): boolean {
-  return features.some(
-    (f) => typeof f === "string" && /^\[FAQ\]/i.test(f.trim()),
-  );
+  return features.some((f) => typeof f === "string" && featureIsExplicitFaqMarker(f));
 }
 
 /** Pipeline/in-memory: sanitize titles, descriptions, features; strip blacklist metadata. */

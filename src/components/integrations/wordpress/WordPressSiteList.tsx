@@ -177,7 +177,7 @@ export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
     onDockStripeTailIndexChange,
   ]);
 
-  const renderPropertyRowTrailingControls = (site: WordPressSite, dockActive = false) => {
+  const renderPropertyRowTrailingControls = (site: WordPressSite, dockActive = false, rowIndex = 0) => {
     const stop = (e: React.SyntheticEvent) => e.stopPropagation();
     if (isDock) {
       return (
@@ -193,6 +193,7 @@ export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
             countsBatchPending={countsBatchPending}
             variant="dock"
             dockActive={dockActive}
+            dockFadeIndex={rowIndex}
           />
         </div>
       );
@@ -359,7 +360,7 @@ export const WordPressSiteList: React.FC<WordPressSiteListProps> = ({
                   !isDock && (propertyRowDisplay === "compact" ? "gap-2 sm:gap-2" : "gap-3 sm:gap-4"),
                 )}
               >
-                {renderPropertyRowTrailingControls(site, isActive)}
+                {renderPropertyRowTrailingControls(site, isActive, index)}
               </div>
             );
 

@@ -1,7 +1,6 @@
 import type { WordPressSite } from "@/components/integrations/types";
 import { wordpressSiteDisplayName } from "@/lib/wordpress-site-display-name";
 import { buildLocationSummary } from "@/lib/pulse-assist/app-module-catalog";
-import { forgeContextFromPath } from "@/lib/pulse-assist/navigation";
 import {
   getMergedBulkInventorySessionSnapshot,
 } from "@/lib/wordpress-bulk-inventory-session-cache";
@@ -12,8 +11,6 @@ import type { SitePostInventoryRow } from "@/lib/wordpress-api/types";
 import type {
   AssistRequestPayload,
   AssistSubmode,
-  PageContentMode,
-  AssistTargetScope,
   PropertiesContextPayload,
   PulseContextPayload,
   SiteInventoryContextPayload,
@@ -116,8 +113,6 @@ export type PulseAssistContextInput = {
   expandedPageTitle?: string | null;
   postId?: number;
   submode: AssistSubmode;
-  pageContentMode: PageContentMode;
-  targetScope: AssistTargetScope;
   message: string;
   history: AssistRequestPayload["history"];
   team?: TeamSummary | null;
@@ -147,9 +142,8 @@ export function buildPropertiesContext(
 }
 
 export function buildPulseContext(
-  input: Omit<PulseAssistContextInput, "message" | "history" | "submode" | "targetScope" | "pageContentMode">,
+  input: Omit<PulseAssistContextInput, "message" | "history" | "submode">,
 ): PulseContextPayload {
-  const forge = input.managerTab === "pulse-forge" ? forgeContextFromPath() : {};
   const locationSummary = buildLocationSummary({
     managerTab: input.managerTab,
     dashboardCluster: input.dashboardCluster,
@@ -158,7 +152,6 @@ export function buildPulseContext(
     researchSection: input.researchSection,
     sitemapMode: input.sitemapMode,
     contentOptimizerSection: input.contentOptimizerSection,
-    forgeSection: forge.forgeSection,
   });
 
   return {
@@ -170,9 +163,6 @@ export function buildPulseContext(
     researchSection: input.researchSection,
     sitemapMode: input.sitemapMode,
     contentOptimizerSection: input.contentOptimizerSection,
-    forgeSection: forge.forgeSection,
-    forgeWorkflowId: forge.forgeWorkflowId,
-    forgeRecipeKeyword: forge.forgeRecipeKeyword,
     pulseAppUrl: typeof window !== "undefined" ? window.location.href : "",
     siteId: input.site?.id ?? "",
     siteName: input.siteDisplayName || "",
@@ -273,20 +263,14 @@ export function buildTeamContext(input: {
 }
 
 export function buildAssistPayload(input: PulseAssistContextInput): AssistRequestPayload {
-  const pageUrl = input.targetScope === "site" ? "" : (input.expandedPageUrl || "");
-  const postId = input.targetScope === "site" ? 0 : (input.postId || 0);
-  const pageTitle = input.targetScope === "site" ? "" : (input.expandedPageTitle || "");
-
   return {
     message: input.message,
     history: input.history,
     admin_mode: "backend",
     admin_submode: input.submode,
-    page_content_mode: input.pageContentMode,
-    target_scope: input.targetScope,
-    post_id: postId,
-    page_url: pageUrl,
-    page_title: pageTitle,
+    post_id: input.postId || 0,
+    page_url: input.expandedPageUrl || "",
+    page_title: input.expandedPageTitle || "",
     pulse_context: buildPulseContext(input),
     properties_context: buildPropertiesContext(input.allSites, input.activeSiteId),
     site_inventory_context: buildSiteInventoryContext(input.site?.id ?? input.activeSiteId),

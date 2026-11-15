@@ -176,9 +176,22 @@ describe("Universal Pulse Engine Agent & Pipeline Contract", () => {
     expect(callOpenRouterChatCompletionMock).toHaveBeenCalledWith(
       expect.objectContaining({
         model: "google/gemini-4-argon",
-        system: expect.stringContaining("[MASTER_RULES]"),
-        user: expect.stringContaining("WORD BLACKLIST"),
       }),
+    );
+    const firstCall = callOpenRouterChatCompletionMock.mock.calls[0]?.[0] as {
+      system?: string;
+      user?: string;
+    };
+    expect(firstCall.system).toMatch(/WORD BLACKLIST \(mandatory/i);
+    expect(firstCall.system).toMatch(/HUMANIZER \(mandatory/i);
+    expect(firstCall.system).toContain("[MASTER_RULES]");
+    expect(firstCall.user).toMatch(/WORD BLACKLIST/i);
+    expect(firstCall.user).toMatch(/HUMANIZER/i);
+    expect(firstCall.system!.indexOf("WORD BLACKLIST (mandatory")).toBeLessThan(
+      firstCall.system!.indexOf("HUMANIZER (mandatory"),
+    );
+    expect(firstCall.user!.indexOf("WORD BLACKLIST")).toBeLessThan(
+      firstCall.user!.indexOf("HUMANIZER"),
     );
 
     // Switch Meta model in settings and confirm the same agent instance immediately switches

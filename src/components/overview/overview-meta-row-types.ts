@@ -43,6 +43,8 @@ export interface OverviewRow {
   semrushAuditJsonFilename?: string | null;
   semrushAuditFixChecklist?: string | null;
   postId?: number | null;
+  /** WordPress featured image attachment id from site inventory. */
+  featuredMediaId?: number | null;
   postType?: string | null;
   wpStatus?: string;
   wpDateGmt?: string;

@@ -12,6 +12,7 @@ import { useBulkStudioEditor } from "./use-bulk-studio-editor";
 import { useBulkBlogImport } from "./use-bulk-blog-import";
 import { useBulkGeneratorProgress } from "./use-bulk-generator-progress";
 import { useBulkGeneratorDerived } from "./use-bulk-generator-derived";
+import { openRouterMaxOutputTokens } from "@/lib/openrouter-stream-token-limits";
 
 export function BulkBlogGenerationTab({
   activeSection,
@@ -121,7 +122,7 @@ export function BulkBlogGenerationTab({
             apiKey={effectiveDataForSeoApiKey ?? ""}
             selectedModel={selectedModel ?? ""}
             temperature={temperature ?? 0.7}
-            maxTokens={maxTokens ?? 4096}
+            maxTokens={maxTokens ?? openRouterMaxOutputTokens()}
             topP={topP ?? 1}
             bulkGeneratorDock={bulkGeneratorDock}
             bulkGeneratorDetailsPanel={bulkGeneratorDetailsProps}

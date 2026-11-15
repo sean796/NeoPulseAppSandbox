@@ -92,11 +92,8 @@ export function ManagerEmbeddedPageChrome({ children }: { children: ReactNode })
           </div>
 
           <ManagerAppFooter
-            currentTab={managerTab}
             onTabChange={onManagerTabChange}
             onDashboardBrandClick={onDashboardBrandClick}
-            onDashboardClusterChange={onManagerDashboardClusterChange}
-            settingsCluster={managerDashboardCluster}
           />
         </div>
       </ManagerSeedWorkspaceProvider>

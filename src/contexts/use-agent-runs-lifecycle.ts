@@ -74,6 +74,7 @@ export function useAgentRunsLifecycle({
         (run.status === "queued" || run.status === "running") &&
         agentRunIsServerExecution(run) &&
         resolveAgentRunRecipeKey(run) !== "semrush_safe_fix" &&
+        resolveAgentRunRecipeKey(run) !== "posts_content_gap_check" &&
         !serverProcessInFlight.current.has(run.id)
       ) {
         serverProcessInFlight.current.add(run.id);
@@ -99,13 +100,18 @@ export function useAgentRunsLifecycle({
         (run) =>
           agentRunIsServerExecution(run) &&
           resolveAgentRunRecipeKey(run) !== "semrush_safe_fix" &&
+          resolveAgentRunRecipeKey(run) !== "posts_content_gap_check" &&
           (run.status === "queued" || run.status === "running"),
       );
       if (active.length === 0) return;
       await Promise.all(
         active.map(async (run) => {
-          const latest = await advanceServerAgentRun(teamId, run, sites);
-          patchRunInList(run.id, latest);
+          try {
+            const latest = await advanceServerAgentRun(teamId, run, sites);
+            patchRunInList(run.id, latest);
+          } catch (err) {
+            logger.error("[Agent runs] Server run advance failed:", err);
+          }
         }),
       );
     };

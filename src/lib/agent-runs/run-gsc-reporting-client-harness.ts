@@ -2,7 +2,6 @@ import type { WordPressSite } from "@/components/integrations/types";
 import type { AgentRunHarnessContext } from "@/lib/agent-runs/harness-registry";
 import { resolveGscReportingSite } from "@/lib/agent-runs/resolve-agent-run-site";
 import { commitAgentRunDeliverable } from "@/lib/agent-runs/commit-agent-run-deliverable";
-import { fetchWorkflowStepOutputs } from "@/lib/workflow/workflow-api";
 import { runGscReportingAgentHarness } from "@/lib/gsc-reporting/gsc-reporting-agent-harness";
 import { downloadGscReportingArtifacts } from "@/lib/gsc-reporting/gsc-reporting-download";
 import type { AgentRun, AgentRunResult } from "@/lib/agent-runs-types";
@@ -21,7 +20,7 @@ import {
 import { automationTitleFromRun } from "@/lib/automation-email-delivery";
 import { AGENT_RUN_STEP_KEYS } from "@/lib/agent-runs/agent-run-step-keys";
 import { resolveGscAgentProgressStepKey } from "@/lib/gsc-reporting/gsc-reporting-progress-log";
-import { completeAgentRunExecution } from "@/lib/workflow/workflow-deliveries-skip";
+import { completeAgentRunExecution } from "@/lib/agent-runs/complete-agent-run-execution";
 import { gscReportingSupplementsFromExecutionPayload } from "@/lib/gsc-reporting/gsc-reporting-supplements-from-payload";
 
 function executionPayloadFromSource(
@@ -41,13 +40,6 @@ async function persistGscReportingDeliverables(
   archiveFiles: TaskArchiveFileInput[],
   saveLocalArchive: boolean,
 ): Promise<void> {
-  const workflowId = Number(run.context?.workflowId ?? run.plan?.workflowId ?? 0);
-  const workflowRunId = Number(run.context?.workflowRunId ?? run.plan?.workflowRunId ?? 0);
-  const workflowOutputs =
-    workflowId > 0 && workflowRunId > 0
-      ? await fetchWorkflowStepOutputs(run.teamId, workflowId, workflowRunId)
-      : undefined;
-
   const deliverableFiles = archiveFiles.filter(
     (file) => file.fileName.trim() && file.content.trim(),
   );
@@ -62,7 +54,6 @@ async function persistGscReportingDeliverables(
       files: [file],
       textPreview: file.fileName,
       saveLocalArchive,
-      workflowOutputs,
     });
   }
 }

@@ -67,6 +67,10 @@ class Neo_Pulse_App_Agent_Runs_Recipe_Registry {
 			'title'       => 'Semrush safe fix',
 			'managerTabs' => array( 'dashboard' ),
 		),
+		'posts_content_gap_check'   => array(
+			'title'       => 'Posts content gap check',
+			'managerTabs' => array( 'dashboard' ),
+		),
 	);
 
 	public static function is_valid( string $recipe_key ): bool {

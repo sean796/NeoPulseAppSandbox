@@ -56,12 +56,12 @@ export const SitePropertyEditPanel: React.FC<SitePropertyEditPanelProps> = ({
 
     let cancelled = false;
     void (async () => {
-      const rows = await fetchWordPressSitesMirror();
+      const mirror = await fetchWordPressSitesMirror();
       if (cancelled) return;
       hydrateKeyRef.current = site.id;
-      if (rows.length === 0) return;
+      if (!mirror.ok || mirror.sites.length === 0) return;
 
-      const row = findServerRow(site, rows);
+      const row = findServerRow(site, mirror.sites);
       if (!row) return;
 
       const gbp = row.gbpLocationId?.trim() ?? "";

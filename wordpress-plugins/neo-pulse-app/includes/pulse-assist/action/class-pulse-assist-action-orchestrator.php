@@ -202,16 +202,17 @@ class Neo_Pulse_App_Pulse_Assist_Action_Orchestrator {
 								'projectId'        => $project_id,
 							),
 							'links' => array(
-								self::forge_nav_link( 'Open My Forge', 'pulse-forge/forge' ),
+								array(
+									'label'    => 'Open Tasks',
+									'navigate' => array(
+										'kind' => 'managerTab',
+										'tab'  => 'tasks',
+									),
+								),
 							),
 						)
 					);
 				}
-			}
-
-			$forge_card = self::forge_card_from_results( $results, $table, $exec_result );
-			if ( is_array( $forge_card ) ) {
-				return $forge_card;
 			}
 
 			if ( ! empty( $exec_result['ok'] ) && $template_saved ) {
@@ -363,7 +364,7 @@ class Neo_Pulse_App_Pulse_Assist_Action_Orchestrator {
 		$type  = $submode === 'plan' ? 'plan' : 'answer';
 		$title = $submode === 'plan' ? 'Task plan preview' : 'Task action preview';
 		$is_project_plan = false;
-		$is_forge_plan   = false;
+		$is_recipe_plan  = false;
 		foreach ( $tool_calls as $call ) {
 			if ( ! is_array( $call ) ) {
 				continue;
@@ -372,29 +373,29 @@ class Neo_Pulse_App_Pulse_Assist_Action_Orchestrator {
 			if ( $tool === 'tasks_create_project' ) {
 				$is_project_plan = true;
 			}
-			if ( Neo_Pulse_App_Pulse_Assist_Action_Tools_Forge::is_forge_tool( $tool ) || $tool === 'recipes_install' || $tool === 'recipes_run' ) {
-				$is_forge_plan = true;
+			if ( $tool === 'recipes_install' || $tool === 'recipes_run' ) {
+				$is_recipe_plan = true;
 			}
 		}
 		if ( $is_project_plan ) {
 			$title = $submode === 'plan' ? 'Project plan preview' : 'Project action preview';
 		}
-		if ( $is_forge_plan ) {
-			$title = $submode === 'plan' ? 'Forge plan preview' : 'Forge action preview';
+		if ( $is_recipe_plan ) {
+			$title = $submode === 'plan' ? 'Recipe plan preview' : 'Recipe action preview';
 		}
 		if ( $body_text === '' && count( $tool_calls ) > 0 ) {
-			$body_text = $is_forge_plan
-				? 'Review the planned Forge actions below. Switch to Build to apply them.'
+			$body_text = $is_recipe_plan
+				? 'Review the planned recipe actions below. Switch to Build to apply them.'
 				: 'Review the planned tasks below. Switch to Build to create them in your task list.';
 		}
 		if ( $submode === 'plan' ) {
-			$body_text .= $is_forge_plan
-				? "\n\nThis is a read-only preview. Switch to Build to apply these Forge actions."
+			$body_text .= $is_recipe_plan
+				? "\n\nThis is a read-only preview. Switch to Build to apply these recipe actions."
 				: "\n\nThis is a read-only preview. Switch to Build to create these tasks.";
 		}
 		if ( $submode === 'ask' && count( $tool_calls ) > 0 ) {
-			$body_text .= $is_forge_plan
-				? "\n\nAsk mode is preview only. Switch to Build to apply these Forge actions."
+			$body_text .= $is_recipe_plan
+				? "\n\nAsk mode is preview only. Switch to Build to apply these recipe actions."
 				: "\n\nAsk mode is preview only. Click Create tasks (Build mode) below to add them to your task list.";
 		}
 
@@ -407,15 +408,13 @@ class Neo_Pulse_App_Pulse_Assist_Action_Orchestrator {
 			'submode_switch'    => (string) ( $execution['submode_switch'] ?? ( count( $tool_calls ) > 0 ? 'build' : '' ) ),
 			'suggested_actions' => isset( $execution['suggested_actions'] ) && is_array( $execution['suggested_actions'] ) ? $execution['suggested_actions'] : array(),
 			'links'             => array(
-				$is_forge_plan
-					? self::forge_nav_link( 'Open My Forge', 'pulse-forge/forge' )
-					: array(
-						'label'    => 'Open Tasks',
-						'navigate' => array(
-							'kind' => 'managerTab',
-							'tab'  => 'tasks',
-						),
+				array(
+					'label'    => 'Open Tasks',
+					'navigate' => array(
+						'kind' => 'managerTab',
+						'tab'  => 'tasks',
 					),
+				),
 			),
 		);
 
@@ -650,81 +649,4 @@ class Neo_Pulse_App_Pulse_Assist_Action_Orchestrator {
 		return $table;
 	}
 
-	/**
-	 * @return array<string,mixed>
-	 */
-	private static function forge_nav_link( string $label, string $hash ): array {
-		return array(
-			'label'    => $label,
-			'navigate' => array(
-				'kind' => 'pulseForge',
-				'hash' => $hash,
-			),
-		);
-	}
-
-	/**
-	 * @param array<int,array<string,mixed>> $results
-	 * @param array<string,mixed>|null       $table
-	 * @param array<string,mixed>            $exec_result
-	 * @return array<string,mixed>|null
-	 */
-	private static function forge_card_from_results( array $results, ?array $table, array $exec_result ): ?array {
-		$ok     = ! empty( $exec_result['ok'] );
-		$errors = isset( $exec_result['errors'] ) && is_array( $exec_result['errors'] ) ? implode( ' ', $exec_result['errors'] ) : '';
-		foreach ( $results as $row ) {
-			if ( ! is_array( $row ) ) {
-				continue;
-			}
-			$tool   = sanitize_key( (string) ( $row['tool'] ?? '' ) );
-			$result = isset( $row['result'] ) && is_array( $row['result'] ) ? $row['result'] : array();
-			if ( ! Neo_Pulse_App_Pulse_Assist_Action_Tools_Forge::is_forge_tool( $tool ) ) {
-				continue;
-			}
-			$workflow_id = (int) ( $result['workflowId'] ?? $result['workflow']['id'] ?? 0 );
-			$name        = trim( (string) ( $result['workflow']['name'] ?? '' ) );
-			$hash        = $workflow_id > 0 ? 'pulse-forge/workflows/' . $workflow_id : 'pulse-forge/workflows';
-			$link        = self::forge_nav_link( $workflow_id > 0 ? 'Open workflow' : 'Open Workflows', $hash );
-			if ( ! $ok ) {
-				return array(
-					'type'       => 'error',
-					'title'      => 'Forge build failed',
-					'body'       => $errors !== '' ? $errors : (string) ( $result['error'] ?? 'Forge action failed.' ),
-					'confidence' => 'low',
-					'links'      => array( self::forge_nav_link( 'Open My Forge', 'pulse-forge/forge' ) ),
-				);
-			}
-			$title = 'Updated workflow';
-			$body  = $name !== '' ? 'Updated workflow "' . $name . '".' : 'Workflow was updated.';
-			if ( $tool === 'workflows_create' ) {
-				$title = 'Created workflow';
-				$body  = $name !== '' ? 'Created workflow "' . $name . '".' : 'Workflow was created.';
-			} elseif ( $tool === 'workflows_publish' ) {
-				$title = 'Published workflow';
-				$body  = $name !== '' ? 'Published workflow "' . $name . '".' : 'Workflow was published.';
-			} elseif ( $tool === 'workflows_delete' ) {
-				$title = 'Deleted workflow';
-				$body  = 'Deleted workflow ' . ( $workflow_id > 0 ? (string) $workflow_id : '' ) . '.';
-				$link  = self::forge_nav_link( 'Open Workflows', 'pulse-forge/workflows' );
-			} elseif ( $tool === 'workflows_run' ) {
-				$title = 'Started workflow';
-				$body  = $name !== '' ? 'Started workflow "' . $name . '".' : 'Workflow run was started.';
-			}
-			return array(
-				'type'           => 'action',
-				'title'          => $title,
-				'body'           => trim( $body ),
-				'confidence'     => 'high',
-				'table'          => $table,
-				'submode_switch' => '',
-				'action_result'  => array(
-					'createdWorkflowId' => $workflow_id,
-				),
-				'links'             => array( $link ),
-				'suggested_actions' => array( 'Open Pulse Forge' ),
-				'details_drawer'    => array( 'execution' => $exec_result ),
-			);
-		}
-		return null;
-	}
 }

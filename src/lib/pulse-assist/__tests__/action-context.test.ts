@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { buildLocationSummary } from "@/lib/pulse-assist/app-module-catalog";
 import { buildPropertiesContext, buildTeamContext } from "@/lib/pulse-assist/context";
 import type { WordPressSite } from "@/components/integrations/types";
-import { forgeContextFromPath } from "@/lib/pulse-assist/navigation";
 import type { TeamSummary } from "@/lib/teams-types";
 import type { TaskProject } from "@/lib/tasks-types";
 
@@ -119,16 +117,5 @@ describe("buildPropertiesContext", () => {
     const ctx = buildPropertiesContext([site], "site-1");
     expect(ctx.activePropertyId).toBe("site-1");
     expect(ctx.properties[0]?.googleAdsCustomerId).toBe("6293305294");
-  });
-});
-
-describe("buildPulseContext forge route", () => {
-  it("adds forge section and workflow id from the path", () => {
-    const forge = forgeContextFromPath("/pulse-forge/workflows/12");
-    expect(forge.forgeSection).toBe("workflows");
-    expect(forge.forgeWorkflowId).toBe(12);
-    expect(buildLocationSummary({ managerTab: "pulse-forge", forgeSection: "workflows" })).toContain(
-      "Workflows",
-    );
   });
 });

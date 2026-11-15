@@ -1,27 +1,17 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { resolveUpstreamGridCsvFromWorkflow } from "@/lib/entity-page-creator/resolve-upstream-grid-csv";
-import type { WorkflowStepOutput } from "@/lib/workflow/workflow-types";
+import type { AgentRunStepOutputSnapshot } from "@/lib/agent-runs/step-output-types";
 
 vi.mock("@/lib/agent-runs-api", () => ({
   fetchAgentRunCsvContent: vi.fn(),
 }));
 
-vi.mock("@/lib/workflow/workflow-api", () => ({
-  fetchWorkflowStepOutputs: vi.fn(),
-}));
-
 import { fetchAgentRunCsvContent } from "@/lib/agent-runs-api";
-import { fetchWorkflowStepOutputs } from "@/lib/workflow/workflow-api";
 
-const outputs: WorkflowStepOutput[] = [
+const outputs: AgentRunStepOutputSnapshot[] = [
   {
-    id: 1,
-    runId: 294,
-    nodeId: "ld-node",
     variableKey: "local_dominator_export_1",
     scope: "run",
-    label: "Grid export",
-    textPreview: "CSV",
     agentRunId: 899,
     fileRefs: [
       {
@@ -30,7 +20,6 @@ const outputs: WorkflowStepOutput[] = [
         mime: "text/csv",
       },
     ],
-    createdAt: "",
   },
 ];
 
@@ -40,13 +29,11 @@ describe("resolveUpstreamGridCsvFromWorkflow", () => {
   });
 
   it("loads grid CSV through agent run deliverables API, not a public URL", async () => {
-    vi.mocked(fetchWorkflowStepOutputs).mockResolvedValue(outputs);
     vi.mocked(fetchAgentRunCsvContent).mockResolvedValue("Business Name,Rank\nTest,1");
 
     const text = await resolveUpstreamGridCsvFromWorkflow({
       teamId: 1,
-      workflowId: 10,
-      workflowRunId: 294,
+      outputs,
       ragInputKeys: ["local_dominator_export_1"],
     });
 

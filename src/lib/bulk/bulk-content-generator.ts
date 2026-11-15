@@ -93,7 +93,10 @@ export async function generateMarkdownContent(
 
   let fullContent = '';
   try {
-    const safeMaxTokens = Math.min(options.maxTokens || 16000, 16000);
+    const { openRouterMaxOutputTokens } = await import("@/lib/openrouter-stream-token-limits");
+    const safeMaxTokens = options.maxTokens && options.maxTokens > 0
+      ? options.maxTokens
+      : openRouterMaxOutputTokens();
 
     const blogModel = getBlogModel();
     await streamGeneration({

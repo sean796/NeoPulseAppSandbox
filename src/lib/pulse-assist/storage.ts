@@ -1,13 +1,6 @@
-import type {
-  AssistHistoryMessage,
-  AssistSubmode,
-  AssistTargetScope,
-  PageContentMode,
-} from "./types";
+import type { AssistHistoryMessage, AssistSubmode } from "./types";
 
 const SUBMODE_KEY = "neo_pulse_chat_admin_submode";
-const PAGE_CONTENT_MODE_KEY = "neo_pulse_page_content_mode";
-const SCOPE_KEY = "neo_pulse_chat_target_scope";
 const OPEN_KEY = "neo_pulse_pulse_assist_open";
 const PANEL_KEY = "neo_pulse_sidebar_panel";
 const SIDEBAR_WIDTH_KEY = "neo_pulse_assist_sidebar_width";
@@ -16,7 +9,7 @@ export const DEFAULT_SIDEBAR_WIDTH = 480;
 export const DEFAULT_SEO_SIDEBAR_WIDTH = 720;
 export const MIN_SIDEBAR_WIDTH = 360;
 export const MAX_SIDEBAR_WIDTH = 1280;
-export type SidebarPanel = "assist" | "agents" | "tasks" | "seo" | "details";
+export type SidebarPanel = "assist" | "tasks" | "seo" | "details";
 const ASSIST_HISTORY_MAX = 40;
 const ASSIST_HISTORY_BODY_MAX = 12000;
 
@@ -44,46 +37,6 @@ export function cycleSubmode(current: AssistSubmode): AssistSubmode {
   return "ask";
 }
 
-export function readPageContentMode(): PageContentMode {
-  try {
-    const v = sessionStorage.getItem(PAGE_CONTENT_MODE_KEY);
-    if (v === "seo_blocks" || v === "elementor_widgets") return v;
-  } catch {
-    /* ignore */
-  }
-  return "seo_blocks";
-}
-
-export function writePageContentMode(mode: PageContentMode): void {
-  try {
-    sessionStorage.setItem(PAGE_CONTENT_MODE_KEY, mode);
-  } catch {
-    /* ignore */
-  }
-}
-
-export function togglePageContentMode(current: PageContentMode): PageContentMode {
-  return current === "seo_blocks" ? "elementor_widgets" : "seo_blocks";
-}
-
-export function readTargetScope(): AssistTargetScope {
-  try {
-    const v = sessionStorage.getItem(SCOPE_KEY);
-    if (v === "page" || v === "site") return v;
-  } catch {
-    /* ignore */
-  }
-  return "page";
-}
-
-export function writeTargetScope(scope: AssistTargetScope): void {
-  try {
-    sessionStorage.setItem(SCOPE_KEY, scope);
-  } catch {
-    /* ignore */
-  }
-}
-
 export function readSidebarOpen(): boolean {
   try {
     if (sessionStorage.getItem(OPEN_KEY) === "1") return true;
@@ -105,8 +58,8 @@ export function writeSidebarOpen(open: boolean): void {
 export function readSidebarPanel(): SidebarPanel {
   try {
     const v = sessionStorage.getItem(PANEL_KEY);
-    if (v === "agents" || v === "tasks" || v === "seo") return v;
-    if (v === "mastra") return "seo";
+    if (v === "tasks" || v === "seo") return v;
+    if (v === "agents" || v === "mastra") return v === "mastra" ? "seo" : "tasks";
   } catch {
     /* ignore */
   }

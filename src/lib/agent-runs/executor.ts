@@ -15,10 +15,7 @@ import { buildAgentRunBatchKey } from "@/lib/agent-runs/agent-run-batch-key";
 import { agentRunHasResumeProgress, getAgentRunResumePoint } from "@/lib/agent-runs/agent-run-resume";
 import { appendAgentRunStep, finalizeOpenAgentRunSteps } from "@/lib/agent-runs/agent-run-step";
 import { AGENT_RUN_STEP_KEYS } from "@/lib/agent-runs/agent-run-step-keys";
-import { chainWorkflowAfterAgentComplete } from "@/lib/workflow/workflow-grid-export-chain";
-import { failWorkflowRunForAgentRun } from "@/lib/workflow/workflow-runner";
 import { mergeAgentRunDeliveryFields } from "@/lib/agent-runs/agent-run-log-format";
-import { runWorkflowBoundDeliverySteps } from "@/lib/workflow/workflow-bound-automation-runner";
 import { runTaskExecutionClientHarness } from "@/lib/agent-runs/run-task-execution-client";
 import { contentGapResultFromRun } from "@/lib/agent-runs/run-content-gap-check-client-harness";
 import type { AgentRun, AgentRunResult } from "@/lib/agent-runs-types";
@@ -254,13 +251,6 @@ async function executeAgentRunOnce(
         result: { ...(activeRun.result ?? {}), ...alreadyCounted },
         clientBatchKey: alreadyCounted.batchKey,
       });
-      if (activeRun.source === "workflow" && alreadyCounted.goalMet === true) {
-        void chainWorkflowAfterAgentComplete({
-          ...activeRun,
-          status: "done",
-          result: { ...(activeRun.result ?? {}), ...alreadyCounted },
-        }).catch(() => {});
-      }
       return;
     }
 
@@ -371,24 +361,6 @@ async function executeAgentRunOnce(
     await flushAgentRunCheckpointPatch(teamId, activeRun.id);
     await finalizeOpenAgentRunSteps(teamId, activeRun.id, activeRun);
 
-    const contentGapGoalMet = result.goalMet === true;
-    const recipeKeyAfter = resolveAgentRunRecipeKey(activeRun);
-    const workflowThenDelivery =
-      activeRun.source === "workflow" && activeRun.plan?.workflowThenDelivery === true;
-    // Content gap walk owns the next agents. Target met: do not run Then. LD has its own continue path.
-    const runBoundThenDelivery =
-      workflowThenDelivery
-      && recipeKeyAfter !== "local_dominator_export"
-      && recipeKeyAfter !== "content_gap_check";
-
-    if (runBoundThenDelivery) {
-      await runWorkflowBoundDeliverySteps({
-        teamId,
-        run: activeRun,
-        onStep: ctx.onStep,
-      });
-    }
-
     const terminalStatus = "done";
 
     patchAgentRunInList(activeRun.id, {
@@ -404,13 +376,6 @@ async function executeAgentRunOnce(
       clientBatchKey: result.batchKey,
     });
 
-    // Gap check: walk already continues when a gap remains; only chain when target met (stop + finish).
-    if (
-      activeRun.source === "workflow"
-      && (recipeKeyAfter !== "content_gap_check" || contentGapGoalMet)
-    ) {
-      void chainWorkflowAfterAgentComplete({ ...activeRun, status: terminalStatus, result }).catch(() => {});
-    }
   } catch (err) {
     if (err instanceof AgentRunCancelledError || (err instanceof Error && err.message === "Cancelled")) {
       await markRunCancelled(teamId, activeRun);
@@ -445,10 +410,6 @@ async function executeAgentRunOnce(
       errorMessage: message,
       ...(latest?.result ? { result: latest.result } : {}),
     });
-
-    if (activeRun.source === "workflow") {
-      await failWorkflowRunForAgentRun(teamId, activeRun, message).catch(() => {});
-    }
 
     const executionId = activeRun.plan?.taskExecutionId;
     if (executionId && teamId > 0) {

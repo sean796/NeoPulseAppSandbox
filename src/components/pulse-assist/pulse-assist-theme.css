@@ -67,7 +67,7 @@
   --fai-sidebar-launcher-text: #fff;
   --pulse-assist-surface: hsl(0 0% 6%);
   --pulse-assist-toolbar: #000;
-  --pulse-assist-band: hsl(240 4% 16% / 0.5);
+  --pulse-assist-band: #000;
   font-family: "Lato", ui-sans-serif, system-ui, sans-serif;
   font-size: 1rem;
 }
@@ -125,6 +125,8 @@
 }
 
 .pulse-assist-root--docked .pulse-assist-shortcut-rail {
+  box-sizing: border-box;
+  width: 100%;
   background-color: #09090b;
   border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -166,19 +168,28 @@
 }
 
 .pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked button.pulse-assist-launcher.pulse-assist-launcher--docked {
-  position: static;
+  position: relative;
   top: auto;
   right: auto;
   transform: none;
   z-index: auto;
+  box-sizing: border-box;
   width: 100%;
-  max-width: var(--neo-pulse-shortcut-rail-width);
+  max-width: none;
   min-height: 72px;
-  padding: 12px 8px 14px;
+  padding: 0;
   background-color: transparent;
   color: #a1a1aa;
   box-shadow: none;
-  border-left-color: transparent;
+  border: 0;
+}
+
+.pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked button.pulse-assist-launcher.pulse-assist-launcher--docked .pulse-assist-launcher-brand {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max-content;
+  transform: translate(-50%, -50%);
 }
 
 .pulse-assist-root.fai-sidebar-root.pulse-assist-root--docked button.pulse-assist-launcher.pulse-assist-launcher--docked:hover,
@@ -433,7 +444,7 @@
   left: 50%;
   width: 2px;
   transform: translateX(-50%);
-  background: hsl(240 4% 22%);
+  background: #09090b;
   transition:
     background 160ms ease,
     box-shadow 160ms ease;
@@ -482,7 +493,7 @@
 }
 
 .fai-sidebar-panel__close:hover {
-  background: hsl(240 4% 16%);
+  background: #09090b;
 }
 
 .pulse-assist-panel-header {
@@ -549,7 +560,7 @@
 }
 
 .pulse-assist-panel-header__icon-btn:hover {
-  background: hsl(240 4% 16%);
+  background: #09090b;
 }
 
 .pulse-assist-body.fcw-body {
@@ -580,7 +591,7 @@
   padding: 6px 12px;
   border: none;
   border-radius: 0;
-  background: hsl(240 4% 16%);
+  background: #09090b;
   color: hsl(var(--muted-foreground));
   cursor: pointer;
 }
@@ -602,14 +613,14 @@
   padding: 6px 10px;
   border: none;
   border-radius: 0;
-  background: hsl(240 4% 16%);
+  background: #09090b;
   color: hsl(var(--foreground));
   cursor: pointer;
   font-weight: 600;
 }
 
 .fcw-toolbar-debug-btn:hover {
-  background: hsl(240 4% 20%);
+  background: #18181b;
 }
 
 .fcw-toolbar-icon-btn {
@@ -626,7 +637,7 @@
 }
 
 .fcw-toolbar-icon-btn:hover:not(:disabled) {
-  background: hsl(240 4% 16%);
+  background: #09090b;
 }
 
 .fcw-toolbar-icon-btn:disabled {
@@ -648,7 +659,7 @@
 
 .fcw-harness-progress__track {
   height: 4px;
-  background: hsl(240 4% 16%);
+  background: #09090b;
   border-radius: 0;
   overflow: hidden;
 }
@@ -698,7 +709,7 @@
   padding: 14px 16px;
   border: none;
   border-radius: 0;
-  background: hsl(240 4% 12%);
+  background: #09090b;
   color: hsl(var(--foreground));
   font-size: inherit;
   line-height: 1.45;
@@ -706,7 +717,7 @@
 }
 
 .fcw-starter:hover:not(:disabled) {
-  background: hsl(240 4% 18%);
+  background: #09090b;
 }
 
 .fcw-msg {
@@ -728,7 +739,7 @@
   display: inline-block;
   padding: 8px 12px;
   border-radius: 0;
-  background: hsl(240 4% 14%);
+  background: #09090b;
   color: hsl(var(--muted-foreground));
   font-size: inherit;
 }
@@ -736,7 +747,7 @@
 .fcw-card {
   padding: 16px 18px;
   border-radius: 0;
-  background: hsl(240 4% 10%);
+  background: #000;
 }
 
 .fcw-card__title {
@@ -866,14 +877,14 @@
   margin: 0.85em 0;
   padding: 10px 12px;
   border-radius: 0;
-  background: hsl(240 4% 14%);
+  background: #09090b;
   color: hsl(var(--muted-foreground));
 }
 
 .fcw-md-hr {
   margin: 1.1em 0;
   border: none;
-  border-top: 1px solid hsl(240 4% 20%);
+  border-top: 1px solid #18181b;
 }
 
 .fcw-md-pre {
@@ -881,7 +892,7 @@
   padding: 12px;
   overflow-x: auto;
   border-radius: 0;
-  background: hsl(240 4% 8%);
+  background: #000;
   font-family: ui-monospace, monospace;
   font-size: inherit;
   line-height: 1.5;
@@ -890,7 +901,7 @@
 .fcw-md-code-inline {
   padding: 0.1em 0.35em;
   border-radius: 0;
-  background: hsl(240 4% 16%);
+  background: #09090b;
   font-family: ui-monospace, monospace;
   font-size: inherit;
 }
@@ -900,7 +911,7 @@
   max-width: 100%;
   overflow-x: auto;
   border-radius: 0;
-  background: hsl(240 4% 8%);
+  background: #000;
   padding: 4px 0;
 }
 
@@ -912,7 +923,7 @@
 }
 
 .fcw-md-thead {
-  background: hsl(240 4% 14%);
+  background: #09090b;
 }
 
 .fcw-md-th,
@@ -920,7 +931,7 @@
   padding: 10px 12px;
   text-align: left;
   vertical-align: top;
-  border-bottom: 1px solid hsl(240 4% 18%);
+  border-bottom: 1px solid #09090b;
 }
 
 .fcw-md-th {
@@ -1036,7 +1047,7 @@
   font-size: inherit;
   padding: 6px 12px;
   border-radius: 0;
-  background: hsl(240 4% 16%);
+  background: #09090b;
   color: hsl(var(--primary));
   text-decoration: none;
   border: none;
@@ -1057,14 +1068,14 @@
   padding: 12px 14px;
   border: none;
   border-radius: 0;
-  background: hsl(240 4% 14%);
+  background: #09090b;
   color: hsl(var(--foreground));
   font-size: inherit;
   cursor: pointer;
 }
 
 .fcw-topic-chip:hover {
-  background: hsl(240 4% 18%);
+  background: #09090b;
 }
 
 .fcw-composer {
@@ -1085,7 +1096,7 @@
 }
 
 .fcw-page-content-pill {
-  background: hsl(240 4% 22%);
+  background: #09090b;
   color: hsl(var(--foreground));
 }
 
@@ -1114,7 +1125,7 @@
   padding: 10px 12px;
   border: none;
   border-radius: 0;
-  background: hsl(240 4% 12%);
+  background: #09090b;
   color: hsl(var(--foreground));
   font-size: inherit;
   font-family: inherit;
@@ -1217,7 +1228,7 @@
 
 .pulse-assist-agents {
   margin-top: 8px;
-  background: hsl(240 4% 8%);
+  background: #000;
 }
 
 .pulse-assist-agents__item {
@@ -1252,7 +1263,7 @@
   justify-content: space-between;
   gap: 8px;
   padding: 6px 8px;
-  background: hsl(240 4% 12%);
+  background: #09090b;
   min-height: 0;
 }
 

@@ -8,6 +8,7 @@ import type { PromptBulkSitemapInventoryLink } from "@/lib/bulk/prompt-bulk-site
 import type { OptimizationFileManager } from "@/lib/optimization-file-manager";
 import { BulkSitemapInventoryRunDetail } from "@/components/keyword-research/bulk/BulkSitemapInventoryRunDetail";
 import { WordBlacklistRunDetail } from "@/components/keyword-research/bulk/WordBlacklistRunDetail";
+import { HumanizerRunDetail } from "@/components/keyword-research/bulk/HumanizerRunDetail";
 import {
   buildMultiSiteBulkGeneratorDetailsProps,
   buildOverviewWarmInventoryDetailsProps,
@@ -85,6 +86,7 @@ export function MultiSiteContentDetailsPanel({
       {batchSite && !drawerProps ? (
         <>
           <WordBlacklistRunDetail />
+          <HumanizerRunDetail />
           <BulkSitemapInventoryRunDetail
             links={sitemapInventoryLinks}
             gscHostedLink={gscHostedLink}

@@ -9,7 +9,6 @@ import { getAgentRunOptimizationBridge } from "@/lib/agent-runs/agent-run-optimi
 import type { AgentRun, AgentRunResult } from "@/lib/agent-runs-types";
 import type { TaskExecutionClientRunContract, TaskExecutionPayload } from "@/lib/tasks-types";
 import { resolveDfsArticleAuditBlockForUrl } from "@/lib/dfs-article-audit/resolve-dfs-article-audit-block";
-import { fetchWorkflowStepOutputs } from "@/lib/workflow/workflow-api";
 import { mergeRunContractOptimizationOptions } from "@/lib/agent-runs/merge-run-contract-optimization-options";
 import {
   fetchTaskExecution,
@@ -25,7 +24,7 @@ import {
   completeAgentRunExecution,
   completeExecutionArchiveOnly,
   shouldSkipInlineDeliveries,
-} from "@/lib/workflow/workflow-deliveries-skip";
+} from "@/lib/agent-runs/complete-agent-run-execution";
 import type { OptimizationProgressState } from "@/hooks/content-optimization/use-optimization-state";
 
 export function noopSetState<T>(_value: SetStateAction<T>): void {
@@ -38,19 +37,12 @@ export async function optimizationOptionsWithDfsArticleAudit(
   url: string,
 ): Promise<NonNullable<TaskExecutionClientRunContract["optimizationOptions"]>> {
   const base = { ...(contract.optimizationOptions ?? {}) };
-  const workflowId = Number(run.context?.workflowId ?? run.plan?.workflowId ?? 0);
-  const workflowRunId = Number(run.context?.workflowRunId ?? run.plan?.workflowRunId ?? 0);
-  let workflowOutputs: Awaited<ReturnType<typeof fetchWorkflowStepOutputs>> | undefined;
-  if (workflowId > 0 && workflowRunId > 0) {
-    workflowOutputs = await fetchWorkflowStepOutputs(run.teamId, workflowId, workflowRunId);
-  }
 
   const workflowContextBlock = String(contract.workflowContextBlock ?? base.workflowContextBlock ?? "");
   const block = base.dfsArticleAuditBlock?.trim()
     ? base.dfsArticleAuditBlock
     : await resolveDfsArticleAuditBlockForUrl({
         articleUrl: url,
-        workflowOutputs,
         workflowContextBlock,
       });
 
@@ -58,7 +50,6 @@ export async function optimizationOptionsWithDfsArticleAudit(
   return {
     ...base,
     ...(workflowContextBlock ? { workflowContextBlock } : {}),
-    ...(workflowOutputs?.length ? { workflowAuditOutputs: workflowOutputs } : {}),
     ...(block.trim() ? { dfsArticleAuditBlock: block } : {}),
     ...(optionalPrompt ? { optionalPrompt } : {}),
   };

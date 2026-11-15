@@ -63,7 +63,7 @@ export function TaskProjectNavRow({
           <AlertDialogHeader>
             <AlertDialogTitle className="text-base">{deleteLabel}</AlertDialogTitle>
             <AlertDialogDescription className="text-base text-muted-foreground">
-              Delete &quot;{project.title}&quot;? It will be removed from Pulse Forge and My Tasks.
+              Delete &quot;{project.title}&quot;? It will be removed from My Tasks.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

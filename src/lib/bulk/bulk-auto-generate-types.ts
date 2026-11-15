@@ -4,7 +4,7 @@ import type { RunHistoryEntry } from '@/hooks/content-optimization/use-optimizat
 import type { SapMapsMediaBank } from '@/lib/bulk/sap-maps-media-bank';
 import type { PeerFeaturedImageReportCollector } from '@/lib/bulk/peer-featured-image-report';
 import type { PeerFeaturedLibraryCsvFile } from '@/lib/overview/sap-peer-featured-image-search';
-import type { WorkflowStepOutput } from '@/lib/workflow/workflow-types';
+import type { AgentRunStepOutputSnapshot } from '@/lib/agent-runs/step-output-types';
 import type { SeoContentBriefV1 } from '@/lib/overview-seo-content-brief';
 import type { HarnessSectionTokenUsage } from '@/lib/bulk/harness-section-max-tokens';
 import type { SemrushBulkEnrichmentResult } from '@/lib/wordpress-api/semrush';
@@ -129,8 +129,8 @@ export interface BulkProcessingOptions {
   wordPressPagesForOfferTable?: ExtraTextInventoryLinkRow[];
   reservedUploadSlugsBySite?: Map<string, Set<string>>;
   workflowSerpResearch?: {
-    outputs?: WorkflowStepOutput[];
-    getOutputs?: () => WorkflowStepOutput[] | undefined;
+    outputs?: AgentRunStepOutputSnapshot[];
+    getOutputs?: () => AgentRunStepOutputSnapshot[] | undefined;
     commitBrief?: (
       keyword: string,
       brief: SeoContentBriefV1,
@@ -138,8 +138,8 @@ export interface BulkProcessingOptions {
     ) => Promise<void>;
   };
   workflowDfsArticleAudit?: {
-    outputs?: WorkflowStepOutput[];
-    getOutputs?: () => WorkflowStepOutput[] | undefined;
+    outputs?: AgentRunStepOutputSnapshot[];
+    getOutputs?: () => AgentRunStepOutputSnapshot[] | undefined;
   };
   skipWikipediaLookup?: boolean;
   updateTargetPostId?: number;

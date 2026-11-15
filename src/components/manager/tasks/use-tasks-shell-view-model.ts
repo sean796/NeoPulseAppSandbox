@@ -22,7 +22,7 @@ import type {
 } from "@/lib/tasks-types";
 import type { TasksShellProps } from "@/components/manager/tasks/tasks-shell-types";
 
-export function useTasksShellViewModel({ onOpenPulseForge }: TasksShellProps = {}) {
+export function useTasksShellViewModel(_props: TasksShellProps = {}) {
   const { user } = useAuth();
   const {
     activeTeam,
@@ -205,7 +205,6 @@ export function useTasksShellViewModel({ onOpenPulseForge }: TasksShellProps = {
   }, [tasks, filterMode, searchQuery, sortMode]);
 
   return {
-    onOpenPulseForge,
     activeTeam,
     members,
     taskProjects,

@@ -7,8 +7,8 @@ import {
   TaskFormPanel,
   TaskFormPlaceholderCell,
 } from "@/components/manager/tasks/TaskFormLayout";
-import { ForgeWhatPublishScheduleFields } from "@/components/manager/tasks/ForgeWhatPublishScheduleFields";
-import { PulseForgePostSchedulePanel } from "@/components/manager/tasks/planner/PulseForgePostSchedulePanel";
+import { WhatPublishScheduleFields } from "@/components/manager/tasks/WhatPublishScheduleFields";
+import { TaskPostSchedulePanel } from "@/components/manager/tasks/planner/TaskPostSchedulePanel";
 import { ensurePostCreatorPayload } from "@/lib/post-creator/post-creator-defaults";
 import type { TaskExecutionPayload } from "@/lib/tasks-types";
 
@@ -114,7 +114,7 @@ export function PostCreatorExecutionFields({
           {useUpstream}
         </TaskFormPanel>
         <TaskFormPanel title="Featured image">{aiFeaturedImage}</TaskFormPanel>
-        <ForgeWhatPublishScheduleFields
+        <WhatPublishScheduleFields
           payload={payload}
           disabled={disabled}
           onChange={(next) => onChange(ensurePostCreatorPayload(next))}
@@ -161,7 +161,7 @@ export function PostCreatorExecutionFields({
   return (
     <div className="flex flex-col gap-3">
       <TaskFormFieldGrid>{postsPerRun}</TaskFormFieldGrid>
-      <PulseForgePostSchedulePanel
+      <TaskPostSchedulePanel
         executionKind="post_creator"
         executionPayload={payload}
         disabled={disabled}

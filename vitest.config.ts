@@ -21,6 +21,7 @@ export default defineConfig({
             'scripts/edmonton-internal-links/__tests__/**/*.test.ts',
             'scripts/firstrank-teardown/__tests__/**/*.test.ts',
             'hosting/**/*.test.ts',
+            'skills/**/__tests__/**/*.test.ts',
           ],
         },
       },

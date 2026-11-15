@@ -12,11 +12,9 @@ import { fetchDfsArticleAudit } from "@/lib/dfs-article-audit/fetch-dfs-article-
 import {
   dfsArticleAuditArtifactName,
   dfsArticleAuditUrlSlug,
-  serializeWorkflowDfsArticleAudit,
-} from "@/lib/workflow/workflow-dfs-article-audit-cache";
-import { resolveDfsArticleAuditWorkflowPayload } from "@/lib/workflow/resolve-dfs-article-audit-workflow-payload";
-import { completeAgentRunExecution } from "@/lib/workflow/workflow-deliveries-skip";
-import { fetchWorkflowStepOutputs } from "@/lib/workflow/workflow-api";
+} from "@/lib/dfs-article-audit/dfs-article-audit-types";
+import { resolveDfsArticleAuditWorkflowPayload } from "@/lib/dfs-article-audit/resolve-dfs-article-audit-payload";
+import { completeAgentRunExecution } from "@/lib/agent-runs/complete-agent-run-execution";
 import { patchTaskExecutionProgress } from "@/lib/tasks-api";
 import { AGENT_RUN_STEP_KEYS } from "@/lib/agent-runs/agent-run-step-keys";
 import { effectiveSaveLocalArchive } from "@/lib/schedule-output-destination";
@@ -72,14 +70,6 @@ export async function runDfsArticleAuditClientHarness(
   }
 
   const saveLocalArchive = effectiveSaveLocalArchive("dfs_llm_article_audit", contract);
-  let workflowOutputs: Awaited<ReturnType<typeof fetchWorkflowStepOutputs>> | undefined;
-
-  const bindingWorkflowId = Number(run.context?.workflowId ?? run.plan?.workflowId ?? 0);
-  const bindingWorkflowRunId = Number(run.context?.workflowRunId ?? run.plan?.workflowRunId ?? 0);
-  if (bindingWorkflowId > 0 && bindingWorkflowRunId > 0) {
-    workflowOutputs = await fetchWorkflowStepOutputs(run.teamId, bindingWorkflowId, bindingWorkflowRunId);
-  }
-
   await ctx.onStep?.(
     `Auditing ${articleUrl}…`,
     "running",
@@ -120,7 +110,7 @@ export async function runDfsArticleAuditClientHarness(
   });
 
   const artifactName = dfsArticleAuditArtifactName(articleUrl);
-  const serialized = serializeWorkflowDfsArticleAudit(audit);
+  const serialized = JSON.stringify(audit, null, 2);
   const archiveFile: TaskArchiveFileInput = {
     fileName: artifactName,
     mime: "application/json",
@@ -135,7 +125,6 @@ export async function runDfsArticleAuditClientHarness(
     files: [archiveFile],
     textPreview: dfsArticleAuditTextPreview(audit),
     saveLocalArchive,
-    workflowOutputs,
   });
 
   const completionSummary = dfsArticleAuditCompletionSummary(audit);

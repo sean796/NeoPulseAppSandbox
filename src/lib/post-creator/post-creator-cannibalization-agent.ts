@@ -1,6 +1,7 @@
 import { callOpenRouterChatCompletion } from "@/lib/competitor-research/competitor-report-openrouter";
 import { getResearchModel } from "@/lib/optimization-settings-storage";
 import { openRouterWebAppHeaders } from "@/lib/openrouter-attribution";
+import { openRouterMaxOutputTokens } from "@/lib/openrouter-stream-token-limits";
 import type { CSVRow } from "@/lib/bulk/bulk-csv-parser";
 import { parsePostCreatorCannibalizationJson } from "@/lib/post-creator/post-creator-cannibalization-parse";
 import {
@@ -56,7 +57,7 @@ async function callWithTools(args: {
       messages: args.messages,
       tools: POST_CREATOR_CANNIBAL_TOOLS,
       temperature: 0.1,
-      max_tokens: 4000,
+      max_tokens: openRouterMaxOutputTokens(),
     }),
   });
 
@@ -173,7 +174,7 @@ export async function runPostCreatorCannibalizationAgent(args: {
       proposedRows: buildProposedCatalog(args.rows),
       note: "Return JSON only: { decisions: [{ rowIndex, allow, reason, conflictingUrl? }] }",
     }),
-    maxTokens: 3000,
+    maxTokens: openRouterMaxOutputTokens(),
     temperature: 0.1,
     responseFormat: { type: "json_object" },
     signal: args.signal,

@@ -28,6 +28,7 @@ import type { OptimizationFileManager } from "@/lib/optimization-file-manager";
 import { hasActiveBulkActionProgress } from "@/lib/overview/overview-bulk-inline-status";
 import { BulkSitemapInventoryRunDetail } from "@/components/keyword-research/bulk/BulkSitemapInventoryRunDetail";
 import { WordBlacklistRunDetail } from "@/components/keyword-research/bulk/WordBlacklistRunDetail";
+import { HumanizerRunDetail } from "@/components/keyword-research/bulk/HumanizerRunDetail";
 import { contentOptimizerRowStripeClass } from "@/components/overview/overview-tab/overview-tab-content-constants";
 
 type Opt = ReturnType<typeof useWordPressOptimization>;
@@ -191,6 +192,9 @@ export function OverviewContentDetailsPanel({
             <WordBlacklistRunDetail />
           </div>
           <div className={contentOptimizerRowStripeClass(1)}>
+            <HumanizerRunDetail />
+          </div>
+          <div className={contentOptimizerRowStripeClass(2)}>
             <BulkSitemapInventoryRunDetail
               links={sitemapInventoryLinks}
               gscHostedLink={gscHostedLink}

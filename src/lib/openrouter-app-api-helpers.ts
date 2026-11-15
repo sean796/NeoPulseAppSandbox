@@ -1,4 +1,5 @@
 import { getSessionToken } from "@/lib/auth-device";
+import { openRouterMaxOutputTokens } from "@/lib/openrouter-stream-token-limits";
 import { backendApiUrl } from "@/lib/wordpress-api/connection";
 import type {
   OpenRouterAppImageConfig,
@@ -134,7 +135,10 @@ export function buildOpenRouterAppChatRequestBody(args: {
   const base: Record<string, unknown> = {
     model: effectiveModel,
     temperature: args.temperature,
-    maxTokens: args.maxTokens,
+    maxTokens:
+      typeof args.maxTokens === "number" && Number.isFinite(args.maxTokens) && args.maxTokens > 0
+        ? args.maxTokens
+        : openRouterMaxOutputTokens(),
     topP: args.topP,
     stream: false,
     responseFormat: args.responseFormat,

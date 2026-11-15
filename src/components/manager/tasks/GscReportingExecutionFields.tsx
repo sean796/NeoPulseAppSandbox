@@ -11,7 +11,7 @@ import type { TaskExecutionPayload } from "@/lib/tasks-types";
 export type GscReportingExecutionFieldsProps = {
   executionPayload?: TaskExecutionPayload | null;
   disabled?: boolean;
-  layout?: "stack" | "inline" | "workflow";
+  layout?: "stack" | "inline";
   onChange: (payload: TaskExecutionPayload) => void;
 };
 
@@ -24,24 +24,10 @@ export function GscReportingExecutionFields({
   const payload = executionPayload ?? {};
   const saveToDisk = payload.saveToDisk !== false;
   const inline = layout === "inline";
-  const workflow = layout === "workflow";
 
   const patch = (partial: Partial<TaskExecutionPayload>) => {
     onChange({ ...payload, ...partial });
   };
-
-  if (workflow) {
-    return (
-      <>
-        <GscReportingPeriodFields
-          executionPayload={payload}
-          disabled={disabled}
-          layout="workflow"
-          onChange={onChange}
-        />
-      </>
-    );
-  }
 
   if (inline) {
     return (
@@ -49,7 +35,6 @@ export function GscReportingExecutionFields({
         <GscReportingPeriodFields
           executionPayload={payload}
           disabled={disabled}
-          layout="task"
           onChange={onChange}
         />
         <TaskFormPlaceholderCell className="flex min-w-0 items-center gap-2">
@@ -72,7 +57,6 @@ export function GscReportingExecutionFields({
       <GscReportingPeriodFields
         executionPayload={payload}
         disabled={disabled}
-        layout="task"
         onChange={onChange}
       />
       <div className="flex items-center gap-2">

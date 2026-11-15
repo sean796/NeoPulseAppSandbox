@@ -230,6 +230,8 @@
 .agent-runs-body {
   flex: 1;
   min-height: 0;
+  min-width: 0;
+  overflow-x: hidden;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -250,6 +252,7 @@
   display: flex;
   flex-direction: column;
   gap: 0;
+  min-width: 0;
 }
 
 .agent-runs-client-group {
@@ -294,6 +297,7 @@
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  min-width: 0;
   background: hsl(240 4% 16% / 0.5);
 }
 
@@ -324,12 +328,14 @@
 .agent-runs-site-picker-row {
   display: flex;
   width: 100%;
-  min-height: 2.75rem;
-  height: 2.75rem;
-  max-height: 2.75rem;
+  min-width: 0;
+  min-height: 2rem;
+  height: 2rem;
+  max-height: 2rem;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0 1rem;
+  gap: 0.25rem;
+  padding: 0 0.25rem;
+  overflow: hidden;
   background: hsl(240 4% 16% / 0.5);
 }
 
@@ -342,22 +348,21 @@
 
 .agent-runs-site-picker-row__tabs,
 .agent-runs-site-picker-row .agent-runs-client-header__tabs {
-  flex: 0 0 auto;
-  flex-shrink: 0;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .agent-runs-site-picker-row .agent-runs-bucket-select-slot {
   display: block;
-  flex: 0 0 var(--agent-runs-picker-control-width, 17.25rem) !important;
+  flex: 1 1 0 !important;
   align-self: center;
-  width: var(--agent-runs-picker-control-width, 17.25rem) !important;
-  min-width: var(--agent-runs-picker-control-width, 17.25rem) !important;
-  max-width: var(--agent-runs-picker-control-width, 17.25rem) !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
   height: 2rem;
   min-height: 2rem;
   max-height: 2rem;
   overflow: hidden;
-  /* Width: same CSS var as client filter (Tasks + Agents). */
   box-sizing: border-box;
 }
 
@@ -407,11 +412,10 @@
 }
 
 .agent-runs-site-picker-row__logs {
-  margin-left: auto;
   display: inline-flex;
   height: 2rem;
-  min-width: 7.5rem;
-  flex-shrink: 0;
+  min-width: 0;
+  flex: 0 1 auto;
   align-items: center;
   justify-content: flex-end;
 }
@@ -435,14 +439,14 @@
   flex-shrink: 0;
 }
 
-/* Fixed site slot: same width as kind/bucket (Tasks + Agents, zero CLS). */
+/* Client filter and kind/bucket share the row. They shrink to the panel so the sidebar never grows a horizontal scrollbar. */
 .agent-runs-header-site-filter,
 .agent-runs-site-picker-row .agent-runs-header-site-filter,
 .agent-runs-site-picker-row .agent-runs-client-header__site-filter {
-  width: var(--agent-runs-picker-control-width, 17.25rem) !important;
-  min-width: var(--agent-runs-picker-control-width, 17.25rem) !important;
-  max-width: var(--agent-runs-picker-control-width, 17.25rem) !important;
-  flex: 0 0 var(--agent-runs-picker-control-width, 17.25rem) !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  flex: 1 1 0 !important;
   min-height: 2rem;
   height: 2rem;
   padding: 0 0.625rem;

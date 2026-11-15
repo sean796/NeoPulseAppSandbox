@@ -20,6 +20,7 @@ function dockValue(overrides: Partial<DetailsDockValue> = {}): DetailsDockValue 
     count: 0,
     register: () => () => {},
     open: true,
+    setStudioOpen: () => {},
     ...overrides,
   };
 }

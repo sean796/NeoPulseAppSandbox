@@ -11,7 +11,7 @@ import { entitySapTotalFromParts } from "@/lib/local-analysis/entity-ad-group-bu
 import { resolveUpstreamGridCsvUrlFromOutputs } from "@/lib/entity-page-creator/resolve-upstream-grid-csv";
 import { resolveUpstreamEntityCsvUrlFromOutputs } from "@/lib/entity-page-creator/resolve-upstream-entity-csv";
 import { parseCsvStaticText } from "@/lib/bulk/bulk-csv-parser";
-import type { WorkflowStepOutput } from "@/lib/workflow/workflow-types";
+import type { AgentRunStepOutputSnapshot } from "@/lib/agent-runs/step-output-types";
 
 describe("ensureEntityPageCreatorPayload", () => {
   it("derives entityPageCount from ad group layout", () => {
@@ -72,17 +72,11 @@ describe("resolveEntityPageCreatorClusterContext", () => {
 
 describe("resolveUpstreamGridCsvUrlFromOutputs", () => {
   it("picks csv file ref from upstream output", () => {
-    const outputs: WorkflowStepOutput[] = [
+    const outputs: AgentRunStepOutputSnapshot[] = [
       {
-        id: 1,
-        runId: 1,
-        nodeId: "a",
         variableKey: "local_dominator_export_1",
         scope: "run",
-        label: "Grid export",
-        textPreview: "done",
         fileRefs: [{ name: "grid.csv", url: "https://example.com/grid.csv", mime: "text/csv" }],
-        createdAt: "",
       },
     ];
     expect(
@@ -91,17 +85,11 @@ describe("resolveUpstreamGridCsvUrlFromOutputs", () => {
   });
 
   it("throws when no csv file ref exists", () => {
-    const outputs: WorkflowStepOutput[] = [
+    const outputs: AgentRunStepOutputSnapshot[] = [
       {
-        id: 1,
-        runId: 1,
-        nodeId: "a",
         variableKey: "local_dominator_export_1",
         scope: "run",
-        label: "Grid export",
-        textPreview: "done",
         fileRefs: [],
-        createdAt: "",
       },
     ];
     expect(() => resolveUpstreamGridCsvUrlFromOutputs(outputs)).toThrow(
@@ -112,17 +100,11 @@ describe("resolveUpstreamGridCsvUrlFromOutputs", () => {
 
 describe("resolveUpstreamEntityCsvUrlFromOutputs", () => {
   it("picks entity-bulk.csv from upstream entity generator output", () => {
-    const outputs: WorkflowStepOutput[] = [
+    const outputs: AgentRunStepOutputSnapshot[] = [
       {
-        id: 1,
-        runId: 1,
-        nodeId: "a",
         variableKey: "entity_generator_1",
         scope: "run",
-        label: "Entity bulk CSV",
-        textPreview: "done",
         fileRefs: [{ name: "entity-bulk.csv", url: "https://example.com/entity-bulk.csv", mime: "text/csv" }],
-        createdAt: "",
       },
     ];
     expect(
@@ -131,17 +113,11 @@ describe("resolveUpstreamEntityCsvUrlFromOutputs", () => {
   });
 
   it("throws when no entity csv file ref exists", () => {
-    const outputs: WorkflowStepOutput[] = [
+    const outputs: AgentRunStepOutputSnapshot[] = [
       {
-        id: 1,
-        runId: 1,
-        nodeId: "a",
         variableKey: "entity_generator_1",
         scope: "run",
-        label: "Entity generator",
-        textPreview: "done",
         fileRefs: [],
-        createdAt: "",
       },
     ];
     expect(() => resolveUpstreamEntityCsvUrlFromOutputs(outputs)).toThrow(

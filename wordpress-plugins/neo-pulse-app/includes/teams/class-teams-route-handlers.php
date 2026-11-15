@@ -319,12 +319,6 @@ class Neo_Pulse_App_Teams_Route_Handlers {
 			return;
 		}
 
-		if ( $sub === 'workflows' || str_starts_with( $sub, 'workflows/' ) ) {
-			$workflows_sub = $sub === 'workflows' ? '' : substr( $sub, 10 );
-			Neo_Pulse_App_Workflows_Route_Handlers::dispatch( $team, $member, $workflows_sub, $method, $body, $user_id );
-			return;
-		}
-
 		if ( $sub === 'support' || str_starts_with( $sub, 'support/' ) ) {
 			$support_sub = $sub === 'support' ? '' : substr( $sub, 8 );
 			Neo_Pulse_App_Support_Route_Handlers::dispatch( $team, $member, $support_sub, $method, $body, $user_id );

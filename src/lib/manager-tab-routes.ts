@@ -25,7 +25,6 @@ const TAB_IDS = [
   "ppc-google",
   "ppc-meta",
   "api",
-  "pulse-forge",
   "organic-reporting",
   "local-dominator",
   "pulse-host",
@@ -82,7 +81,7 @@ export function legacyHashToPath(rawHash: string): string | null {
   if (body === "api" || body === "api-docs") return "/api";
   if (body.startsWith("api/")) return `/${body}`;
   if (body.startsWith("api-docs/")) return `/api/${body.slice("api-docs/".length)}`;
-  if (body === "pulse-forge" || body.startsWith("pulse-forge/")) return `/${body}`;
+  if (body === "pulse-forge" || body.startsWith("pulse-forge/")) return "/dashboard";
   if (body === "pulse-host" || body.startsWith("pulse-host/")) return `/${body}`;
   if (TAB_ID_SET.has(body)) return `/${body}`;
   return null;

@@ -21,7 +21,7 @@ import {
   automationTitleFromRun,
   executionKindFromRun,
 } from "@/lib/automation-email-delivery";
-import { completeAgentRunExecution } from "@/lib/workflow/workflow-deliveries-skip";
+import { completeAgentRunExecution } from "@/lib/agent-runs/complete-agent-run-execution";
 
 function resolveSite(siteId: string, sites: WordPressSite[]): WordPressSite {
   const fromList = sites.find((s) => s.id === siteId);
@@ -231,7 +231,15 @@ export async function runPostCreatorDirectHarness(
 
   const site = resolveSite(siteId, getStoredSites());
   const plan = (run.plan ?? {}) as Record<string, unknown>;
-  const payload = postCreatorPayloadFromContract(plan);
+  const fromPayload =
+    plan.executionPayload && typeof plan.executionPayload === "object"
+      ? (plan.executionPayload as Record<string, unknown>)
+      : null;
+  const fromContract =
+    plan.clientRunContract && typeof plan.clientRunContract === "object"
+      ? (plan.clientRunContract as Record<string, unknown>)
+      : null;
+  const payload = postCreatorPayloadFromContract(fromPayload ?? fromContract ?? plan);
   const postCount = payload.postCount ?? 1;
 
   initPostCreatorProof(run.id, postCount, payload.featuredImage !== false);

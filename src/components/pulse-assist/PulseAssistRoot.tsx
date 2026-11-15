@@ -1,14 +1,10 @@
 import { useEffect } from "react";
 import { useAgentRunsContext } from "@/contexts/use-agent-runs-context";
-import { usePulseAssistContext } from "@/contexts/pulse-assist-context";
-import { AgentRunsPanel } from "@/components/agent-runs/AgentRunsPanel";
 import { TaskManagerPanel } from "@/components/task-manager/TaskManagerPanel";
+import { cn } from "@/lib/utils";
 import { PulseAssistChatPanel } from "./PulseAssistChatPanel";
-import { PulseEngineInspectorPanel } from "./PulseEngineInspectorPanel";
 import { PulseAssistSidebarShell } from "./PulseAssistSidebarShell";
-import { useDetailsDock } from "./details-dock-context";
 import { writeSidebarOpen, writeSidebarPanel } from "@/lib/pulse-assist/storage";
-import "@/components/agent-runs/agent-runs-theme.css";
 
 export type PulseAssistLayout = "overlay" | "docked";
 
@@ -18,10 +14,6 @@ export type PulseAssistRootProps = {
 
 export function PulseAssistRoot({ layout = "overlay" }: PulseAssistRootProps) {
   const { sidebarOpen, setSidebarOpen, sidebarPanel, setSidebarPanel } = useAgentRunsContext();
-  const { managerTab } = usePulseAssistContext();
-  const showSeo = managerTab !== "local-dominator";
-  const detailsDock = useDetailsDock();
-  const showDetails = (detailsDock?.count ?? 0) > 0;
 
   const setOpen = (next: boolean) => {
     setSidebarOpen(next);
@@ -34,15 +26,11 @@ export function PulseAssistRoot({ layout = "overlay" }: PulseAssistRootProps) {
   };
 
   useEffect(() => {
-    if (!showSeo && sidebarPanel === "seo") {
+    if (sidebarPanel === "seo" || sidebarPanel === "details") {
       setSidebarPanel("assist");
       writeSidebarPanel("assist");
     }
-  }, [showSeo, sidebarPanel, setSidebarPanel]);
-
-  useEffect(() => {
-    if (!showDetails && sidebarPanel === "details") setSidebarPanel("assist");
-  }, [showDetails, sidebarPanel, setSidebarPanel]);
+  }, [sidebarPanel, setSidebarPanel]);
 
   return (
     <PulseAssistSidebarShell
@@ -51,20 +39,13 @@ export function PulseAssistRoot({ layout = "overlay" }: PulseAssistRootProps) {
       onOpenChange={setOpen}
       panel={sidebarPanel}
       onPanelChange={setPanel}
-      showSeo={showSeo}
-      showDetails={showDetails}
     >
-      {sidebarPanel === "details" && showDetails ? (
-        <div ref={detailsDock?.setTarget} className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-black" />
-      ) : sidebarPanel === "tasks" ? (
+      <div className={cn("min-h-0 flex-1 overflow-hidden", sidebarPanel === "tasks" ? "flex flex-col" : "hidden")}>
         <TaskManagerPanel />
-      ) : sidebarPanel === "agents" ? (
-        <AgentRunsPanel />
-      ) : sidebarPanel === "seo" && showSeo ? (
-        <PulseEngineInspectorPanel />
-      ) : (
+      </div>
+      <div className={cn("min-h-0 flex-1 overflow-hidden", sidebarPanel === "tasks" ? "hidden" : "flex flex-col")}>
         <PulseAssistChatPanel sidebarOpen={sidebarOpen} />
-      )}
+      </div>
     </PulseAssistSidebarShell>
   );
 }

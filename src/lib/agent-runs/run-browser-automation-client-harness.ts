@@ -17,9 +17,7 @@ import {
 import type { TaskExecutionClientRunContract, TaskExecutionPayload } from "@/lib/tasks-types";
 import { effectiveSaveLocalArchive } from "@/lib/schedule-output-destination";
 import { automationTitleFromRun } from "@/lib/automation-email-delivery";
-import { completeAgentRunExecution } from "@/lib/workflow/workflow-deliveries-skip";
-import { fetchWorkflowStepOutputs } from "@/lib/workflow/workflow-api";
-import { effectiveClientSiteIds } from "@/lib/workflow/workflow-rag-client";
+import { completeAgentRunExecution } from "@/lib/agent-runs/complete-agent-run-execution";
 import {
   captureDeliverablesFromSummary,
   persistBrowserDeliverables,
@@ -47,20 +45,7 @@ async function resolveBrowserRunInputs(
     throw new Error("Set browser instructions before running.");
   }
 
-  const workflowId = Number(run.context?.workflowId ?? run.plan?.workflowId ?? 0);
-  const workflowRunId = Number(run.context?.workflowRunId ?? run.plan?.workflowRunId ?? 0);
-  const outputs =
-    workflowId > 0 && workflowRunId > 0
-      ? await fetchWorkflowStepOutputs(run.teamId, workflowId, workflowRunId)
-      : undefined;
-  const siteId = String(site?.id ?? contract.siteId ?? run.context?.siteId ?? "").trim() || undefined;
-  const clientSiteIds = outputs ? effectiveClientSiteIds(outputs, siteId ? [siteId] : []) : [];
-
-  const targetUrl = resolveBrowserTargetUrl(contract as TaskExecutionPayload, site, {
-    outputs,
-    siteId,
-    clientSiteIds,
-  });
+  const targetUrl = resolveBrowserTargetUrl(contract as TaskExecutionPayload, site);
   const browserInstructionsHtml = browserInstructionsForJob(
     instructionsHtml,
     String(contract.workflowContextBlock ?? ""),

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { stitchHarnessSections } from '@/lib/bulk/bulk-harness-outline';
+import { buildBulkHarnessOutlineFromAgents, stitchHarnessSections } from '@/lib/bulk/bulk-harness-outline';
 import { stripFooterElementsFromHarnessSectionHtml } from '@/lib/bulk/harness-html-strip-footer';
 import { generateSingleSectionPrompt, generateSectionsPrompt, SYSTEM_PROMPT_CORE, sectionAllowsThreeParagraphs } from '@/lib/prompt-builders';
 import { buildSystemPrompt, buildBulkHarnessSectionUserPrompt } from '@/lib/prompt-builders/system-user';
@@ -72,6 +72,22 @@ describe('generateSingleSectionPrompt', () => {
     );
   });
 
+  it('does not suppress a body section that only mentions FAQs', () => {
+    const agent: AgentConfig = {
+      id: 'tax-faq-mention',
+      step: 2,
+      title: 'Corporate Tax Planning Checklist',
+      description: 'Checklist for Alberta corporate tax planning',
+      features: ['[LIST]: common tax FAQs homeowners ask before filing'],
+    };
+    const prompt = generateSingleSectionPrompt(agent, 'html');
+    expect(prompt).toContain('Corporate Tax Planning Checklist');
+    expect(prompt).not.toMatch(/Output nothing for this section/i);
+    const outline = buildBulkHarnessOutlineFromAgents([agent]);
+    expect(outline[0]?.displayTitle).toBe('Corporate Tax Planning Checklist');
+    expect(outline[0]?.isFaq).toBe(false);
+  });
+
   it('excludes [FORBIDDEN_WORDS] metadata from section prompt text', () => {
     const agent: AgentConfig = {
       id: 'c',
@@ -88,10 +104,15 @@ describe('generateSingleSectionPrompt', () => {
 });
 
 describe('buildSystemPrompt', () => {
-  it('prepends WORD BLACKLIST once in system prompt', async () => {
+  it('prepends WORD BLACKLIST and HUMANIZER once in system prompt', async () => {
     const prompt = await buildSystemPrompt('', 'test-key');
     expect(prompt).toMatch(/WORD BLACKLIST \(mandatory/i);
     expect(prompt.match(/WORD BLACKLIST \(mandatory/g)?.length).toBe(1);
+    expect(prompt).toMatch(/HUMANIZER \(mandatory/i);
+    expect(prompt.match(/HUMANIZER \(mandatory/g)?.length).toBe(1);
+    expect(prompt.indexOf('WORD BLACKLIST (mandatory')).toBeLessThan(
+      prompt.indexOf('HUMANIZER (mandatory'),
+    );
   });
 
   it('harness_section mode uses single-section contract not full-article first paragraph rule', async () => {
@@ -136,7 +157,7 @@ describe('buildSystemPrompt', () => {
 });
 
 describe('buildBulkHarnessSectionUserPrompt', () => {
-  it('starts with read-only WORD BLACKLIST RAG block', () => {
+  it('starts with read-only WORD BLACKLIST RAG block and includes HUMANIZER', () => {
     const prompt = buildBulkHarnessSectionUserPrompt(
       'Article Title',
       'Focused guide (max 3200 words) about topic',
@@ -153,6 +174,9 @@ describe('buildBulkHarnessSectionUserPrompt', () => {
     );
     expect(prompt.startsWith('=== WORD BLACKLIST (READ ONLY')).toBe(true);
     expect(prompt).toMatch(/WORD BLACKLIST \(mandatory/i);
+    expect(prompt).toMatch(/HUMANIZER \(mandatory/i);
+    expect(prompt).toMatch(/\[HUMANIZER - NON-NEGOTIABLE\]/);
+    expect(prompt.match(/HUMANIZER \(mandatory/g)?.length).toBe(1);
     expect(prompt).toContain('start the line with > then a space then the sentence');
     expect(prompt).toContain('wrapping the quote with the word blockquote');
     expect(prompt).not.toContain('blockquotes (>)');

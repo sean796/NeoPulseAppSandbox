@@ -46,8 +46,9 @@ export function resolveGoogleAdsCustomerIdForReporting(site: WordPressSite): str
 export async function resolveGoogleAdsCustomerIdForReportingAsync(site: WordPressSite): Promise<string> {
   const sync = resolveGoogleAdsCustomerIdForReporting(site);
   if (sync.length === 10) return sync;
-  const serverSites = await fetchWordPressSitesMirror();
-  if (serverSites.length === 0) return sync;
+  const mirrorResult = await fetchWordPressSitesMirror();
+  if (!mirrorResult.ok || mirrorResult.sites.length === 0) return sync;
+  const serverSites = mirrorResult.sites;
   const row = mirrorRowForSite(site, serverSites);
   const fromMirror = pickGoogleAdsCustomerIdFromSite(row);
   if (fromMirror.length !== 10) return sync;
