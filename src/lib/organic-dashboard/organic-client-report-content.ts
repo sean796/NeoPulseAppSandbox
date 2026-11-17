@@ -405,9 +405,8 @@ export function buildOrganicClientReportContent(input: OrganicClientReportDeckIn
     showSeoLeadsSection: viewModel.hasNdusLeads && seoLeadsDeckRows.length > 0,
     seoLeadsLoadError: viewModel.ndusLeadsLoadError,
     gmbLeadsDeckRows,
-    showGmbLeadsSection:
-      (viewModel.hasGmbLeads && gmbLeadsDeckRows.length > 0) ||
-      Boolean(viewModel.gmbLeadsLoadError?.trim()),
+    // Temporarily off the client report template (keep fetch/view-model; do not render).
+    showGmbLeadsSection: false,
     gmbLeadsLoadError: viewModel.gmbLeadsLoadError,
     showSemrushSection,
     showKeywordSection: false,
