@@ -36,4 +36,9 @@ describe("OrganicClientReportCover client logo box", () => {
     expect(html).not.toContain('data-report-cover-logo="client"');
     expect(html).toContain(">In the Shade</text>");
   });
+
+  it("does not render the green cover swoop", () => {
+    const html = renderCover(base);
+    expect(html).not.toContain("M 425,182 C 475,242");
+  });
 });

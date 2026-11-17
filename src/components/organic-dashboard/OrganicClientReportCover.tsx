@@ -172,12 +172,6 @@ export function OrganicClientReportCover({
           {/* Top-Left Neo Brand Lime Green Triangle - flush with top edge */}
           <polygon points="0,0 260,0 0,220" fill="#84bd00" />
 
-          {/* Neo Brand Lime Green Curved Accent Wing below frame */}
-          <path
-            d="M 425,182 C 475,242 560,232 720,208 L 720,251 C 540,278 450,253 395,194 Z"
-            fill="#84bd00"
-          />
-
           {/* Client Logo Solid Box Base - square corners, perpendicular to sides (rx=0) */}
           <g
             role={onToggleTheme ? "button" : undefined}

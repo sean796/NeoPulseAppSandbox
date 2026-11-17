@@ -394,12 +394,8 @@ export function buildOrganicClientReportContent(input: OrganicClientReportDeckIn
     googleAdsAccountCard,
     googleAdsNarrative,
     showPerformanceSection: summaryRows.length > 0,
-    showGoogleAdsSection:
-      viewModel.hasGoogleAds &&
-      (googleAdsAccountCard != null ||
-        googleAdsDeckRows.length > 0 ||
-        googleAdsNarrative.length > 0 ||
-        googleAdsOpportunities.length > 0),
+    // Temporarily off the client report template (keep fetch/view-model; do not render).
+    showGoogleAdsSection: false,
     googleAdsLoadError: viewModel.googleAdsLoadError,
     seoLeadsDeckRows,
     showSeoLeadsSection: viewModel.hasNdusLeads && seoLeadsDeckRows.length > 0,
