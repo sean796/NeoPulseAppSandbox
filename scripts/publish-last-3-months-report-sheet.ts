@@ -96,24 +96,53 @@ async function publishOne(site: WordPressSite, token: string): Promise<string> {
   });
 
   const snapshot = buildOrganicReportingHighlightsSnapshot(viewModel, site.name, site.siteUrl, false, null);
-  const hlRes = await fetch(`${HUB}/api/organic-dashboard/reporting-highlights`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ siteId: site.id, snapshot: { ...snapshot, periods: undefined } }),
-  });
-  const hlData = (await hlRes.json().catch(() => ({}))) as {
-    success?: boolean;
-    error?: string;
-    highlights?: unknown;
-  };
-  if (!hlRes.ok || hlData.success === false) {
-    throw new Error(hlData.error ?? `Highlights HTTP ${hlRes.status}`);
+  let highlights = null as ReturnType<typeof normalizeOrganicReportingHighlights>;
+  try {
+    const hlRes = await fetch(`${HUB}/api/organic-dashboard/reporting-highlights`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ siteId: site.id, snapshot: { ...snapshot, periods: undefined } }),
+    });
+    const hlData = (await hlRes.json().catch(() => ({}))) as {
+      success?: boolean;
+      error?: string;
+      highlights?: unknown;
+    };
+    if (!hlRes.ok || hlData.success === false) {
+      throw new Error(hlData.error ?? `Highlights HTTP ${hlRes.status}`);
+    }
+    highlights = normalizeOrganicReportingHighlights(hlData.highlights);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.warn(`[WARN] ${site.name} highlights: ${msg} (using placeholder narratives)`);
   }
-  const highlights = normalizeOrganicReportingHighlights(hlData.highlights);
-  if (!highlights) throw new Error("Highlights model returned empty content.");
+  if (!highlights) {
+    const { buildPlaceholderOrganicReportingHighlights } = await import(
+      "../src/lib/organic-dashboard/organic-reporting-highlights-snapshot"
+    );
+    const placeholder = buildPlaceholderOrganicReportingHighlights(site.name, viewModel);
+    placeholder.performanceNarrative =
+      placeholder.keyTakeaways.length > 0
+        ? placeholder.keyTakeaways
+        : ["Performance metrics for the selected period are shown in the tables below."];
+    placeholder.keywordNarrative = [
+      "Search query performance for the selected period is shown in the keyword tables below.",
+    ];
+    if (placeholder.topOpportunities.length === 0) {
+      placeholder.topOpportunities = [
+        {
+          rank: 1,
+          label: "Review organic opportunities in the tables below",
+          why: "Detailed page and query metrics are included in this report.",
+          comparisonRows: [{ label: "Period", current: viewModel.periodLabels.primary, previous: "—" }],
+        },
+      ];
+    }
+    highlights = placeholder;
+  }
 
   let gridScans = await fetchAllLocalGridScansForSite(site.id).catch(() => []);
   const { shareUrl } = await publishOrganicClientReportDeckAndBuildShareUrl({
