@@ -83,6 +83,10 @@ class Neo_Pulse_App_Agent_Runs_Recipe_Registry {
 			'title'       => 'Editorial content audit',
 			'managerTabs' => array( 'dashboard' ),
 		),
+		'fact_checker'              => array(
+			'title'       => 'Fact Checker',
+			'managerTabs' => array( 'dashboard' ),
+		),
 	);
 
 	public static function is_valid( string $recipe_key ): bool {

@@ -176,6 +176,18 @@ class Neo_Pulse_App_Data_Paths {
 		return $dir . '/run-' . max( 0, $run_id ) . '.json';
 	}
 
+	public static function fact_checker_schedule_path(): string {
+		return self::root() . '/fact-checker.json';
+	}
+
+	public static function fact_checker_work_path( int $run_id ): string {
+		$dir = self::root() . '/fact-checker';
+		if ( ! is_dir( $dir ) ) {
+			wp_mkdir_p( $dir );
+		}
+		return $dir . '/run-' . max( 0, $run_id ) . '.json';
+	}
+
 	public static function careers_applications_path(): string {
 		return self::root() . '/careers-applications.json';
 	}

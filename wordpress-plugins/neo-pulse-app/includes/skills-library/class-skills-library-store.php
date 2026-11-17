@@ -14,6 +14,7 @@ class Neo_Pulse_App_Skills_Library_Store {
 	const SKILL_ENTITIES_GAP = 'content.entities.gap-check';
 	const SKILL_MONEY_LINKS = 'content.internal-links.money-pages';
 	const SKILL_EDITORIAL_AUDIT = 'content.editorial.audit';
+	const SKILL_FACT_CHECKER = 'content.product.fact-check';
 
 	/** URL path slug (no dots — WP rewrites truncate dotted segments). */
 	const SKILL_SAFE_FIX_SLUG  = 'semrush-safe-fix';
@@ -21,6 +22,7 @@ class Neo_Pulse_App_Skills_Library_Store {
 	const SKILL_ENTITIES_GAP_SLUG = 'content-entities-gap-check';
 	const SKILL_MONEY_LINKS_SLUG = 'content-internal-links-money-pages';
 	const SKILL_EDITORIAL_AUDIT_SLUG = 'editorial-content-audit';
+	const SKILL_FACT_CHECKER_SLUG = 'fact-checker';
 
 	const FILES = array( 'schema.json', 'prompts.json', 'evals.json' );
 
@@ -45,6 +47,9 @@ class Neo_Pulse_App_Skills_Library_Store {
 		}
 		if ( $token === self::SKILL_EDITORIAL_AUDIT || $token === self::SKILL_EDITORIAL_AUDIT_SLUG ) {
 			return self::SKILL_EDITORIAL_AUDIT;
+		}
+		if ( $token === self::SKILL_FACT_CHECKER || $token === self::SKILL_FACT_CHECKER_SLUG ) {
+			return self::SKILL_FACT_CHECKER;
 		}
 		return new WP_Error( 'neo-pulse_skills_unknown', 'Unknown skill id', array( 'status' => 404 ) );
 	}
@@ -277,6 +282,13 @@ class Neo_Pulse_App_Skills_Library_Store {
 				'schema.json'  => self::default_editorial_audit_schema(),
 				'prompts.json' => self::default_editorial_audit_prompts(),
 				'evals.json'   => self::default_editorial_audit_evals(),
+			);
+		}
+		if ( $skill_id === self::SKILL_FACT_CHECKER ) {
+			return array(
+				'schema.json'  => self::default_fact_checker_schema(),
+				'prompts.json' => self::default_fact_checker_prompts(),
+				'evals.json'   => self::default_fact_checker_evals(),
 			);
 		}
 		return array(
@@ -528,6 +540,71 @@ class Neo_Pulse_App_Skills_Library_Store {
 	}
 
 	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_fact_checker_schema(): array {
+		return array(
+			'id'          => self::SKILL_FACT_CHECKER,
+			'label'       => 'Fact Checker',
+			'category'    => 'research',
+			'domain'      => 'reporting',
+			'temperature' => 0.1,
+			'maxTokens'   => 8192,
+			'pageClaims'  => array(
+				'input'  => array(
+					'macroLocation' => 'city, state, country only',
+					'page'          => 'id, url, title, status, type, meta, text',
+				),
+				'output' => array(
+					'claims' => 'array of {quote, category, verdict, sourceTitle, sourceUrl, sourceType, qualification, suggestedWording}',
+				),
+			),
+			'skillPath'   => 'skills/fact-checker',
+		);
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_fact_checker_prompts(): array {
+		return array(
+			'pageClaims' => array(
+				'system'       => 'You are a product claim fact-checker for WordPress blog posts and service-area pages. Return JSON claims only. Product and service claims only. No geo or NAP. Prefer manufacturer docs for MACRO_LOCATION.country. Supported claims need http(s) sourceUrl that is not the client site.',
+				'userTemplate' => "Read skills/fact-checker/references/fact-check-rules.md.\n\nMACRO_LOCATION JSON:\n{macroLocationJson}\n\nPAGE JSON:\n{pageJson}\n\nPAGE TEXT:\n{pageText}\n\nExtract important product and service claims. Search for sources. Return JSON claims only.",
+			),
+		);
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_fact_checker_evals(): array {
+		return array(
+			'skill_name' => 'fact-checker',
+			'evals'      => array(
+				array(
+					'id'              => 1,
+					'prompt'          => 'A blog claims PowerView automation cuts heating bills by 30 percent with no source.',
+					'expected_output' => 'JSON claims with energy category, partially_supported or unsupported verdict, and qualification when partial.',
+					'assertions'      => array(
+						'Output is valid JSON with claims',
+						'Supported or partial claims include http(s) sourceUrl',
+					),
+				),
+				array(
+					'id'              => 2,
+					'prompt'          => 'A service-area page only names cities and phones with no product specs.',
+					'expected_output' => 'One claim with verdict no_product_claims.',
+					'assertions'      => array(
+						'Output is valid JSON with claims',
+						'Geo and NAP are not reported as product claims',
+					),
+				),
+			),
+		);
+	}
+
+	/**
 	 * @param mixed  $doc
 	 * @param string $skill_id
 	 * @return true|WP_Error
@@ -568,6 +645,18 @@ class Neo_Pulse_App_Skills_Library_Store {
 			foreach ( array( 'system', 'userTemplate' ) as $key ) {
 				if ( ! isset( $audit[ $key ] ) || ! is_string( $audit[ $key ] ) || trim( $audit[ $key ] ) === '' ) {
 					return new WP_Error( 'neo-pulse_skills_prompts', 'pageAudit.' . $key . ' must be a non-empty string', array( 'status' => 400 ) );
+				}
+			}
+			return true;
+		}
+		if ( $skill_id === self::SKILL_FACT_CHECKER ) {
+			$claims = $doc['pageClaims'] ?? null;
+			if ( ! is_array( $claims ) ) {
+				return new WP_Error( 'neo-pulse_skills_prompts', 'prompts.json requires pageClaims object', array( 'status' => 400 ) );
+			}
+			foreach ( array( 'system', 'userTemplate' ) as $key ) {
+				if ( ! isset( $claims[ $key ] ) || ! is_string( $claims[ $key ] ) || trim( $claims[ $key ] ) === '' ) {
+					return new WP_Error( 'neo-pulse_skills_prompts', 'pageClaims.' . $key . ' must be a non-empty string', array( 'status' => 400 ) );
 				}
 			}
 			return true;

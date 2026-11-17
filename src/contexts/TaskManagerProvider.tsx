@@ -45,6 +45,7 @@ const PROFILE_SKILL_KINDS = new Set([
   "entities_content_gap_check",
   "money_page_internal_links",
   "editorial_content_audit",
+  "fact_checker",
   "semrush_safe_fix",
 ]);
 

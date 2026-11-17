@@ -7,6 +7,7 @@ import { runEntitiesContentGapCheck } from "@/lib/entities-content-gap/entities-
 import { runEntitiesPackageFillJob } from "@/lib/entities-content-gap/entities-package-fill-job";
 import { runMoneyPageInternalLinks } from "@/lib/money-page-internal-links/money-page-internal-links-api";
 import { runEditorialContentAudit } from "@/lib/editorial-content-audit/editorial-content-audit-api";
+import { runFactChecker } from "@/lib/fact-checker/fact-checker-api";
 import { runBlogIdeasStudioBackgroundJob } from "@/lib/bulk/blog-ideas-studio-background-job";
 import { fetchAgentRun } from "@/lib/agent-runs-api";
 import { trackStartedAgentRun } from "@/lib/task-manager/adapt-agent-run";
@@ -743,6 +744,70 @@ export function PropertyOverviewSection({
       });
   };
 
+  const startFactChecker = () => {
+    const client = clientFromUrl;
+    if (!client) {
+      throw new Error("Unknown client URL. Open a client profile to run this skill.");
+    }
+    void runFactChecker({
+      siteId: client.id,
+      siteName: client.name,
+      siteUrl: client.siteUrl,
+      username: client.username,
+      appPassword: client.appPassword,
+      teamId: activeTeam?.id,
+      site: client,
+    })
+      .then(async (result) => {
+        if (!result.ok || !result.runId) {
+          const task = registerWorkspaceTask({
+            title: "Fact Checker",
+            kind: "fact_checker",
+            siteId: client.id,
+            href: location.pathname,
+          });
+          patchWorkspaceTask(task.id, {
+            status: "error",
+            errorMessage: result.error?.trim() || "Fact Checker failed to start.",
+            step: "Failed",
+          });
+          return;
+        }
+        const run = await pollStartedRun(result.runId);
+        if (!run) {
+          const task = registerWorkspaceTask({
+            title: "Fact Checker",
+            kind: "fact_checker",
+            siteId: client.id,
+            href: location.pathname,
+            agentRunId: result.runId,
+          });
+          patchWorkspaceTask(task.id, {
+            status: "error",
+            errorMessage: "Fact Checker run was not found.",
+            step: "Failed",
+          });
+        }
+      })
+      .catch((err: unknown) => {
+        const message =
+          err instanceof Error && err.message.trim()
+            ? err.message.trim()
+            : "Fact Checker request failed.";
+        const task = registerWorkspaceTask({
+          title: "Fact Checker",
+          kind: "fact_checker",
+          siteId: client.id,
+          href: location.pathname,
+        });
+        patchWorkspaceTask(task.id, {
+          status: "error",
+          errorMessage: message,
+          step: "Failed",
+        });
+      });
+  };
+
   const commitKeywordRows = (rows: SiteLocalKeyword[]) => {
     setKeywordRows(rows);
   };
@@ -1458,7 +1523,8 @@ export function PropertyOverviewSection({
                   ? entitiesGapBusy
                   : agent.id === "content.internal-links.money-pages"
                     ? moneyLinksBusy
-                    : agent.id === "content.editorial.audit"
+                    : agent.id === "content.editorial.audit" ||
+                        agent.id === "content.product.fact-check"
                       ? false
                       : safeFixBusy;
             const runNow = () => {
@@ -1476,6 +1542,10 @@ export function PropertyOverviewSection({
               }
               if (agent.id === "content.editorial.audit") {
                 startEditorialContentAudit();
+                return;
+              }
+              if (agent.id === "content.product.fact-check") {
+                startFactChecker();
                 return;
               }
               startSafeFix();

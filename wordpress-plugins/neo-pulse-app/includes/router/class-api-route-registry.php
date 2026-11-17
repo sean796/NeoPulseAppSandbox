@@ -49,6 +49,7 @@ class Neo_Pulse_App_Api_Route_Registry {
 			array( 'method' => 'POST', 'path' => 'entities-content-gap-check/run' ),
 			array( 'method' => 'POST', 'path' => 'money-page-internal-links/run' ),
 			array( 'method' => 'POST', 'path' => 'editorial-content-audit/run' ),
+			array( 'method' => 'POST', 'path' => 'fact-checker/run' ),
 			array( 'method' => 'POST', 'path' => 'proposal/site-audit' ),
 			array( 'method' => 'POST', 'path' => 'seo/discover-locations' ),
 			array( 'method' => 'GET', 'path' => 'vertical-benchmarks/taxonomy' ),

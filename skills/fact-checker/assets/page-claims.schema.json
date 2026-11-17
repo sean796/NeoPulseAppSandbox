@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "fact-checker-page-claims",
+  "title": "FactCheckerPageClaims",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["pageId", "claims"],
+  "properties": {
+    "pageId": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "claims": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["quote", "category", "verdict"],
+        "properties": {
+          "quote": {
+            "type": "string",
+            "minLength": 1
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "product_spec",
+              "operating_system",
+              "materials",
+              "energy",
+              "safety",
+              "warranty",
+              "pricing",
+              "compatibility",
+              "durability",
+              "none"
+            ]
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "supported",
+              "partially_supported",
+              "unsupported",
+              "outdated",
+              "contradicted",
+              "no_product_claims"
+            ]
+          },
+          "sourceTitle": {
+            "type": "string"
+          },
+          "sourceUrl": {
+            "type": "string"
+          },
+          "sourceType": {
+            "type": "string",
+            "enum": ["manufacturer", "manual", "government", "industry", ""]
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "suggestedWording": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

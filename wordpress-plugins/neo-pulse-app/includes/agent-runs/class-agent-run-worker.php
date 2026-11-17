@@ -75,6 +75,9 @@ class Neo_Pulse_App_Agent_Run_Worker {
 			if ( $recipe === 'editorial_content_audit' && class_exists( 'Neo_Pulse_App_Editorial_Content_Audit_Runner' ) ) {
 				Neo_Pulse_App_Editorial_Content_Audit_Runner::resume( $run );
 			}
+			if ( $recipe === 'fact_checker' && class_exists( 'Neo_Pulse_App_Fact_Checker_Runner' ) ) {
+				Neo_Pulse_App_Fact_Checker_Runner::resume( $run );
+			}
 		} catch ( Exception $e ) {
 			Neo_Pulse_App_Agent_Runs_Store::patch_run(
 				$team_id,

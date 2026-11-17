@@ -1,7 +1,7 @@
 /**
  * Live hub: publish last-3-months organic client report decks (GMB section hidden in template),
  * write CSV, and print sheet rows:
- * Client | Last 3 Month Report | Profile Link | Second Report Link
+ * Client | Last 3 Month Report
  *
  * Usage: npx tsx scripts/publish-last-3-months-report-sheet.ts
  */
@@ -24,13 +24,35 @@ import type { Ga4ReportingDateHarness } from "../src/components/research/reporti
 import type { WordPressSite } from "../src/components/integrations/types";
 import { resolveOrganicClientReportClientLogoUrl } from "../src/lib/integrations/client-site-logo";
 import { normalizeClientLogoBoxTheme } from "../src/lib/organic-dashboard/organic-client-report-property-branding";
-import { propertyDashboardSlug, propertyDashboardPath } from "../src/lib/properties/property-dashboard-slug";
-
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const OUT_CSV = path.join(REPO_ROOT, "tmp/organic-last-3-months-report-sheet.csv");
 const HUB = "https://pulse-host-wp-hub.onrender.com";
 const STATIC = "https://neo-pulse-static.onrender.com";
 const LOGIN_EMAIL = (process.env.NEO_PULSE_SMOKE_EMAIL || "sean@neodigital.ca").trim();
+
+function loadDotEnv(filePath: string): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (!fs.existsSync(filePath)) return out;
+  for (const line of fs.readFileSync(filePath, "utf8").split(/\r?\n/)) {
+    const t = line.trim();
+    if (!t || t.startsWith("#")) continue;
+    const eq = t.indexOf("=");
+    if (eq < 1) continue;
+    let v = t.slice(eq + 1).trim();
+    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+      v = v.slice(1, -1);
+    }
+    out[t.slice(0, eq).trim()] = v;
+  }
+  return out;
+}
+
+function ensureHostApiToken(): void {
+  if ((process.env.PULSE_HOST_API_TOKEN || "").trim()) return;
+  const dotenv = { ...loadDotEnv(path.join(REPO_ROOT, ".env")), ...loadDotEnv(path.join(REPO_ROOT, ".env.local")) };
+  const token = (dotenv.PULSE_HOST_API_TOKEN || "").trim();
+  if (token) process.env.PULSE_HOST_API_TOKEN = token;
+}
 
 async function login(): Promise<string> {
   const res = await fetch(`${HUB}/api/auth/login`, {
@@ -94,6 +116,11 @@ async function publishOne(site: WordPressSite, token: string): Promise<string> {
     showCompare: false,
     googleAdsCustomerIdForReporting: site.googleAdsCustomerId,
   });
+  if (!viewModel.hasGa4 && !viewModel.hasGsc) {
+    throw new Error(
+      "Organic fetch returned empty GA4 and GSC (check hub GA/GSC service-account credentials).",
+    );
+  }
 
   const snapshot = buildOrganicReportingHighlightsSnapshot(viewModel, site.name, site.siteUrl, false, null);
   let highlights = null as ReturnType<typeof normalizeOrganicReportingHighlights>;
@@ -163,17 +190,15 @@ async function publishOne(site: WordPressSite, token: string): Promise<string> {
 }
 
 async function main() {
+  ensureHostApiToken();
   const token = await login();
   setSessionToken(token);
   setPostCreatorWorkerApiBase(HUB);
   const sites = await loadSites(token);
-  const rows: Array<{ client: string; report: string; profile: string; second: string }> = [];
+  const rows: Array<{ client: string; report: string }> = [];
   const failures: string[] = [];
 
   for (const site of sites) {
-    const slug = propertyDashboardSlug(site);
-    const profileLink = `${STATIC}${propertyDashboardPath(site)}`;
-    const secondReportLink = `${STATIC}/sites/${encodeURIComponent(slug || site.id)}/organic`;
     try {
       let shareUrl = "";
       for (let attempt = 1; ; attempt++) {
@@ -187,12 +212,7 @@ async function main() {
           await new Promise((r) => setTimeout(r, 5000 * attempt));
         }
       }
-      rows.push({
-        client: site.name,
-        report: shareUrl,
-        profile: profileLink,
-        second: secondReportLink,
-      });
+      rows.push({ client: site.name, report: shareUrl });
       console.log(`[OK] ${site.name} -> ${shareUrl}`);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -202,11 +222,8 @@ async function main() {
   }
 
   const csv = [
-    "Client,Last 3 Month Report,Profile Link,Second Report Link",
-    ...rows.map(
-      (r) =>
-        `${csvCell(r.client)},${csvCell(r.report)},${csvCell(r.profile)},${csvCell(r.second)}`,
-    ),
+    "Client,Last 3 Month Report",
+    ...rows.map((r) => `${csvCell(r.client)},${csvCell(r.report)}`),
   ].join("\n");
   fs.mkdirSync(path.dirname(OUT_CSV), { recursive: true });
   fs.writeFileSync(OUT_CSV, `${csv}\n`, "utf8");

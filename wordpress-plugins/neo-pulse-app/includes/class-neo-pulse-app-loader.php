@@ -32,6 +32,7 @@ class Neo_Pulse_App_Loader {
 		Neo_Pulse_App_Entities_Content_Gap_Cron::init();
 		Neo_Pulse_App_Money_Page_Internal_Links_Cron::init();
 		Neo_Pulse_App_Editorial_Content_Audit_Cron::init();
+		Neo_Pulse_App_Fact_Checker_Cron::init();
 		if ( class_exists( 'Neo_Pulse_App_Agent_Run_Worker_Cron' ) ) {
 			Neo_Pulse_App_Agent_Run_Worker_Cron::activate();
 		}
@@ -68,6 +69,7 @@ class Neo_Pulse_App_Loader {
 		Neo_Pulse_App_Entities_Content_Gap_Cron::activate();
 		Neo_Pulse_App_Money_Page_Internal_Links_Cron::activate();
 		Neo_Pulse_App_Editorial_Content_Audit_Cron::activate();
+		Neo_Pulse_App_Fact_Checker_Cron::activate();
 		flush_rewrite_rules();
 	}
 
@@ -81,6 +83,7 @@ class Neo_Pulse_App_Loader {
 		Neo_Pulse_App_Entities_Content_Gap_Cron::deactivate();
 		Neo_Pulse_App_Money_Page_Internal_Links_Cron::deactivate();
 		Neo_Pulse_App_Editorial_Content_Audit_Cron::deactivate();
+		Neo_Pulse_App_Fact_Checker_Cron::deactivate();
 		flush_rewrite_rules();
 	}
 
@@ -154,6 +157,12 @@ class Neo_Pulse_App_Loader {
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/editorial-content-audit/class-editorial-content-audit-runner.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/editorial-content-audit/class-editorial-content-audit-route.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/editorial-content-audit/class-editorial-content-audit-cron.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/fact-checker/class-fact-checker-schedule.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/fact-checker/class-fact-checker-worker.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/fact-checker/class-fact-checker-mail.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/fact-checker/class-fact-checker-runner.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/fact-checker/class-fact-checker-route.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/fact-checker/class-fact-checker-cron.php';
 
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/proposal/class-proposal-lighthouse-parse.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/proposal/class-proposal-faq-inventory.php';

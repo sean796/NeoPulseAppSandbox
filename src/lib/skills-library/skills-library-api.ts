@@ -19,6 +19,7 @@ export function skillsLibraryPathSlug(skillId: string): string {
   if (skillId === "content.entities.gap-check") return "content-entities-gap-check";
   if (skillId === "content.internal-links.money-pages") return "content-internal-links-money-pages";
   if (skillId === "content.editorial.audit") return "editorial-content-audit";
+  if (skillId === "content.product.fact-check") return "fact-checker";
   return skillId.replace(/\./g, "-");
 }
 

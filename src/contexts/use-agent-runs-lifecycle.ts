@@ -78,6 +78,7 @@ export function useAgentRunsLifecycle({
         resolveAgentRunRecipeKey(run) !== "entities_content_gap_check" &&
         resolveAgentRunRecipeKey(run) !== "money_page_internal_links" &&
         resolveAgentRunRecipeKey(run) !== "editorial_content_audit" &&
+        resolveAgentRunRecipeKey(run) !== "fact_checker" &&
         !serverProcessInFlight.current.has(run.id)
       ) {
         serverProcessInFlight.current.add(run.id);
@@ -107,6 +108,7 @@ export function useAgentRunsLifecycle({
           resolveAgentRunRecipeKey(run) !== "entities_content_gap_check" &&
           resolveAgentRunRecipeKey(run) !== "money_page_internal_links" &&
           resolveAgentRunRecipeKey(run) !== "editorial_content_audit" &&
+          resolveAgentRunRecipeKey(run) !== "fact_checker" &&
           (run.status === "queued" || run.status === "running"),
       );
       if (active.length === 0) return;

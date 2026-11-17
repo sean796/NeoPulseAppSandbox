@@ -472,6 +472,15 @@ export const PULSE_AGENT_REGISTRY: readonly PulseRegisteredAgentEntry[] = [
       "Reads every blog post and service-area page on one Integrations property, writes the errors into one Google Sheet, and emails sean@neodigital.ca.",
     sourceModule: "skills/editorial-content-audit/SKILL.md",
   },
+  {
+    id: "content.product.fact-check",
+    label: "Fact Checker",
+    category: "research",
+    domain: "reporting",
+    reason:
+      "Reads every blog post and service-area page on one Integrations property, grounds product and service claims with an OpenRouter web model, writes claim rows into one Google Sheet named fact-checker, and emails sean@neodigital.ca.",
+    sourceModule: "skills/fact-checker/SKILL.md",
+  },
 ] as const;
 
 export function getPulseAgentById(id: string): PulseRegisteredAgentEntry | undefined {

@@ -41,6 +41,10 @@ export const ASSIGNABLE_SITE_AGENTS = [
     id: "content.editorial.audit",
     label: "Editorial Content Audit",
   },
+  {
+    id: "content.product.fact-check",
+    label: "Fact Checker",
+  },
 ] as const;
 
 export type AssignableSiteAgentId = (typeof ASSIGNABLE_SITE_AGENTS)[number]["id"];

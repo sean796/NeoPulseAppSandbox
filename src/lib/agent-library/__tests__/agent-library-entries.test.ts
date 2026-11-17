@@ -89,6 +89,20 @@ describe("agent library entries", () => {
     expect(ASSIGNABLE_SITE_AGENTS.some((a) => a.id === "content.editorial.audit")).toBe(true);
   });
 
+  it("keeps Fact Checker out of the agent library and in the skills library", () => {
+    const agents = buildUnifiedAgentLibraryEntries([], {});
+    const skills = buildSkillsLibraryEntries([], {});
+    expect(agents.some((e) => e.id === "content.product.fact-check")).toBe(false);
+    const skill = skills.find((e) => e.id === "content.product.fact-check");
+    expect(skill).toBeDefined();
+    expect(skill?.label).toBe("Fact Checker");
+    expect(skill?.appPath).toBeUndefined();
+  });
+
+  it("lists Fact Checker as an assignable site agent", () => {
+    expect(ASSIGNABLE_SITE_AGENTS.some((a) => a.id === "content.product.fact-check")).toBe(true);
+  });
+
   it("leaves plain agents without an Open path", () => {
     const entries = buildUnifiedAgentLibraryEntries([], {});
     const withPath = new Set(["reporting.changelog.app-update-log"]);

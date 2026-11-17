@@ -312,6 +312,10 @@ class Neo_Pulse_App_Api_Dispatcher {
 			Neo_Pulse_App_Editorial_Content_Audit_Route::dispatch_http( substr( $route, strlen( 'editorial-content-audit/' ) ), $method, $body );
 			return;
 		}
+		if ( str_starts_with( $route, 'fact-checker/' ) ) {
+			Neo_Pulse_App_Fact_Checker_Route::dispatch_http( substr( $route, strlen( 'fact-checker/' ) ), $method, $body );
+			return;
+		}
 
 		if ( 0 === strpos( $route, 'semrush/' ) ) {
 			Neo_Pulse_App_Semrush_Route_Handlers::dispatch_http( substr( $route, 8 ), $method, $body );
