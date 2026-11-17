@@ -68,6 +68,7 @@ install_wordpress() {
       --admin_email="$WORDPRESS_ADMIN_EMAIL"
     echo "[pulse-host] WordPress installed at $WORDPRESS_SITE_URL"
   fi
+  wp core update-db --allow-root
   wp plugin activate neo-pulse-wp --allow-root
   # The hub container also runs the Neo Pulse app backend (/api/*) for neo-pulse-static.
   if [[ "${NEO_PULSE_HUB:-}" == "1" ]]; then
