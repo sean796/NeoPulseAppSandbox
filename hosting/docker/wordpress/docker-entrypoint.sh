@@ -34,21 +34,19 @@ ensure_pulse_admin() {
   echo "[pulse-host] Pulse admin user ready for $PULSE_ADMIN_EMAIL"
 }
 
-# One-shot restore of Pulse accounts when the hub database is empty.
-# NEO_PULSE_HUB_USER_SEED_B64 is a mysqldump of the user and team tables.
+# Restore local Pulse accounts onto a new hub. FLO is created on plugin
+# activation, so "any user exists" is not a reason to skip sean@.
 seed_hub_users() {
   local b64="${NEO_PULSE_HUB_USER_SEED_B64:-}"
-  if [[ -z "$b64" ]]; then
+  local flag="/var/www/html/wp-content/neo-pulse-data/.hub-users-seeded"
+  if [[ -z "$b64" || -f "$flag" ]]; then
     return
   fi
-  wp eval 'Neo_Pulse_App_Teams_Store::install_tables();' --allow-root >/dev/null
-  local count
-  count="$(wp db query 'SELECT COUNT(*) FROM `wp_neo-pulse_users`' --skip-column-names --allow-root | tr -d '[:space:]')"
-  if [[ "$count" != "0" ]]; then
-    echo "[pulse-host] hub users already present; seed skipped"
-    return
+  if ! wp eval-file /usr/local/bin/seed-hub-users.php --allow-root; then
+    echo "[pulse-host] hub user seed failed" >&2
+    exit 1
   fi
-  echo "$b64" | base64 -d | wp db query --allow-root
+  touch "$flag"
   echo "[pulse-host] hub users seeded"
 }
 

@@ -7,6 +7,7 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 COPY hosting/docker/wordpress/docker-entrypoint.sh /usr/local/bin/neo-host-wp-entrypoint.sh
+COPY hosting/docker/wordpress/seed-hub-users.php /usr/local/bin/seed-hub-users.php
 RUN chmod +x /usr/local/bin/neo-host-wp-entrypoint.sh
 
 COPY wordpress-plugins/neo-pulse-wp /usr/src/neo-pulse-wp
