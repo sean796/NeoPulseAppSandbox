@@ -34,6 +34,24 @@ ensure_pulse_admin() {
   echo "[pulse-host] Pulse admin user ready for $PULSE_ADMIN_EMAIL"
 }
 
+# One-shot restore of Pulse accounts when the hub database is empty.
+# NEO_PULSE_HUB_USER_SEED_B64 is a mysqldump of the user and team tables.
+seed_hub_users() {
+  local b64="${NEO_PULSE_HUB_USER_SEED_B64:-}"
+  if [[ -z "$b64" ]]; then
+    return
+  fi
+  wp eval 'Neo_Pulse_App_Teams_Store::install_tables();' --allow-root >/dev/null
+  local count
+  count="$(wp db query 'SELECT COUNT(*) FROM `wp_neo-pulse_users`' --skip-column-names --allow-root | tr -d '[:space:]')"
+  if [[ "$count" != "0" ]]; then
+    echo "[pulse-host] hub users already present; seed skipped"
+    return
+  fi
+  echo "$b64" | base64 -d | wp db query --allow-root
+  echo "[pulse-host] hub users seeded"
+}
+
 # Wait for MariaDB, install WordPress on first boot, and activate neo-pulse-wp (host-report endpoint).
 install_wordpress() {
   local host="${WORDPRESS_DB_HOST%%:*}"
@@ -73,6 +91,7 @@ install_wordpress() {
   # The hub container also runs the Neo Pulse app backend (/api/*) for neo-pulse-static.
   if [[ "${NEO_PULSE_HUB:-}" == "1" ]]; then
     wp plugin activate neo-pulse-app --allow-root
+    seed_hub_users
   fi
   ensure_pulse_admin
   # Pretty permalinks (unless the site owner already chose a structure) + .htaccess so /wp-json/ routes through WordPress.
