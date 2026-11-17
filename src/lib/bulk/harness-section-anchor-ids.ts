@@ -1,5 +1,6 @@
 import type { BulkHarnessOutlineSection } from "@/lib/bulk/bulk-harness-outline";
 import { agentHasIllustrativeFeature } from "@/lib/bulk/bulk-harness-outline";
+import { HARNESS_ANSWER_ANCHOR_ID } from "@/lib/bulk/blog-harness-answer-agent";
 import {
   BLOG_HARNESS_SUMMARY_AGENT_ID,
   isBlogHarnessSummaryAgent,
@@ -110,6 +111,51 @@ function escapeHtmlForHeading(text: string): string {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
+
+function answerHeadingPlainText(fullTag: string): string {
+  return fullTag
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/:$/, "")
+    .toLowerCase();
+}
+
+/** Drop heading tags whose visible text is exactly Answer. Keep the paragraph. */
+export function stripVisibleAnswerHeading(html: string): string {
+  return (html ?? "").replace(/<h([1-6])\b[^>]*>[\s\S]*?<\/h\1>/gi, (full) =>
+    answerHeadingPlainText(full) === "answer" ? "" : full,
+  );
+}
+
+/** Set `id="answer"` on the first paragraph. No Answer heading. */
+export function injectAnswerParagraphAnchorId(html: string): string {
+  const src = stripVisibleAnswerHeading(html).trim();
+  const open = src.search(/<p\b/i);
+  if (open < 0) return src;
+  const gt = src.indexOf(">", open);
+  if (gt < 0) return src;
+  const openTag = src.slice(open, gt);
+  const nextOpenTag = /\sid\s*=/i.test(openTag)
+    ? openTag.replace(/\sid\s*=\s*(["'])[^"']*\1/i, ` id="${HARNESS_ANSWER_ANCHOR_ID}"`)
+    : `${openTag} id="${HARNESS_ANSWER_ANCHOR_ID}"`;
+  return src.slice(0, open) + nextOpenTag + src.slice(gt);
+}
+
+/**
+ * When the direct answer is the lead paragraph (before the first H2), keep its anchor.
+ * Overview-first articles are left unchanged.
+ */
+export function markLeadingAnswerParagraph(html: string): string {
+  const src = (html ?? "").trim();
+  if (!src) return src;
+  const pAt = src.search(/<p\b/i);
+  if (pAt < 0) return src;
+  const h2At = src.search(/<h2\b/i);
+  if (h2At >= 0 && pAt > h2At) return src;
+  return injectAnswerParagraphAnchorId(src);
 }
 
 /**

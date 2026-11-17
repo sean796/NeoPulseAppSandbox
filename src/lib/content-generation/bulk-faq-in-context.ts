@@ -115,7 +115,7 @@ Rules for each pair:
 - answer: 2-4 concise sentences of reader-facing copy only. No bullet lists inside answers.
 - Each question must be a different angle. Do not start more than one question with the same first 3 words.
 - ${FAQ_CONVERSATIONAL_RULE}
-- Ground answers in the article body and brief; do not paraphrase the main Answer H2.
+- Ground answers in the article body and brief; do not paraphrase the opening answer paragraph.
 - Use NAP/service area only to localize; do not broaden geography beyond the business area.
 - Do not mention brand or site name in answers unless the article or brief already does.
 ${hasBrief ? "- Use the JSON SEO content brief as the primary intent signal. Do not paste JSON into answers.\n" : ""}

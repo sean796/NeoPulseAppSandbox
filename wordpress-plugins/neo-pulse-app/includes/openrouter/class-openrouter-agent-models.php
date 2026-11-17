@@ -2,7 +2,7 @@
 /**
  * Centralized OpenRouter pipeline agent category models for PHP backend handlers.
  *
- * Mirrors the 7 frontend Pipeline Agent categories in src/lib/openrouter-agent-category-api.ts.
+ * Mirrors frontend Pipeline Agent categories plus Decision (checker / router).
  *
  * @package Neo_Pulse_App
  */
@@ -11,13 +11,14 @@ defined( 'ABSPATH' ) || exit;
 
 class Neo_Pulse_App_Openrouter_Agent_Models {
 
-	const CATEGORY_RESEARCH = 'research';
-	const CATEGORY_BLOG     = 'blog';
-	const CATEGORY_IMAGE    = 'image';
-	const CATEGORY_META     = 'meta';
-	const CATEGORY_REPORT   = 'report';
-	const CATEGORY_ADS      = 'ads';
-	const CATEGORY_VIDEO    = 'video';
+	const CATEGORY_RESEARCH  = 'research';
+	const CATEGORY_BLOG      = 'blog';
+	const CATEGORY_IMAGE     = 'image';
+	const CATEGORY_META      = 'meta';
+	const CATEGORY_REPORT    = 'report';
+	const CATEGORY_ADS       = 'ads';
+	const CATEGORY_VIDEO     = 'video';
+	const CATEGORY_DECISION  = 'decision';
 
 	const DEFAULT_RESEARCH_MODEL = 'deepseek/deepseek-v4.1-flash';
 	const DEFAULT_BLOG_MODEL     = 'google/gemini-2.5-flash';
@@ -26,11 +27,12 @@ class Neo_Pulse_App_Openrouter_Agent_Models {
 	const DEFAULT_REPORT_MODEL   = 'deepseek/deepseek-v4.1-flash';
 	const DEFAULT_ADS_MODEL      = 'deepseek/deepseek-v4.1-flash';
 	const DEFAULT_VIDEO_MODEL    = 'heygen/video-1';
+	const DEFAULT_DECISION_MODEL = 'google/gemini-3.8-flash';
 
 	/**
 	 * Resolve the OpenRouter model id for a pipeline agent category.
 	 *
-	 * @param string $category One of research, blog, image, meta, report, ads, video.
+	 * @param string $category One of research, blog, image, meta, report, ads, video, decision.
 	 * @param string $override Optional explicit model id from request payload.
 	 * @return string
 	 */
@@ -55,6 +57,8 @@ class Neo_Pulse_App_Openrouter_Agent_Models {
 				return self::DEFAULT_ADS_MODEL;
 			case self::CATEGORY_VIDEO:
 				return self::DEFAULT_VIDEO_MODEL;
+			case self::CATEGORY_DECISION:
+				return self::DEFAULT_DECISION_MODEL;
 			default:
 				return self::DEFAULT_BLOG_MODEL;
 		}

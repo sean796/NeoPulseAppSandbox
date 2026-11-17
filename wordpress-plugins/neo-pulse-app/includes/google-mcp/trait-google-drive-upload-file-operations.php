@@ -240,7 +240,7 @@ trait Neo_Pulse_App_Google_Drive_Upload_Trait_File_Operations {
 		$list_url = add_query_arg(
 			array(
 				'q'                         => $query,
-				'fields'                    => 'files(id,name,webViewLink,createdTime)',
+				'fields'                    => 'files(id,name,mimeType,webViewLink,createdTime)',
 				'supportsAllDrives'         => 'true',
 				'includeItemsFromAllDrives' => 'true',
 				'pageSize'                  => max( 1, min( 100, $page_size ) ),
@@ -278,7 +278,7 @@ trait Neo_Pulse_App_Google_Drive_Upload_Trait_File_Operations {
 	}
 
 	/**
-	 * @return array{statusCode:int,body:array<string,mixed>,files?:array<int,array{id:string,name:string,webViewLink:string,createdTime:string}>}
+	 * @return array{statusCode:int,body:array<string,mixed>,files?:array<int,array{id:string,name:string,mimeType:string,webViewLink:string,createdTime:string}>}
 	 */
 	private static function named_files_in_folder( string $access_token, string $folder_id, string $file_name ): array {
 		$escaped_name = str_replace( "'", "\\'", $file_name );
@@ -301,6 +301,7 @@ trait Neo_Pulse_App_Google_Drive_Upload_Trait_File_Operations {
 			$named[] = array(
 				'id'          => (string) $file['id'],
 				'name'        => (string) ( $file['name'] ?? $file_name ),
+				'mimeType'    => (string) ( $file['mimeType'] ?? '' ),
 				'webViewLink' => (string) ( $file['webViewLink'] ?? '' ),
 				'createdTime' => (string) ( $file['createdTime'] ?? '' ),
 			);

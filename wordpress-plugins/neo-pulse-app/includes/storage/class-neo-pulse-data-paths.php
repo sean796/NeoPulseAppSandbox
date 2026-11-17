@@ -156,6 +156,26 @@ class Neo_Pulse_App_Data_Paths {
 		return self::root() . '/posts-content-gap-check.json';
 	}
 
+	public static function entities_content_gap_schedule_path(): string {
+		return self::root() . '/entities-content-gap-check.json';
+	}
+
+	public static function money_page_internal_links_schedule_path(): string {
+		return self::root() . '/money-page-internal-links.json';
+	}
+
+	public static function editorial_content_audit_schedule_path(): string {
+		return self::root() . '/editorial-content-audit.json';
+	}
+
+	public static function editorial_content_audit_work_path( int $run_id ): string {
+		$dir = self::root() . '/editorial-content-audit';
+		if ( ! is_dir( $dir ) ) {
+			wp_mkdir_p( $dir );
+		}
+		return $dir . '/run-' . max( 0, $run_id ) . '.json';
+	}
+
 	public static function careers_applications_path(): string {
 		return self::root() . '/careers-applications.json';
 	}

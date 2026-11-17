@@ -36,10 +36,11 @@ class Neo_Pulse_App_Wp_Inventory_Collector {
 			? 'id,slug,title,link,neo_pulse_fields,content,excerpt,date_gmt,featured_media'
 			: 'id,slug,title,link,neo_pulse_fields,excerpt,date_gmt,featured_media';
 
+		$per_page = ( $include_content || $include_page_heading ) ? 20 : 100;
 		while ( $has_more ) {
 			$params = array(
 				'status'   => $use_ids ? 'any' : $wp_status,
-				'per_page' => $use_ids ? min( 100, count( $include_ids ) ) : 100,
+				'per_page' => $use_ids ? min( $per_page, count( $include_ids ) ) : $per_page,
 				'page'     => $use_ids ? 1 : $page,
 				'context'  => 'edit',
 				'_fields'  => $fields,
@@ -97,7 +98,7 @@ class Neo_Pulse_App_Wp_Inventory_Collector {
 				break;
 			}
 			$total_pages = (int) ( $resp['headers']['x-wp-totalpages'] ?? 1 );
-			if ( $page >= $total_pages || count( $posts ) < 100 ) {
+			if ( $page >= $total_pages || count( $posts ) < $per_page ) {
 				$has_more = false;
 			} else {
 				++$page;
@@ -109,6 +110,68 @@ class Neo_Pulse_App_Wp_Inventory_Collector {
 			'rows'      => $inventory,
 			'wpTotal'   => $wp_total,
 			'truncated' => ( $row_cap !== null && count( $inventory ) >= $row_cap ),
+		);
+	}
+
+	/**
+	 * One REST page. Does not walk the rest of the collection.
+	 *
+	 * @return array{ok:bool,rows?:array<int,array<string,mixed>>,error?:string,siteground?:bool,totalPages?:int,perPage?:int}
+	 */
+	public static function collect_page( $normalized, $username, $app_password, $rest_collection, $include_content, $wp_status, $page_number ) {
+		$page_number = max( 1, (int) $page_number );
+		$per_page    = $include_content ? 20 : 100;
+		$warm        = Neo_Pulse_App_Wp_Rest_Client::warm_origin_session( $normalized );
+		$fields      = $include_content
+			? 'id,slug,title,link,neo_pulse_fields,content,excerpt,date_gmt,featured_media'
+			: 'id,slug,title,link,neo_pulse_fields,excerpt,date_gmt,featured_media';
+		$resp        = Neo_Pulse_App_Wp_Rest_Client::request(
+			'GET',
+			$normalized . '/wp-json/wp/v2/' . rawurlencode( (string) $rest_collection ),
+			$username,
+			$app_password,
+			array(
+				'timeout' => self::INVENTORY_TIMEOUT,
+				'referer' => $normalized . '/',
+				'cookie'  => $warm['cookie'],
+				'params'  => array(
+					'status'   => $wp_status,
+					'per_page' => $per_page,
+					'page'     => $page_number,
+					'context'  => 'edit',
+					'_fields'  => $fields,
+				),
+			)
+		);
+		if ( Neo_Pulse_App_Wp_Url_Normalize::rest_looks_like_siteground_captcha( (int) $resp['status'], $resp['body'] ) ) {
+			return array( 'ok' => false, 'error' => Neo_Pulse_App_Wp_Url_Normalize::SITEGROUND_REST_BLOCKED_MESSAGE, 'siteground' => true );
+		}
+		$transport = Neo_Pulse_App_Wp_Rest_Client::transport_error_message( $resp );
+		if ( $transport ) {
+			return array( 'ok' => false, 'error' => $transport );
+		}
+		$extracted = self::extract_posts_array( $resp['body'], (int) $resp['status'] );
+		if ( $extracted['rest_error'] ) {
+			return array( 'ok' => false, 'error' => $extracted['rest_error'] );
+		}
+		if ( (int) $resp['status'] === 401 ) {
+			return array( 'ok' => false, 'error' => 'Authentication failed.' );
+		}
+		if ( (int) $resp['status'] < 200 || (int) $resp['status'] >= 300 ) {
+			return array( 'ok' => false, 'error' => 'WordPress API error: ' . (int) $resp['status'] );
+		}
+		$rows = array();
+		foreach ( $extracted['posts'] as $post ) {
+			$row = self::map_inventory_row( $post, $normalized, $include_content, false, false, $rest_collection );
+			if ( $row ) {
+				$rows[] = $row;
+			}
+		}
+		return array(
+			'ok'         => true,
+			'rows'       => $rows,
+			'totalPages' => (int) ( $resp['headers']['x-wp-totalpages'] ?? 1 ),
+			'perPage'    => $per_page,
 		);
 	}
 

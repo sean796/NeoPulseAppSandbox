@@ -4,7 +4,15 @@ Best practices for **Pulse product skills** under `skills/` (Property Skills Run
 
 This is not the guide for Cursor coding skills in `.agents/skills/`. Those teach the IDE how to edit the app. Pulse skills under `skills/` do real work for a site: count, validate, execute.
 
-**Reference skill:** [`skills/posts-content-gap-check/`](../../skills/posts-content-gap-check/). Copy that shape. Do not invent a second layout.
+**Reference skills (copy these; do not invent a third layout):**
+
+| Job shape | Folder | Use when |
+| --- | --- | --- |
+| Count → optional client fill | [`skills/posts-content-gap-check/`](../../skills/posts-content-gap-check/) | Blog / posts package gap |
+| Count → optional client fill | [`skills/entities-content-gap-check/`](../../skills/entities-content-gap-check/) | SAP / service-area package gap |
+| Inventory → AI plan → Neo MCP write + email | [`skills/money-page-internal-links/`](../../skills/money-page-internal-links/) | Blog → money-page inbound links + sean@ report |
+
+These are Property Skills with the same spine: Node scripts + PHP hub route/runner + thin React caller + Assignable row on the client profile. Prefer **entities** as the newer full wire-up example (Tasks UX, Docker sync, fill job). Prefer **posts** when matching blog quota / Blog Ideas Studio. Prefer **money-page-internal-links** when the skill plans site writes via Neo MCP and emails a follow-up report like Semrush Safe Fix.
 
 ---
 
@@ -13,6 +21,8 @@ This is not the guide for Cursor coding skills in `.agents/skills/`. Those teach
 One job. One folder. A short `SKILL.md` that a person or agent can follow. Thin Node scripts that print JSON, fail with clear exit codes, and never invent business answers in code.
 
 If the skill needs judgment (dates, topics, wording), put rules in `references/` or a JSON schema in `assets/`, and let the agent or OpenRouter fill the plan. Scripts only validate and run.
+
+**Assignable Property Skill** means: Off / Auto / Run on the client profile Skills panel, an agent-run recipe for the count (or whole job), and usually a workspace Tasks row so Run is never silent.
 
 ---
 
@@ -177,16 +187,103 @@ npx vitest run skills/posts-content-gap-check/scripts/__tests__/posts-content-ga
 
 ---
 
-## Wire-up checklist (Pulse app)
+## Wire-up checklist (Pulse app + agent library)
 
-When the skill should show on a property or run from the UI:
+When the skill should show on a property or run from the UI, do **all** of these. Mirror [`entities-content-gap-check`](../../skills/entities-content-gap-check/) (or posts) end to end. Do not invent a second skill registry.
 
-1. Keep the skill folder complete and green under Vitest.
-2. Add or extend a **server** route that runs the skill steps (browser calls `backendApiUrl` only). Reference: posts content gap run API used by [`src/lib/posts-content-gap/posts-content-gap-api.ts`](../../src/lib/posts-content-gap/posts-content-gap-api.ts).
-3. If it is an assignable agent, register it in [`src/lib/agent-pipeline/pulse-agent-registry.ts`](../../src/lib/agent-pipeline/pulse-agent-registry.ts) with:
-   - `id` equal to `metadata.assignableId`
-   - `sourceModule` pointing at `skills/your-skill-name/SKILL.md`
-4. Wire Property Skills Run / Auto only after the scripts and API exist. Do not invent a second skill registry.
+### 1. Skill folder (Node)
+
+- Keep `skills/<kebab-name>/` complete and green under Vitest.
+- `assignableId` in frontmatter is the stable product id (example: `content.entities.gap-check`).
+
+### 2. Hub PHP plugin (`wordpress-plugins/neo-pulse-app`)
+
+Add a small feature folder next to posts/entities (same class naming):
+
+| Piece | Example (entities) | Job |
+| --- | --- | --- |
+| Pipeline | `includes/entities-content-gap/class-entities-content-gap-pipeline.php` | Count / validate / payload (no Node required on the hub) |
+| Runner | `…-runner.php` | `start` → create agent run → `finish` (count; mark fill needed) |
+| Route | `…-route.php` | `POST /api/<skill-kebab>/run` after session auth |
+| Schedule / cron | `…-schedule.php`, `…-cron.php` | Auto / due stamps when assigned |
+| PHP smoke test | `tests/test-entities-content-gap.php` | Quota, validate, payload |
+
+Then register the HTTP surface:
+
+1. **Dispatcher** — [`includes/router/class-api-dispatcher.php`](../../wordpress-plugins/neo-pulse-app/includes/router/class-api-dispatcher.php): prefix `entities-content-gap-check/` → route class.
+2. **Route registry** — [`includes/router/class-api-route-registry.php`](../../wordpress-plugins/neo-pulse-app/includes/router/class-api-route-registry.php): `POST` path listed.
+3. **Loader** — [`includes/class-neo-pulse-app-loader.php`](../../wordpress-plugins/neo-pulse-app/includes/class-neo-pulse-app-loader.php): require classes; cron `init` / activate / deactivate.
+4. **Recipe key** — [`includes/agent-runs/class-agent-runs-recipe-registry.php`](../../wordpress-plugins/neo-pulse-app/includes/agent-runs/class-agent-runs-recipe-registry.php): snake_case key (example: `entities_content_gap_check`), title, `managerTabs`.
+5. **Skills library store** (if the skill appears in Library prompts) — [`includes/skills-library/class-skills-library-store.php`](../../wordpress-plugins/neo-pulse-app/includes/skills-library/class-skills-library-store.php).
+6. **Data paths** — only if the runner writes work dirs under Pulse data ([`includes/storage/class-neo-pulse-data-paths.php`](../../wordpress-plugins/neo-pulse-app/includes/storage/class-neo-pulse-data-paths.php)).
+
+**Runner contract (Property Skills pattern):**
+
+- `resolve_run_context` loads the site from the Integrations **mirror** and merges the posted body (`siteId`, credentials, name, url). Posted `appPassword` must win; the mirror often omits secrets.
+- `start` creates the agent run and returns `{ ok, runId }` (HTTP **202**).
+- `finish` runs the count (and any server steps). Put structured `result` on the run: `goalMet`, `gap` / page counts, hints the client fill needs (`entityPageCount`, `publishTimeHint`, etc.).
+- Auto path: only sites with `assignedAgentIds` containing this `assignableId`.
+
+### 3. Thin React / TypeScript client
+
+| Piece | Example | Job |
+| --- | --- | --- |
+| API caller | [`src/lib/entities-content-gap/entities-content-gap-api.ts`](../../src/lib/entities-content-gap/entities-content-gap-api.ts) | `backendApiUrl('/entities-content-gap-check/run')` + session headers |
+| Optional fill job | [`src/lib/entities-content-gap/entities-package-fill-job.ts`](../../src/lib/entities-content-gap/entities-package-fill-job.ts) | Client-side grid → CSV → create pages when count says gap > 0 |
+| Property Run | [`PropertyOverviewSection.tsx`](../../src/components/integrations/wordpress/PropertyOverviewSection.tsx) | `start…` → poll agent run → optional `startWorkspaceTask` fill |
+
+**UI contract (mandatory):**
+
+- Browser calls **this app’s API only** (no direct WordPress / third-party fetch).
+- Poll the agent run with `trackStartedAgentRun` so Tasks can show the count.
+- On start failure, missing `runId`, or thrown errors: **register a Tasks row with `status: "error"`** and `openTasksPanel()`. Never `.catch(() => ({ ok: false }))` with no UI.
+- If `goalMet` or gap &lt; 1: stop fill; still leave the agent-run task visible (open Tasks).
+- If gap &gt; 0: `startWorkspaceTask` for the fill (`kind` = recipe key). Profile skills stay on the client URL.
+
+### 4. Agent library / registry / Tasks surface
+
+Touch every list that already knows posts/entities/semrush. Miss one and Run looks broken.
+
+| File | What to add |
+| --- | --- |
+| [`src/lib/agent-pipeline/pulse-agent-registry.ts`](../../src/lib/agent-pipeline/pulse-agent-registry.ts) | `id` = `assignableId`, `sourceModule` = `skills/<name>/SKILL.md` |
+| [`src/lib/agent-library/agent-library-api.ts`](../../src/lib/agent-library/agent-library-api.ts) | Row in `ASSIGNABLE_SITE_AGENTS` (`id` + `label`) |
+| [`src/lib/agent-library/__tests__/agent-library-entries.test.ts`](../../src/lib/agent-library/__tests__/agent-library-entries.test.ts) | Assert assignable + skills catalog entry |
+| [`src/lib/agent-runs-types.ts`](../../src/lib/agent-runs-types.ts) | Recipe key union member |
+| [`src/lib/agent-runs/agent-run-navigation.ts`](../../src/lib/agent-runs/agent-run-navigation.ts) | Title / section / recipe recognition |
+| [`src/lib/agent-runs/agent-run-grouping.ts`](../../src/lib/agent-runs/agent-run-grouping.ts) | Group bucket (example: `editorial`) |
+| [`src/contexts/use-agent-runs-lifecycle.ts`](../../src/contexts/use-agent-runs-lifecycle.ts) | Include recipe in lifecycle filters if peers are listed |
+| [`src/contexts/TaskManagerProvider.tsx`](../../src/contexts/TaskManagerProvider.tsx) | `PROFILE_SKILL_KINDS` includes recipe key |
+| [`src/lib/skills-library/skills-library-api.ts`](../../src/lib/skills-library/skills-library-api.ts) | Map `assignableId` → library slug if Library uses it |
+
+### 5. Local Docker: sync after every PHP change
+
+Host junctions under `wpstaging/.../www/wp-content/plugins` are **not** what PHP-FPM serves. The container uses the **Docker webroot volume**. New PHP folders can exist on disk and still be **missing in the container**. Symptom: UI Run does nothing / Tasks stay empty / `wp_neo_pulse_agent_runs` never gets the new `recipe_key`.
+
+After editing `wordpress-plugins/neo-pulse-app` (or `-wp`):
+
+```powershell
+npm run sync:local-wp
+```
+
+That script junctions on the host **and** `docker cp`s into `wpstg-neopulse-local-php`, then signals opcache reload. See [`docs/deploy-local-branching-pathway.md`](../deploy-local-branching-pathway.md) and [`scripts/sync-local-wp-plugins.ps1`](../../scripts/sync-local-wp-plugins.ps1).
+
+**Verify before blaming the UI:**
+
+```powershell
+docker exec wpstg-neopulse-local-php sh -c "test -f /var/www/wp-content/plugins/neo-pulse-app/includes/<your-folder>/<your-route>.php && echo OK"
+```
+
+Empty auth probe should be **401**, not a generic missing route after login. A real Run must insert a row in `wp_neo_pulse_agent_runs` with your `recipe_key`.
+
+### 6. Tests to run (agent executes these)
+
+```bash
+npx vitest run skills/<kebab-name>/scripts/__tests__/
+npx vitest run src/lib/agent-library/__tests__/agent-library-entries.test.ts
+php wordpress-plugins/neo-pulse-app/tests/test-<skill>.php
+npm run sync:local-wp
+```
 
 ---
 
@@ -194,11 +291,13 @@ When the skill should show on a property or run from the UI:
 
 **Do**
 
-- Copy `posts-content-gap-check` as the template.
+- Copy `posts-content-gap-check` or `entities-content-gap-check` as the template (same layout).
 - Keep `SKILL.md` short and checklist-first.
 - Use the shared exit code map.
 - Name files and functions so a stranger can guess the job.
 - Test help, usage failure, and validation.
+- Sync Docker plugins after PHP wire-up; confirm an agent-run row exists after Run.
+- Fail into Tasks (error row + open panel). Never silent catch.
 
 **Do not**
 
@@ -208,6 +307,8 @@ When the skill should show on a property or run from the UI:
 - Grow `SKILL.md` into a novel; move depth to `references/`.
 - Mount a different folder layout for the next skill.
 - Silent retries or fallback paths the checklist did not name.
+- Assume the host plugin junction is live inside Docker without `sync:local-wp`.
+- Ship Property Skills Run that returns early with no Tasks / agent-run feedback.
 
 ---
 
@@ -223,11 +324,17 @@ Copy this when starting a skill:
 - [ ] Meaningful lib file names (no junk-drawer `utils`)
 - [ ] Schema and/or `references/` for agent-written plans
 - [ ] Vitest coverage for help, usage, validate
-- [ ] Server API + thin client caller if the UI must run it
-- [ ] Agent registry row if assignable (`id` + `sourceModule`)
+- [ ] Hub PHP: pipeline, runner, route, cron/schedule as needed
+- [ ] Dispatcher + route registry + loader + agent-runs recipe key
+- [ ] Thin client API + PropertyOverviewSection Run/Auto wiring
+- [ ] Agent registry + `ASSIGNABLE_SITE_AGENTS` + agent-run types/nav/grouping/lifecycle
+- [ ] `PROFILE_SKILL_KINDS` (+ skills-library map if Library lists it)
+- [ ] Tasks: poll `trackStartedAgentRun`; errors and goalMet open Tasks; no silent `.catch`
+- [ ] `npm run sync:local-wp` and confirm container has the new PHP files
+- [ ] Smoke: Run creates `wp_neo_pulse_agent_runs` row; gap path starts fill task when required
 
 ---
 
 ## Closing
 
-Pulse skills stay predictable when every skill looks like the last one: same folders, same exit codes, same checklist voice, code names that mean what they do. Start from `posts-content-gap-check`. Keep scripts thin. Keep rules where an agent can read them. Fail loud. That is the standard.
+Pulse skills stay predictable when every skill looks like the last one: same folders, same exit codes, same checklist voice, code names that mean what they do. Start from `posts-content-gap-check` or `entities-content-gap-check`. Keep scripts thin. Keep rules where an agent can read them. Fail loud into Tasks. Sync the hub plugin into Docker before you trust local Run. That is the standard.

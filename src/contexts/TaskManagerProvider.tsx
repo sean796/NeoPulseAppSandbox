@@ -29,7 +29,7 @@ import {
   writeOverviewTaskRestoreIntent,
 } from "@/lib/task-manager/overview-restore";
 import { writeOverviewStudioActiveUrl } from "@/lib/overview/overview-studio-active-url-persist";
-import type { StartWorkspaceTaskInput, WorkspaceTaskPatch } from "@/lib/task-manager/types";
+import type { StartWorkspaceTaskInput, WorkspaceTask, WorkspaceTaskPatch } from "@/lib/task-manager/types";
 import { isWorkspaceTaskTerminal } from "@/lib/task-manager/types";
 import { TaskManagerContext, type TaskManagerContextValue } from "@/contexts/task-manager-context";
 import {
@@ -42,6 +42,9 @@ import { propertyDashboardPath } from "@/lib/properties/property-dashboard-slug"
 const PROFILE_SKILL_KINDS = new Set([
   "blog_ideas_studio",
   "posts_content_gap_check",
+  "entities_content_gap_check",
+  "money_page_internal_links",
+  "editorial_content_audit",
   "semrush_safe_fix",
 ]);
 
@@ -171,7 +174,11 @@ export function TaskManagerProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<TaskManagerContextValue>(() => {
     const hasRunning = tasks.some((task) => task.status === "running");
-    const latestTerminal = tasks.find((task) => isWorkspaceTaskTerminal(task.status));
+    const latestTerminal = tasks.reduce<WorkspaceTask | undefined>((latest, task) => {
+      if (!isWorkspaceTaskTerminal(task.status)) return latest;
+      if (!latest || task.updatedAt > latest.updatedAt) return task;
+      return latest;
+    }, undefined);
     return {
       tasks,
       hasRunning,

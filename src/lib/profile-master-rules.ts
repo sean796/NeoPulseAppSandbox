@@ -15,11 +15,12 @@ office_locations\tYellowknife; Red Deer; Edmonton; other locations
 prohibited_framing\tDo not state or imply that KWB is located only in Edmonton or that Edmonton is the sole office.
 rule\tKWB has offices and team members in multiple cities including Yellowknife, Red Deer, Edmonton, and other locations. Use multi-location or region-wide framing when describing where the firm operates. Do not default copy to Edmonton-based or located in Edmonton as if that were the only office unless the page topic is specifically about the Edmonton office.`;
 
-export const SHUTTER_SPOT_BRAND_RULE_CONTENT = `[Shutter Spot brand naming]
-canonical_public_name\tShutter Spot
-discouraged_public_names\tBlind Spot; blind spot
-google_ads_mcc_label\tBlind Spot (Google Ads sub-account label only; never use in client-facing copy)
-rule\tThe Integrations property name is Shutter Spot. Use exactly "Shutter Spot" in all client-facing copy, titles, meta descriptions, headings, FAQs, schema, and first-party authority statements. Do not substitute Blind Spot, blind spot, or any other name. Do not infer a different brand from the Google Ads MCC label or from other portfolio clients. No renaming or post-processing of the business name.`;
+export const SHUTTER_SPOT_BRAND_RULE_CONTENT = `[Blind Spot brand naming]
+canonical_public_name\tBlind Spot
+discouraged_public_names\tShutter Spot; ShutterSpot; shutter spot
+domain\tshutterspot.com (domain only; never use as the business name)
+google_ads_customer_id\t745-406-1453 (account id only; not a second brand)
+rule\tThe Integrations property name is Blind Spot. Use exactly "Blind Spot" in all client-facing copy, titles, meta descriptions, headings, FAQs, schema, and first-party authority statements. Do not use Shutter Spot, ShutterSpot, or shutter spot as the business name. The site domain remains shutterspot.com. Do not infer a different brand from other portfolio clients. No renaming or post-processing of the business name.`;
 
 export function isKwbSite(siteUrl: string, siteName: string): boolean {
   const hay = `${siteUrl} ${siteName}`.toLowerCase();

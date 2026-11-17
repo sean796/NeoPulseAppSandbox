@@ -6,6 +6,7 @@ import {
   INTERNAL_LINKS_PER_SECTION_RULE,
   toSentenceCaseLinkAnchor,
 } from "@/lib/content-generation/link-anchor-text-case";
+import { formatFactCheckPromptBlock } from "@/lib/content-optimization/research-fact-check";
 
 export type { FirstPartyClaim };
 
@@ -382,6 +383,7 @@ export function firstPartyAuthorityBlockFromBrief(
   swotText?: string,
 ): string {
   const chunks = [
+    formatFactCheckPromptBlock(brief?.queryFanout?.factCheck),
     formatVerifiedFactsPromptBlock(
       brief?.queryFanout?.verifiedFacts,
       brief?.queryFanout?.researchAsOf,

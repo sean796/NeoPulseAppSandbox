@@ -24,7 +24,8 @@ describe("buildBlogHarnessAnswerAgent", () => {
 
   it("Answer section prompt is stat-first in one paragraph", () => {
     const prompt = generateSingleSectionPrompt(buildBlogHarnessAnswerAgent(), "html");
-    expect(prompt).toContain("<h2>Answer</h2>");
+    expect(prompt).toContain('<p id="answer">');
+    expect(prompt).not.toContain("<h2>Answer</h2>");
     expect(prompt).toContain("two or three sentences");
     expect(prompt).toContain("STAT/FACT FIRST");
     expect(prompt).toContain("numeric anchor with units and explicit CAD or USD");

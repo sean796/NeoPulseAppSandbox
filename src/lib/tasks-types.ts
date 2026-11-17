@@ -60,7 +60,7 @@ export type TaskExecutionPayload = {
   targetBucket?: TaskExecutionTargetBucket;
   /** Set by trigger evaluator; only these URLs are optimized in trigger mode. */
   targetUrls?: string[];
-  /** When missing_new_template, bulk Full AISEO keeps URLs that lack an Answer H2. */
+  /** When missing_new_template, bulk Full AISEO keeps URLs that still have an Answer heading. */
   urlFilter?: "missing_new_template";
   postId?: number | null;
   updateMode?: "update" | "draft";

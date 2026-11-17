@@ -39,6 +39,7 @@ import {
   runFactualVerificationPass,
   serpRowFromDump,
 } from "@/lib/content-optimization/topic-research-fanout-verification";
+import { runResearchFactCheck } from "@/lib/content-optimization/research-fact-check";
 import { logger } from "@/lib/logger";
 
 const TopicResearchPlanModelSchema = z.object({
@@ -350,7 +351,15 @@ export async function runTopicResearchFanout(input: {
   const researchAsOf =
     fanout?.researchAsOf ?? formatResearchAsOfLabel(new Date());
   if (!fanout) {
-    return input.brief;
+    return runResearchFactCheck({
+      brief: input.brief,
+      site: input.site,
+      keyword: input.keyword,
+      title: input.title,
+      pageExcerpt: input.pageExcerpt,
+      swotText: input.swotText,
+      onProgress: input.onProgress,
+    });
   }
 
   const runVerificationTask = async () => {
@@ -401,9 +410,21 @@ export async function runTopicResearchFanout(input: {
     !input.brief.queryFanout?.verifiedFacts?.length;
   const needsMerge =
     fanout !== input.brief.queryFanout || !input.brief.firstPartyClaims || addedVerifiedFacts;
-  if (!needsMerge) {
-    return input.brief;
-  }
+  const merged = needsMerge
+    ? mergeFanoutIntoBrief(input.brief, fanout, claims)
+    : {
+        ...input.brief,
+        firstPartyClaims: input.brief.firstPartyClaims ?? claims,
+        queryFanout: input.brief.queryFanout ?? fanout,
+      };
 
-  return mergeFanoutIntoBrief(input.brief, fanout, claims);
+  return runResearchFactCheck({
+    brief: merged,
+    site: input.site,
+    keyword: input.keyword,
+    title: input.title,
+    pageExcerpt: input.pageExcerpt,
+    swotText: input.swotText,
+    onProgress: input.onProgress,
+  });
 }

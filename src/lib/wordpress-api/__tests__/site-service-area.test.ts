@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  backfillMissingLocationCountries,
   buildSiteAdditionalLocationsPatch,
   buildSiteLocationsPatch,
   readSiteAdditionalLocations,
@@ -125,5 +126,71 @@ describe("site-service-area", () => {
     expect(patch.locations?.[1]?.city).toBe("Sherwood Park");
     expect(patch.locations?.[1]?.state).toBe("Alberta");
     expect(patch.locations?.[2]?.city).toBe("St. Albert");
+  });
+
+  it("accepts a world country outside Canada and United States", () => {
+    const site = ridgelineSite();
+    const patch = buildSiteLocationsPatch(site, "Mexico City", "", "Mexico");
+    expect(patch.locations?.[0]?.country).toBe("Mexico");
+    expect(patch.locations?.[0]?.city).toBe("Mexico City");
+    expect(patch.locations?.[0]?.state).toBe("");
+  });
+
+  it("backfills blank preferred country from province and skips set countries", () => {
+    const blank = ridgelineSite({
+      id: "wp-blank",
+      locations: [
+        {
+          id: "l1",
+          name: "HQ",
+          address: "",
+          city: "Winnipeg",
+          state: "Manitoba",
+          zip: "",
+          phone: "",
+          isDefault: true,
+        },
+      ],
+    });
+    const kept = ridgelineSite({
+      id: "wp-kept",
+      locations: [
+        {
+          id: "l1",
+          name: "HQ",
+          address: "",
+          city: "Austin",
+          state: "Texas",
+          country: "United States",
+          zip: "",
+          phone: "",
+          isDefault: true,
+        },
+      ],
+    });
+    const { sites, changed } = backfillMissingLocationCountries([blank, kept]);
+    expect(changed).toBe(true);
+    expect(sites[0]?.locations?.[0]?.country).toBe("Canada");
+    expect(sites[1]?.locations?.[0]?.country).toBe("United States");
+  });
+
+  it("does not report changed when every country is already set", () => {
+    const site = ridgelineSite({
+      locations: [
+        {
+          id: "l1",
+          name: "HQ",
+          address: "",
+          city: "Edmonton",
+          state: "Alberta",
+          country: "Canada",
+          zip: "",
+          phone: "",
+          isDefault: true,
+        },
+      ],
+    });
+    const { changed } = backfillMissingLocationCountries([site]);
+    expect(changed).toBe(false);
   });
 });

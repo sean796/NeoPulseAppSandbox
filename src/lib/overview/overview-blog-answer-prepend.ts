@@ -1,5 +1,5 @@
-import { BLOG_HARNESS_ANSWER_TITLE, HARNESS_ANSWER_ANCHOR_ID } from "@/lib/bulk/blog-harness-answer-agent";
-import { injectHarnessSectionH2AnchorId } from "@/lib/bulk/harness-section-anchor-ids";
+import { BLOG_HARNESS_ANSWER_TITLE } from "@/lib/bulk/blog-harness-answer-agent";
+import { injectAnswerParagraphAnchorId } from "@/lib/bulk/harness-section-anchor-ids";
 import { stitchHarnessSections } from "@/lib/bulk/bulk-harness-outline";
 import { prepareHarnessSectionHtml } from "@/lib/bulk/harness-section-validate";
 import { callOpenRouterChatCompletion } from "@/lib/competitor-research/competitor-report-openrouter";
@@ -66,8 +66,8 @@ export async function generateAnswerSectionHtml(args: GenerateAnswerSectionArgs)
     : "";
 
   const answerSystem = entityCanonical
-    ? `You write a brand-new Answer section from scratch for an existing ${pageLabel}. Output HTML only: <h2>Answer</h2> and one <p> with two or three sentences. No other headings. Primary keyword: ${keyword}. Place entity (comma label): ${entityCanonical}. Mention the connected business name somewhere in the Answer paragraph when one is listed.${linkRule} Respect official ® / ™ / © symbols on proprietary product lines and automation systems where applicable. Never copy or paraphrase a previous Answer block.`
-    : `You write a brand-new Answer section from scratch for an existing ${pageLabel}. Output HTML only: <h2>Answer</h2> and one <p> with two or three sentences. No other headings. Primary keyword: ${keyword}. Mention the connected business name somewhere in the Answer paragraph when one is listed.${linkRule} Respect official ® / ™ / © symbols on proprietary product lines and automation systems where applicable. Never copy or paraphrase a previous Answer block.`;
+    ? `You write a brand-new opening answer paragraph from scratch for an existing ${pageLabel}. Output HTML only: one <p id="answer"> with two or three sentences. No headings. Do not output an Answer heading. Primary keyword: ${keyword}. Place entity (comma label): ${entityCanonical}. Mention the connected business name somewhere in the paragraph when one is listed.${linkRule} Respect official ® / ™ / © symbols on proprietary product lines and automation systems where applicable. Never copy or paraphrase a previous answer paragraph.`
+    : `You write a brand-new opening answer paragraph from scratch for an existing ${pageLabel}. Output HTML only: one <p id="answer"> with two or three sentences. No headings. Do not output an Answer heading. Primary keyword: ${keyword}. Mention the connected business name somewhere in the paragraph when one is listed.${linkRule} Respect official ® / ™ / © symbols on proprietary product lines and automation systems where applicable. Never copy or paraphrase a previous answer paragraph.`;
   const answerUserPrompt = [
     `Title: ${title}`,
     `Keyword: ${keyword}`,
@@ -163,7 +163,7 @@ export async function generateAndPrependAnswerHtml(args: {
     signal: args.signal,
   });
 
-  const answerWithId = injectHarnessSectionH2AnchorId(answerHtml.trim(), HARNESS_ANSWER_ANCHOR_ID);
+  const answerWithId = injectAnswerParagraphAnchorId(answerHtml.trim());
   return {
     html: enforceHarnessAnswerBeforeOverview(stitchHarnessSections([answerWithId, stripped])),
     answerHtml: answerWithId,

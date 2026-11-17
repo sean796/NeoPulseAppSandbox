@@ -3,7 +3,7 @@ import { isBlogHarnessSummaryAgent } from "@/lib/bulk/blog-harness-summary-agent
 import { HARNESS_ANSWER_ANCHOR_ID, isBlogHarnessAnswerAgent } from "@/lib/bulk/blog-harness-answer-agent";
 import { FLO_OVERVIEW_CLASS } from "@/lib/overview/wrap-overview-section-html";
 import { stitchHarnessSections, type BulkHarnessOutlineSection } from "@/lib/bulk/bulk-harness-outline";
-import { HARNESS_OVERVIEW_ANCHOR_ID, injectHarnessSectionH2AnchorId, type HarnessSectionAnchorEntry } from "@/lib/bulk/harness-section-anchor-ids";
+import { HARNESS_OVERVIEW_ANCHOR_ID, injectHarnessSectionH2AnchorId, markLeadingAnswerParagraph, stripVisibleAnswerHeading, type HarnessSectionAnchorEntry } from "@/lib/bulk/harness-section-anchor-ids";
 import { plainTextFromH2InnerHtml } from "@/lib/overview/overview-blog-headers-extract";
 
 export type OverviewHarnessPageKind = "post" | "entity";
@@ -187,7 +187,7 @@ export function isAnswerOnlyHarnessBody(html: string): boolean {
   return !stripLeadingAnswerSection(src).trim();
 }
 
-/** Remove leading Answer H2 blocks (through the next H2) before Overview re-runs. */
+/** Remove Answer heading blocks and a lead paragraph id="answer" before Overview re-runs. */
 export function stripLeadingAnswerSection(html: string): string {
   let src = (html ?? "").trim();
   if (!src) return src;
@@ -205,7 +205,7 @@ export function stripLeadingAnswerSection(html: string): string {
     }
     if (!removed) break;
   }
-  return src;
+  return src.replace(/<p\b[^>]*\bid\s*=\s*(["'])answer\1[^>]*>[\s\S]*?<\/p>/gi, "").trim();
 }
 
 export function isOverviewHeadingTitle(title: string): boolean {
@@ -379,7 +379,7 @@ export function injectHarnessH2AnchorIdsForStitchedBlog(
   html: string,
   bodyAnchors: HarnessSectionAnchorEntry[],
 ): string {
-  let result = html;
+  let result = markLeadingAnswerParagraph(stripVisibleAnswerHeading(html));
   let bodyAnchorIndex = 0;
   let i = 0;
 
@@ -426,7 +426,23 @@ export function looksLikeBlockedHostHtml(html: string): boolean {
   return false;
 }
 
-/** Slice the Answer H2/H3 block (through the next H2/H3) for row preview. */
+function findAnswerParagraphOpenAt(html: string): number {
+  const re = /<p\b[^>]*>/gi;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(html))) {
+    const tag = match[0].toLowerCase();
+    if (tag.includes('id="answer"') || tag.includes("id='answer'")) return match.index;
+  }
+  return -1;
+}
+
+function answerParagraphHtmlAt(html: string, openAt: number): string {
+  const close = html.toLowerCase().indexOf("</p>", openAt);
+  if (close < 0) return "";
+  return html.slice(openAt, close + 4);
+}
+
+/** Slice the Answer block: a legacy Answer heading, or the lead paragraph id="answer". */
 export function extractAnswerSectionHtml(html: string): string {
   const src = (html ?? "").trim();
   if (!src) return "";
@@ -437,7 +453,9 @@ export function extractAnswerSectionHtml(html: string): string {
     const end = answerSectionEndAt(src, openAt);
     return src.slice(openAt, end).trim();
   }
-  return "";
+  const paraAt = findAnswerParagraphOpenAt(src);
+  if (paraAt < 0) return "";
+  return answerParagraphHtmlAt(src, paraAt).trim();
 }
 
 /** Slice the Overview H2/H3 block (through the next heading) for row preview. */
@@ -454,11 +472,18 @@ export function extractOverviewSectionHtml(html: string): string {
   return "";
 }
 
-function firstAnswerH2OpenAt(html: string): number {
+function firstAnswerBlockStartAt(html: string): number {
+  let headingAt = -1;
   for (const openAt of findH2OpenPositions(html)) {
-    if (isAnswerHeadingAt(html, openAt)) return openAt;
+    if (isAnswerHeadingAt(html, openAt)) {
+      headingAt = openAt;
+      break;
+    }
   }
-  return -1;
+  const paraAt = findAnswerParagraphOpenAt(html);
+  if (headingAt < 0) return paraAt;
+  if (paraAt < 0) return headingAt;
+  return Math.min(headingAt, paraAt);
 }
 
 function firstOverviewBlockStartAt(html: string): number {
@@ -480,7 +505,7 @@ export function enforceHarnessAnswerBeforeOverview(html: string): string {
   const overviewSection = extractOverviewSectionHtml(src);
   if (!answerSection.trim() || !overviewSection.trim()) return src;
 
-  const answerAt = firstAnswerH2OpenAt(src);
+  const answerAt = firstAnswerBlockStartAt(src);
   const overviewAt = firstOverviewBlockStartAt(src);
   if (answerAt < 0 || overviewAt < 0 || answerAt < overviewAt) return src;
 

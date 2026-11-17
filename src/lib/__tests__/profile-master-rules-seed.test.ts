@@ -152,17 +152,17 @@ describe("Shutter Spot profile master rules", () => {
     setServerHarnessSitesOverride([siteRow(siteId, name, siteUrl, { googleAdsCustomerId })]);
   }
 
-  it("adds Shutter Spot brand naming rule when master rules load for shutterspot.com", () => {
+  it("adds Blind Spot brand naming rule when master rules load for shutterspot.com", () => {
     seedShutterSpotSite();
     const payload = getMasterInstructionsPayload(siteId);
     const row = payload.sources.find((s) => s.name === PROFILE_BRAND_NAMING_FILENAME);
     expect(row?.kind).toBe("semantic-triples");
-    expect(row?.content).toContain("Shutter Spot");
     expect(row?.content).toContain("Blind Spot");
-    expect(row?.content).toContain("Do not substitute Blind Spot");
+    expect(row?.content).toContain("Shutter Spot");
+    expect(row?.content).toContain('Use exactly "Blind Spot"');
   });
 
-  it("seeds for legacy Blind Spot name with matching Ads customer id", () => {
+  it("seeds for Blind Spot name with matching Ads customer id", () => {
     seedShutterSpotSite("Blind Spot", "", "7454061453");
     const payload = getMasterInstructionsPayload(siteId);
     expect(payload.sources.some((s) => s.name === PROFILE_BRAND_NAMING_FILENAME)).toBe(true);
@@ -170,7 +170,7 @@ describe("Shutter Spot profile master rules", () => {
     expect(row?.content).toBe(SHUTTER_SPOT_BRAND_RULE_CONTENT);
   });
 
-  it("updates an outdated Shutter Spot profile rule in place", () => {
+  it("updates an outdated Blind Spot profile rule in place", () => {
     seedShutterSpotSite();
     const storageKey = `neo_pulse_wp_master_instructions_${siteId}`;
     lsStore.set(
@@ -179,7 +179,7 @@ describe("Shutter Spot profile master rules", () => {
         sources: [
           {
             name: PROFILE_BRAND_NAMING_FILENAME,
-            content: "[Shutter Spot brand naming]\nrule\tOld rule without canonical name.",
+            content: "[Blind Spot brand naming]\nrule\tOld rule without canonical name.",
             uploadedAt: 1,
             kind: "semantic-triples",
           },

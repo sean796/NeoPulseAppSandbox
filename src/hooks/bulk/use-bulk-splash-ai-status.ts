@@ -3,6 +3,7 @@ import {
   generateBulkSplashStatus,
   type BulkSplashStatus,
 } from "@/lib/bulk/bulk-splash-status-agent";
+import { FACT_CHECKING_STEP_LABEL } from "@/lib/content-optimization/research-fact-check";
 import { logger } from "@/lib/logger";
 
 export const BULK_SPLASH_STARTER_STATUS: BulkSplashStatus = {
@@ -10,9 +11,21 @@ export const BULK_SPLASH_STARTER_STATUS: BulkSplashStatus = {
   visual: "writing",
 };
 
+export const FACT_CHECKING_SPLASH_STATUS: BulkSplashStatus = {
+  status: FACT_CHECKING_STEP_LABEL,
+  visual: "factcheck",
+};
+
+export function isFactCheckingSplashStep(step: string): boolean {
+  return step.trim().toLowerCase() === FACT_CHECKING_STEP_LABEL.toLowerCase();
+}
+
 export function defaultSplashStatusForStep(step: string): BulkSplashStatus {
   const s = step.trim().toLowerCase();
   if (!s) return BULK_SPLASH_STARTER_STATUS;
+  if (isFactCheckingSplashStep(step)) {
+    return FACT_CHECKING_SPLASH_STATUS;
+  }
   if (s.includes("upload") || s.includes("publish")) {
     return { status: "Uploading to WordPress", visual: "publish" };
   }
@@ -98,7 +111,14 @@ export function useBulkSplashAiStatus({
       return;
     }
 
-    setStatusPair(defaultSplashStatusForStep(step));
+    const defaultPair = defaultSplashStatusForStep(step);
+    setStatusPair(defaultPair);
+
+    // Fact checking owns its exact label + graphic; do not paraphrase.
+    if (isFactCheckingSplashStep(step)) {
+      cacheRef.current.set(cacheKey, FACT_CHECKING_SPLASH_STATUS);
+      return;
+    }
 
     const sequence = ++sequenceRef.current;
     abortRef.current?.abort();

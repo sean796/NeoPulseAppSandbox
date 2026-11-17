@@ -79,6 +79,7 @@ class Neo_Pulse_App_Wp_Rest_Client {
 			array(
 				'timeout'     => 15,
 				'redirection' => 5,
+				'httpversion' => '1.1',
 				'headers'     => array(
 					'User-Agent'      => self::USER_AGENT,
 					'Accept'          => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -134,6 +135,7 @@ class Neo_Pulse_App_Wp_Rest_Client {
 			'method'      => strtoupper( $method ),
 			'timeout'     => $timeout,
 			'redirection' => 5,
+			'httpversion' => '1.1',
 			'headers'     => $headers,
 		);
 
@@ -186,6 +188,7 @@ class Neo_Pulse_App_Wp_Rest_Client {
 			'Accept'          => $accept,
 			'User-Agent'      => isset( $options['user_agent'] ) ? (string) $options['user_agent'] : self::USER_AGENT,
 			'Accept-Language' => isset( $options['accept_language'] ) ? (string) $options['accept_language'] : 'en-US,en;q=0.9',
+			'Accept-Encoding' => 'identity',
 		);
 		if ( ! empty( $options['referer'] ) ) {
 			$headers['Referer']         = (string) $options['referer'];

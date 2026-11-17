@@ -75,6 +75,9 @@ export function useAgentRunsLifecycle({
         agentRunIsServerExecution(run) &&
         resolveAgentRunRecipeKey(run) !== "semrush_safe_fix" &&
         resolveAgentRunRecipeKey(run) !== "posts_content_gap_check" &&
+        resolveAgentRunRecipeKey(run) !== "entities_content_gap_check" &&
+        resolveAgentRunRecipeKey(run) !== "money_page_internal_links" &&
+        resolveAgentRunRecipeKey(run) !== "editorial_content_audit" &&
         !serverProcessInFlight.current.has(run.id)
       ) {
         serverProcessInFlight.current.add(run.id);
@@ -101,6 +104,9 @@ export function useAgentRunsLifecycle({
           agentRunIsServerExecution(run) &&
           resolveAgentRunRecipeKey(run) !== "semrush_safe_fix" &&
           resolveAgentRunRecipeKey(run) !== "posts_content_gap_check" &&
+          resolveAgentRunRecipeKey(run) !== "entities_content_gap_check" &&
+          resolveAgentRunRecipeKey(run) !== "money_page_internal_links" &&
+          resolveAgentRunRecipeKey(run) !== "editorial_content_audit" &&
           (run.status === "queued" || run.status === "running"),
       );
       if (active.length === 0) return;

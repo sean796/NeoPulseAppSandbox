@@ -12,9 +12,11 @@ import {
   ensureSitesLoadedFromServer,
   getStoredSites,
   hasSitesServerHydrated,
+  saveSites,
 } from "@/components/integrations/storage";
 import { type WordPressSite } from "@/components/integrations/types";
 import { wordpressSiteMenuDisplayName } from "@/lib/wordpress-site-display-name";
+import { backfillMissingLocationCountries } from "@/lib/wordpress-api/site-service-area";
 import { useWordPressSiteCrud } from "./wordpress-sites/use-wordpress-site-crud";
 import { useWordPressConnectionAndSitemaps } from "./wordpress-sites/use-wordpress-connection-and-sitemaps";
 import { useWordPressSitemapOperations } from "./wordpress-sites/use-wordpress-sitemap-operations";
@@ -64,10 +66,16 @@ function useWordPressSitesState() {
     void (async () => {
       const loaded = await ensureSitesLoadedFromServer();
       if (cancelled) return;
+      const { sites: filled, changed } = backfillMissingLocationCountries(loaded);
       // Successful load replaces the painted list, including a shorter roster.
       // Failed load leaves ensureSitesLoadedFromServer returning the painted rows.
-      setSites(loaded);
+      setSites(filled);
       setSitesReady(true);
+      if (changed) {
+        await saveSites(filled);
+        if (cancelled) return;
+        setSites(getStoredSites());
+      }
     })();
     return () => {
       cancelled = true;

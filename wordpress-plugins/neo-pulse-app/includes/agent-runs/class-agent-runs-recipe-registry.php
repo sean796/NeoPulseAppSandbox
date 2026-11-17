@@ -71,6 +71,18 @@ class Neo_Pulse_App_Agent_Runs_Recipe_Registry {
 			'title'       => 'Posts content gap check',
 			'managerTabs' => array( 'dashboard' ),
 		),
+		'entities_content_gap_check' => array(
+			'title'       => 'Entities content gap check',
+			'managerTabs' => array( 'dashboard' ),
+		),
+		'money_page_internal_links' => array(
+			'title'       => 'Money page internal links',
+			'managerTabs' => array( 'dashboard' ),
+		),
+		'editorial_content_audit'   => array(
+			'title'       => 'Editorial content audit',
+			'managerTabs' => array( 'dashboard' ),
+		),
 	);
 
 	public static function is_valid( string $recipe_key ): bool {

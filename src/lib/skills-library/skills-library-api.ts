@@ -16,6 +16,9 @@ export interface SkillsLibraryPayload {
 export function skillsLibraryPathSlug(skillId: string): string {
   if (skillId === "reporting.semrush.safe-fix") return "semrush-safe-fix";
   if (skillId === "content.posts.gap-check") return "content-posts-gap-check";
+  if (skillId === "content.entities.gap-check") return "content-entities-gap-check";
+  if (skillId === "content.internal-links.money-pages") return "content-internal-links-money-pages";
+  if (skillId === "content.editorial.audit") return "editorial-content-audit";
   return skillId.replace(/\./g, "-");
 }
 

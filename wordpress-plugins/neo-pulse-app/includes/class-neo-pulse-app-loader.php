@@ -29,6 +29,9 @@ class Neo_Pulse_App_Loader {
 		Neo_Pulse_App_Changelog_Newsletter_Cron::init();
 		Neo_Pulse_App_Semrush_Safe_Fix_Cron::init();
 		Neo_Pulse_App_Posts_Content_Gap_Cron::init();
+		Neo_Pulse_App_Entities_Content_Gap_Cron::init();
+		Neo_Pulse_App_Money_Page_Internal_Links_Cron::init();
+		Neo_Pulse_App_Editorial_Content_Audit_Cron::init();
 		if ( class_exists( 'Neo_Pulse_App_Agent_Run_Worker_Cron' ) ) {
 			Neo_Pulse_App_Agent_Run_Worker_Cron::activate();
 		}
@@ -62,6 +65,9 @@ class Neo_Pulse_App_Loader {
 		Neo_Pulse_App_Changelog_Newsletter_Cron::activate();
 		Neo_Pulse_App_Semrush_Safe_Fix_Cron::activate();
 		Neo_Pulse_App_Posts_Content_Gap_Cron::activate();
+		Neo_Pulse_App_Entities_Content_Gap_Cron::activate();
+		Neo_Pulse_App_Money_Page_Internal_Links_Cron::activate();
+		Neo_Pulse_App_Editorial_Content_Audit_Cron::activate();
 		flush_rewrite_rules();
 	}
 
@@ -72,6 +78,9 @@ class Neo_Pulse_App_Loader {
 		Neo_Pulse_App_Changelog_Newsletter_Cron::deactivate();
 		Neo_Pulse_App_Semrush_Safe_Fix_Cron::deactivate();
 		Neo_Pulse_App_Posts_Content_Gap_Cron::deactivate();
+		Neo_Pulse_App_Entities_Content_Gap_Cron::deactivate();
+		Neo_Pulse_App_Money_Page_Internal_Links_Cron::deactivate();
+		Neo_Pulse_App_Editorial_Content_Audit_Cron::deactivate();
 		flush_rewrite_rules();
 	}
 
@@ -128,6 +137,23 @@ class Neo_Pulse_App_Loader {
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/posts-content-gap/class-posts-content-gap-runner.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/posts-content-gap/class-posts-content-gap-route.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/posts-content-gap/class-posts-content-gap-cron.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/entities-content-gap/class-entities-content-gap-schedule.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/entities-content-gap/class-entities-content-gap-pipeline.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/entities-content-gap/class-entities-content-gap-runner.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/entities-content-gap/class-entities-content-gap-route.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/entities-content-gap/class-entities-content-gap-cron.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/money-page-internal-links/class-money-page-internal-links-schedule.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/money-page-internal-links/class-money-page-internal-links-pipeline.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/money-page-internal-links/class-money-page-internal-links-mail.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/money-page-internal-links/class-money-page-internal-links-runner.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/money-page-internal-links/class-money-page-internal-links-route.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/money-page-internal-links/class-money-page-internal-links-cron.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/editorial-content-audit/class-editorial-content-audit-schedule.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/editorial-content-audit/class-editorial-content-audit-worker.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/editorial-content-audit/class-editorial-content-audit-mail.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/editorial-content-audit/class-editorial-content-audit-runner.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/editorial-content-audit/class-editorial-content-audit-route.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/editorial-content-audit/class-editorial-content-audit-cron.php';
 
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/proposal/class-proposal-lighthouse-parse.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/proposal/class-proposal-faq-inventory.php';

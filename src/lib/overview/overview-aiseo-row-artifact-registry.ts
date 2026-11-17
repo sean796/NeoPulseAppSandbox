@@ -114,7 +114,7 @@ export const AISEO_ROW_ARTIFACT_REGISTRY: Record<AiseoFileSlotRunKind, AiseoRowA
     category: "content",
     agentKind: "blog",
     label: "Answer",
-    reason: "Generates or replaces the leading `<h2>Answer</h2>` direct-answer block for AI Overviews and featured snippets.",
+    reason: "Generates or replaces the leading direct-answer paragraph for AI Overviews and featured snippets. No Answer heading.",
     elementSlotTitle: "Answer",
     elementFileName: "answer.html",
     pipelineTitles: ["Answer", AISEO_POST_CONTENT_SLOT_TITLE, AISEO_WP_UPLOAD_SLOT_TITLE],

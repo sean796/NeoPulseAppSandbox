@@ -7,9 +7,10 @@ import {
   enforceHarnessSectionHeadingTitle,
   HARNESS_OVERVIEW_ANCHOR_ID,
   headingTitleToHarnessAnchorId,
+  injectAnswerParagraphAnchorId,
   injectHarnessSectionH2AnchorId,
+  stripVisibleAnswerHeading,
 } from "@/lib/bulk/harness-section-anchor-ids";
-import { HARNESS_ANSWER_ANCHOR_ID } from "@/lib/bulk/blog-harness-answer-agent";
 import {
   isBadIllustrativeH2Title,
   resolveIllustrativeH2Title,
@@ -168,15 +169,7 @@ export function countPlainTextSentences(plain: string): number {
 }
 
 export function assertHarnessAnswerProseComplete(html: string): void {
-  if (!/<h2\b/i.test(html)) {
-    throw new Error("Harness: Answer missing <h2>");
-  }
-  const lower = html.toLowerCase();
-  const h2End = lower.indexOf("</h2>");
-  if (h2End < 0) {
-    throw new Error("Harness: Answer missing </h2>");
-  }
-  const body = html.slice(h2End + 5);
+  const body = stripVisibleAnswerHeading(html);
   if (/<ul\b/i.test(body) || /<ol\b/i.test(body) || /<table\b/i.test(body)) {
     throw new Error("Harness: Answer must not contain lists or tables");
   }
@@ -373,16 +366,13 @@ export function normalizeIllustrativeHarnessHtml(html: string, forcedH2?: string
   return s.trim();
 }
 
-/** Answer contract: one H2 + one paragraph only. Drop model-added headings after </p>. */
+/** Answer contract: one paragraph only. Drop an Answer heading and anything after the paragraph. */
 export function trimAnswerSectionToContract(html: string): string {
   const s = (html ?? "").trim();
   if (!s) return s;
-  const h2Match = s.match(/^<h2\b[^>]*>[\s\S]*?<\/h2>/i);
-  if (!h2Match) return s;
-  const afterH2 = s.slice(h2Match[0].length).trim();
-  const pMatch = afterH2.match(/^<p\b[^>]*>[\s\S]*?<\/p>/i);
-  if (!pMatch) return s;
-  return `${h2Match[0]}${pMatch[0]}`.trim();
+  const pMatch = s.match(/<p\b[^>]*>[\s\S]*?<\/p>/i);
+  if (!pMatch) return stripVisibleAnswerHeading(s).trim();
+  return pMatch[0].trim();
 }
 
 export function finalizeHarnessSectionHtml(
@@ -392,10 +382,9 @@ export function finalizeHarnessSectionHtml(
   let s = stripHarnessModelContamination(html);
   s = stripHarnessSectionTrailingGarbage(s);
   if (opts.isAnswer) {
-    s = enforceHarnessSectionHeadingTitle(s, "Answer");
     s = normalizeAnswerProseHtml(s);
     s = trimAnswerSectionToContract(s);
-    s = injectHarnessSectionH2AnchorId(s, HARNESS_ANSWER_ANCHOR_ID);
+    s = injectAnswerParagraphAnchorId(s);
   } else if (opts.isOverview) {
     s = normalizeOverviewProseHtml(s);
     s = enforceHarnessSectionHeadingTitle(s, "Overview");

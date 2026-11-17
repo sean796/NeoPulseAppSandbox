@@ -38,7 +38,7 @@ Required task formatting wins: Answer and Overview structure, Overview bold labe
 18. Prefer is/are/has over "serves as, stands as, functions as, boasts, features, offers, maintains [a]".
 §19–§21 (formatting):
 19. Bold as decoration: do not bold random words. Overview key-point bold labels required by the task stay. Decorative bold-label lists that add no information become prose.
-20. Decorative headings: sentence case; no emoji or arrow decoration; no horizontal rules between every section; do not restyle required H2 titles (Answer, Overview, Scenario:…).
+20. Decorative headings: sentence case; no emoji or arrow decoration; no horizontal rules between every section; do not restyle required H2 titles (Overview, Scenario:…). Do not add or keep a heading whose text is Answer.
 21. Straight quotes only (weak alone): use "..." not curly quotes.
 §22–§25 (leftovers):
 22. Chatbot residue: never write "I hope this helps", "Great question!", "Of course!", "Certainly!", "Would you like…", "let me know".

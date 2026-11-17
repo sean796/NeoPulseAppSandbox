@@ -13,7 +13,10 @@ import { mergeSeoBriefIntoBulkSkeleton } from "@/lib/llm-audit/fetch-merged-seo-
 import { llmAuditGuidanceFromBrief } from "@/lib/llm-audit/llm-audit-dataforseo";
 import { resolveSiteLocationLabel } from "@/lib/llm-audit/resolve-site-location-label";
 import type { SeoContentBriefV1 } from "@/lib/overview-seo-content-brief";
-import { runTopicResearchFanout } from "@/lib/content-optimization/topic-research-fanout";
+import {
+  runResearchFactCheck,
+  runTopicResearchFanout,
+} from "@/lib/content-optimization/topic-research-fanout";
 import { firstPartyAuthorityBlockFromBrief, swotTextFromResearchFields } from "@/lib/content-optimization/first-party-authority-prompt";
 import { resolveLlmAuditAuthorityLinksForChecklist } from "@/lib/llm-audit/llm-audit-authority-links";
 import {
@@ -323,6 +326,9 @@ export async function runBulkRowResearchEnrichmentPhase(input: {
           forceRefresh: options.forceFreshTopicFanout === true,
         });
       } catch (e) {
+        if (e instanceof Error && /^Fact checking/i.test(e.message)) {
+          throw e;
+        }
         logger.warn("[Bulk Auto-Generate] Topic research fan-out failed (non-fatal):", e);
         return serpLlmBrief;
       }
@@ -374,6 +380,17 @@ export async function runBulkRowResearchEnrichmentPhase(input: {
       runAuthorityClassifyTask(),
     ]);
     serpLlmBrief = fanoutBrief;
+    if (!serpLlmBrief.queryFanout?.factCheck) {
+      serpLlmBrief = await runResearchFactCheck({
+        brief: serpLlmBrief,
+        site: serpSite,
+        keyword: serpKeyword,
+        title: enrichedRow.title,
+        pageExcerpt: pageExcerptFromImport || enrichedRow.imported_preamble_html?.trim(),
+        swotText,
+        onProgress: (message) => options.onProgress?.(rowIndex, 0, message),
+      });
+    }
     llmAuditAuthorityLinks = classifiedAuthorityLinks;
     firstPartyAuthorityBlock = firstPartyAuthorityBlockFromBrief(serpLlmBrief, swotText);
     rowExplicitExternalPairs = buildRowExplicitExternalAllowlist({

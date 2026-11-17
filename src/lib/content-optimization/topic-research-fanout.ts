@@ -57,3 +57,14 @@ export {
   mergeFanoutIntoBrief,
   runTopicResearchFanout,
 } from "@/lib/content-optimization/topic-research-fanout-orchestration";
+
+export {
+  FACT_CHECKING_STEP_LABEL,
+  buildNapCardFromSite,
+  phoneDigits,
+  formatNapCardPromptBlock,
+  formatFactCheckPromptBlock,
+  assertRewrittenNapOnCard,
+  applyFactCheckToBrief,
+  runResearchFactCheck,
+} from "@/lib/content-optimization/research-fact-check";

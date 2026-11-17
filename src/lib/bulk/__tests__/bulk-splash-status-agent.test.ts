@@ -66,6 +66,25 @@ describe("generateBulkSplashStatus", () => {
     expect(call?.system).toContain('"meta"');
     expect(call?.system).toContain('"image"');
     expect(call?.system).toContain('"writing"');
+    expect(call?.system).toContain('"factcheck"');
+    expect(call?.system).toContain("Fact checking");
+  });
+
+  it("accepts the factcheck visual kind", async () => {
+    mockCall.mockResolvedValue({
+      raw: null,
+      content: JSON.stringify({
+        status: "Fact checking",
+        visual: "factcheck",
+      }),
+    });
+
+    await expect(
+      generateBulkSplashStatus({ step: "Fact checking" }),
+    ).resolves.toEqual({
+      status: "Fact checking",
+      visual: "factcheck",
+    });
   });
 
   it("throws when the model returns an unknown graphic kind", async () => {

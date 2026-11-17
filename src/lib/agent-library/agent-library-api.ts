@@ -29,6 +29,18 @@ export const ASSIGNABLE_SITE_AGENTS = [
     id: "content.posts.gap-check",
     label: "Posts Content Gap Check",
   },
+  {
+    id: "content.entities.gap-check",
+    label: "Entities Content Gap Check",
+  },
+  {
+    id: "content.internal-links.money-pages",
+    label: "Money Page Internal Links",
+  },
+  {
+    id: "content.editorial.audit",
+    label: "Editorial Content Audit",
+  },
 ] as const;
 
 export type AssignableSiteAgentId = (typeof ASSIGNABLE_SITE_AGENTS)[number]["id"];

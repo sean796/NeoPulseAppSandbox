@@ -174,16 +174,16 @@ export const CAREER_APPLICATION_QUESTIONS: CareerApplicationQuestion[] = [
 
 export const PROJECT_ROOM_STAGING_CONTEXT = {
   propertyId: "wp-prop-shutterspot",
-  integrationsBrandName: "Shutter Spot",
+  integrationsBrandName: "Blind Spot",
   domain: "https://shutterspot.com",
   stagingDomain: "https://shutterspot1stg.wpenginepowered.com",
-  googleAdsMccSubAccountLabel: "Blind Spot (Customer ID 745-406-1453) [INTERNAL ADS LABEL ONLY - NEVER USE IN PUBLIC COPY]",
+  googleAdsCustomerId: "745-406-1453",
   targetUrl: "https://shutterspot.com/custom-plantation-shutters-calgary/",
   focusKeyword: "custom plantation shutters calgary",
-  gscSignal: "2,410 impressions / 1.1% CTR (pos 8.4) over last 28 days. Current title has a colon and legacy Ads label.",
+  gscSignal: "2,410 impressions / 1.1% CTR (pos 8.4) over last 28 days. Current title has a colon and legacy Shutter Spot label.",
   serverWriteEndpoint: "/api/wordpress/update-post-meta",
   contractRules: [
-    "publicBrandName must be the canonical Integrations brand name (Shutter Spot), never the Google Ads MCC sub-account label (Blind Spot).",
+    "publicBrandName must be the canonical Integrations brand name (Blind Spot), never the legacy domain label (Shutter Spot).",
     "seoTitle must be 45 to 60 characters, include focusKeyword (custom plantation shutters calgary), and contain zero colons (:).",
     "metaDescription must be 130 to 160 characters and include focusKeyword (custom plantation shutters calgary).",
     "executionRoute must be the server-side NEO Pulse endpoint (/api/wordpress/update-post-meta), never a direct browser wp-json URL or fetch() call.",
@@ -194,10 +194,10 @@ export const PROJECT_ROOM_STAGING_CONTEXT = {
 export const INITIAL_FLAWED_HARNESS_PROMPT = `Draft the SEO meta refresh JSON for /custom-plantation-shutters-calgary/ using the account memo defaults.`;
 
 export const INITIAL_FLAWED_ARTIFACT: ProjectRoomArtifact = {
-  publicBrandName: "Blind Spot",
+  publicBrandName: "Shutter Spot",
   focusKeyword: "custom plantation shutters calgary",
-  seoTitle: "Blind Spot: Custom Plantation Shutters Calgary",
-  metaDescription: "Order shutters from Blind Spot.",
+  seoTitle: "Shutter Spot: Custom Plantation Shutters Calgary",
+  metaDescription: "Order shutters from Shutter Spot.",
   executionRoute: "https://shutterspot.com/wp-json/wp/v2/pages/418",
   targetEnvironment: "production",
   stagingVerificationStep: "",

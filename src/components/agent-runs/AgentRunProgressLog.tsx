@@ -46,18 +46,20 @@ type AgentRunProgressLogProps = {
   rows: AgentRunLogTimelineRow[];
   /** Horizontal rules between log rows (Tasks drawer). */
   withSeparators?: boolean;
+  /** Extra classes on the scroll box. Tasks passes a tall cap so the lines are readable. */
+  className?: string;
 };
 
 const NEAR_BOTTOM_PX = 48;
 
-export function AgentRunProgressLog({ rows, withSeparators = false }: AgentRunProgressLogProps) {
+export function AgentRunProgressLog({ rows, withSeparators = false, className }: AgentRunProgressLogProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const container = scrollRef.current;
     if (!container) return;
     const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
-    if (distanceFromBottom > NEAR_BOTTOM_PX) return;
+    if (distanceFromBottom > NEAR_BOTTOM_PX && container.scrollTop > 0) return;
     container.scrollTop = container.scrollHeight;
   }, [rows]);
 
@@ -66,7 +68,7 @@ export function AgentRunProgressLog({ rows, withSeparators = false }: AgentRunPr
   }
 
   return (
-    <div ref={scrollRef} className="max-h-56 overflow-y-auto px-2.5 py-2 sm:px-3">
+    <div ref={scrollRef} className={cn("overflow-y-auto px-2.5 py-2 sm:px-3", className ?? "max-h-56")}>
       <ul className="space-y-1">
         {rows.map((row, index) => (
           <li

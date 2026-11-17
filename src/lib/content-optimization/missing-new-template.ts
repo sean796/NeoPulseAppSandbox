@@ -24,7 +24,7 @@ export function h2CellHasAnswer(h2: string): boolean {
     .includes("answer");
 }
 
-/** True when published HTML already has the new-template chrome H2 titled Answer. */
+/** True when published HTML still has a heading whose text is exactly Answer. */
 export function htmlHasNewTemplateAnswerH2(html: string): boolean {
   return extractH2TextsFromHtml(html).some((heading) => heading.trim().toLowerCase() === "answer");
 }
@@ -39,8 +39,8 @@ export function auditUrlsMissingNewTemplate(
   for (const url of urls) {
     const h2s = extractH2TextsFromHtml(htmlForUrl(url));
     h2sByUrl[url] = h2s;
-    if (h2s.some((heading) => heading.trim().toLowerCase() === "answer")) alreadyNew.push(url);
-    else missing.push(url);
+    if (h2s.some((heading) => heading.trim().toLowerCase() === "answer")) missing.push(url);
+    else alreadyNew.push(url);
   }
   return { scanned: urls.length, missing, alreadyNew, h2sByUrl };
 }
@@ -66,10 +66,10 @@ export function isMissingNewTemplateFilter(value: unknown): value is TaskExecuti
 }
 
 export const MISSING_NEW_TEMPLATE_AUDIT_PROMPT =
-  "A page already has the new template when its published HTML includes an H2 whose text is exactly Answer. Keep those pages. This step lists only URLs that still lack that H2.";
+  "A page still needs a heading cleanup when its published HTML includes an H2 whose text is exactly Answer. Keep pages that do not have that heading. This step lists only URLs that still have it.";
 
 export const MISSING_NEW_TEMPLATE_OPTIMIZE_INSTRUCTIONS =
-  "Apply the new live template. Published HTML must include an H2 titled Answer. Rewrite the page to that chrome. Do not drop an existing Answer H2.";
+  "Remove any heading whose text is exactly Answer. Keep the paragraph that followed it. Do not add an Answer heading.";
 
 function csvCell(value: string): string {
   if (/[",\n\r]/.test(value)) return `"${value.replace(/"/g, '""')}"`;
@@ -86,7 +86,7 @@ function auditCsvCell(header: string, url: string, missing: boolean, h2s: readon
   return "";
 }
 
-/** Full scan CSV for run RAG. H2 is the scraped headings. Full AISEO works rows whose H2s do not include Answer. */
+/** Full scan CSV for run RAG. H2 is the scraped headings. Full AISEO works rows whose H2s include Answer. */
 export function missingTemplateAuditToCsv(
   audit: MissingTemplateAudit,
   headers: readonly string[] = MISSING_TEMPLATE_AUDIT_CSV_HEADERS,

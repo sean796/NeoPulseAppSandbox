@@ -237,7 +237,7 @@ async function runContinueOptimizationTryBodyInner(input: ContinueOptimizationTr
       ensured.acfContext?.promptModifier,
     ),
   };
-  const seoResearchRaw = ensured.seoResearchRaw;
+  let seoResearchRaw = ensured.seoResearchRaw;
 
   if (pending.acfFields && typeof pending.acfFields === "object") {
     Object.assign(pending.acfFields as Record<string, unknown>, workingAcfFields);
@@ -319,6 +319,7 @@ async function runContinueOptimizationTryBodyInner(input: ContinueOptimizationTr
     titleForBlueprint,
     firstPartyAuthorityBlock,
     llmAuditSummary,
+    seoResearchRaw: factCheckedResearchRaw,
   } = await buildContinueOptimizationBlueprintPrep({
     finalOptimizationOptions,
     url,
@@ -334,7 +335,17 @@ async function runContinueOptimizationTryBodyInner(input: ContinueOptimizationTr
     fileManager,
     contentPrepHarnessSetters,
     flushGeneratedFiles,
+    onProgress: (message) =>
+      updateOptimizationProgress(setOptimizationProgress, siteId, "plan", 0.66, message),
+    sapEntity: extractedEntity !== "N/A" ? extractedEntity : undefined,
   });
+  seoResearchRaw = factCheckedResearchRaw;
+  if (pending.acfFields && typeof pending.acfFields === "object") {
+    (pending.acfFields as Record<string, unknown>).seo_research = seoResearchRaw;
+  }
+  if (pending.acfContext) {
+    pending.acfContext = { ...pending.acfContext, seoResearch: seoResearchRaw };
+  }
 
   updateOptimizationProgress(setOptimizationProgress, siteId, "plan", 0.68, "Building blueprint…");
   const forbiddenLiveH2s = existingContent?.trim() ? extractH2Titles(existingContent) : undefined;

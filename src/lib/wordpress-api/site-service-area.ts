@@ -1,10 +1,9 @@
 import type { Location, NAPInfo, WordPressSite } from "@/components/integrations/types";
 import { cityStateFromNapAddress } from "@/lib/llm-audit/resolve-site-location-label";
 import {
-  inferServiceCountry,
-  isServiceCountry,
+  isWorldCountry,
   normalizeServiceRegion,
-  type ServiceCountry,
+  resolveStoredCountry,
 } from "@/lib/keyword-location-utils";
 
 function preferredLocation(site?: WordPressSite | null): Location | undefined {
@@ -49,20 +48,20 @@ export function readSiteServiceState(site?: WordPressSite | null): string {
   return "";
 }
 
-export function readSiteServiceCountry(site?: WordPressSite | null): ServiceCountry | "" {
+export function readSiteServiceCountry(site?: WordPressSite | null): string {
   const preferred = preferredLocation(site);
   const stored = preferred?.country?.trim() ?? "";
-  if (isServiceCountry(stored)) return stored;
+  if (isWorldCountry(stored)) return stored;
   const state = preferred?.state?.trim() ?? "";
-  if (state) return inferServiceCountry(state, stored);
+  if (state) return resolveStoredCountry(stored, state);
   const napAddr = site?.napInfo?.address?.trim();
   if (napAddr) {
     const parsed = cityStateFromNapAddress(napAddr);
     if (parsed.includes(",")) {
-      return inferServiceCountry(parsed.split(",").slice(1).join(","), stored);
+      return resolveStoredCountry(stored, parsed.split(",").slice(1).join(","));
     }
   }
-  return inferServiceCountry("", stored);
+  return resolveStoredCountry(stored, "");
 }
 
 function asCleanString(value: unknown): string {
@@ -84,9 +83,9 @@ export function buildSiteLocationsPatch(
     isDefault: false,
   }));
   const countryTrim = asCleanString(country);
-  const resolvedCountry = isServiceCountry(countryTrim)
+  const resolvedCountry = isWorldCountry(countryTrim)
     ? countryTrim
-    : inferServiceCountry(stateRaw, existing?.country);
+    : resolveStoredCountry(existing?.country, stateRaw);
   const resolvedState = normalizeServiceRegion(stateRaw, resolvedCountry);
   if (!cityTrim && !resolvedState && !resolvedCountry) {
     const nextLocations = additional.map((loc, idx) => ({
@@ -142,9 +141,9 @@ export function buildSiteAdditionalLocationsPatch(
     const cityTrim = asCleanString(item.city);
     const stateRaw = asCleanString(item.state);
     const countryTrim = asCleanString(item.country);
-    const resolvedCountry = isServiceCountry(countryTrim)
+    const resolvedCountry = isWorldCountry(countryTrim)
       ? countryTrim
-      : inferServiceCountry(stateRaw, countryTrim);
+      : resolveStoredCountry(countryTrim, stateRaw);
     const resolvedState = normalizeServiceRegion(stateRaw, resolvedCountry);
     return {
       id: asCleanString(item.id) || `loc-${site.id}-extra-${idx + 1}`,
@@ -171,4 +170,41 @@ export function buildSiteAdditionalLocationsPatch(
       : undefined;
 
   return { locations, napInfo };
+}
+
+/** Fill blank location.country from province/NAP inference. Does not overwrite set countries. */
+export function backfillMissingLocationCountries(sites: WordPressSite[]): {
+  sites: WordPressSite[];
+  changed: boolean;
+} {
+  let changed = false;
+  const nextSites = sites.map((site) => {
+    const locs = readSiteLocationsList(site);
+    if (locs.length === 0) return site;
+
+    let siteChanged = false;
+    const preferred = preferredLocation(site);
+    const nextLocs = locs.map((loc) => {
+      if (loc.country?.trim()) return loc;
+      const isPreferred =
+        preferred != null &&
+        (preferred.id ? loc.id === preferred.id : loc === preferred);
+      const inferred = isPreferred
+        ? readSiteServiceCountry(site)
+        : resolveStoredCountry("", loc.state);
+      if (!inferred) return loc;
+      siteChanged = true;
+      return { ...loc, country: inferred };
+    });
+
+    if (!siteChanged) return site;
+    changed = true;
+    return {
+      ...site,
+      locations: nextLocs,
+      napInfo: site.napInfo ? { ...site.napInfo, locations: nextLocs } : site.napInfo,
+    };
+  });
+
+  return { sites: nextSites, changed };
 }

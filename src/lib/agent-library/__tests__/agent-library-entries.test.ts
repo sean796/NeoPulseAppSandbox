@@ -47,6 +47,48 @@ describe("agent library entries", () => {
     expect(ASSIGNABLE_SITE_AGENTS.some((a) => a.id === "content.posts.gap-check")).toBe(true);
   });
 
+  it("keeps Entities Content Gap Check out of the agent library and in the skills library", () => {
+    const agents = buildUnifiedAgentLibraryEntries([], {});
+    const skills = buildSkillsLibraryEntries([], {});
+    expect(agents.some((e) => e.id === "content.entities.gap-check")).toBe(false);
+    const gap = skills.find((e) => e.id === "content.entities.gap-check");
+    expect(gap).toBeDefined();
+    expect(gap?.label).toBe("Entities Content Gap Check");
+    expect(gap?.appPath).toBeUndefined();
+  });
+
+  it("lists Entities Content Gap Check as an assignable site agent", () => {
+    expect(ASSIGNABLE_SITE_AGENTS.some((a) => a.id === "content.entities.gap-check")).toBe(true);
+  });
+
+  it("keeps Money Page Internal Links out of the agent library and in the skills library", () => {
+    const agents = buildUnifiedAgentLibraryEntries([], {});
+    const skills = buildSkillsLibraryEntries([], {});
+    expect(agents.some((e) => e.id === "content.internal-links.money-pages")).toBe(false);
+    const skill = skills.find((e) => e.id === "content.internal-links.money-pages");
+    expect(skill).toBeDefined();
+    expect(skill?.label).toBe("Money Page Internal Links");
+    expect(skill?.appPath).toBeUndefined();
+  });
+
+  it("lists Money Page Internal Links as an assignable site agent", () => {
+    expect(ASSIGNABLE_SITE_AGENTS.some((a) => a.id === "content.internal-links.money-pages")).toBe(true);
+  });
+
+  it("keeps Editorial Content Audit out of the agent library and in the skills library", () => {
+    const agents = buildUnifiedAgentLibraryEntries([], {});
+    const skills = buildSkillsLibraryEntries([], {});
+    expect(agents.some((e) => e.id === "content.editorial.audit")).toBe(false);
+    const skill = skills.find((e) => e.id === "content.editorial.audit");
+    expect(skill).toBeDefined();
+    expect(skill?.label).toBe("Editorial Content Audit");
+    expect(skill?.appPath).toBeUndefined();
+  });
+
+  it("lists Editorial Content Audit as an assignable site agent", () => {
+    expect(ASSIGNABLE_SITE_AGENTS.some((a) => a.id === "content.editorial.audit")).toBe(true);
+  });
+
   it("leaves plain agents without an Open path", () => {
     const entries = buildUnifiedAgentLibraryEntries([], {});
     const withPath = new Set(["reporting.changelog.app-update-log"]);

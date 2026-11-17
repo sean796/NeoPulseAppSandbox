@@ -105,7 +105,8 @@ trait Neo_Pulse_App_Google_Drive_Upload_Trait_Upload {
 		$content   = (string) ( $body['content'] ?? '' );
 		$folder_id = preg_replace( '/[^a-zA-Z0-9_-]/', '', (string) ( $body['folderId'] ?? '' ) );
 		$mime      = sanitize_text_field( (string) ( $body['mime'] ?? 'text/plain' ) );
-		$as_doc    = ! array_key_exists( 'convertToGoogleDoc', $body ) || ! empty( $body['convertToGoogleDoc'] );
+		$as_sheet  = ! empty( $body['convertToGoogleSheet'] );
+		$as_doc    = ! $as_sheet && ( ! array_key_exists( 'convertToGoogleDoc', $body ) || ! empty( $body['convertToGoogleDoc'] ) );
 
 		if ( $file_name === '' ) {
 			return array(
@@ -127,57 +128,133 @@ trait Neo_Pulse_App_Google_Drive_Upload_Trait_Upload {
 		}
 
 		$upload_mime = $mime !== '' ? $mime : 'text/plain';
-		$target_mime = $as_doc && $upload_mime !== 'text/csv'
-			? 'application/vnd.google-apps.document'
-			: $upload_mime;
-
-		$existing_list = self::named_files_in_folder( $access_token, $folder_id, $file_name );
-		if ( (int) ( $existing_list['statusCode'] ?? 500 ) !== 200 ) {
-			return $existing_list;
+		if ( $as_sheet ) {
+			$target_mime = 'application/vnd.google-apps.spreadsheet';
+		} elseif ( $as_doc && $upload_mime !== 'text/csv' ) {
+			$target_mime = 'application/vnd.google-apps.document';
+		} else {
+			$target_mime = $upload_mime;
 		}
-		$existing = isset( $existing_list['files'] ) && is_array( $existing_list['files'] ) ? $existing_list['files'] : array();
+
+		$match_names = array( $file_name );
+		if ( isset( $body['alsoMatchNames'] ) && is_array( $body['alsoMatchNames'] ) ) {
+			foreach ( $body['alsoMatchNames'] as $alias ) {
+				$alias = sanitize_text_field( (string) $alias );
+				if ( $alias !== '' && ! in_array( $alias, $match_names, true ) ) {
+					$match_names[] = $alias;
+				}
+			}
+		}
+
+		$existing = array();
+		$seen_ids = array();
+		foreach ( $match_names as $match_name ) {
+			$existing_list = self::named_files_in_folder( $access_token, $folder_id, $match_name );
+			if ( (int) ( $existing_list['statusCode'] ?? 500 ) !== 200 ) {
+				return $existing_list;
+			}
+			$files = isset( $existing_list['files'] ) && is_array( $existing_list['files'] ) ? $existing_list['files'] : array();
+			foreach ( $files as $file ) {
+				if ( ! is_array( $file ) || empty( $file['id'] ) ) {
+					continue;
+				}
+				$id = (string) $file['id'];
+				if ( isset( $seen_ids[ $id ] ) ) {
+					continue;
+				}
+				$seen_ids[ $id ] = true;
+				$existing[]      = $file;
+			}
+		}
+
 		if ( count( $existing ) > 0 ) {
-			$keep = $existing[0];
-			foreach ( array_slice( $existing, 1 ) as $duplicate ) {
-				self::trash_file( array( 'fileId' => $duplicate['id'] ) );
+			if ( $as_sheet ) {
+				$keep_sheet = null;
+				foreach ( $existing as $file ) {
+					if ( (string) ( $file['mimeType'] ?? '' ) === 'application/vnd.google-apps.spreadsheet' ) {
+						$keep_sheet = $file;
+						break;
+					}
+				}
+				if ( is_array( $keep_sheet ) ) {
+					foreach ( $existing as $file ) {
+						if ( (string) $file['id'] === (string) $keep_sheet['id'] ) {
+							continue;
+						}
+						self::trash_file( array( 'fileId' => (string) $file['id'] ) );
+					}
+					$values = self::sheet_values_from_upload_body( $body, $content );
+					$replaced = self::replace_spreadsheet_values(
+						$access_token,
+						(string) $keep_sheet['id'],
+						$values
+					);
+					if ( (int) ( $replaced['statusCode'] ?? 500 ) !== 200 ) {
+						return $replaced;
+					}
+					$link = (string) ( $keep_sheet['webViewLink'] ?? '' );
+					if ( $link === '' ) {
+						$link = 'https://docs.google.com/spreadsheets/d/' . rawurlencode( (string) $keep_sheet['id'] ) . '/edit';
+					}
+					return array(
+						'statusCode' => 200,
+						'body'       => array(
+							'success'     => true,
+							'fileId'      => (string) $keep_sheet['id'],
+							'name'        => $file_name,
+							'webViewLink' => $link,
+						),
+					);
+				}
+				foreach ( $existing as $file ) {
+					self::trash_file( array( 'fileId' => (string) $file['id'] ) );
+				}
+			} else {
+				$keep = $existing[0];
+				foreach ( $existing as $file ) {
+					if ( (string) $file['id'] === (string) $keep['id'] ) {
+						continue;
+					}
+					self::trash_file( array( 'fileId' => (string) $file['id'] ) );
+				}
+				$update_metadata = array( 'name' => $file_name );
+				if ( $target_mime === 'application/vnd.google-apps.document' ) {
+					$update_metadata['mimeType'] = 'application/vnd.google-apps.document';
+				}
+				$updated = self::send_multipart_upload(
+					$access_token,
+					self::DRIVE_UPLOAD_URL . '/' . rawurlencode( (string) $keep['id'] ) . '?uploadType=multipart&supportsAllDrives=true&fields=id,name,webViewLink',
+					'PATCH',
+					$update_metadata,
+					$upload_mime,
+					$content
+				);
+				if ( (int) ( $updated['statusCode'] ?? 500 ) !== 200 ) {
+					return $updated;
+				}
+				$updated_body = isset( $updated['body'] ) && is_array( $updated['body'] ) ? $updated['body'] : array();
+				if ( (string) ( $updated_body['name'] ?? '' ) === '' ) {
+					$updated_body['name'] = $file_name;
+				}
+				if ( (string) ( $updated_body['fileId'] ?? '' ) === '' ) {
+					$updated_body['fileId'] = (string) $keep['id'];
+				}
+				if ( (string) ( $updated_body['webViewLink'] ?? '' ) === '' ) {
+					$updated_body['webViewLink'] = (string) ( $keep['webViewLink'] ?? '' );
+				}
+				return array(
+					'statusCode' => 200,
+					'body'       => $updated_body,
+				);
 			}
-			$update_metadata = array( 'name' => $file_name );
-			if ( $target_mime === 'application/vnd.google-apps.document' ) {
-				$update_metadata['mimeType'] = 'application/vnd.google-apps.document';
-			}
-			$updated = self::send_multipart_upload(
-				$access_token,
-				self::DRIVE_UPLOAD_URL . '/' . rawurlencode( $keep['id'] ) . '?uploadType=multipart&supportsAllDrives=true&fields=id,name,webViewLink',
-				'PATCH',
-				$update_metadata,
-				$upload_mime,
-				$content
-			);
-			if ( (int) ( $updated['statusCode'] ?? 500 ) !== 200 ) {
-				return $updated;
-			}
-			$updated_body = isset( $updated['body'] ) && is_array( $updated['body'] ) ? $updated['body'] : array();
-			if ( (string) ( $updated_body['name'] ?? '' ) === '' ) {
-				$updated_body['name'] = $file_name;
-			}
-			if ( (string) ( $updated_body['fileId'] ?? '' ) === '' ) {
-				$updated_body['fileId'] = $keep['id'];
-			}
-			if ( (string) ( $updated_body['webViewLink'] ?? '' ) === '' ) {
-				$updated_body['webViewLink'] = $keep['webViewLink'];
-			}
-			return array(
-				'statusCode' => 200,
-				'body'       => $updated_body,
-			);
 		}
 
 		$metadata = array(
 			'name'    => $file_name,
 			'parents' => array( $folder_id ),
 		);
-		if ( $target_mime === 'application/vnd.google-apps.document' ) {
-			$metadata['mimeType'] = 'application/vnd.google-apps.document';
+		if ( $target_mime === 'application/vnd.google-apps.document' || $target_mime === 'application/vnd.google-apps.spreadsheet' ) {
+			$metadata['mimeType'] = $target_mime;
 		}
 
 		$created = self::send_multipart_upload(
@@ -277,6 +354,173 @@ trait Neo_Pulse_App_Google_Drive_Upload_Trait_Upload {
 				'folderLabel' => (string) ( $folder_body['folderLabel'] ?? '' ),
 				'created'     => isset( $folder_body['created'] ) && is_array( $folder_body['created'] ) ? $folder_body['created'] : array(),
 			),
+		);
+	}
+
+	/**
+	 * @param array<string,mixed> $body
+	 * @return array<int,array<int,string>>
+	 */
+	private static function sheet_values_from_upload_body( array $body, string $content ): array {
+		if ( isset( $body['sheetValues'] ) && is_array( $body['sheetValues'] ) ) {
+			$out = array();
+			foreach ( $body['sheetValues'] as $row ) {
+				if ( ! is_array( $row ) ) {
+					continue;
+				}
+				$cells = array();
+				foreach ( $row as $cell ) {
+					$cells[] = (string) $cell;
+				}
+				$out[] = $cells;
+			}
+			if ( $out !== array() ) {
+				return $out;
+			}
+		}
+		return self::parse_csv_to_sheet_values( $content );
+	}
+
+	/**
+	 * @return array<int,array<int,string>>
+	 */
+	private static function parse_csv_to_sheet_values( string $csv ): array {
+		$csv = str_replace( "\r\n", "\n", $csv );
+		$csv = str_replace( "\r", "\n", $csv );
+		$lines = explode( "\n", $csv );
+		$rows  = array();
+		foreach ( $lines as $line ) {
+			if ( $line === '' ) {
+				continue;
+			}
+			$parsed = str_getcsv( $line );
+			if ( ! is_array( $parsed ) ) {
+				continue;
+			}
+			$cells = array();
+			foreach ( $parsed as $cell ) {
+				$cells[] = (string) $cell;
+			}
+			$rows[] = $cells;
+		}
+		return $rows;
+	}
+
+	/**
+	 * Clear and rewrite every cell on the first tab. Keeps the same spreadsheet ID / URL.
+	 *
+	 * @param array<int,array<int,string>> $values
+	 * @return array{statusCode:int,body:array<string,mixed>}
+	 */
+	private static function replace_spreadsheet_values( string $access_token, string $spreadsheet_id, array $values ): array {
+		if ( $values === array() ) {
+			return array(
+				'statusCode' => 400,
+				'body'       => array( 'success' => false, 'error' => 'sheet values are required.' ),
+			);
+		}
+
+		$meta_url = self::SHEETS_API_URL . '/' . rawurlencode( $spreadsheet_id ) . '?fields=sheets.properties.title';
+		$meta_res = wp_remote_get(
+			$meta_url,
+			array(
+				'timeout' => 30,
+				'headers' => array( 'Authorization' => 'Bearer ' . $access_token ),
+			)
+		);
+		if ( is_wp_error( $meta_res ) ) {
+			return array(
+				'statusCode' => 502,
+				'body'       => array( 'success' => false, 'error' => $meta_res->get_error_message() ),
+			);
+		}
+		$meta_code = (int) wp_remote_retrieve_response_code( $meta_res );
+		$meta_data = json_decode( wp_remote_retrieve_body( $meta_res ), true );
+		if ( $meta_code < 200 || $meta_code >= 300 || ! is_array( $meta_data ) ) {
+			$msg = is_array( $meta_data ) && ! empty( $meta_data['error']['message'] )
+				? (string) $meta_data['error']['message']
+				: 'Could not read spreadsheet tabs.';
+			return array(
+				'statusCode' => $meta_code > 0 ? $meta_code : 502,
+				'body'       => array( 'success' => false, 'error' => $msg ),
+			);
+		}
+		$title = 'Sheet1';
+		if ( isset( $meta_data['sheets'][0]['properties']['title'] ) ) {
+			$title = (string) $meta_data['sheets'][0]['properties']['title'];
+		}
+		$quoted = str_replace( "'", "''", $title );
+		$a1     = "'" . $quoted . "'!A1";
+
+		$clear_url = self::SHEETS_API_URL . '/' . rawurlencode( $spreadsheet_id ) . '/values/' . rawurlencode( "'" . $quoted . "'!A:ZZ" ) . ':clear';
+		$clear_res = wp_remote_post(
+			$clear_url,
+			array(
+				'timeout' => 30,
+				'headers' => array(
+					'Authorization' => 'Bearer ' . $access_token,
+					'Content-Type'  => 'application/json; charset=UTF-8',
+				),
+				'body'    => '{}',
+			)
+		);
+		if ( is_wp_error( $clear_res ) ) {
+			return array(
+				'statusCode' => 502,
+				'body'       => array( 'success' => false, 'error' => $clear_res->get_error_message() ),
+			);
+		}
+		$clear_code = (int) wp_remote_retrieve_response_code( $clear_res );
+		if ( $clear_code < 200 || $clear_code >= 300 ) {
+			$clear_data = json_decode( wp_remote_retrieve_body( $clear_res ), true );
+			$msg        = is_array( $clear_data ) && ! empty( $clear_data['error']['message'] )
+				? (string) $clear_data['error']['message']
+				: 'Could not clear spreadsheet cells.';
+			return array(
+				'statusCode' => $clear_code > 0 ? $clear_code : 502,
+				'body'       => array( 'success' => false, 'error' => $msg ),
+			);
+		}
+
+		$update_url = self::SHEETS_API_URL . '/' . rawurlencode( $spreadsheet_id ) . '/values/' . rawurlencode( $a1 ) . '?valueInputOption=RAW';
+		$update_res = wp_remote_request(
+			$update_url,
+			array(
+				'method'  => 'PUT',
+				'timeout' => 60,
+				'headers' => array(
+					'Authorization' => 'Bearer ' . $access_token,
+					'Content-Type'  => 'application/json; charset=UTF-8',
+				),
+				'body'    => wp_json_encode(
+					array(
+						'range'  => $a1,
+						'values' => $values,
+					)
+				),
+			)
+		);
+		if ( is_wp_error( $update_res ) ) {
+			return array(
+				'statusCode' => 502,
+				'body'       => array( 'success' => false, 'error' => $update_res->get_error_message() ),
+			);
+		}
+		$update_code = (int) wp_remote_retrieve_response_code( $update_res );
+		$update_data = json_decode( wp_remote_retrieve_body( $update_res ), true );
+		if ( $update_code < 200 || $update_code >= 300 || ! is_array( $update_data ) ) {
+			$msg = is_array( $update_data ) && ! empty( $update_data['error']['message'] )
+				? (string) $update_data['error']['message']
+				: 'Could not update spreadsheet cells.';
+			return array(
+				'statusCode' => $update_code > 0 ? $update_code : 502,
+				'body'       => array( 'success' => false, 'error' => $msg ),
+			);
+		}
+
+		return array(
+			'statusCode' => 200,
+			'body'       => array( 'success' => true ),
 		);
 	}
 }

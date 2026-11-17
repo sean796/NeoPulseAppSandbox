@@ -25,8 +25,16 @@ import { ActionButton, Button, Tooltip, TooltipContent, TooltipTrigger } from "@
 function splashFromBatchStep(
   step: string | undefined,
   rowStatus: RowStatus | undefined,
+  statusMessage?: string,
 ): { text: string; visual: BulkSplashVisualKind } {
+  const message = statusMessage?.trim() ?? "";
   const s = step?.trim() ?? "";
+  if (
+    s.toLowerCase() === "fact checking" ||
+    message.toLowerCase() === "fact checking"
+  ) {
+    return { text: "Fact checking", visual: "factcheck" };
+  }
   if (s === "Uploading to WordPress" || s === "Publishing to WordPress" || rowStatus === "uploading") {
     return { text: "Uploading to WordPress", visual: "publish" };
   }
@@ -180,7 +188,13 @@ export function OverviewVisualDocCanvas({
       ? bulkWorkspaceBusy || busy || rowPipelineActive || batchStepHoldSplash
       : optimizerSplashActive);
 
-  const optimizerSplash = splashFromBatchStep(activeBatchState?.currentStep, row?.status);
+  const optimizerSplash = splashFromBatchStep(
+    activeBatchState?.currentStep,
+    row?.status,
+    activeBatchState?.currentStepProgress?.message
+      ?? singleProgress?.message
+      ?? batchProgress?.message,
+  );
   const effectiveSplashStatusText = isBulkGeneratorStudio
     ? bulkSplashStatusText
     : optimizerSplash.text;

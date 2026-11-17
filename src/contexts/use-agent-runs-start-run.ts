@@ -70,7 +70,7 @@ export function useAgentRunsStartRun({
           }
           return [run, ...withoutOptimistic];
         });
-        if (options?.openSidebar !== false) {
+        if (options?.openSidebar === true) {
           openSidebar(result.run.id);
         }
         trackStartedAgentRun(run);

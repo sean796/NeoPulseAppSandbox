@@ -112,9 +112,8 @@ export const generateSingleSectionPrompt = (
       : "";
 
   if (agent.id === BLOG_HARNESS_ANSWER_AGENT_ID) {
-    return `<h2>Answer</h2>
-Rules:
-- Output <h2>Answer</h2> then exactly one <p>...</p> with two or three sentences total. REQUIRED: the sentences MUST be inside a single <p> element. Bare text after </h2> without <p> is invalid.
+    return `Rules:
+- Output exactly one <p id="answer">...</p> with two or three sentences total. REQUIRED: the sentences MUST be inside a single <p> element. No heading. Do not output a heading titled Answer. Bare text without <p> is invalid.
 ${comparisonAnswerBlock}- Sentence 1: ${primaryKeyword?.trim() && isComparisonPrimaryKeyword(primaryKeyword) ? "Direct comparison verdict (see COMPARISON ANSWER above)." : "STAT/FACT FIRST. Open with a sourced number, range, named spec, process constraint, or installer measurement from VERIFIED FACTS, FIRST-PARTY CLAIMS, audit blocks, or this prompt. Then answer the question. Weave the writing keyword later in the paragraph if needed, not as the first clause."}
 - Forbidden sentence-1 shapes: "{keyword} offers/are/is/provide/give"; dictionary definitions; generic benefit stacks (privacy, light control, energy efficiency, aesthetic appeal) as the whole answer; "This article/guide provides/explores/covers"; company-name greeting with no fact.
 - Sentence 2 (mandatory when VERIFIED FACTS lists confirmed cost, efficiency, rate, payback, or export rows): one confirmed numeric anchor with units and explicit CAD or USD, qualified as illustrative when Tier 2. Cost/install bands must name the primary service city from PRIMARY LOCAL CONTEXT (e.g. Edmonton) — forbidden: Calgary, Toronto, Vancouver, or any other city when primary city is set unless the page keyword targets that city. Discard SERP or brief facts from other cities. When stating payback or savings, name at least one variance driver (system size, usage, export rates, equipment). Forbidden: universal payback lines ("recoup within X–Y years", "pays back in 5–10 years") without depends-on framing. Never invent figures. When no confirmed economic row exists, one concrete installer detail from FIRST-PARTY or audit blocks instead (mount type, room constraint, product tier, regional pattern) — never hollow "our team" filler.

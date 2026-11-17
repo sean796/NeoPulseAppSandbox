@@ -1,4 +1,4 @@
-import type { AgentRun } from "@/lib/agent-runs-types";
+import type { AgentRun, EditorialAuditConsoleEvent } from "@/lib/agent-runs-types";
 import { isAgentRunTerminal } from "@/lib/agent-runs-types";
 import { buildAgentRunViewPath } from "@/lib/agent-runs/agent-run-optimizer-url";
 import {
@@ -6,6 +6,7 @@ import {
   resolveAgentRunRecipeKey,
 } from "@/lib/agent-runs/agent-run-navigation";
 import { agentRunSiteId } from "@/lib/agent-runs/agent-run-batch-key";
+import { logger } from "@/lib/logger";
 import {
   getWorkspaceTask,
   listWorkspaceTasks,
@@ -16,6 +17,66 @@ import type { WorkspaceTask, WorkspaceTaskStatus } from "@/lib/task-manager/type
 
 function taskIdForAgentRun(runId: number): string {
   return `agent-run-${runId}`;
+}
+
+const printedConsoleLines = new Map<number, number>();
+
+function sizeOrQ(value: number | null | undefined): string {
+  return typeof value === "number" && Number.isFinite(value) ? String(value) : "?";
+}
+
+function secondsOrQ(value: number | null | undefined): string {
+  return typeof value === "number" && Number.isFinite(value) ? value.toFixed(1) : "?";
+}
+
+function printConsoleEvent(event: EditorialAuditConsoleEvent): void {
+  const kind = (event.kind ?? "").trim();
+  const model = (event.model ?? "").trim() || "?";
+  if (kind === "llm_call") {
+    logger.llm(
+      `[LLM] call -> ${model} | prompt ${sizeOrQ(event.promptChars)} chars | maxTokens ${sizeOrQ(event.maxTokens)} | JSON output`,
+    );
+    return;
+  }
+  if (kind === "llm_done") {
+    logger.llmSuccess(
+      `[LLM] done <- ${model} | reply ${sizeOrQ(event.replyChars)} chars | finish ${event.finish?.trim() || "?"} | ${secondsOrQ(event.seconds)}s`,
+    );
+    return;
+  }
+  if (kind === "llm_fail") {
+    const err = (event.error ?? "").trim() || "failed";
+    const status = typeof event.status === "number" ? event.status : "?";
+    logger.llmFail(
+      `[LLM] FAILED <- ${model} | HTTP ${status} | ${secondsOrQ(event.seconds)}s | ${err}`,
+    );
+    return;
+  }
+  if (kind === "publish" || kind === "publish_fail") {
+    const label = (event.label ?? "").trim() || (event.url ?? "").trim() || "request";
+    const status = typeof event.status === "number" ? event.status : "?";
+    const rows =
+      typeof event.rows === "number" ? ` | rows ${event.rows}` : "";
+    const err = kind === "publish_fail" && (event.error ?? "").trim()
+      ? ` | ${(event.error ?? "").trim()}`
+      : "";
+    logger.publish(
+      `[WP] ${label} | ${status} | ${secondsOrQ(event.seconds)}s${rows}${err}`,
+    );
+  }
+}
+
+function printRunConsoleLog(run: AgentRun): void {
+  const lines = run.result?.consoleLog;
+  if (!Array.isArray(lines) || lines.length === 0) return;
+  const seen = printedConsoleLines.get(run.id) ?? 0;
+  for (let i = seen; i < lines.length; i += 1) {
+    const line = lines[i];
+    if (line && typeof line === "object" && "kind" in line) {
+      printConsoleEvent(line as EditorialAuditConsoleEvent);
+    }
+  }
+  printedConsoleLines.set(run.id, lines.length);
 }
 
 function statusFromAgentRun(run: AgentRun): WorkspaceTaskStatus {
@@ -37,6 +98,11 @@ function hrefFromAgentRun(run: AgentRun): string {
 }
 
 function progressFromAgentRun(run: AgentRun): number | undefined {
+  const index = run.result?.checkpoint?.currentIndex;
+  const total = run.result?.checkpoint?.totalCount;
+  if (typeof index === "number" && typeof total === "number" && total > 0) {
+    return Math.max(0, Math.min(100, Math.round((index / total) * 100)));
+  }
   const steps = run.steps;
   if (!steps?.length) return undefined;
   const done = steps.filter((step) => step.status === "done").length;
@@ -68,6 +134,7 @@ function patchFromAgentRun(run: AgentRun) {
 }
 
 function patchFields(run: AgentRun) {
+  const folder = run.result?.googleDriveFolderWebViewLink?.trim() || "";
   return {
     title: titleFromAgentRun(run),
     status: statusFromAgentRun(run),
@@ -77,11 +144,14 @@ function patchFields(run: AgentRun) {
     progress: progressFromAgentRun(run),
     errorMessage: run.errorMessage?.trim() || undefined,
     agentRunId: run.id,
+    currentUrl: folder || undefined,
+    currentTitle: folder ? "Open Drive folder" : undefined,
   };
 }
 
 /** Register only a freshly started agent run. Never used for history dumps. */
 export function trackStartedAgentRun(run: AgentRun): WorkspaceTask {
+  printRunConsoleLog(run);
   const id = taskIdForAgentRun(run.id);
   const patch = patchFromAgentRun(run);
   const existing = getWorkspaceTask(id);
@@ -107,6 +177,7 @@ export function refreshTrackedAgentRuns(runs: AgentRun[]): void {
     const id = taskIdForAgentRun(run.id);
     const existing = getWorkspaceTask(id);
     if (!existing) continue;
+    printRunConsoleLog(run);
     patchWorkspaceTask(id, patchFromAgentRun(run));
   }
 }

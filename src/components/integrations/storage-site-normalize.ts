@@ -160,7 +160,7 @@ function siteHostForLocalDefaults(site: WordPressSite): string {
   }
 }
 
-/** Integrations display name stays Shutter Spot (Google Ads MCC sub-account 745-406-1453). */
+/** Integrations display name stays Blind Spot for shutterspot.com (Ads customer 745-406-1453). */
 export function applyShutterSpotDisplayNameMigration(site: WordPressSite): WordPressSite {
   if (!isShutterSpotProperty(site)) return site;
   const ads = (site.googleAdsCustomerId ?? "").replace(/\D/g, "");

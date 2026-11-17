@@ -353,7 +353,7 @@ export function TasksShell(_props: TasksShellProps = {}): React.ReactElement {
                     ...selectedTaskForExecute,
                     executionKind: resolveEffectiveExecutionKind(selectedTaskForExecute),
                   },
-                  { openSidebar: true },
+                  { openSidebar: false },
                 );
                 void result;
               }

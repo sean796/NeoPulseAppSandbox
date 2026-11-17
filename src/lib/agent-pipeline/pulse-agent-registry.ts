@@ -136,7 +136,7 @@ export const PULSE_AGENT_REGISTRY: readonly PulseRegisteredAgentEntry[] = [
     label: "AISEO Direct Answer Section Writer",
     category: "blog",
     domain: "aiseo",
-    reason: "Writes or replaces the leading `<h2>Answer</h2>` section for AI Overviews and featured snippets.",
+    reason: "Writes or replaces the leading answer paragraph for AI Overviews and featured snippets. No Answer heading.",
     useWordBlacklist: true,
     sourceModule: "src/lib/overview/overview-blog-overview-prepend.ts",
   },
@@ -444,6 +444,33 @@ export const PULSE_AGENT_REGISTRY: readonly PulseRegisteredAgentEntry[] = [
     reason:
       "Counts next-month published and scheduled blog posts for one site, and when short of the site blog quota starts Blog Ideas (GSC) until WordPress upload finishes.",
     sourceModule: "skills/posts-content-gap-check/SKILL.md",
+  },
+  {
+    id: "content.entities.gap-check",
+    label: "Entities Content Gap Check",
+    category: "research",
+    domain: "entity-sap",
+    reason:
+      "Counts next-month published and scheduled service-area pages for one site, and when short of the site SAP quota runs the locations grid, builds the entity CSV, and creates the missing pages.",
+    sourceModule: "skills/entities-content-gap-check/SKILL.md",
+  },
+  {
+    id: "content.internal-links.money-pages",
+    label: "Money Page Internal Links",
+    category: "blog",
+    domain: "aiseo",
+    reason:
+      "Loads GSC-ranked page-sitemap money pages, plans top-down AISEO links from those money pages to supporting blogs and related money pages, applies via Neo MCP, and emails sean@neodigital.ca a follow-up report.",
+    sourceModule: "skills/money-page-internal-links/SKILL.md",
+  },
+  {
+    id: "content.editorial.audit",
+    label: "Editorial Content Audit",
+    category: "research",
+    domain: "reporting",
+    reason:
+      "Reads every blog post and service-area page on one Integrations property, writes the errors into one Google Sheet, and emails sean@neodigital.ca.",
+    sourceModule: "skills/editorial-content-audit/SKILL.md",
   },
 ] as const;
 

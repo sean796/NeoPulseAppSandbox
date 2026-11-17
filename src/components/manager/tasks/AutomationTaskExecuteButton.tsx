@@ -87,7 +87,7 @@ export function AutomationTaskExecuteButton({
         return;
       }
 
-      const result = await startRunFromTask(prepared, { openSidebar: true });
+      const result = await startRunFromTask(prepared, { openSidebar: false });
       if (!result.ok) {
         setError(result.error ?? "Execute failed.");
         return;

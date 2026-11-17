@@ -151,7 +151,7 @@ export function TaskManagerDetailsDrawer({
 
       <div className={contentOptimizerRowStripeClass(stripeIndex++)}>
         <div className="border-0 py-1 px-2.5 sm:px-3">
-          <AgentRunProgressLog rows={rows} withSeparators />
+          <AgentRunProgressLog rows={rows} withSeparators className="max-h-[70vh]" />
         </div>
       </div>
     </div>

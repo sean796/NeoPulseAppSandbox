@@ -25,6 +25,7 @@ import {
   buildConnectedSiteIdentityBlock,
   swotTextFromResearchFields,
 } from "@/lib/content-optimization/first-party-authority-prompt";
+import { runResearchFactCheck } from "@/lib/content-optimization/research-fact-check";
 import {
   llmAuditSummaryFromSeoResearchBrief,
   parseSeoResearchBrief,
@@ -176,11 +177,14 @@ export async function buildContinueOptimizationBlueprintPrep(args: {
   fileManager: OptimizationFileManager;
   contentPrepHarnessSetters: ContentPrepHarnessSetters | null;
   flushGeneratedFiles: () => void;
+  onProgress?: (message: string) => void;
+  sapEntity?: string;
 }): Promise<{
   dfsArticleAuditBlock: string;
   titleForBlueprint: string;
   firstPartyAuthorityBlock: string;
   llmAuditSummary: string | undefined;
+  seoResearchRaw: string;
 }> {
   const {
     finalOptimizationOptions,
@@ -193,10 +197,12 @@ export async function buildContinueOptimizationBlueprintPrep(args: {
     parsedBriefFromAcf,
     workingAcfContext,
     acfFields,
-    seoResearchRaw,
+    seoResearchRaw: seoResearchRawIn,
     fileManager,
     contentPrepHarnessSetters,
     flushGeneratedFiles,
+    onProgress,
+    sapEntity,
   } = args;
   const dfsArticleAuditBlock =
     String(finalOptimizationOptions?.dfsArticleAuditBlock ?? "").trim()
@@ -218,16 +224,31 @@ export async function buildContinueOptimizationBlueprintPrep(args: {
     throw new Error("Connected site name is required for content optimization.");
   }
 
-  const parsedBrief = parsedBriefFromAcf;
-
   const swotText = swotTextFromResearchFields({
     promptModifier: String(
       workingAcfContext.promptModifier
       ?? (acfFields as { prompt_modifier?: string } | undefined)?.prompt_modifier
       ?? "",
     ),
-    seoResearch: seoResearchRaw,
+    seoResearch: seoResearchRawIn,
   });
+
+  let parsedBrief = parsedBriefFromAcf;
+  let seoResearchRaw = seoResearchRawIn;
+  if (parsedBrief) {
+    parsedBrief = await runResearchFactCheck({
+      brief: parsedBrief,
+      site,
+      keyword: primaryKeyword,
+      title: titleForBlueprint,
+      pageExcerpt: undefined,
+      swotText,
+      entity: sapEntity,
+      onProgress,
+    });
+    seoResearchRaw = JSON.stringify(parsedBrief, null, 2);
+  }
+
   const serviceArea = resolveSiteLocationLabel(site, primaryKeyword);
   const firstPartyAuthorityBlock = [
     firstPartyAuthorityBlockFromBrief(parsedBrief, swotText),
@@ -252,5 +273,6 @@ export async function buildContinueOptimizationBlueprintPrep(args: {
     titleForBlueprint,
     firstPartyAuthorityBlock,
     llmAuditSummary,
+    seoResearchRaw,
   };
 }

@@ -31,6 +31,9 @@ export function resolveAgentRunRecipeKey(
     key === "content_gap_check" ||
     key === "semrush_safe_fix" ||
     key === "posts_content_gap_check" ||
+    key === "entities_content_gap_check" ||
+    key === "money_page_internal_links" ||
+    key === "editorial_content_audit" ||
     key === "content_optimizer_bulk" ||
     key === "overview_pages_meta_batch"
   ) {
@@ -71,6 +74,9 @@ export function agentRunProgressHeading(recipeKey: string): string {
   if (recipeKey === "content_gap_check") return "Content gap check";
   if (recipeKey === "semrush_safe_fix") return "Semrush safe fix";
   if (recipeKey === "posts_content_gap_check") return "Posts content gap check";
+  if (recipeKey === "entities_content_gap_check") return "Entities content gap check";
+  if (recipeKey === "money_page_internal_links") return "Money page internal links";
+  if (recipeKey === "editorial_content_audit") return "Editorial content audit";
   if (recipeKey === "entity_page_creator" || recipeKey === "entity_generator" || recipeKey === "sap_generator") return "Progress";
   if (recipeKey === "post_creator") return "";
   return "Current post";
@@ -103,6 +109,9 @@ function isKnownNonOptimizerRecipe(recipeKey: string): recipeKey is AgentRunReci
     recipeKey === "content_gap_check" ||
     recipeKey === "semrush_safe_fix" ||
     recipeKey === "posts_content_gap_check" ||
+    recipeKey === "entities_content_gap_check" ||
+    recipeKey === "money_page_internal_links" ||
+    recipeKey === "editorial_content_audit" ||
     recipeKey === "content_optimizer_bulk" ||
     recipeKey === "overview_pages_meta_batch"
   );

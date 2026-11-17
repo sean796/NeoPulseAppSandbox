@@ -4,8 +4,7 @@
  */
 
 import { BLOG_HARNESS_SUMMARY_TITLE, buildBlogHarnessSummaryAgent } from "@/lib/bulk/blog-harness-summary-agent";
-import { HARNESS_ANSWER_ANCHOR_ID } from "@/lib/bulk/blog-harness-answer-agent";
-import { HARNESS_OVERVIEW_ANCHOR_ID, buildHarnessSectionAnchorMap, formatHarnessInPageAnchorBlock, injectHarnessSectionH2AnchorId, type HarnessSectionAnchorEntry } from "@/lib/bulk/harness-section-anchor-ids";
+import { HARNESS_OVERVIEW_ANCHOR_ID, buildHarnessSectionAnchorMap, formatHarnessInPageAnchorBlock, injectAnswerParagraphAnchorId, injectHarnessSectionH2AnchorId, type HarnessSectionAnchorEntry } from "@/lib/bulk/harness-section-anchor-ids";
 import { ensureOverviewBulletBoldLabels } from "@/lib/overview/overview-bullet-bold-labels";
 import { applyOverviewHarnessScrollLinks } from "@/lib/overview/overview-harness-scroll-links";
 import { completeOverviewScrollLinks, overviewBulletsHaveRequiredScrollLinks } from "@/lib/prompt-builders/overview-link-rules";
@@ -126,7 +125,7 @@ export function stitchOverviewOntoBody(args: {
   const pieces: string[] = [];
   if (args.answerHtml?.trim()) {
     pieces.push(
-      injectHarnessSectionH2AnchorId(args.answerHtml.trim(), HARNESS_ANSWER_ANCHOR_ID),
+      injectAnswerParagraphAnchorId(args.answerHtml.trim()),
     );
   }
   pieces.push(overviewWithId, bodyWithIds);
@@ -211,7 +210,7 @@ export async function generateAndPrependOverviewHtml(args: {
   if (!answerHtml.trim()) {
     throw new Error("Answer section could not be generated (single pass)");
   }
-  answerHtml = injectHarnessSectionH2AnchorId(answerHtml, HARNESS_ANSWER_ANCHOR_ID);
+  answerHtml = injectAnswerParagraphAnchorId(answerHtml);
 
   const overviewAgent = buildBlogHarnessSummaryAgent();
   const sectionPrompt = generateSingleSectionPrompt(overviewAgent, "html");

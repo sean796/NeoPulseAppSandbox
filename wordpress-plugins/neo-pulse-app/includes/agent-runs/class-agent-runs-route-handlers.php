@@ -479,7 +479,10 @@ class Neo_Pulse_App_Agent_Runs_Route_Handlers {
 
 		if ( in_array( (string) ( $run['status'] ?? '' ), array( 'queued', 'running' ), true ) ) {
 			$recipe = sanitize_key( (string) ( $run['recipeKey'] ?? '' ) );
-			$ticks  = in_array( $recipe, array( 'semrush_safe_fix', 'posts_content_gap_check' ), true ) ? 1 : 24;
+			// Editorial audits: one page per tick. Keep poll bursts short so HTTP does not time out.
+			$ticks  = in_array( $recipe, array( 'semrush_safe_fix', 'posts_content_gap_check' ), true )
+				? 1
+				: ( $recipe === 'editorial_content_audit' ? 8 : 24 );
 			for ( $i = 0; $i < $ticks; $i++ ) {
 				$current = Neo_Pulse_App_Agent_Runs_Store::get_run( $team_id, $run_id, true );
 				if ( ! $current ) {

@@ -13,6 +13,7 @@ Every new skill must follow that guide and match the reference layout below.
 | Skill | Assignable id | Job |
 | --- | --- | --- |
 | [`posts-content-gap-check`](posts-content-gap-check/) | `content.posts.gap-check` | Count next-month blog posts vs site quota; schedule and start Blog Ideas when short |
+| [`entities-content-gap-check`](entities-content-gap-check/) | `content.entities.gap-check` | Count next-month SAP pages vs site quota; run locations grid, entity CSV, and create pages when short |
 
 ## Quick layout reminder
 

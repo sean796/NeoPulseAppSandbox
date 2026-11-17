@@ -45,7 +45,10 @@ export type AgentRunRecipeKey =
   | "browser_automation"
   | "content_gap_check"
   | "semrush_safe_fix"
-  | "posts_content_gap_check";
+  | "posts_content_gap_check"
+  | "entities_content_gap_check"
+  | "money_page_internal_links"
+  | "editorial_content_audit";
 
 export type AgentRunStepArtifact = {
   id: string;
@@ -160,6 +163,11 @@ export type AgentRunResult = {
   googleDriveError?: string;
   googleDriveSkipped?: boolean;
   googleDriveSkipReason?: string;
+  /**
+   * Studio-style call events from the editorial audit hub, printed via logger.
+   * Legacy string lines are ignored by the browser printer.
+   */
+  consoleLog?: Array<string | EditorialAuditConsoleEvent>;
   gapCount?: number;
   goalMet?: boolean;
   comparePreset?: "mom" | "yoy";
@@ -169,6 +177,22 @@ export type AgentRunResult = {
   sessionReady?: boolean;
   responseCount?: number;
   responses?: import("@/lib/chatgpt-audit-api").ChatGptAuditQueryResponse[];
+};
+
+/** Blog Ideas Studio shaped hub call note for Chrome console. */
+export type EditorialAuditConsoleEvent = {
+  kind: string;
+  model?: string;
+  promptChars?: number | null;
+  maxTokens?: number | null;
+  replyChars?: number | null;
+  finish?: string;
+  seconds?: number | null;
+  status?: number | null;
+  url?: string;
+  label?: string;
+  error?: string;
+  rows?: number | null;
 };
 
 export type AgentRun = {

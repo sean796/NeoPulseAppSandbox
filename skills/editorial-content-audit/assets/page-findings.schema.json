@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "editorial-content-audit-page-findings",
+  "title": "EditorialContentAuditPageFindings",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["pageId", "findings"],
+  "properties": {
+    "pageId": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["severity", "certainty", "quote", "problem", "fix"],
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": ["high", "medium", "low"]
+          },
+          "certainty": {
+            "type": "string",
+            "enum": ["proven", "confirm"]
+          },
+          "quote": {
+            "type": "string",
+            "minLength": 1
+          },
+          "problem": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fix": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

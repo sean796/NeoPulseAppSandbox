@@ -122,9 +122,9 @@ export function CareerProjectRoomPanel({
               </span>
             </div>
             <div>
-              <span className="text-muted-foreground">Ads MCC Sub-Account: </span>
+              <span className="text-muted-foreground">Ads Customer ID: </span>
               <span className="text-amber-300">
-                {PROJECT_ROOM_STAGING_CONTEXT.googleAdsMccSubAccountLabel}
+                {PROJECT_ROOM_STAGING_CONTEXT.googleAdsCustomerId}
               </span>
             </div>
             <div>
@@ -222,7 +222,7 @@ export function CareerProjectRoomPanel({
           <form onSubmit={handleSendChat} className="flex items-center gap-2">
             <Input
               aria-label="Prompt the in-room assistant"
-              placeholder="Steer the assistant (e.g. Use Shutter Spot, /api/wordpress/update-post-meta, staging approval)..."
+              placeholder="Steer the assistant (e.g. Use Blind Spot, /api/wordpress/update-post-meta, staging approval)..."
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
               disabled={sending}

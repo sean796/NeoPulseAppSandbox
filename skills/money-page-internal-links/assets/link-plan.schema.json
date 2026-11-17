@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["links"],
+  "additionalProperties": false,
+  "properties": {
+    "links": {
+      "type": "array",
+      "maxItems": 25,
+      "items": {
+        "type": "object",
+        "required": ["moneyUrl", "targetUrl", "anchorText"],
+        "additionalProperties": false,
+        "properties": {
+          "moneyUrl": {
+            "type": "string",
+            "description": "Money page to edit (source of the outbound link)."
+          },
+          "targetUrl": {
+            "type": "string",
+            "description": "Supporting blog or related money page to link to."
+          },
+          "anchorText": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 80,
+            "description": "Suggested topic hint only. Apply weaves a natural phrase already on the money page."
+          }
+        }
+      }
+    }
+  }
+}

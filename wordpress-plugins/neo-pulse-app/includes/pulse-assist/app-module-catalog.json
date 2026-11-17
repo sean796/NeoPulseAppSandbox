@@ -1774,6 +1774,24 @@
         "blog gap check",
         "content gap skill"
       ]
+    },
+    {
+      "id": "content.entities.gap-check",
+      "moduleId": "dashboard/skills-library",
+      "label": "Entities Content Gap Check",
+      "question": "What does the Entities Content Gap Check skill do?",
+      "pulseNav": "pulse:nav/dashboard/skills-library",
+      "steps": [
+        "Open [Dashboard → Settings → Skills Library](pulse:nav/dashboard/skills-library).",
+        "Find **Entities Content Gap Check** (id `content.entities.gap-check`).",
+        "Enable it on the property profile when you want next-month published and scheduled service-area page counts checked against the site SAP quota, then the locations grid, entity CSV, and missing pages created when short."
+      ],
+      "aliases": [
+        "entities content gap check",
+        "sap gap check",
+        "service area gap",
+        "entities package fill"
+      ]
     }
   ]
 }

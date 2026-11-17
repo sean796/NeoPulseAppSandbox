@@ -79,11 +79,11 @@ export function validateProjectRoomArtifact(
   const lowerKw = focusKw.toLowerCase();
   const lowerRoute = apiRoute.toLowerCase();
 
-  const hasBlindSpot =
-    lowerBrand.includes("blind spot") ||
-    lowerTitle.includes("blind spot") ||
-    lowerDesc.includes("blind spot");
-  const brandOk = brand === "Shutter Spot" && !hasBlindSpot;
+  const hasShutterSpot =
+    lowerBrand.includes("shutter spot") ||
+    lowerTitle.includes("shutter spot") ||
+    lowerDesc.includes("shutter spot");
+  const brandOk = brand === "Blind Spot" && !hasShutterSpot;
 
   const hasBrowserFetch =
     lowerRoute.includes("wp-json") ||
@@ -108,8 +108,8 @@ export function validateProjectRoomArtifact(
       id: "canonical_brand",
       passed: brandOk,
       detail: brandOk
-        ? "Uses canonical Integrations brand Shutter Spot and rejects Google Ads MCC label Blind Spot."
-        : 'Failed brand check: publicBrandName must be "Shutter Spot" and no field may contain "Blind Spot".',
+        ? "Uses canonical Integrations brand Blind Spot and rejects legacy domain label Shutter Spot."
+        : 'Failed brand check: publicBrandName must be "Blind Spot" and no field may contain "Shutter Spot".',
     },
     {
       id: "server_side_route",

@@ -50,6 +50,6 @@ describe("FAQ_CONVERSATIONAL_RULE", () => {
     expect(FAQ_CONVERSATIONAL_RULE).toContain("same four stems");
     expect(FAQ_CONVERSATIONAL_RULE).toContain("current promotions");
     expect(FAQ_CONVERSATIONAL_RULE).toContain("If-X-then-Y");
-    expect(FAQ_CONVERSATIONAL_RULE).toContain("Do not ask a question the Answer H2 already answered");
+    expect(FAQ_CONVERSATIONAL_RULE).toContain("Do not ask a question the opening answer paragraph already answered");
   });
 });

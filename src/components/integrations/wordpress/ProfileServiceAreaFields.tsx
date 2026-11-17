@@ -1,14 +1,37 @@
-import { useEffect, useState, type ReactElement } from "react";
-import { Plus, Trash2 } from "lucide-react";
-import { Button, Field, SelectField } from "@/ui";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+  type MouseEvent as ReactMouseEvent,
+  type ReactElement,
+} from "react";
+import { ChevronDown, Plus, Trash2 } from "lucide-react";
+import {
+  Button,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  Field,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  SelectField,
+} from "@/ui";
+import { cn } from "@/lib/utils";
 import {
   inferServiceCountry,
   isServiceCountry,
+  isWorldCountry,
   nextStateForCountry,
   normalizeServiceRegion,
   regionPlaceholder,
-  SERVICE_COUNTRY_OPTIONS,
   serviceRegionOptions,
+  WORLD_COUNTRY_NORTH_AMERICA,
+  WORLD_COUNTRY_OPTIONS,
 } from "@/lib/keyword-location-utils";
 import { TaskFormFlatGrid, TaskFormPlaceholderCell } from "@/components/manager/tasks/TaskFormLayout";
 import type { Location, WordPressSite } from "@/components/integrations/types";
@@ -16,8 +39,34 @@ import {
   buildSiteAdditionalLocationsPatch,
   readSiteAdditionalLocations,
 } from "@/lib/wordpress-api/site-service-area";
+import { UI_SELECT_TRIGGER } from "@/ui/tokens";
 
 const UNSET_SELECT_VALUE = "__unset__";
+const COUNTRY_PLACEHOLDER = "Country";
+const COUNTRY_LIST_MIN_CH = Math.max(
+  COUNTRY_PLACEHOLDER.length,
+  "North America".length,
+  "United States".length,
+  ...WORLD_COUNTRY_OPTIONS.map((c) => c.length),
+);
+
+/**
+ * Idle = alternating black / zinc.
+ * cmdk sets data-selected={true|false} on every item — bare data-[selected]: matches BOTH.
+ * Green only when data-selected=true (pointer/keyboard hover).
+ */
+function countryItemClass(stripeIndex: number): string {
+  const idle = stripeIndex % 2 === 0 ? "bg-black" : "bg-zinc-900";
+  const idleSelectedFalse =
+    stripeIndex % 2 === 0 ? "data-[selected=false]:!bg-black" : "data-[selected=false]:!bg-zinc-900";
+  return cn(
+    "cursor-pointer rounded-none px-2 py-1.5 text-base text-white",
+    idle,
+    idleSelectedFalse,
+    "data-[selected=false]:!text-white data-[selected=false]:[&_svg]:!text-white",
+    "data-[selected=true]:!bg-primary data-[selected=true]:!text-black data-[selected=true]:[&_svg]:!text-black",
+  );
+}
 
 export function ProfileLocationSelect({
   placeholder,
@@ -25,23 +74,188 @@ export function ProfileLocationSelect({
   options,
   onChange,
   disabled = false,
+  width = "full",
+  triggerStyle,
 }: {
   placeholder: string;
   value: string;
   options: string[];
   onChange: (value: string) => void;
   disabled?: boolean;
+  width?: "xs" | "sm" | "md" | "full" | "auto";
+  triggerStyle?: CSSProperties;
 }): ReactElement {
   const listed = options.includes(value) || !value ? options : [value, ...options];
   return (
     <SelectField
       placeholder={placeholder}
-      width="full"
+      width={width}
+      triggerStyle={{ ...(width === "sm" ? { flexShrink: 0 } : undefined), ...triggerStyle }}
       value={value || UNSET_SELECT_VALUE}
       disabled={disabled}
       options={[{ value: UNSET_SELECT_VALUE, label: placeholder }, ...listed.map((opt) => ({ value: opt, label: opt }))]}
       onValueChange={(next) => onChange(next === UNSET_SELECT_VALUE ? "" : next)}
     />
+  );
+}
+
+export function ProfileCountrySearchSelect({
+  value,
+  onChange,
+  disabled = false,
+  className,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  disabled?: boolean;
+  className?: string;
+}): ReactElement {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const selected = value.trim();
+  const query = search.trim().toLocaleLowerCase();
+
+  const restOptions = useMemo(
+    () => WORLD_COUNTRY_OPTIONS.filter((c) => !WORLD_COUNTRY_NORTH_AMERICA.includes(c)),
+    [],
+  );
+
+  const filterList = (list: string[]) =>
+    query ? list.filter((c) => c.toLocaleLowerCase().includes(query)) : list;
+
+  const northAmerica = filterList([...WORLD_COUNTRY_NORTH_AMERICA]);
+  const rest = filterList(restOptions);
+  const unknownSelected =
+    selected && !isWorldCountry(selected) ? selected : "";
+  /** Trigger sizes to the selected label; list panel can be wider. */
+  const triggerMinCh = Math.max(COUNTRY_PLACEHOLDER.length, selected.length || 0, "United States".length);
+  const panelStyle = { minWidth: `${COUNTRY_LIST_MIN_CH + 4}ch`, width: "max-content" } as const;
+
+  const commit = (next: string) => {
+    onChange(next);
+    setSearch("");
+    setOpen(false);
+  };
+
+  /** Keep popover open; commit on click (cmdk onSelect alone is unreliable here). */
+  const bindRow = (next: string) => ({
+    onMouseDown: (event: ReactMouseEvent) => {
+      event.preventDefault();
+    },
+    onClick: (event: ReactMouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      commit(next);
+    },
+    onSelect: () => commit(next),
+  });
+
+  let stripe = 0;
+  const nextStripe = () => {
+    const i = stripe;
+    stripe += 1;
+    return i;
+  };
+
+  return (
+    <Popover
+      open={open}
+      onOpenChange={(next) => {
+        if (disabled) return;
+        setOpen(next);
+        if (!next) setSearch("");
+      }}
+    >
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          disabled={disabled}
+          aria-label={COUNTRY_PLACEHOLDER}
+          className={cn(
+            UI_SELECT_TRIGGER,
+            "flex w-auto shrink-0 items-center justify-between gap-2",
+            className,
+          )}
+          style={{ minWidth: `${triggerMinCh + 3}ch` }}
+        >
+          <span className={cn("whitespace-nowrap", !selected && "text-muted-foreground")}>
+            {selected || COUNTRY_PLACEHOLDER}
+          </span>
+          <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        align="start"
+        sideOffset={4}
+        onOpenAutoFocus={(event) => event.preventDefault()}
+        className="z-[200] w-auto max-w-[min(24rem,calc(100vw-2rem))] rounded-none border-0 bg-black p-1 text-white shadow-lg"
+        style={panelStyle}
+      >
+        <Command shouldFilter={false} className="rounded-none bg-transparent text-white">
+          <CommandInput
+            value={search}
+            onValueChange={setSearch}
+            placeholder={COUNTRY_PLACEHOLDER}
+            className="h-9 text-base text-white placeholder:text-muted-foreground"
+          />
+          <CommandList className="max-h-56 overflow-y-auto overflow-x-hidden">
+            {unknownSelected ? (
+              <CommandGroup
+                heading="Current"
+                className="overflow-visible bg-transparent p-0 [&_[cmdk-group-heading]]:bg-black [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:text-base [&_[cmdk-group-heading]]:text-muted-foreground"
+              >
+                <CommandItem
+                  value={unknownSelected}
+                  className={countryItemClass(nextStripe())}
+                  {...bindRow(unknownSelected)}
+                >
+                  <span className="whitespace-nowrap">{unknownSelected}</span>
+                </CommandItem>
+              </CommandGroup>
+            ) : null}
+            {northAmerica.length > 0 ? (
+              <CommandGroup
+                heading="North America"
+                className="overflow-visible bg-transparent p-0 [&_[cmdk-group-heading]]:bg-black [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:text-base [&_[cmdk-group-heading]]:text-muted-foreground"
+              >
+                {northAmerica.map((country) => (
+                  <CommandItem
+                    key={country}
+                    value={country}
+                    className={countryItemClass(nextStripe())}
+                    {...bindRow(country)}
+                  >
+                    <span className="whitespace-nowrap">{country}</span>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            ) : null}
+            {rest.length > 0 ? (
+              <CommandGroup
+                heading="World"
+                className="overflow-visible bg-transparent p-0 [&_[cmdk-group-heading]]:bg-black [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:text-base [&_[cmdk-group-heading]]:text-muted-foreground"
+              >
+                {rest.map((country) => (
+                  <CommandItem
+                    key={country}
+                    value={country}
+                    className={countryItemClass(nextStripe())}
+                    {...bindRow(country)}
+                  >
+                    <span className="whitespace-nowrap">{country}</span>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            ) : null}
+            {!northAmerica.length && !rest.length && !unknownSelected ? (
+              <CommandEmpty className="py-3 text-center text-base text-muted-foreground">
+                No country match
+              </CommandEmpty>
+            ) : null}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 }
 type DraftAdditionalLocation = {
@@ -61,9 +275,11 @@ function toDraftAdditionalLocations(
   defaultCountry: string = "",
 ): DraftAdditionalLocation[] {
   return readSiteAdditionalLocations(site).map((loc: Location, idx: number) => {
+    const stored = loc.country?.trim() ?? "";
     const country =
-      (loc.country && isServiceCountry(loc.country) ? loc.country : "") ||
-      inferServiceCountry(loc.state, defaultCountry);
+      stored ||
+      inferServiceCountry(loc.state, defaultCountry) ||
+      (isWorldCountry(defaultCountry) ? defaultCountry : "");
     const state = normalizeServiceRegion(loc.state, country);
     return {
       id: loc.id || `loc-${site?.id ?? "site"}-extra-${idx + 1}`,
@@ -111,8 +327,8 @@ export function ProfileAdditionalLocationsEditor({
   };
 
   const handleAddLocation = () => {
-    const country = isServiceCountry(defaultCountry) ? defaultCountry : "Canada";
-    const state = nextStateForCountry(defaultState, country);
+    const country = defaultCountry.trim();
+    const state = isServiceCountry(country) ? nextStateForCountry(defaultState, country) : "";
     const next: DraftAdditionalLocation[] = [
       ...rows,
       {
@@ -171,10 +387,8 @@ export function ProfileAdditionalLocationsEditor({
             />
           </TaskFormPlaceholderCell>
           <TaskFormPlaceholderCell>
-            <ProfileLocationSelect
-              placeholder="Country"
+            <ProfileCountrySearchSelect
               value={row.country}
-              options={SERVICE_COUNTRY_OPTIONS}
               onChange={(val) => handleCountryChange(idx, val)}
             />
           </TaskFormPlaceholderCell>
@@ -184,7 +398,7 @@ export function ProfileAdditionalLocationsEditor({
               value={row.state}
               options={serviceRegionOptions(row.country)}
               onChange={(val) => handleStateChange(idx, val)}
-              disabled={!row.country}
+              disabled={!isServiceCountry(row.country)}
             />
           </TaskFormPlaceholderCell>
           <Button icon={Trash2} onClick={() => handleRemoveLocation(idx)}>

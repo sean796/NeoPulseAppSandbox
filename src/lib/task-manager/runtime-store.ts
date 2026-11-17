@@ -19,7 +19,12 @@ const listeners = new Set<Listener>();
 let snapshot: WorkspaceTask[] = [];
 
 function rebuildSnapshot(): void {
-  snapshot = Array.from(tasks.values()).sort((a, b) => b.updatedAt - a.updatedAt);
+  snapshot = Array.from(tasks.values()).sort((a, b) => {
+    if (a.createdAt !== b.createdAt) return a.createdAt - b.createdAt;
+    if (a.id < b.id) return -1;
+    if (a.id > b.id) return 1;
+    return 0;
+  });
 }
 
 function canUseStorage(): boolean {
@@ -241,7 +246,12 @@ export function hasRunningWorkspaceTasks(): boolean {
 }
 
 export function latestTerminalWorkspaceTask(): WorkspaceTask | undefined {
-  return snapshot.find((task) => isWorkspaceTaskTerminal(task.status));
+  let latest: WorkspaceTask | undefined;
+  for (const task of tasks.values()) {
+    if (!isWorkspaceTaskTerminal(task.status)) continue;
+    if (!latest || task.updatedAt > latest.updatedAt) latest = task;
+  }
+  return latest;
 }
 
 /** Explicit user clear only. Never call on mount or refresh. */

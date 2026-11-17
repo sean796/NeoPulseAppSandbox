@@ -365,7 +365,7 @@ export async function runAutoSeoBlogBodyRewrite(
       seoResearchBrief,
       pregeneratedAnswerHtml:
         ansBefore.trim() ||
-        `<h2 id="answer">Answer</h2><p>${focusKeyword || articleTitle}</p>`,
+        `<p id="answer">${focusKeyword || articleTitle}</p>`,
       apiKey,
       model: getBlogModel(site?.id),
     });

@@ -126,8 +126,41 @@ export type QueryFanout = {
   factualVerificationQueries?: string[];
   /** Extracted facts bound to official source URLs */
   verifiedFacts?: VerifiedFact[];
+  /** NAP + place + persona fact-check packet (runs before writing) */
+  factCheck?: ResearchFactCheckPacket;
   serpByQuery?: QueryFanoutSerpRow[];
   chatGptByQuery?: Array<{ query: string; responseText: string }>;
+};
+
+export type ResearchFactCheckKind =
+  | "nap"
+  | "place"
+  | "person"
+  | "source"
+  | "product";
+
+export type ResearchFactCheckItem = {
+  kind: ResearchFactCheckKind;
+  original: string;
+  verdict: "pass" | "rewrite";
+  rewritten: string;
+  reason: string;
+  placeType?: string;
+  placeCity?: string;
+};
+
+export type ResearchFactCheckNapCard = {
+  names: string[];
+  addresses: string[];
+  phones: string[];
+  emails: string[];
+};
+
+export type ResearchFactCheckPacket = {
+  checkedAt: string;
+  primaryCity: string;
+  napCard: ResearchFactCheckNapCard;
+  checks: ResearchFactCheckItem[];
 };
 
 export type FirstPartyClaim = { text: string; source: string };

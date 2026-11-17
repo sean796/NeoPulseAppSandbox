@@ -11,10 +11,16 @@ class Neo_Pulse_App_Skills_Library_Store {
 
 	const SKILL_SAFE_FIX = 'reporting.semrush.safe-fix';
 	const SKILL_POSTS_GAP = 'content.posts.gap-check';
+	const SKILL_ENTITIES_GAP = 'content.entities.gap-check';
+	const SKILL_MONEY_LINKS = 'content.internal-links.money-pages';
+	const SKILL_EDITORIAL_AUDIT = 'content.editorial.audit';
 
 	/** URL path slug (no dots — WP rewrites truncate dotted segments). */
 	const SKILL_SAFE_FIX_SLUG  = 'semrush-safe-fix';
 	const SKILL_POSTS_GAP_SLUG = 'content-posts-gap-check';
+	const SKILL_ENTITIES_GAP_SLUG = 'content-entities-gap-check';
+	const SKILL_MONEY_LINKS_SLUG = 'content-internal-links-money-pages';
+	const SKILL_EDITORIAL_AUDIT_SLUG = 'editorial-content-audit';
 
 	const FILES = array( 'schema.json', 'prompts.json', 'evals.json' );
 
@@ -30,6 +36,15 @@ class Neo_Pulse_App_Skills_Library_Store {
 		}
 		if ( $token === self::SKILL_POSTS_GAP || $token === self::SKILL_POSTS_GAP_SLUG ) {
 			return self::SKILL_POSTS_GAP;
+		}
+		if ( $token === self::SKILL_ENTITIES_GAP || $token === self::SKILL_ENTITIES_GAP_SLUG ) {
+			return self::SKILL_ENTITIES_GAP;
+		}
+		if ( $token === self::SKILL_MONEY_LINKS || $token === self::SKILL_MONEY_LINKS_SLUG ) {
+			return self::SKILL_MONEY_LINKS;
+		}
+		if ( $token === self::SKILL_EDITORIAL_AUDIT || $token === self::SKILL_EDITORIAL_AUDIT_SLUG ) {
+			return self::SKILL_EDITORIAL_AUDIT;
 		}
 		return new WP_Error( 'neo-pulse_skills_unknown', 'Unknown skill id', array( 'status' => 404 ) );
 	}
@@ -243,6 +258,27 @@ class Neo_Pulse_App_Skills_Library_Store {
 				'evals.json'   => self::default_posts_gap_evals(),
 			);
 		}
+		if ( $skill_id === self::SKILL_ENTITIES_GAP ) {
+			return array(
+				'schema.json'  => self::default_entities_gap_schema(),
+				'prompts.json' => self::default_entities_gap_prompts(),
+				'evals.json'   => self::default_entities_gap_evals(),
+			);
+		}
+		if ( $skill_id === self::SKILL_MONEY_LINKS ) {
+			return array(
+				'schema.json'  => self::default_money_links_schema(),
+				'prompts.json' => self::default_money_links_prompts(),
+				'evals.json'   => self::default_money_links_evals(),
+			);
+		}
+		if ( $skill_id === self::SKILL_EDITORIAL_AUDIT ) {
+			return array(
+				'schema.json'  => self::default_editorial_audit_schema(),
+				'prompts.json' => self::default_editorial_audit_prompts(),
+				'evals.json'   => self::default_editorial_audit_evals(),
+			);
+		}
 		return array(
 			'schema.json'  => self::default_schema(),
 			'prompts.json' => self::default_prompts(),
@@ -311,6 +347,187 @@ class Neo_Pulse_App_Skills_Library_Store {
 	}
 
 	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_entities_gap_schema(): array {
+		return array(
+			'id'          => self::SKILL_ENTITIES_GAP,
+			'label'       => 'Entities Content Gap Check',
+			'category'    => 'research',
+			'domain'      => 'entity-sap',
+			'temperature' => 0.3,
+			'maxTokens'   => 512,
+			'schedule'    => array(
+				'input'  => array(
+					'month'           => 'string (YYYY-MM)',
+					'gap'             => 'number',
+					'occupiedDates'   => 'array of YYYY-MM-DD',
+					'lastAllowedDay'  => 'string (YYYY-MM-DD)',
+					'publishTimeHint' => 'string (HH:MM)',
+				),
+				'output' => array(
+					'publishDates' => 'array of YYYY-MM-DD',
+					'publishTime'  => 'string (HH:MM)',
+				),
+			),
+			'skillPath'   => 'skills/entities-content-gap-check',
+		);
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_entities_gap_prompts(): array {
+		return array(
+			'schedule' => array(
+				'system'       => 'Return one JSON object only: {"publishDates":["YYYY-MM-DD"],"publishTime":"HH:MM"}. Follow the schedule rules in the user message. Never use an em dash.',
+				'userTemplate' => "Read skills/entities-content-gap-check/references/schedule-rules.md.\n\nCount JSON:\n{countJson}",
+			),
+		);
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_entities_gap_evals(): array {
+		return array(
+			'skill_name' => 'content-entities-gap-check',
+			'evals'      => array(
+				array(
+					'id'              => 1,
+					'prompt'          => 'Given gap 3, month 2026-12, occupiedDates [2026-12-02], lastAllowedDay 2026-12-26, pick publishDates and publishTime.',
+					'expected_output' => 'JSON with exactly 3 unique YYYY-MM-DD dates inside 2026-12, on or before 2026-12-26, not 2026-12-02, plus HH:MM publishTime.',
+					'assertions'      => array(
+						'Output is valid JSON with publishDates and publishTime',
+						'publishDates length equals gap',
+					),
+				),
+			),
+		);
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_money_links_schema(): array {
+		return array(
+			'id'          => self::SKILL_MONEY_LINKS,
+			'label'       => 'Money Page Internal Links',
+			'category'    => 'blog',
+			'domain'      => 'aiseo',
+			'temperature' => 0.2,
+			'maxTokens'   => 2048,
+			'linkPlan'    => array(
+				'input'  => array(
+					'moneyPages' => 'array of {url, queries[]}',
+					'blogUrls'   => 'array of blog URLs',
+				),
+				'output' => array(
+					'links' => 'array of {moneyUrl, targetUrl, anchorText}',
+				),
+			),
+			'skillPath'   => 'skills/money-page-internal-links',
+		);
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_money_links_prompts(): array {
+		return array(
+			'linkPlan' => array(
+				'system'       => 'Return one JSON object only: {"links":[{"moneyUrl":"https://...","targetUrl":"https://...","anchorText":"..."}]}. Top-down: money pages link out to blogs or related money pages. Copy URLs from the lists. Never invent URLs. Never use an em dash.',
+				'userTemplate' => "Read skills/money-page-internal-links/references/aiseo-internal-link-rules.md.\n\nInventory JSON:\n{inventoryJson}",
+			),
+		);
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_money_links_evals(): array {
+		return array(
+			'skill_name' => 'content-internal-links-money-pages',
+			'evals'      => array(
+				array(
+					'id'              => 1,
+					'prompt'          => 'Given money page /shutters/ with GSC query roller shutters and blog /blog/window-tips/, propose one outbound link from the money page.',
+					'expected_output' => 'JSON links array with moneyUrl as the money page, targetUrl as the blog or related money page, and a short anchorText.',
+					'assertions'      => array(
+						'Output is valid JSON with links',
+						'URLs are copied from inventory',
+					),
+				),
+			),
+		);
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_editorial_audit_schema(): array {
+		return array(
+			'id'          => self::SKILL_EDITORIAL_AUDIT,
+			'label'       => 'Editorial Content Audit',
+			'category'    => 'research',
+			'domain'      => 'reporting',
+			'temperature' => 0.1,
+			'maxTokens'   => 4096,
+			'pageAudit'   => array(
+				'input'  => array(
+					'property' => 'NAP, every location row, phones, addresses, states, countries',
+					'page'     => 'id, url, title, status, type, meta, text',
+				),
+				'output' => array(
+					'findings' => 'array of {severity, certainty, quote, problem, fix}',
+				),
+			),
+			'skillPath'   => 'skills/editorial-content-audit',
+		);
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_editorial_audit_prompts(): array {
+		return array(
+			'pageAudit' => array(
+				'system'       => 'You are a fact-check auditor for one WordPress post or service-area page. Verify buyer-facing claims against the full property NAP (every location, street, phone, state/province, country). Extra effort on location and serve/install claims. A listed city is valid on every page. Check every phone against the NAP phone list. Flag out-of-area served cities and wrong state/country labels. Prefer NAP/location findings over polish. Do not write price findings and do not use confirm for price. Return JSON only: {"findings":[{"severity":"high|medium|low","certainty":"proven|confirm","quote":"...","problem":"...","fix":"..."}]}. Empty findings is valid. Quote page text. No em dashes.',
+				'userTemplate' => "Read skills/editorial-content-audit/references/audit-rules.md.\n\nAct as a fact-check auditor. Prefer NAP, location, phone, address, state/province, and country contradictions over polish.\n\nPROPERTY JSON:\n{propertyJson}\n\nPAGE JSON:\n{pageJson}\n\nPAGE TEXT:\n{pageText}\n\nFACT-CHECK PASS: Collect every place, phone, address, and serve/install claim from title, meta, headings, body, FAQ, and links. Ground each against PROPERTY.locations and PROPERTY.phones. Report only material mismatches. Return JSON findings only.",
+			),
+		);
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_editorial_audit_evals(): array {
+		return array(
+			'skill_name' => 'editorial-content-audit',
+			'evals'      => array(
+				array(
+					'id'              => 1,
+					'prompt'          => 'A service-area page claims hundreds of installs in a city outside the saved service cities and uses a wrong phone number.',
+					'expected_output' => 'JSON findings with high severity proven quotes for the invented local claim and wrong phone.',
+					'assertions'      => array(
+						'Output is valid JSON with findings',
+						'Each finding has a non-empty quote',
+					),
+				),
+				array(
+					'id'              => 2,
+					'prompt'          => 'A blog names a listed city but attaches the wrong province, and says we serve a metro that is not in PROPERTY.locations.',
+					'expected_output' => 'JSON findings with proven severity for the wrong province label and the out-of-area metro serve claim.',
+					'assertions'      => array(
+						'Output is valid JSON with findings',
+						'Location/NAP contradictions are preferred over polish',
+					),
+				),
+			),
+		);
+	}
+
+	/**
 	 * @param mixed  $doc
 	 * @param string $skill_id
 	 * @return true|WP_Error
@@ -319,7 +536,7 @@ class Neo_Pulse_App_Skills_Library_Store {
 		if ( ! is_array( $doc ) ) {
 			return new WP_Error( 'neo-pulse_skills_prompts', 'prompts.json must be an object', array( 'status' => 400 ) );
 		}
-		if ( $skill_id === self::SKILL_POSTS_GAP ) {
+		if ( $skill_id === self::SKILL_POSTS_GAP || $skill_id === self::SKILL_ENTITIES_GAP ) {
 			$schedule = $doc['schedule'] ?? null;
 			if ( ! is_array( $schedule ) ) {
 				return new WP_Error( 'neo-pulse_skills_prompts', 'prompts.json requires schedule object', array( 'status' => 400 ) );
@@ -327,6 +544,30 @@ class Neo_Pulse_App_Skills_Library_Store {
 			foreach ( array( 'system', 'userTemplate' ) as $key ) {
 				if ( ! isset( $schedule[ $key ] ) || ! is_string( $schedule[ $key ] ) || trim( $schedule[ $key ] ) === '' ) {
 					return new WP_Error( 'neo-pulse_skills_prompts', 'schedule.' . $key . ' must be a non-empty string', array( 'status' => 400 ) );
+				}
+			}
+			return true;
+		}
+		if ( $skill_id === self::SKILL_MONEY_LINKS ) {
+			$plan = $doc['linkPlan'] ?? null;
+			if ( ! is_array( $plan ) ) {
+				return new WP_Error( 'neo-pulse_skills_prompts', 'prompts.json requires linkPlan object', array( 'status' => 400 ) );
+			}
+			foreach ( array( 'system', 'userTemplate' ) as $key ) {
+				if ( ! isset( $plan[ $key ] ) || ! is_string( $plan[ $key ] ) || trim( $plan[ $key ] ) === '' ) {
+					return new WP_Error( 'neo-pulse_skills_prompts', 'linkPlan.' . $key . ' must be a non-empty string', array( 'status' => 400 ) );
+				}
+			}
+			return true;
+		}
+		if ( $skill_id === self::SKILL_EDITORIAL_AUDIT ) {
+			$audit = $doc['pageAudit'] ?? null;
+			if ( ! is_array( $audit ) ) {
+				return new WP_Error( 'neo-pulse_skills_prompts', 'prompts.json requires pageAudit object', array( 'status' => 400 ) );
+			}
+			foreach ( array( 'system', 'userTemplate' ) as $key ) {
+				if ( ! isset( $audit[ $key ] ) || ! is_string( $audit[ $key ] ) || trim( $audit[ $key ] ) === '' ) {
+					return new WP_Error( 'neo-pulse_skills_prompts', 'pageAudit.' . $key . ' must be a non-empty string', array( 'status' => 400 ) );
 				}
 			}
 			return true;

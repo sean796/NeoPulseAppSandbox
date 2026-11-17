@@ -47,6 +47,7 @@ export const EDITORIAL_STANDARD_PROPERTY_NAMES = [
   "Tailored Interiors",
   "Neo Digital",
   "Shutter Spot",
+  "Blind Spot",
   "Custom Shades of London",
 ] as const;
 

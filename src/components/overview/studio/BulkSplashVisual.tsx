@@ -72,6 +72,39 @@ function AuditVisual() {
   );
 }
 
+/** NAP card + place pin for the dedicated Fact checking step. */
+function FactCheckVisual() {
+  return (
+    <svg
+      viewBox="0 0 288 128"
+      className="h-full w-full"
+      role="presentation"
+      aria-hidden="true"
+    >
+      <rect x="16" y="18" width="168" height="92" rx="6" fill="#27272a" />
+      <rect x="28" y="32" width="88" height="8" rx="2" className="animate-pulse" fill="#84bd00" />
+      <rect x="28" y="50" width="132" height="6" rx="2" className="animate-pulse" fill="#52525b" />
+      <rect x="28" y="64" width="110" height="6" rx="2" className="animate-pulse" fill="#3f3f46" />
+      <rect x="28" y="78" width="72" height="6" rx="2" className="animate-pulse" fill="#52525b" />
+      <circle cx="156" cy="88" r="11" fill="rgba(132, 189, 0, 0.25)" />
+      <path
+        d="M151 88.5l3.2 3.2 6.8-7"
+        fill="none"
+        stroke="#84bd00"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M232 28c-14 0-25 11-25 25 0 18 25 47 25 47s25-29 25-47c0-14-11-25-25-25z"
+        fill="#3f3f46"
+        className="animate-pulse"
+      />
+      <circle cx="232" cy="52" r="8" fill="#84bd00" />
+    </svg>
+  );
+}
+
 function MetaVisual() {
   return (
     <div className="flex w-full flex-col gap-2.5">
@@ -177,6 +210,7 @@ const VISUALS: Record<BulkSplashVisualKind, ReactNode> = {
   ideas: <IdeasVisual />,
   research: <ResearchVisual />,
   audit: <AuditVisual />,
+  factcheck: <FactCheckVisual />,
   meta: <MetaVisual />,
   writing: <WritingVisual />,
   image: <ImageVisual />,

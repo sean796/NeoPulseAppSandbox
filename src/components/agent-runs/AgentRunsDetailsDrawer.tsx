@@ -46,7 +46,11 @@ function agentRunUploadedPostsForDisplay(run: AgentRun): AgentRunUploadedPost[] 
 }
 
 function googleDriveResultLinkLabel(run: AgentRun, url: string): string {
-  if (!url.includes("/drive/folders/")) return "Open in Google Docs";
+  if (!url.includes("/drive/folders/")) {
+    if (url.includes("/spreadsheets/")) return "Open findings";
+    if (url.includes("/document/")) return "Open in Google Docs";
+    return "Open CSV";
+  }
   const candidates = [
     run.result?.googleDriveFolderLabel ?? "",
     (run.result?.googleDriveFoldersCreated ?? []).join(" / "),

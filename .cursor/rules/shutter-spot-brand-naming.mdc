@@ -1,14 +1,14 @@
 ---
-description: Shutter Spot public brand name is always Shutter Spot, never Blind Spot
+description: shutterspot.com public brand name is always Blind Spot, never Shutter Spot
 alwaysApply: true
 ---
 
-# Shutter Spot brand naming
+# Blind Spot brand naming (shutterspot.com)
 
-For the Neo Digital client **Shutter Spot** (`shutterspot.com`, Integrations property name **Shutter Spot**, Google Ads customer ID 745-406-1453):
+For the Neo Digital client on **shutterspot.com** (Integrations property name **Blind Spot**, Google Ads customer ID 745-406-1453):
 
-- Use exactly **Shutter Spot** in client-facing copy, titles, meta, headings, FAQs, schema, and reports.
-- Do **not** use **Blind Spot** or **blind spot**. That string is the Google Ads MCC sub-account label only, not the public brand.
+- Use exactly **Blind Spot** in client-facing copy, titles, meta, headings, FAQs, schema, and reports.
+- Do **not** use **Shutter Spot**, **ShutterSpot**, or **shutter spot** as the business name. That string is the domain / legacy label only, not the public brand.
 - Do not rename, normalize, or post-process the business name. Do not infer a different name from other blind/window clients in the portfolio (for example Superior Blinds).
 
-When editing master instructions or generation prompts for this property, preserve the Integrations name **Shutter Spot** as the canonical public name.
+When editing master instructions or generation prompts for this property, preserve the Integrations name **Blind Spot** as the canonical public name. The site domain remains `shutterspot.com`.

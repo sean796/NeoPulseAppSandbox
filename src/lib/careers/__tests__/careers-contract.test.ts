@@ -20,13 +20,13 @@ describe("NEO Pulse Operator Career Application & Project Room Contract", () => 
     expect(result.totalCount).toBe(5);
   });
 
-  it("passes all 5 contract checks when the operator steers to Shutter Spot, server route, and staging HITL", () => {
+  it("passes all 5 contract checks when the operator steers to Blind Spot, server route, and staging HITL", () => {
     const validArtifact: ProjectRoomArtifact = {
-      publicBrandName: "Shutter Spot",
+      publicBrandName: "Blind Spot",
       focusKeyword: "custom plantation shutters calgary",
-      seoTitle: "Custom Plantation Shutters Calgary by Shutter Spot",
+      seoTitle: "Custom Plantation Shutters Calgary by Blind Spot",
       metaDescription:
-        "Upgrade your home with custom plantation shutters calgary homeowners trust from Shutter Spot. Book a free in-home consultation and measure in Calgary today.",
+        "Upgrade your home with custom plantation shutters calgary homeowners trust from Blind Spot. Book a free in-home consultation and measure in Calgary today.",
       executionRoute: "/api/wordpress/update-post-meta",
       targetEnvironment: "staging",
       stagingVerificationStep:
@@ -38,13 +38,13 @@ describe("NEO Pulse Operator Career Application & Project Room Contract", () => 
     expect(result.passedCount).toBe(5);
   });
 
-  it("fails the brand check if Blind Spot appears in seoTitle or metaDescription even when publicBrandName is Shutter Spot", () => {
+  it("fails the brand check if Shutter Spot appears in seoTitle or metaDescription even when publicBrandName is Blind Spot", () => {
     const leakedBrandArtifact: ProjectRoomArtifact = {
-      publicBrandName: "Shutter Spot",
+      publicBrandName: "Blind Spot",
       focusKeyword: "custom plantation shutters calgary",
-      seoTitle: "Custom Plantation Shutters Calgary by Blind Spot",
+      seoTitle: "Custom Plantation Shutters Calgary by Shutter Spot",
       metaDescription:
-        "Upgrade your home with custom plantation shutters calgary homeowners trust from Shutter Spot. Book a free in-home consultation and measure in Calgary today.",
+        "Upgrade your home with custom plantation shutters calgary homeowners trust from Blind Spot. Book a free in-home consultation and measure in Calgary today.",
       executionRoute: "/api/wordpress/update-post-meta",
       targetEnvironment: "staging",
       stagingVerificationStep:

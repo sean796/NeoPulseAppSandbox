@@ -1,6 +1,6 @@
 import type { WordPressSite } from "@/components/integrations/types";
 
-export const SHUTTER_SPOT_CANONICAL_NAME = "Shutter Spot";
+export const SHUTTER_SPOT_CANONICAL_NAME = "Blind Spot";
 
 export const SHUTTER_SPOT_GOOGLE_ADS_CUSTOMER_ID = "7454061453";
 
@@ -15,7 +15,7 @@ function siteHost(site: WordPressSite): string {
   }
 }
 
-/** Integrations property identity for shutterspot.com (Google Ads MCC may still say Blind Spot). */
+/** Integrations property identity for shutterspot.com (public brand Blind Spot; domain stays shutterspot.com). */
 export function isShutterSpotProperty(
   site: Pick<WordPressSite, "name" | "siteUrl" | "productionSiteUrl" | "googleAdsCustomerId">,
 ): boolean {

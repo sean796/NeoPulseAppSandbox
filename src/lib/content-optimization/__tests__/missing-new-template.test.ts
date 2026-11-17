@@ -28,8 +28,8 @@ describe("missing-new-template", () => {
     };
     const audit = auditUrlsMissingNewTemplate(Object.keys(html), (url) => html[url] ?? "");
     expect(audit.scanned).toBe(2);
-    expect(audit.alreadyNew).toEqual(["https://a.test/new/"]);
-    expect(audit.missing).toEqual(["https://a.test/old/"]);
+    expect(audit.missing).toEqual(["https://a.test/new/"]);
+    expect(audit.alreadyNew).toEqual(["https://a.test/old/"]);
     expect(audit.h2sByUrl["https://a.test/old/"]).toEqual(["Overview", "We Care About Town"]);
     expect(audit.h2sByUrl["https://a.test/new/"]).toEqual(["Answer", "Overview"]);
   });

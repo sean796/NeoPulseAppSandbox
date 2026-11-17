@@ -41,7 +41,7 @@ describe("generateAnswerSectionHtml entity prompts", () => {
     const call = vi.mocked(callOpenRouterChatCompletion).mock.calls[0]![0];
     expect(call.system).toContain("Edmonton, AB");
     expect(call.system).toContain("two or three sentences");
-    expect(call.system).toContain("somewhere in the Answer paragraph");
+    expect(call.system).toContain("somewhere in the paragraph");
     expect(call.user).toContain("Edmonton, AB");
     expect(call.user).toContain("service-area entity");
     expect(call.user).toContain("Acme Plumbing");
@@ -65,7 +65,7 @@ describe("generateAnswerSectionHtml entity prompts", () => {
     expect(call.user).toContain("Business name (mention somewhere in the Answer)");
     expect(call.user).toContain("Acme Tax");
     expect(call.system).toContain("two or three sentences");
-    expect(call.system).toContain("somewhere in the Answer paragraph");
+    expect(call.system).toContain("somewhere in the paragraph");
   });
 });
 
@@ -109,7 +109,8 @@ describe("generateAndPrependAnswerHtml", () => {
     });
     expect(result.html).toContain("Original body stays");
     expect(result.html).toContain("Cost Factors");
-    expect(result.html.indexOf("Answer")).toBeLessThan(result.html.indexOf("Cost Factors"));
+    expect(result.html.indexOf("One. Two. Three.")).toBeLessThan(result.html.indexOf("Cost Factors"));
+    expect(result.html).not.toContain(">Answer<");
   });
 
   it("deletes an existing Answer and places the new one before Overview", async () => {

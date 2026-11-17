@@ -34,7 +34,7 @@ describe("stripLeadingAnswerSection", () => {
 });
 
 describe("injectHarnessH2AnchorIdsForStitchedBlog", () => {
-  it("assigns answer, overview, then body anchor ids", () => {
+  it("drops the Answer heading and assigns overview, then body anchor ids", () => {
     const html = [
       `<h2>Answer</h2><p>a. b.</p>`,
       `<h2>Overview</h2><p>Lead</p>`,
@@ -42,7 +42,8 @@ describe("injectHarnessH2AnchorIdsForStitchedBlog", () => {
     ].join("");
     const map = buildHarnessSectionAnchorMap(outlineFromBodyH2Titles(["Cost Factors"]));
     const out = injectHarnessH2AnchorIdsForStitchedBlog(html, map);
-    expect(out).toContain(`id="${HARNESS_ANSWER_ANCHOR_ID}"`);
+    expect(out).not.toContain(">Answer<");
+    expect(out).toContain(`<p id="${HARNESS_ANSWER_ANCHOR_ID}">a. b.</p>`);
     expect(out).toContain(`id="${HARNESS_OVERVIEW_ANCHOR_ID}"`);
     expect(out).toContain(`id="cost-factors"`);
   });
@@ -215,6 +216,8 @@ describe("stitchOverviewOntoBody", () => {
     const overviewPos = result.html.indexOf(`id="${HARNESS_OVERVIEW_ANCHOR_ID}"`);
     expect(answerPos).toBeGreaterThanOrEqual(0);
     expect(overviewPos).toBeGreaterThan(answerPos);
+    expect(result.html).not.toContain(">Answer<");
+    expect(result.html).toContain("One. Two.");
     expect(result.html).toContain("Cost Factors");
   });
 

@@ -19,6 +19,7 @@ class Neo_Pulse_App_Google_Drive_Upload {
 
 	const DRIVE_UPLOAD_URL = 'https://www.googleapis.com/upload/drive/v3/files';
 	const DRIVE_FILES_URL  = 'https://www.googleapis.com/drive/v3/files';
+	const SHEETS_API_URL   = 'https://sheets.googleapis.com/v4/spreadsheets';
 	const TEST_PARENT_FOLDER_ID = '1YrbOxNXBkYBp7GLGlUoSd07WGU8e0VEd';
 	const TEST_SUBFOLDER_NAME   = 'Flowbie Connection Tests';
 	const NEO_PULSE_WORKSPACE_FOLDER_NAME = 'NEO Pulse';

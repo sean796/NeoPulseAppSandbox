@@ -90,6 +90,15 @@ class Neo_Pulse_App_Neo_Mcp_Client {
 			$data = $data['return'];
 		}
 
+		if ( ! empty( $result['isError'] ) ) {
+			return array(
+				'ok'    => false,
+				'error' => $text !== '' ? $text : 'Neo MCP tool error',
+				'text'  => $text,
+				'data'  => $data,
+			);
+		}
+
 		return array(
 			'ok'   => true,
 			'text' => $text,

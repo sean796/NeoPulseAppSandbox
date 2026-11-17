@@ -10,8 +10,12 @@ import { normalizeProfileTags } from "@/lib/wordpress-property-profile-tags";
 import { WP_PANEL_INSET_BAND, WP_PANEL_LIST_GAP } from "./wordpress-panel-chrome";
 import { BenchmarkCategoryTagField } from "./BenchmarkCategoryTagField";
 import { PropertyClientLogoFields } from "./PropertyClientLogoFields";
-import { ProfileAdditionalLocationsEditor, ProfileLocationSelect } from "./ProfileServiceAreaFields";
-import { regionPlaceholder, SERVICE_COUNTRY_OPTIONS, serviceRegionOptions } from "@/lib/keyword-location-utils";
+import {
+  ProfileAdditionalLocationsEditor,
+  ProfileCountrySearchSelect,
+  ProfileLocationSelect,
+} from "./ProfileServiceAreaFields";
+import { isServiceCountry, regionPlaceholder, serviceRegionOptions } from "@/lib/keyword-location-utils";
 import { accordionContentClass, accordionItemClass, accordionTriggerClass, fieldsGridClass, IGNORE_CREDENTIAL_MANAGER, radioOptionLabelClass, SEMRUSH_MATCH_STATES, SITE_PROPERTY_COPY, stackedLabelClass, type SitePropertyFormChrome, type SitePropertySectionsProps } from "./site-property-form-chrome";
 
 /** Field (label is its placeholder); optional help spans full tile width below. */
@@ -107,10 +111,8 @@ export function SitePropertyAccordionSections(props: SitePropertySectionsProps) 
           />
         } />
       <FieldBlock chrome={chrome} field={
-          <ProfileLocationSelect
-            placeholder="Country"
+          <ProfileCountrySearchSelect
             value={formServiceCountry}
-            options={SERVICE_COUNTRY_OPTIONS}
             onChange={applyServiceCountry}
           />
         } />
@@ -120,7 +122,7 @@ export function SitePropertyAccordionSections(props: SitePropertySectionsProps) 
             value={formServiceState}
             options={serviceRegionOptions(formServiceCountry)}
             onChange={applyServiceState}
-            disabled={!formServiceCountry}
+            disabled={!isServiceCountry(formServiceCountry)}
           />
         } />
       <div className={cn("w-full py-1.5", chrome === "light" && "sm:col-span-2")}>

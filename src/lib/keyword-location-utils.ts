@@ -1,3 +1,7 @@
+import { isWorldCountry, WORLD_COUNTRY_NORTH_AMERICA, WORLD_COUNTRY_OPTIONS } from "@/lib/world-countries";
+
+export { isWorldCountry, WORLD_COUNTRY_NORTH_AMERICA, WORLD_COUNTRY_OPTIONS };
+
 // US States - defined outside component to avoid recreation
 export const usStates = [
   "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
@@ -147,16 +151,18 @@ export function inferServiceCountry(region?: string, storedCountry?: string): Se
   return "";
 }
 
-export function normalizeServiceRegion(region?: string, country: ServiceCountry | "" = ""): string {
+export function normalizeServiceRegion(region?: string, country: string = ""): string {
   const raw = typeof region === "string" ? region.trim() : "";
   if (!raw) return "";
   const upper = raw.toUpperCase();
-  if (country === "Canada" || country === "") {
+  const countryTrim = typeof country === "string" ? country.trim() : "";
+  if (countryTrim && !isServiceCountry(countryTrim)) return raw;
+  if (countryTrim === "Canada" || countryTrim === "") {
     if (CA_PROVINCE_ABBR_TO_NAME[upper]) return CA_PROVINCE_ABBR_TO_NAME[upper];
     const named = matchListedName(raw, canadianProvinces);
     if (named) return named;
   }
-  if (country === "United States" || country === "") {
+  if (countryTrim === "United States" || countryTrim === "") {
     if (US_STATE_ABBR_TO_NAME[upper]) return US_STATE_ABBR_TO_NAME[upper];
     const named = matchListedName(raw, usStates);
     if (named) return named;
@@ -170,6 +176,13 @@ export function regionBelongsToCountry(region: string, country: ServiceCountry):
 }
 
 export const SERVICE_COUNTRY_OPTIONS = [...SERVICE_COUNTRIES];
+
+/** Resolve a stored country string: listed world name, or Canada/US from region. */
+export function resolveStoredCountry(stored?: string, region?: string): string {
+  const trimmed = typeof stored === "string" ? stored.trim() : "";
+  if (trimmed && isWorldCountry(trimmed)) return trimmed;
+  return inferServiceCountry(region, trimmed);
+}
 
 export function nextStateForCountry(state: string, country: string): string {
   if (!isServiceCountry(country)) return "";

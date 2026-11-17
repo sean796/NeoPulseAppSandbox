@@ -24,8 +24,12 @@ import {
 import { BenchmarkCategoryTagField } from "./BenchmarkCategoryTagField";
 import { PropertyClientLogoFields } from "./PropertyClientLogoFields";
 import { WpEngineHostingFields } from "./WpEngineHostingFields";
-import { ProfileAdditionalLocationsEditor, ProfileLocationSelect } from "./ProfileServiceAreaFields";
-import { regionPlaceholder, SERVICE_COUNTRY_OPTIONS, serviceRegionOptions } from "@/lib/keyword-location-utils";
+import {
+  ProfileAdditionalLocationsEditor,
+  ProfileCountrySearchSelect,
+  ProfileLocationSelect,
+} from "./ProfileServiceAreaFields";
+import { isServiceCountry, regionPlaceholder, serviceRegionOptions } from "@/lib/keyword-location-utils";
 import { EDITORIAL_PACKAGE_OPTIONS, IGNORE_CREDENTIAL_MANAGER, SEMRUSH_MATCH_STATES, type SitePropertySectionsProps } from "./site-property-form-chrome";
 import { PropertySettingsEditActions } from "./PropertySettingsEditActions";
 import { WordPressCardActions } from "./WordPressCardActions";
@@ -143,10 +147,8 @@ export function SitePropertyModalFlatSections(props: SitePropertySectionsProps) 
       </TaskFormFlatGrid>
       <TaskFormFlatGrid className="grid-cols-2">
         <TaskFormPlaceholderCell>
-          <ProfileLocationSelect
-            placeholder="Country"
+          <ProfileCountrySearchSelect
             value={formServiceCountry}
-            options={SERVICE_COUNTRY_OPTIONS}
             onChange={applyServiceCountry}
           />
         </TaskFormPlaceholderCell>
@@ -156,7 +158,7 @@ export function SitePropertyModalFlatSections(props: SitePropertySectionsProps) 
             value={formServiceState}
             options={serviceRegionOptions(formServiceCountry)}
             onChange={applyServiceState}
-            disabled={!formServiceCountry}
+            disabled={!isServiceCountry(formServiceCountry)}
           />
         </TaskFormPlaceholderCell>
       </TaskFormFlatGrid>

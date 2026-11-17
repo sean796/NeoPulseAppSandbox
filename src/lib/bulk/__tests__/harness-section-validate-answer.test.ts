@@ -49,14 +49,15 @@ describe("Answer harness validation", () => {
     expect(() => assertHarnessAnswerProseComplete(html)).toThrow(/lists or tables/);
   });
 
-  it("finalize injects answer anchor id", () => {
+  it("finalize keeps the answer paragraph and drops the Answer heading", () => {
     const out = finalizeHarnessSectionHtml(validAnswer, {
       title: "Answer",
       isOverview: false,
       isAnswer: true,
     });
     expect(out).toContain(`id="${HARNESS_ANSWER_ANCHOR_ID}"`);
-    expect(out).toContain(">Answer<");
+    expect(out).not.toContain(">Answer<");
+    expect(out).toContain("Solar panels cost depends on system size.");
   });
 
   it("prepareHarnessSectionHtml normalizes Answer markdown fence", () => {
@@ -72,7 +73,7 @@ describe("Answer harness validation", () => {
       "<h2>Answer</h2>\nArched openings need a template fit first. Custom Shades of London sizes the curve on site.",
       { title: "Answer", isOverview: false, isAnswer: true },
     );
-    expect(out).toMatch(/<p>[^<]*Arched openings[^<]*<\/p>/i);
+    expect(out).toMatch(/<p\b[^>]*>[^<]*Arched openings[^<]*<\/p>/i);
     expect(() =>
       validateHarnessSectionOrThrow(out, {
         title: "Answer",
@@ -86,7 +87,7 @@ describe("Answer harness validation", () => {
     const noisy =
       `<h2>Answer</h2><p>One. Two.</p><h2>Bin Rental Tips For Home Renovations</h2><h2>Navigating</h2>`;
     const out = trimAnswerSectionToContract(noisy);
-    expect(out).toBe(`<h2>Answer</h2><p>One. Two.</p>`);
+    expect(out).toBe(`<p>One. Two.</p>`);
   });
 });
 
