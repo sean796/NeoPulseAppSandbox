@@ -73,10 +73,11 @@ describe("neo-pulse-app route registry", () => {
     );
     const publicEntries = publicBlock.match(/array\(\s*'(GET|POST)'/g) ?? [];
     const machineEntries = machineBlock.match(/array\(\s*'(GET|POST)'/g) ?? [];
-    expect(publicEntries.length).toBe(17);
+    expect(publicEntries.length).toBe(18);
     expect(machineEntries.length).toBe(3);
     for (const entry of [
       "'GET', 'auth/me'",
+      "'GET', 'auth/users'",
       "'POST', 'auth/login'",
       "'POST', 'auth/logout'",
       "'POST', 'auth/register'",

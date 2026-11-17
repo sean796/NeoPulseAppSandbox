@@ -3,14 +3,15 @@ const SESSION_TOKEN_KEY = "neo_pulse_session_token";
 
 let memorySessionToken: string | null = null;
 
-export type DeviceAuth = {
-  email: string;
-  password: string;
-  sessionToken?: string;
-};
-
 function hasBrowserStorage(): boolean {
   return typeof window !== "undefined" && typeof sessionStorage !== "undefined";
+}
+
+/** Removes the old email+password localStorage blob so it cannot be replayed. */
+export function clearLegacyDeviceAuth(): void {
+  if (typeof localStorage !== "undefined") {
+    localStorage.removeItem(STORAGE_KEY);
+  }
 }
 
 export function setSessionToken(sessionToken: string | null): void {
@@ -32,50 +33,10 @@ export function getSessionToken(): string | null {
       return fromSession;
     }
   }
-  return loadDeviceAuth()?.sessionToken?.trim() || null;
-}
-
-export function loadDeviceAuth(): DeviceAuth | null {
-  if (typeof localStorage === "undefined") return null;
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as DeviceAuth;
-    if (!parsed.email || !parsed.password) return null;
-    return {
-      email: parsed.email,
-      password: parsed.password,
-      sessionToken: parsed.sessionToken,
-    };
-  } catch {
-    return null;
-  }
-}
-
-export function saveDeviceAuth(email: string, password: string, sessionToken?: string): void {
-  if (typeof localStorage === "undefined") {
-    if (sessionToken) setSessionToken(sessionToken);
-    return;
-  }
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify({
-      email,
-      password,
-      ...(sessionToken ? { sessionToken } : {}),
-    }),
-  );
-  if (sessionToken) {
-    setSessionToken(sessionToken);
-  }
+  return null;
 }
 
 export function saveSessionToken(sessionToken: string): void {
-  const existing = loadDeviceAuth();
-  if (existing) {
-    saveDeviceAuth(existing.email, existing.password, sessionToken);
-    return;
-  }
   setSessionToken(sessionToken);
 }
 
@@ -84,8 +45,6 @@ export function loadSessionToken(): string | null {
 }
 
 export function clearDeviceAuth(): void {
-  if (typeof localStorage !== "undefined") {
-    localStorage.removeItem(STORAGE_KEY);
-  }
+  clearLegacyDeviceAuth();
   setSessionToken(null);
 }

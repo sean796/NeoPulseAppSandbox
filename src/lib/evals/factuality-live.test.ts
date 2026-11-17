@@ -4,11 +4,10 @@ import { setSessionToken } from "@/lib/auth-device";
 import { runFactualityJudge } from "@/lib/evals/factuality-evals";
 
 // Live opt-in: runs the real decision-model judge against the local hub.
-// Requires NEO_PULSE_SMOKE_EMAIL and NEO_PULSE_SMOKE_PASSWORD (hub login);
-// without them it skips, so default suite runs stay green and offline.
+// Requires NEO_PULSE_SMOKE_EMAIL (email picker hub login);
+// without it it skips, so default suite runs stay green and offline.
 const SMOKE_EMAIL = (process.env.NEO_PULSE_SMOKE_EMAIL ?? "").trim();
-const SMOKE_PASSWORD = process.env.NEO_PULSE_SMOKE_PASSWORD ?? "";
-const smokeConfigured = Boolean(SMOKE_EMAIL && SMOKE_PASSWORD);
+const smokeConfigured = Boolean(SMOKE_EMAIL);
 
 describe.skipIf(!smokeConfigured)("factuality judge (live, opt-in)", () => {
   beforeAll(async () => {
@@ -16,7 +15,7 @@ describe.skipIf(!smokeConfigured)("factuality judge (live, opt-in)", () => {
     const res = await fetch(backendApiUrl("/auth/login"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: SMOKE_EMAIL, password: SMOKE_PASSWORD }),
+      body: JSON.stringify({ email: SMOKE_EMAIL }),
     });
     const data = (await res.json().catch(() => ({}))) as { sessionToken?: string; error?: string };
     if (!res.ok || !data.sessionToken) {

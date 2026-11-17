@@ -23,6 +23,10 @@ class Neo_Pulse_App_Auth_Route_Handlers {
 			self::me();
 			return;
 		}
+		if ( $subpath === 'users' && $method === 'GET' ) {
+			self::users();
+			return;
+		}
 		if ( $subpath === 'login' && $method === 'POST' ) {
 			self::login( $body );
 			return;
@@ -157,21 +161,31 @@ class Neo_Pulse_App_Auth_Route_Handlers {
 		return $user;
 	}
 
+	private static function users(): void {
+		Neo_Pulse_App_Api_Dispatcher::send_json(
+			array(
+				'ok'    => true,
+				'users' => Neo_Pulse_App_Teams_Store::list_users_for_picker(),
+			)
+		);
+	}
+
 	/**
+	 * Email picker sign-in. No password. Bearer token only (no cookie).
+	 *
 	 * @param array<string,mixed> $body
 	 */
 	private static function login( array $body ): void {
-		$login    = isset( $body['username'] ) ? (string) $body['username'] : ( isset( $body['email'] ) ? (string) $body['email'] : '' );
-		$password = isset( $body['password'] ) ? (string) $body['password'] : '';
-		$user     = Neo_Pulse_App_Teams_Store::get_user_by_email( $login );
-		if ( ! $user || ! Neo_Pulse_App_Teams_Store::verify_password( $user, $password ) ) {
-			Neo_Pulse_App_Api_Dispatcher::send_json( array( 'ok' => false, 'error' => 'Invalid credentials' ), 401 );
+		$login = isset( $body['email'] ) ? (string) $body['email'] : ( isset( $body['username'] ) ? (string) $body['username'] : '' );
+		$user  = Neo_Pulse_App_Teams_Store::get_user_by_email( $login );
+		if ( ! $user ) {
+			Neo_Pulse_App_Api_Dispatcher::send_json( array( 'ok' => false, 'error' => 'Unknown email' ), 401 );
 			return;
 		}
 		$user_id = (int) $user['id'];
 		$teams   = Neo_Pulse_App_Teams_Store::list_teams_for_user( $user_id );
 		$team_id = count( $teams ) > 0 ? (int) $teams[0]['id'] : null;
-		Neo_Pulse_App_Auth_Session::set_session( $user_id, $team_id );
+		$token   = Neo_Pulse_App_Auth_Session::issue_token( $user_id, $team_id );
 		Neo_Pulse_App_Api_Dispatcher::send_json(
 			array(
 				'ok'   => true,
@@ -180,7 +194,7 @@ class Neo_Pulse_App_Auth_Route_Handlers {
 					'email'       => (string) $user['email'],
 					'displayName' => (string) $user['display_name'],
 				),
-				'sessionToken' => Neo_Pulse_App_Auth_Session::current_token(),
+				'sessionToken' => $token,
 			)
 		);
 	}

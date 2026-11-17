@@ -73,14 +73,38 @@ export async function fetchAuthMe(): Promise<AuthMeResponse> {
   }
 }
 
+export type AuthPickerUser = {
+  email: string;
+  displayName: string;
+};
+
+export async function fetchAuthUsers(): Promise<{
+  ok: boolean;
+  users?: AuthPickerUser[];
+  error?: string;
+}> {
+  const res = await api(`/auth/users?_=${Date.now()}`);
+  const raw = stripJsonBom(await res.text());
+  let data: { ok?: boolean; users?: AuthPickerUser[]; error?: string } = {};
+  try {
+    data = JSON.parse(raw) as { ok?: boolean; users?: AuthPickerUser[]; error?: string };
+  } catch {
+    return { ok: false, error: formatApiTransportError(raw, res) };
+  }
+  if (!res.ok || !data.ok) {
+    return { ok: false, error: data.error || res.statusText || "Could not load users" };
+  }
+  return { ok: true, users: Array.isArray(data.users) ? data.users : [] };
+}
+
+/** Email picker sign-in. No password. */
 export async function loginWithEmail(
   email: string,
-  password: string,
 ): Promise<{ ok: boolean; error?: string; sessionToken?: string }> {
   const res = await api("/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username: email, email, password }),
+    body: JSON.stringify({ email }),
   });
   const raw = stripJsonBom(await res.text());
   let data: { ok?: boolean; error?: string; sessionToken?: string } = {};
@@ -93,7 +117,7 @@ export async function loginWithEmail(
     };
   }
   if (!res.ok || !data.ok) {
-    return { ok: false, error: data.error || res.statusText || "Invalid credentials" };
+    return { ok: false, error: data.error || res.statusText || "Unknown email" };
   }
   return { ok: true, sessionToken: data.sessionToken };
 }

@@ -6,7 +6,7 @@ export type AuthContextValue = {
   loading: boolean;
   activeTeam: TeamSummary | null;
   permissions: TeamPermissions | null;
-  login: (email: string, password: string, rememberDevice?: boolean) => Promise<{ ok: boolean; error?: string }>;
+  login: (email: string) => Promise<{ ok: boolean; error?: string }>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
   setActiveTeam: (team: TeamSummary | null) => void;

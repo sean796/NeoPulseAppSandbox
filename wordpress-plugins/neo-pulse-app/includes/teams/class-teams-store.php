@@ -199,6 +199,34 @@ class Neo_Pulse_App_Teams_Store {
 		return is_array( $row ) ? $row : null;
 	}
 
+	/**
+	 * Emails for the login picker. No password hashes.
+	 *
+	 * @return array<int,array{email:string,displayName:string}>
+	 */
+	public static function list_users_for_picker(): array {
+		global $wpdb;
+		$rows = $wpdb->get_results(
+			'SELECT email, display_name FROM ' . self::users_table_sql() . ' ORDER BY email ASC',
+			ARRAY_A
+		);
+		if ( ! is_array( $rows ) ) {
+			return array();
+		}
+		$out = array();
+		foreach ( $rows as $row ) {
+			$email = isset( $row['email'] ) ? sanitize_email( strtolower( trim( (string) $row['email'] ) ) ) : '';
+			if ( $email === '' ) {
+				continue;
+			}
+			$out[] = array(
+				'email'       => $email,
+				'displayName' => isset( $row['display_name'] ) ? (string) $row['display_name'] : $email,
+			);
+		}
+		return $out;
+	}
+
 	public static function create_user( string $email, string $password, string $display_name ): int {
 		global $wpdb;
 		$wpdb->insert(

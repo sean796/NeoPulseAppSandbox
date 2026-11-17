@@ -110,6 +110,7 @@ class Neo_Pulse_App_Api_Dispatcher {
 	private static function public_routes(): array {
 		return array(
 			array( 'GET', 'auth/me' ),
+			array( 'GET', 'auth/users' ),
 			array( 'POST', 'auth/login' ),
 			array( 'POST', 'auth/logout' ),
 			array( 'POST', 'auth/register' ),
@@ -297,6 +298,18 @@ class Neo_Pulse_App_Api_Dispatcher {
 
 		if ( str_starts_with( $route, 'posts-content-gap-check/' ) ) {
 			Neo_Pulse_App_Posts_Content_Gap_Route::dispatch_http( substr( $route, strlen( 'posts-content-gap-check/' ) ), $method, $body );
+			return;
+		}
+		if ( str_starts_with( $route, 'entities-content-gap-check/' ) ) {
+			Neo_Pulse_App_Entities_Content_Gap_Route::dispatch_http( substr( $route, strlen( 'entities-content-gap-check/' ) ), $method, $body );
+			return;
+		}
+		if ( str_starts_with( $route, 'money-page-internal-links/' ) ) {
+			Neo_Pulse_App_Money_Page_Internal_Links_Route::dispatch_http( substr( $route, strlen( 'money-page-internal-links/' ) ), $method, $body );
+			return;
+		}
+		if ( str_starts_with( $route, 'editorial-content-audit/' ) ) {
+			Neo_Pulse_App_Editorial_Content_Audit_Route::dispatch_http( substr( $route, strlen( 'editorial-content-audit/' ) ), $method, $body );
 			return;
 		}
 

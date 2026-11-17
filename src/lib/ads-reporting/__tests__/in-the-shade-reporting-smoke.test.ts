@@ -12,15 +12,14 @@ import { setSessionToken } from "@/lib/auth-device";
 const IN_THE_SHADE_CUSTOMER_ID = "3177712331";
 const REFERENCE = new Date("2026-10-05T18:00:00Z");
 
-// Live smoke test: runs only when hub credentials and an OpenRouter key are
-// provided via env (NEO_PULSE_SMOKE_EMAIL, NEO_PULSE_SMOKE_PASSWORD,
-// OPENROUTER_API_KEY). Without them it skips, so default suite runs stay
-// green; the hub key endpoint it used before was deleted on purpose (C3),
-// so the key now comes from the environment like every other secret.
+// Live smoke test: runs only when hub email and an OpenRouter key are
+// provided via env (NEO_PULSE_SMOKE_EMAIL, OPENROUTER_API_KEY). Without them
+// it skips, so default suite runs stay green; the hub key endpoint it used
+// before was deleted on purpose (C3), so the key now comes from the
+// environment like every other secret.
 const SMOKE_EMAIL = (process.env.NEO_PULSE_SMOKE_EMAIL ?? "").trim();
-const SMOKE_PASSWORD = process.env.NEO_PULSE_SMOKE_PASSWORD ?? "";
 const SMOKE_OPENROUTER_KEY = (process.env.OPENROUTER_API_KEY ?? "").trim();
-const smokeConfigured = Boolean(SMOKE_EMAIL && SMOKE_PASSWORD && SMOKE_OPENROUTER_KEY);
+const smokeConfigured = Boolean(SMOKE_EMAIL && SMOKE_OPENROUTER_KEY);
 
 describe.skipIf(!smokeConfigured)("In the Shade PPC reporting smoke", () => {
   beforeAll(async () => {
@@ -28,7 +27,7 @@ describe.skipIf(!smokeConfigured)("In the Shade PPC reporting smoke", () => {
     const res = await fetch(backendApiUrl("/auth/login"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: SMOKE_EMAIL, password: SMOKE_PASSWORD }),
+      body: JSON.stringify({ email: SMOKE_EMAIL }),
     });
     const data = (await res.json().catch(() => ({}))) as { sessionToken?: string; error?: string };
     if (!res.ok || !data.sessionToken) {

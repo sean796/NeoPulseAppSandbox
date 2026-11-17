@@ -159,6 +159,11 @@ class Neo_Pulse_App_Auth_Session {
 		self::write_cookie( $user_id, ( $team_id === null || $team_id <= 0 ) ? null : $team_id );
 	}
 
+	/** Bearer token for the browser. Does not set a cookie. */
+	public static function issue_token( int $user_id, ?int $team_id ): string {
+		return self::encode_token( $user_id, ( $team_id === null || $team_id <= 0 ) ? null : $team_id );
+	}
+
 	public static function current_token(): string {
 		return self::read_token_from_request();
 	}
