@@ -1,0 +1,729 @@
+{
+  "site": "advanceblindsanddrapery.com",
+  "businessName": "Advance Blinds",
+  "dryRun": false,
+  "model": "google/gemini-2.5-flash",
+  "openRouter": true,
+  "total": 65,
+  "accepted": [
+    {
+      "id": 5376,
+      "title": "How Banded Shades Control Sunlight And Privacy For Windows",
+      "link": "https://advanceblindsanddrapery.com/?p=5376",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5912,
+      "title": "Bow Window Blinds For Curved Bays And Light Control",
+      "link": "https://advanceblindsanddrapery.com/?p=5912",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Maya"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5782,
+      "title": "Arched Window Blinds For Curved Windows And Tight Spaces",
+      "link": "https://advanceblindsanddrapery.com/?p=5782",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Maya"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5579,
+      "title": "Battery Powered Blinds Features And Smart Home Control Options",
+      "link": "https://advanceblindsanddrapery.com/blog/battery-powered-blinds/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4605,
+      "title": "How LightLock® Shades Block Light And Compare To Blackout Shades",
+      "link": "https://advanceblindsanddrapery.com/blog/lightlock-shades-explained-darkness/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5293,
+      "title": "How Motorized Blinds Connect With Smart Home Systems Today",
+      "link": "https://advanceblindsanddrapery.com/blog/motorized-blinds/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4595,
+      "title": "How Cellular Shades Work For Insulation And Light Control",
+      "link": "https://advanceblindsanddrapery.com/blog/cellular-shades-benefits-features/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5245,
+      "title": "How To Choose Window Coverings For Every Room And Budget",
+      "link": "https://advanceblindsanddrapery.com/blog/window-coverings/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5226,
+      "title": "How Sheer Shades Manage Light Control And Home Privacy Daily",
+      "link": "https://advanceblindsanddrapery.com/blog/sheer-shades/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5223,
+      "title": "Battery Powered Shades Installation And Wired Comparisons Guide",
+      "link": "https://advanceblindsanddrapery.com/blog/battery-powered-shades/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5220,
+      "title": "Angled Window Blinds For Sloped And Specialty Window Shapes Guide",
+      "link": "https://advanceblindsanddrapery.com/blog/angled-window-blinds/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Chloe"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5235,
+      "title": "Battery Wand Power And Setup For Motorized Window Shades Tips",
+      "link": "https://advanceblindsanddrapery.com/blog/batterywand/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4574,
+      "title": "Blind Repair Guide For Tangled Cords And Broken Slats At Home",
+      "link": "https://advanceblindsanddrapery.com/blog/blind-repair-guide/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4410,
+      "title": "Plantation Shutters Benefits For Home Privacy And Insulation",
+      "link": "https://advanceblindsanddrapery.com/blog/plantation-shutters-benefits-styles/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4401,
+      "title": "Smart Home Blinds Automation For Light And Privacy Control Options",
+      "link": "https://advanceblindsanddrapery.com/blog/smart-home-blinds-automation/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4397,
+      "title": "Large Window Treatment Ideas For Light Control And Privacy",
+      "link": "https://advanceblindsanddrapery.com/blog/large-window-treatment-ideas/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4393,
+      "title": "French Door Blinds Guide For Selecting Slim Fit Shades And Styles",
+      "link": "https://advanceblindsanddrapery.com/blog/french-door-blinds-guide/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Chloe"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4332,
+      "title": "Best Roller Shade Use Cases For Light Control And Home Privacy",
+      "link": "https://advanceblindsanddrapery.com/blog/roller-shades-use-cases/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4326,
+      "title": "Comparing Blinds Vs Shutters On Cost And Light Control Tips",
+      "link": "https://advanceblindsanddrapery.com/blog/blinds-vs-shutters/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4098,
+      "title": "Custom Window Treatments Costs And Options For Manitoba Homes",
+      "link": "https://advanceblindsanddrapery.com/blog/guide-custom-window-treatments/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4201,
+      "title": "Window Treatment Consultation Benefits For Home Projects Explained",
+      "link": "https://advanceblindsanddrapery.com/blog/window-treatment-consultation-benefits/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4197,
+      "title": "Smart Vs Manual Blinds Cost And Feature Differences",
+      "link": "https://advanceblindsanddrapery.com/blog/smart-vs-manual-blinds/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Chloe"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4057,
+      "title": "Blackout Shades Guide For Room Darkening And Light Control",
+      "link": "https://advanceblindsanddrapery.com/blog/the-ultimate-guide-to-blackout-shades/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4053,
+      "title": "Window Treatment Opacities For Light Control And Privacy Guide",
+      "link": "https://advanceblindsanddrapery.com/blog/decoding-window-treatment-opacities/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4100,
+      "title": "Best Blackout Shades For Total Darkness And Bedroom Privacy",
+      "link": "https://advanceblindsanddrapery.com/blog/perfect-darkness-blackout-shades/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4047,
+      "title": "PowerView Vs SoftTouch Motorized Shade Systems Compared For Homes",
+      "link": "https://advanceblindsanddrapery.com/blog/powerview-vs-softtouch/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 3983,
+      "title": "Cordless Blind Maintenance And Cleaning Methods For Longevity",
+      "link": "https://advanceblindsanddrapery.com/blog/are-cordless-blinds-maintenance-free/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 3982,
+      "title": "Hunter Douglas PowerView Vs Somfy Smart Shade Comparison Review",
+      "link": "https://advanceblindsanddrapery.com/blog/hunter-douglas-powerview-vs-somfy-tahoma/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 3854,
+      "title": "Window Treatment Opacities For Light Control And Privacy Levels",
+      "link": "https://advanceblindsanddrapery.com/blog/decoding-window-treatment/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 3832,
+      "title": "Blackout Shades Darkness Room Guide For Better Sleep And Privacy Setup",
+      "link": "https://advanceblindsanddrapery.com/blog/blackout-shades-darkness-room/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 3828,
+      "title": "PowerView Vs SoftTouch Motorization For Automated Blinds Costs",
+      "link": "https://advanceblindsanddrapery.com/blog/powerview-vs-softtouch-motorization/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 3368,
+      "title": "In Home Window Treatment Consultation Process And Benefits",
+      "link": "https://advanceblindsanddrapery.com/blog/window-treatment-consultation/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 3363,
+      "title": "Aura Illuminated Shades Features And Room Lighting Options",
+      "link": "https://advanceblindsanddrapery.com/blog/what-are-aura-illuminated-shades/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 2517,
+      "title": "How To Sync Smart Shades For Voice Control And Automation",
+      "link": "https://advanceblindsanddrapery.com/blog/sync-smart-shades/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5659,
+      "title": "Blinds And Drapery Near Pembina Valley Provincial Park Winkler MB",
+      "link": "https://advanceblindsanddrapery.com/?post_type=service-area&p=5659",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5658,
+      "title": "Banded Shades Near West Reserve Winkler MB",
+      "link": "https://advanceblindsanddrapery.com/?post_type=service-area&p=5658",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5656,
+      "title": "Custom Window Treatments In The Municipality Of Rhineland Winkler MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/custom-window-treatments-in-municipality-of-rhineland-mb-winkler-mb/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5655,
+      "title": "Designer Roller Shades Near Rural Municipality Of Rhineland, Winkler, MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/designer-roller-shades-in-rural-municipality-of-rhineland-mb-winkler-mb/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5654,
+      "title": "Picture Window Blinds In Rural Municipality Of Stanley Winkler MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/picture-window-blinds-in-rural-municipality-of-stanley-mb-winkler-mb/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5652,
+      "title": "Sidelight Blinds For Homes Near East Winkler, MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/sidelight-blinds-in-east-winkler-mb/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Arthur"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5650,
+      "title": "Commercial Window Shades Near West Winkler, MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/commercial-window-shades-in-west-winkler-mb/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Ethan"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5646,
+      "title": "Finding Window Treatments Near Downtown Winkler, MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/window-treatments-in-downtown-winkler-mb/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5640,
+      "title": "Vertical Blinds Near Southwood Winkler MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/vertical-blinds-in-southwood-mb-winkler-mb/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5638,
+      "title": "Cellular Shades Near Westwood Winkler MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/cellular-shades-in-westwood-mb-winkler-mb/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5663,
+      "title": "Custom Blinds Near Municipality Of Rhineland Plum Coulee MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/custom-blinds-municipality-of-rhineland-plumcoulee-mb/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Evelyn"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5634,
+      "title": "Designer Roller Blinds Near Pembina Valley Provincial Park Winkler MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/designer-roller-blinds-in-pembina-valley-provincial-park-mb-winkler-mb/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5630,
+      "title": "Window Coverings Near Rural Municipality Of Rhineland Winkler MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/window-coverings-in-rural-municipality-of-rhineland-mb-winkler-mb/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4633,
+      "title": "How To Sync Smart Shades In Winkler MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/sync-smart-shades-winkler-mb/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Arthur"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4629,
+      "title": "Somfy Blinds Services In Winkler MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/somfy-blinds-winkler-mb/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Arthur"
+      ],
+      "saved": true
+    }
+  ],
+  "skipped": [
+    {
+      "id": 5648,
+      "title": "Commercial Blinds Near South Winkler, MB Guide",
+      "link": "https://advanceblindsanddrapery.com/service-area/commercial-blinds-in-south-winkler-mb/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 5644,
+      "title": "Panel Blinds In Eastwood Winkler MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/panel-blinds-in-eastwood-mb-winkler-mb/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 5642,
+      "title": "Banded Blinds Near Northwood Winkler MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/banded-blinds-in-northwood-mb-winkler-mb/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 5668,
+      "title": "Roman Shades In The Rural Municipality Of Stuartburn And Plum Coulee",
+      "link": "https://advanceblindsanddrapery.com/service-area/roman-shades-rural-municipality-of-stuartburn-plumcoulee-mb/",
+      "status": "skipped",
+      "reason": "name-remains:Eleanor",
+      "kind": "service-area"
+    },
+    {
+      "id": 5636,
+      "title": "Roller Blinds Near Red River Valley Winkler MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/roller-blinds-in-red-river-valley-mb-winkler-mb/",
+      "status": "skipped",
+      "reason": "name-remains:Arthur",
+      "kind": "service-area"
+    },
+    {
+      "id": 5665,
+      "title": "Custom Blinds Near Souris River And Plum Coulee MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/custom-blinds-souris-river-plumcoulee-mb/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 5632,
+      "title": "Roman Blinds In The Municipality Of Rhineland Winkler MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/roman-blinds-in-municipality-of-rhineland-mb-winkler-mb/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4833,
+      "title": "Blind Depot Near Southland Mall, Winkler, MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/blind-depot-near-me-southland-mall-mb-winkler-mb/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4807,
+      "title": "Motorized Window Drapery Winkler: Enhance Your Home",
+      "link": "https://advanceblindsanddrapery.com/service-area/motorized-window-drapery-winnipeg-winkler-mb/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4799,
+      "title": "Hunter Douglas Shades Winkler, MB: Local Selection",
+      "link": "https://advanceblindsanddrapery.com/service-area/hunter-douglas-shades-winkler-mb/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4789,
+      "title": "Blinds For Picture Window Winkler, MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/blinds-for-picture-window-winkler-mb/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4781,
+      "title": "Silhouette Sheer Shades Winkler, MB: Your Local Guide",
+      "link": "https://advanceblindsanddrapery.com/service-area/silhouette-sheer-shades-winkler-mb/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4775,
+      "title": "Carole Fabrics Roman Shades In Winkler, MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/carole-fabrics-roman-shades-winkler-mb-2/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4759,
+      "title": "Best Blackout Blinds Church Avenue, Winnipeg, MB",
+      "link": "https://advanceblindsanddrapery.com/service-area/best-blackout-blinds-church-avenue-mb-winnipeg-mb/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4457,
+      "title": "Cellular Shades in Downtown East Cluster",
+      "link": "https://advanceblindsanddrapery.com/service-area/cellular-shades-centennial-winnipeg-mb/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 3875,
+      "title": "Luminette Shades Winnipeg: Your Local Guide",
+      "link": "https://advanceblindsanddrapery.com/service-area/blinds-and-drapery-near-inkster-winnipeg/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    }
+  ],
+  "failed": []
+}

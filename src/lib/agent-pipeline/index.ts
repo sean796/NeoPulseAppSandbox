@@ -14,6 +14,7 @@ import { parseJsonStrict } from "@/lib/model-json";
 import type { BulkOptimizationState } from "@/hooks/content-optimization/use-optimization-state";
 
 export type PulseAgentDomain =
+  | "system"
   | "aiseo"
   | "blog-generator"
   | "entity-sap"

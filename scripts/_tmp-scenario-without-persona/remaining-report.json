@@ -1,0 +1,348 @@
+{
+  "accepted": [
+    {
+      "id": 18226,
+      "restBase": "posts",
+      "ok": true,
+      "removed": [
+        "Eleanor"
+      ],
+      "link": "https://blindmagic.com/blog/battery-wand-repair/"
+    },
+    {
+      "id": 18091,
+      "restBase": "posts",
+      "ok": true,
+      "removed": [
+        "Liam"
+      ],
+      "link": "https://blindmagic.com/blog/edmonton-blind-repair/"
+    },
+    {
+      "id": 17427,
+      "restBase": "posts",
+      "ok": true,
+      "removed": [
+        "Evelyn"
+      ],
+      "link": "https://blindmagic.com/blog/cadence-vs-skyline-vs-somner/"
+    },
+    {
+      "id": 20820,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Liam"
+      ],
+      "link": "https://blindmagic.com/?post_type=service-area&p=20820"
+    },
+    {
+      "id": 20804,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Chloe"
+      ],
+      "link": "https://blindmagic.com/service-area/window-coverings-downtown-edmonton-ab/"
+    },
+    {
+      "id": 22637,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Maya"
+      ],
+      "link": "https://blindmagic.com/service-area/motorized-window-blinds-edmonton-sherwood-park-ab/"
+    },
+    {
+      "id": 18890,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Chloe"
+      ],
+      "link": "https://blindmagic.com/service-area/blind-repair-westwood-stalbert-ab/"
+    },
+    {
+      "id": 17803,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Anya"
+      ],
+      "link": "https://blindmagic.com/service-area/hunter-douglas-blinds-mill-woods-town-centre/"
+    },
+    {
+      "id": 18884,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Evelyn"
+      ],
+      "link": "https://blindmagic.com/service-area/blind-repair-downtown-stalbert-ab/"
+    },
+    {
+      "id": 18882,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Chloe"
+      ],
+      "link": "https://blindmagic.com/service-area/blinds-downtown-stalbert-ab/"
+    },
+    {
+      "id": 18878,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Anya"
+      ],
+      "link": "https://blindmagic.com/service-area/blind-repair-mission-stalbert-ab/"
+    },
+    {
+      "id": 18874,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Chloe"
+      ],
+      "link": "https://blindmagic.com/service-area/blinds-sherwood-park-erin-ridge-stalbert-ab/"
+    },
+    {
+      "id": 18864,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Evelyn"
+      ],
+      "link": "https://blindmagic.com/service-area/blinds-crestwood-edmonton-ab/"
+    },
+    {
+      "id": 18862,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Liam"
+      ],
+      "link": "https://blindmagic.com/service-area/blinds-sherwood-park-bowness-edmonton-ab/"
+    },
+    {
+      "id": 18860,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Eleanor"
+      ],
+      "link": "https://blindmagic.com/service-area/blind-repair-bowness-edmonton-ab/"
+    },
+    {
+      "id": 18854,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Chloe"
+      ],
+      "link": "https://blindmagic.com/service-area/blind-repair-callingwood-edmonton-ab/"
+    },
+    {
+      "id": 18850,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Liam"
+      ],
+      "link": "https://blindmagic.com/service-area/blinds-sherwood-park-namao-edmonton-ab/"
+    },
+    {
+      "id": 19256,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Chloe"
+      ],
+      "link": "https://blindmagic.com/service-area/blinds-allard-edmonton/"
+    },
+    {
+      "id": 18846,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Liam"
+      ],
+      "link": "https://blindmagic.com/service-area/blinds-namao-edmonton-ab/"
+    },
+    {
+      "id": 20035,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Chloe"
+      ],
+      "link": "https://blindmagic.com/service-area/blinds-sherwood-park-ab/"
+    },
+    {
+      "id": 18832,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Eleanor"
+      ],
+      "link": "https://blindmagic.com/service-area/blind-repair-north-glenora-edmonton-ab/"
+    },
+    {
+      "id": 18828,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Chloe"
+      ],
+      "link": "https://blindmagic.com/service-area/hunter-douglas-canora-edmonton-ab/"
+    },
+    {
+      "id": 18824,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Chloe"
+      ],
+      "link": "https://blindmagic.com/service-area/blind-repair-canora-edmonton-ab/"
+    },
+    {
+      "id": 17789,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Liam"
+      ],
+      "link": "https://blindmagic.com/service-area/hunter-douglas-blinds-capilano-mall-edmonton/"
+    },
+    {
+      "id": 17785,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Eleanor"
+      ],
+      "link": "https://blindmagic.com/service-area/hunter-douglas-blinds-walterdale-bridge/"
+    },
+    {
+      "id": 18247,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Chloe"
+      ],
+      "link": "https://blindmagic.com/service-area/window-blinds-south-campus-edmonton-ab/"
+    },
+    {
+      "id": 17783,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Anya"
+      ],
+      "link": "https://blindmagic.com/service-area/hunter-douglas-blinds-terwillegar-park-footbridge/"
+    },
+    {
+      "id": 17767,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Liam"
+      ],
+      "link": "https://blindmagic.com/service-area/hunter-douglas-blinds-grant-moellmann-bridge/"
+    },
+    {
+      "id": 17299,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Anya"
+      ],
+      "link": "https://blindmagic.com/service-area/west-jasper-place-edmonton-ab/"
+    },
+    {
+      "id": 17575,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Liam"
+      ],
+      "link": "https://blindmagic.com/service-area/blinds-shades-cold-lake/"
+    },
+    {
+      "id": 17361,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Anya"
+      ],
+      "link": "https://blindmagic.com/service-area/window-coverings-near-blatchford-edmonton-ab/"
+    },
+    {
+      "id": 17716,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Chloe"
+      ],
+      "link": "https://blindmagic.com/service-area/hunter-douglas-blinds-central-station-edmonton/"
+    },
+    {
+      "id": 17579,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Liam"
+      ],
+      "link": "https://blindmagic.com/service-area/blinds-shades-lacombe/"
+    },
+    {
+      "id": 17718,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Anya"
+      ],
+      "link": "https://blindmagic.com/service-area/hunter-douglas-blinds-century-park-station-edmonton/"
+    },
+    {
+      "id": 17728,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Liam"
+      ],
+      "link": "https://blindmagic.com/service-area/hunter-douglas-blinds-davies-station/"
+    },
+    {
+      "id": 17752,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Liam"
+      ],
+      "link": "https://blindmagic.com/service-area/hunter-douglas-blinds-170-street-pedestrian-bridge/"
+    },
+    {
+      "id": 17750,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Anya"
+      ],
+      "link": "https://blindmagic.com/service-area/hunter-douglas-blinds-university-station-edmonton/"
+    },
+    {
+      "id": 17744,
+      "restBase": "service-area",
+      "ok": true,
+      "removed": [
+        "Chloe"
+      ],
+      "link": "https://blindmagic.com/service-area/hunter-douglas-blinds-south-campus-fort-edmonton/"
+    }
+  ],
+  "failed": [],
+  "skipped": []
+}

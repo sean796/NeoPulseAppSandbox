@@ -15,10 +15,12 @@ export function SkillJsonLibrary({
   skillId,
   skillLabel,
   onBack,
+  hideHeader = false,
 }: {
   skillId: string;
   skillLabel: string;
   onBack: () => void;
+  hideHeader?: boolean;
 }): React.ReactElement {
   const [files, setFiles] = useState<SkillsLibraryFiles | null>(null);
   const [activeFile, setActiveFile] = useState<SkillsLibraryFileName>("schema.json");
@@ -90,6 +92,7 @@ export function SkillJsonLibrary({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden">
+      {hideHeader ? null : (
       <div className="flex h-11 shrink-0 items-center gap-2">
         <button
           type="button"
@@ -101,6 +104,7 @@ export function SkillJsonLibrary({
         <span className="min-w-0 truncate text-base font-semibold text-white">{skillLabel}</span>
         <span className="ml-auto shrink-0 font-mono text-base text-muted-foreground">{skillId}</span>
       </div>
+      )}
 
       {errorMessage ? (
         <div className="shrink-0 bg-zinc-900 px-4 py-2.5 text-base text-red-400">{errorMessage}</div>
@@ -128,10 +132,12 @@ export function SkillJsonLibrary({
         </nav>
 
         <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2 overflow-hidden">
-          <div className="flex h-8 shrink-0 items-center gap-2">
+          <div className={cn("flex h-8 shrink-0 items-center gap-2", readOnly && hideHeader && "hidden")}>
+            {hideHeader ? null : (
             <span className="font-mono text-base text-muted-foreground">{activeFile}</span>
+            )}
             {readOnly ? (
-              <span className="text-base text-muted-foreground">read-only</span>
+              hideHeader ? null : <span className="text-base text-muted-foreground">read-only</span>
             ) : (
               <button
                 type="button"

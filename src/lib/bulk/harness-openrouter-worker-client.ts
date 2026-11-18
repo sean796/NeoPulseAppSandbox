@@ -25,6 +25,7 @@ export async function runHarnessOpenRouterSection(
     temperature: payload.temperature,
     maxTokens: payload.maxTokens,
     topP: payload.topP,
+    siteId: payload.siteId,
     onContentChunk: (c) => {
       buf += c;
     },

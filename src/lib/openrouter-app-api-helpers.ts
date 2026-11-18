@@ -123,6 +123,8 @@ export function buildOpenRouterAppChatRequestBody(args: {
   toolChoice?: unknown;
   webSearchOptions?: Record<string, unknown>;
   reasoning?: OpenRouterAppReasoning;
+  /** Integrations site id for server-side vertical inject (stripped before OpenRouter). */
+  siteId?: string | null;
 }): Record<string, unknown> {
   const system = openRouterPromptText(args.system);
   const user = openRouterPromptText(args.user);
@@ -132,6 +134,7 @@ export function buildOpenRouterAppChatRequestBody(args: {
 
   // One model per call. No silent fallback: if the requested model fails,
   // the call fails visibly and the prompt trace shows what was requested.
+  const siteId = typeof args.siteId === "string" ? args.siteId.trim() : "";
   const base: Record<string, unknown> = {
     model: effectiveModel,
     temperature: args.temperature,
@@ -148,6 +151,7 @@ export function buildOpenRouterAppChatRequestBody(args: {
     tool_choice: args.toolChoice,
     webSearchOptions: args.webSearchOptions,
     reasoning: args.reasoning ?? { effort: "low" },
+    ...(siteId ? { siteId } : {}),
   };
 
   if (filteredMessages.length > 0) {

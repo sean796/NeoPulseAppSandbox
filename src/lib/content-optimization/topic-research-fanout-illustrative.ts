@@ -23,7 +23,7 @@ const ILLUSTRATIVE_EXTRACT_SCHEMA = {
   additionalProperties: false,
   required: [
     "leadIn",
-    "personaName",
+    "situationOpener",
     "householdProfile",
     "situationHook",
     "scenarioQuestion",
@@ -33,7 +33,7 @@ const ILLUSTRATIVE_EXTRACT_SCHEMA = {
   ],
   properties: {
     leadIn: { type: "string" },
-    personaName: { type: "string" },
+    situationOpener: { type: "string" },
     householdProfile: { type: "string" },
     situationHook: { type: "string" },
     scenarioQuestion: { type: "string" },
@@ -45,6 +45,7 @@ const ILLUSTRATIVE_EXTRACT_SCHEMA = {
 
 const IllustrativeExampleModelSchema = z.object({
   leadIn: z.string().nullish(),
+  situationOpener: z.string().nullish(),
   personaName: z.string().nullish(),
   householdProfile: z.string().nullish(),
   situationHook: z.string().nullish(),
@@ -57,27 +58,32 @@ const IllustrativeExampleModelSchema = z.object({
 
 export const ILLUSTRATIVE_PERSONA_EXTRACT_TEMPERATURE = 0.85;
 
-export const ILLUSTRATIVE_EXTRACT_SYSTEM = `Create one persona for this blog article [ILLUSTRATIVE] section: ONE named person facing ONE real decision that this article's Keyword, Service topic, and Answer (when provided) already discuss.
+export const ILLUSTRATIVE_EXTRACT_SYSTEM = `Create one situation example for this blog article [ILLUSTRATIVE] section: ONE real decision that this article's Keyword, Service topic, and Answer (when provided) already discuss. Do not invent a homeowner first name.
 
-Return JSON only: { leadIn, personaName, householdProfile, situationHook, scenarioQuestion, scenarioNarrative, recommendationTitle, recommendationParagraph }.
+Return JSON only: { leadIn, situationOpener, householdProfile, situationHook, scenarioQuestion, scenarioNarrative, recommendationTitle, recommendationParagraph }.
 
-Topic contract (non-negotiable): the persona's decision MUST be the same topic as Keyword + Service topic + Page title + ARTICLE ANSWER + CONNECTED SITE IDENTITY when present. The connected site is the seller. Match that site's buyer for this keyword. If the site sells SEO, web, or ads and the keyword names another industry, the persona is a business buyer of that marketing service, not a shopper of the industry product. Forbidden: inventing a different industry, product line, or room problem than those sources. Forbidden: product-trend or homeowner-shopping copy when this site does not sell that product.
+Topic contract (non-negotiable): the decision MUST be the same topic as Keyword + Service topic + Page title + ARTICLE ANSWER + CONNECTED SITE IDENTITY when present. The connected site is the seller. Match that site's buyer for this keyword. If the site sells SEO, web, or ads and the keyword names another industry, the buyer is a business buyer of that marketing service, not a shopper of the industry product. Forbidden: inventing a different industry, product line, or room problem than those sources. Forbidden: product-trend or homeowner-shopping copy when this site does not sell that product.
 
 leadIn: always "Hypothetical scenario:" (writer ignores this).
 
-personaName: invent a fresh first name for this page only (AI-generated — no fixed lists). Only person in the example.
+situationOpener: pick ONE opener that fits this page and vary across articles. Allowed values only:
+- "In this scenario"
+- "Consider a common situation"
+- "For example"
+- "In most cases"
+Forbidden: inventing a first name; "Nadia", "Arthur", or any other proper first name; reusing the same opener wording in every field.
 
-householdProfile: one-line persona situation that matches this article's buyer (not a default household when the article is B2B or strategy).
+householdProfile: one-line buyer situation that matches this article's buyer (not a named person; not a default household when the article is B2B or strategy).
 
-situationHook: 1-2 sentences that INTRODUCE the general decision context for any reader facing this topic (from Keyword + Answer). Third-person, industry-level setup only. Describe the tension in plain language so someone understands why this decision is hard BEFORE meeting the persona. Forbidden: personaName or any proper name; "Hypothetical scenario:"; copying scenarioNarrative; posing scenarioQuestion verbatim; opening with "Arthur is…" or any named owner.
+situationHook: 1-2 sentences that INTRODUCE the general decision context for any reader facing this topic (from Keyword + Answer). Third-person, industry-level setup only. Describe the tension in plain language. Forbidden: any proper first name; "Hypothetical scenario:"; copying scenarioNarrative; posing scenarioQuestion verbatim.
 
 scenarioQuestion: one decision question for the blockquote only (never in the intro p, never as H2 or H3, never prefixed with "Scenario:"). Use the site profile city from PRIMARY LOCAL CONTEXT when the example is local. Do not invent a city. Brand and product names (Hunter Douglas, Alta, Duette) are products, never towns. Forbidden: a question about a topic the Answer does not cover.
 
-scenarioNarrative: 2-3 tight sentences for the blockquote. personaName weighs ONE choice from this article and why they are stuck. Weave scenarioQuestion here as a natural sentence when provided. Anchor place names to primary service city when local. Forbidden: repeating situationHook wording or restating the same intro setup.
+scenarioNarrative: 2-3 tight sentences for the blockquote. Start from situationOpener (or weave it naturally). Describe a homeowner or buyer with "a homeowner", "their", or "the household" — never a first name. Weigh ONE choice from this article and why they are stuck. Weave scenarioQuestion here as a natural sentence when provided. Anchor place names to primary service city when local. Forbidden: repeating situationHook wording; inventing a first name; "Nadia is…", "Arthur recently…", or any "{Name} is/has/needs" pattern.
 
 recommendationTitle: the specific option the connected Company would recommend (strategy, service, product, or tier named in Keyword/Answer).
 
-recommendationParagraph: 2 sentences max. SITE-FIRST: sentence one MUST open with the connected Company name as the grammatical subject ("{Company} would recommend…" or "{Company} recommends…"), then a balanced why that pick can fit this persona's decision. Use may / can / when / depending on plus variance drivers (budget, window orientation, schedule, glazing, daily routines). Forbidden: guaranteed energy savings, significant long-term savings, pays for itself, or opening with personaName ("{persona} should…"), "they should", or "a business should".
+recommendationParagraph: 2 sentences max. SITE-FIRST: sentence one MUST open with the connected Company name as the grammatical subject ("{Company} would recommend…" or "{Company} recommends…"), then a balanced why that pick can fit this decision. Use may / can / when / depending on plus variance drivers (budget, window orientation, schedule, glazing, daily routines). Forbidden: guaranteed energy savings, significant long-term savings, pays for itself, or opening with a first name, "they should", or "a business should".
 
 Forbidden recommendation phrases without qualification: "significant long-term energy savings", "will reduce energy bills", "guaranteed savings".
 
@@ -85,10 +91,10 @@ GOOD recommendationParagraph: "{Company} would recommend {the pick} when {named 
 BAD: inventing a city when the site profile has none.
 BAD: treating a product name as a town.
 BAD: citing another city for local examples when primary city is set.
-BAD: a persona deciding something Keyword, Service topic, and Answer never mention.
-BAD recommendationParagraph: "{personaName} should implement…"
+BAD: a scenario deciding something Keyword, Service topic, and Answer never mention.
+BAD recommendationParagraph: inventing a first name or "{Name} should implement…"
 
-Forbidden: Homeowner A/B, two personas, product-catalog tours, keyword slug phrasing, treating service topic tokens as geography, other-city cost bands when primary city is set, new dollar amounts when sources lack them.
+Forbidden: invented homeowner first names, Homeowner A/B, two personas, product-catalog tours, keyword slug phrasing, treating service topic tokens as geography, other-city cost bands when primary city is set, new dollar amounts when sources lack them.
 
 Keep every field to 1-2 short sentences. Finish the entire JSON object in one reply. Never leave a string unclosed.`;
 
@@ -100,7 +106,7 @@ export function normalizeIllustrativeExample(
   if (!raw || typeof raw !== "object") return undefined;
   const rec = raw as Record<string, unknown>;
   const leadIn = String(rec.leadIn ?? "").trim();
-  const personaName = String(rec.personaName ?? "").trim();
+  const situationOpener = String(rec.situationOpener ?? "").trim();
   const householdProfile = String(rec.householdProfile ?? "").trim();
   const situationHook = String(rec.situationHook ?? "").trim();
   const scenarioQuestion = String(rec.scenarioQuestion ?? "").trim();
@@ -109,21 +115,22 @@ export function normalizeIllustrativeExample(
   const recommendationParagraph = String(rec.recommendationParagraph ?? "").trim();
   let quoteBody = String(rec.quoteBody ?? "").trim();
   if (!quoteBody && scenarioNarrative) {
-    quoteBody = [scenarioQuestion, scenarioNarrative, recommendationTitle, recommendationParagraph]
+    quoteBody = [situationOpener, scenarioQuestion, scenarioNarrative, recommendationTitle, recommendationParagraph]
       .filter(Boolean)
       .join("\n\n");
   }
   const usedLeadIn = leadIn || "Hypothetical scenario:";
   const usedQuote =
     quoteBody
-    || [scenarioQuestion, scenarioNarrative, recommendationTitle, recommendationParagraph, personaName, householdProfile, situationHook]
+    || [situationOpener, scenarioQuestion, scenarioNarrative, recommendationTitle, recommendationParagraph, householdProfile, situationHook]
       .filter(Boolean)
       .join("\n\n");
   if (!usedQuote) return undefined;
   const out: IllustrativeExample = { leadIn: usedLeadIn, quoteBody: usedQuote, asOf };
   const h2 = illustrativeH2Title?.trim();
   if (h2) out.illustrativeH2Title = h2;
-  out.personaName = personaName;
+  out.personaName = "";
+  if (situationOpener) out.situationOpener = situationOpener;
   if (householdProfile) out.householdProfile = householdProfile;
   if (situationHook) out.situationHook = situationHook;
   if (scenarioQuestion) out.scenarioQuestion = scenarioQuestion;
@@ -174,7 +181,7 @@ export async function extractIllustrativeExample(input: {
   const companyName = input.companyName.trim();
   const location = input.location.trim();
   if (!keyword || !companyName) {
-    logger.warn("[Illustrative extract] missing keyword or company name; skipping persona extract");
+    logger.warn("[Illustrative extract] missing keyword or company name; skipping situation extract");
     return undefined;
   }
   const pageCtx =
@@ -237,12 +244,12 @@ export async function extractIllustrativeExample(input: {
   try {
     parsed = parseModelJson(content, IllustrativeExampleModelSchema, "illustrative example");
   } catch {
-    logger.warn("[Illustrative extract] JSON parse failed; continuing without stored persona");
+    logger.warn("[Illustrative extract] JSON parse failed; continuing without stored situation");
     return undefined;
   }
   const normalized = normalizeIllustrativeExample(parsed, input.researchAsOf, input.illustrativeH2Title);
   if (!normalized) {
-    logger.warn("[Illustrative extract] invalid persona shape; continuing without stored persona");
+    logger.warn("[Illustrative extract] invalid situation shape; continuing without stored situation");
     return undefined;
   }
   return normalized;

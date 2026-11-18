@@ -15,6 +15,7 @@ export const BENCHMARK_CATEGORY_TAG_BY_HOST_LABEL: Record<string, string> = {
   kwbllp: "Accounting",
   lindseyblindsetc: "Window treatments",
   neodigital: "Digital marketing",
+  nightanddaydecor: "Window treatments",
   phoenixpainting: "Painting",
   "posh-outdoors": "Outdoor living",
   shutterspot: "Window treatments",

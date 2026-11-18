@@ -46,6 +46,7 @@ const PROFILE_SKILL_KINDS = new Set([
   "money_page_internal_links",
   "editorial_content_audit",
   "fact_checker",
+  "cannibalization_audit",
   "semrush_safe_fix",
 ]);
 
@@ -59,7 +60,7 @@ function getSnapshot() {
 
 export function TaskManagerProvider({ children }: { children: ReactNode }) {
   const tasks = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  const { setSidebarOpen, setSidebarPanel, runs } = useAgentRunsContext();
+  const { setSidebarOpen, setSidebarPanel, runs, cancelRun } = useAgentRunsContext();
   const { setActiveWordPressSiteId } = useActiveWordPressSite();
   const { sites } = useWordPressSites();
 
@@ -155,23 +156,53 @@ export function TaskManagerProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const cancelTask = useCallback((taskId: string) => {
-    cancelWorkspaceTask(taskId);
-  }, []);
+  const stopServerRun = useCallback(
+    (taskId: string) => {
+      const task = getWorkspaceTask(taskId);
+      const fromField = task?.agentRunId;
+      const fromId = /^agent-run-(\d+)$/.exec(taskId)?.[1];
+      const runId =
+        typeof fromField === "number" && fromField > 0
+          ? fromField
+          : fromId
+            ? Number(fromId)
+            : 0;
+      if (runId > 0) void cancelRun(runId);
+    },
+    [cancelRun],
+  );
+
+  const cancelTask = useCallback(
+    (taskId: string) => {
+      stopServerRun(taskId);
+      cancelWorkspaceTask(taskId);
+    },
+    [stopServerRun],
+  );
 
   const cancelRunningTasks = useCallback(() => {
     for (const task of getWorkspaceTaskSnapshot()) {
-      if (task.status === "running") cancelWorkspaceTask(task.id);
+      if (task.status === "running") {
+        stopServerRun(task.id);
+        cancelWorkspaceTask(task.id);
+      }
     }
-  }, []);
+  }, [stopServerRun]);
 
-  const dismissTask = useCallback((taskId: string) => {
-    dismissWorkspaceTask(taskId);
-  }, []);
+  const dismissTask = useCallback(
+    (taskId: string) => {
+      stopServerRun(taskId);
+      dismissWorkspaceTask(taskId);
+    },
+    [stopServerRun],
+  );
 
   const clearAllTasks = useCallback(() => {
+    for (const task of getWorkspaceTaskSnapshot()) {
+      stopServerRun(task.id);
+    }
     clearAllWorkspaceTasks();
-  }, []);
+  }, [stopServerRun]);
 
   const value = useMemo<TaskManagerContextValue>(() => {
     const hasRunning = tasks.some((task) => task.status === "running");

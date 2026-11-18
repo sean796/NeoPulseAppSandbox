@@ -4,6 +4,7 @@ import {
   type BulkSplashStatus,
 } from "@/lib/bulk/bulk-splash-status-agent";
 import { FACT_CHECKING_STEP_LABEL } from "@/lib/content-optimization/research-fact-check";
+import { FACT_CHECKER_STEP_LABEL } from "@/lib/content-generation/product-fact-checker";
 import { logger } from "@/lib/logger";
 
 export const BULK_SPLASH_STARTER_STATUS: BulkSplashStatus = {
@@ -16,13 +17,27 @@ export const FACT_CHECKING_SPLASH_STATUS: BulkSplashStatus = {
   visual: "factcheck",
 };
 
+export const FACT_CHECKER_SPLASH_STATUS: BulkSplashStatus = {
+  status: FACT_CHECKER_STEP_LABEL,
+  visual: "factchecker",
+};
+
 export function isFactCheckingSplashStep(step: string): boolean {
   return step.trim().toLowerCase() === FACT_CHECKING_STEP_LABEL.toLowerCase();
+}
+
+export function isFactCheckerSplashStep(step: string): boolean {
+  const s = step.trim().toLowerCase();
+  const label = FACT_CHECKER_STEP_LABEL.toLowerCase();
+  return s === label || s.startsWith(`${label}:`) || s.startsWith(`${label} `);
 }
 
 export function defaultSplashStatusForStep(step: string): BulkSplashStatus {
   const s = step.trim().toLowerCase();
   if (!s) return BULK_SPLASH_STARTER_STATUS;
+  if (isFactCheckerSplashStep(step)) {
+    return FACT_CHECKER_SPLASH_STATUS;
+  }
   if (isFactCheckingSplashStep(step)) {
     return FACT_CHECKING_SPLASH_STATUS;
   }
@@ -114,7 +129,11 @@ export function useBulkSplashAiStatus({
     const defaultPair = defaultSplashStatusForStep(step);
     setStatusPair(defaultPair);
 
-    // Fact checking owns its exact label + graphic; do not paraphrase.
+    // Fact checker / Fact checking own exact labels + graphics; do not paraphrase.
+    if (isFactCheckerSplashStep(step)) {
+      cacheRef.current.set(cacheKey, FACT_CHECKER_SPLASH_STATUS);
+      return;
+    }
     if (isFactCheckingSplashStep(step)) {
       cacheRef.current.set(cacheKey, FACT_CHECKING_SPLASH_STATUS);
       return;

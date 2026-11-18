@@ -1,0 +1,236 @@
+{
+  "ok": 32,
+  "fail": 1,
+  "results": [
+    {
+      "id": 8102,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-103a-avenue-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8110,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-105-street-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8112,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-106-avenue-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8114,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-107-avenue-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8118,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-111-112-avenue/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8122,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-112-avenue-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8138,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-149-street-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8144,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-167-avenue-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8042,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-17-street-edmonton/",
+      "ok": false,
+      "error": "fetch failed"
+    },
+    {
+      "id": 8040,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-17-street-nw-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8146,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-170-street-sw-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8046,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-23-avenue-nw-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8050,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-34-avenue-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8056,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-41-avenue-sw-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8058,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-50-street-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8060,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-51-avenue-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8064,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-66-street-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8080,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-91-street-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8084,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-97-street/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8158,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-alberta-highway-14a/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 7996,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-amisk-wacw-asokan/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8030,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-centennial-garage-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8003,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-clover-bar-railway-bridge-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8005,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-dawson-bridge/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 7986,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-edmonton-lechelt-field/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 7988,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-edmonton-morinville/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8011,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-groat-bridge-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8018,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-james-macdonald-bridge/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8034,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-list-of-avenues-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8032,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-list-of-edmonton-lrt/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8022,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-ques/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8026,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-terwillegar-park-footbridge/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 8484,
+      "pageUrl": "https://neodigital.ca/service-area/wordpress-features-brewery-district-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    }
+  ]
+}

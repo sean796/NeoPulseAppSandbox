@@ -138,11 +138,31 @@ assert_true(
 	strpos( $link, 'https://blindmagic.com/blog/power/#:~:text=' ) === 0,
 	'claim link uses text fragment'
 );
+assert_true(
+	Neo_Pulse_App_Fact_Checker_Worker::same_site_host( 'blindmagic.com', 'blindmagic.com' ),
+	'client host is the same site'
+);
+assert_true(
+	Neo_Pulse_App_Fact_Checker_Worker::same_site_host( 'www.blindmagic.com', 'blindmagic.com' ),
+	'www client host is the same site'
+);
+assert_true(
+	! Neo_Pulse_App_Fact_Checker_Worker::same_site_host( 'www.hunterdouglas.ca', 'blindmagic.com' ),
+	'manufacturer host is not the client site'
+);
+assert_true(
+	Neo_Pulse_App_Fact_Checker_Worker::is_competitor_blinds_host( 'www.blindsplanet.ca' ),
+	'blindsplanet.ca is a competitor blinds host'
+);
+assert_true(
+	! Neo_Pulse_App_Fact_Checker_Worker::is_competitor_blinds_host( 'www.hunterdouglas.com' ),
+	'Hunter Douglas is not a competitor blinds host'
+);
 
 $empty_rollup = Neo_Pulse_App_Fact_Checker_Worker::rollup(
 	array(
 		array(
-			'verdict' => 'no_product_claims',
+			'verdict' => 'no_product_claim',
 			'pageId'  => 1,
 		),
 	),
@@ -152,14 +172,63 @@ $empty_rollup = Neo_Pulse_App_Fact_Checker_Worker::rollup(
 	)
 );
 assert_true( is_array( $empty_rollup ), 'empty product claims rollup works' );
-assert_true( (int) ( $empty_rollup['counts']['claimCount'] ?? -1 ) === 0, 'no_product_claims does not count as material' );
+assert_true( (int) ( $empty_rollup['counts']['claimCount'] ?? -1 ) === 0, 'no_product_claim does not count as material' );
+
+$capped = Neo_Pulse_App_Fact_Checker_Worker::cap_aiseo_score(
+	9.0,
+	array(
+		array(
+			'verdict'  => 'unsupported',
+			'severity' => 'critical',
+			'quote'    => 'Battery lasts 30 days',
+		),
+	)
+);
+assert_true( $capped === 4.0, 'critical claims cap AISEO at 4' );
+
+$capped_major = Neo_Pulse_App_Fact_Checker_Worker::cap_aiseo_score(
+	8.5,
+	array(
+		array(
+			'verdict'  => 'contradicted',
+			'severity' => 'major',
+			'quote'    => 'SoftTouch is PowerView',
+		),
+	)
+);
+assert_true( $capped_major === 6.0, 'major or contradicted claims cap AISEO at 6' );
+assert_true( Neo_Pulse_App_Fact_Checker_Worker::aiseo_letter( 9.2 ) === 'A', 'letter A for 9+' );
+assert_true( Neo_Pulse_App_Fact_Checker_Worker::aiseo_letter( 5.0 ) === 'F', 'letter F below 6' );
+
+$material_rollup = Neo_Pulse_App_Fact_Checker_Worker::rollup(
+	array(
+		array(
+			'pageId'           => 2,
+			'title'            => 'PowerView Guide',
+			'quote'            => 'Cuts heating bills by 30 percent',
+			'verdict'          => 'unsupported',
+			'severity'         => 'major',
+			'suggestedWording' => 'Ask for the current product sheet on energy performance.',
+			'aiseoScore'       => 6.0,
+		),
+	),
+	array( 'pageCount' => 1 )
+);
+assert_true(
+	strpos( (string) ( $material_rollup['publication'] ?? '' ), 'Material claims remain unresolved' ) !== false,
+	'unresolved claims block full fact-check publication'
+);
+assert_true(
+	(string) ( $material_rollup['counts']['aiseoLetter'] ?? '' ) === 'D',
+	'rollup stores AISEO letter'
+);
 
 assert_true(
 	Neo_Pulse_App_Fact_Checker_Worker::BATCH_SIZE === 1,
 	'fact checker processes one page per tick'
 );
 assert_true(
-	Neo_Pulse_App_Fact_Checker_Worker::WEB_MODEL === 'openai/gpt-4o:online',
+	Neo_Pulse_App_Fact_Checker_Worker::WEB_MODEL === 'openai/gpt-6-sol:online',
 	'uses OpenRouter web model'
 );
 

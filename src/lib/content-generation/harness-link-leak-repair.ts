@@ -68,7 +68,7 @@ export function repairHarnessPlaceholderLeaks(html: string): string {
   out = out.replace(EXTERNAL_LINK_PLACEHOLDER_RE, (_match, url: string, anchor: string) => {
     const href = url.trim();
     const text = anchor.trim() || href;
-    return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(text)}</a>`;
+    return `<a href="${escapeHtml(href)}" target="_blank" rel="nofollow noopener noreferrer">${escapeHtml(text)}</a>`;
   });
   return out;
 }

@@ -10,4 +10,5 @@ export type HarnessOpenRouterWorkerPayload = {
   maxTokens: number;
   topP: number;
   httpReferer: string;
+  siteId?: string | null;
 };

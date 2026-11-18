@@ -1,0 +1,19 @@
+{
+  "dryRun": true,
+  "model": "google/gemini-2.5-flash",
+  "openRouter": true,
+  "sites": [
+    {
+      "site": "advanceblindsanddrapery.com",
+      "total": 2,
+      "accepted": 2,
+      "skipped": 0,
+      "failed": 0,
+      "report": "B:\\Neo Pulse\\scripts\\_tmp-scenario-without-persona\\advanceblindsanddrapery-com-report.json",
+      "changedUrls": [
+        "https://advanceblindsanddrapery.com/?p=5376",
+        "https://advanceblindsanddrapery.com/?p=5912"
+      ]
+    }
+  ]
+}

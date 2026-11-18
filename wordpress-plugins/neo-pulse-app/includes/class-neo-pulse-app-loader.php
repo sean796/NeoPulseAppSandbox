@@ -33,6 +33,8 @@ class Neo_Pulse_App_Loader {
 		Neo_Pulse_App_Money_Page_Internal_Links_Cron::init();
 		Neo_Pulse_App_Editorial_Content_Audit_Cron::init();
 		Neo_Pulse_App_Fact_Checker_Cron::init();
+		Neo_Pulse_App_Cannibalization_Audit_Cron::init();
+		Neo_Pulse_App_Google_Seo_Updates_Cron::init();
 		if ( class_exists( 'Neo_Pulse_App_Agent_Run_Worker_Cron' ) ) {
 			Neo_Pulse_App_Agent_Run_Worker_Cron::activate();
 		}
@@ -70,6 +72,8 @@ class Neo_Pulse_App_Loader {
 		Neo_Pulse_App_Money_Page_Internal_Links_Cron::activate();
 		Neo_Pulse_App_Editorial_Content_Audit_Cron::activate();
 		Neo_Pulse_App_Fact_Checker_Cron::activate();
+		Neo_Pulse_App_Cannibalization_Audit_Cron::activate();
+		Neo_Pulse_App_Google_Seo_Updates_Cron::activate();
 		flush_rewrite_rules();
 	}
 
@@ -84,6 +88,8 @@ class Neo_Pulse_App_Loader {
 		Neo_Pulse_App_Money_Page_Internal_Links_Cron::deactivate();
 		Neo_Pulse_App_Editorial_Content_Audit_Cron::deactivate();
 		Neo_Pulse_App_Fact_Checker_Cron::deactivate();
+		Neo_Pulse_App_Cannibalization_Audit_Cron::deactivate();
+		Neo_Pulse_App_Google_Seo_Updates_Cron::deactivate();
 		flush_rewrite_rules();
 	}
 
@@ -163,6 +169,18 @@ class Neo_Pulse_App_Loader {
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/fact-checker/class-fact-checker-runner.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/fact-checker/class-fact-checker-route.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/fact-checker/class-fact-checker-cron.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/cannibalization-audit/class-cannibalization-audit-schedule.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/cannibalization-audit/class-cannibalization-audit-pipeline.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/cannibalization-audit/class-cannibalization-audit-mail.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/cannibalization-audit/class-cannibalization-audit-runner.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/cannibalization-audit/class-cannibalization-audit-route.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/cannibalization-audit/class-cannibalization-audit-cron.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/google-seo-updates/class-google-seo-updates-runner.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/google-seo-updates/class-google-seo-updates-inject.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/google-seo-updates/class-google-seo-updates-route.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/google-seo-updates/class-google-seo-updates-cron.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/window-treatments-vertical/class-window-treatments-vertical-inject.php';
+		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/window-treatments-vertical/class-window-treatments-vertical-route.php';
 
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/proposal/class-proposal-lighthouse-parse.php';
 		require_once NEO_PULSE_APP_PLUGIN_DIR . 'includes/proposal/class-proposal-faq-inventory.php';

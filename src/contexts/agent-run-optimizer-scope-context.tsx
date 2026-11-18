@@ -1,31 +1,14 @@
-/* @refresh reset */
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useContext } from "react";
 import type { AgentRun } from "@/lib/agent-runs-types";
 import {
   agentRunSiteId,
   resolveAgentRunBatchKey,
 } from "@/lib/agent-runs/agent-run-batch-key";
 import {
-  buildAgentRunViewPath,
-  writeAgentRunViewPath,
-} from "@/lib/agent-runs/agent-run-optimizer-url";
-import { managerTabFromPathname } from "@/lib/manager-tab-routes";
-import {
   agentRunGeneratorSection,
   resolveAgentRunRecipeKey,
 } from "@/lib/agent-runs/agent-run-navigation";
 import type { BlogGeneratorSectionId } from "@/components/blog-generator/blog-generator-sections";
-import { writeStoredContentOptimizerSection } from "@/components/content-optimizer/content-optimizer-sections";
-import { writeStoredBlogGeneratorSection, readStoredBlogGeneratorSection } from "@/components/blog-generator/blog-generator-sections";
-
-import { useActiveWordPressSite } from "@/contexts/active-wordpress-site-context";
 
 const SCOPE_STORAGE_KEY = "neo-pulse-agent-run-optimizer-scope";
 

@@ -139,7 +139,7 @@ class Neo_Pulse_App_Fact_Checker_Mail {
 			$subj,
 			$text,
 			$attachments,
-			self::html( $name, $when, $overview, $counts, $folder_link )
+			self::html( $name, $when, $overview, $counts, $folder_link, $rollup )
 		);
 	}
 
@@ -163,8 +163,30 @@ class Neo_Pulse_App_Fact_Checker_Mail {
 	 * @param array<string,mixed> $rollup
 	 */
 	private static function plain_sections( array $rollup ): string {
-		$parts = array();
-		$next  = isset( $rollup['nextSteps'] ) && is_array( $rollup['nextSteps'] ) ? $rollup['nextSteps'] : array();
+		$parts  = array();
+		$counts = isset( $rollup['counts'] ) && is_array( $rollup['counts'] ) ? $rollup['counts'] : array();
+		$score  = isset( $counts['aiseoScore'] ) ? (float) $counts['aiseoScore'] : 0.0;
+		$letter = (string) ( $counts['aiseoLetter'] ?? '' );
+		if ( $letter !== '' ) {
+			$parts[] = 'AISEO score: ' . $score . '/10 (' . $letter . ')';
+		}
+		$problems = isset( $rollup['mainProblems'] ) && is_array( $rollup['mainProblems'] ) ? $rollup['mainProblems'] : array();
+		if ( count( $problems ) > 0 ) {
+			$parts[] = "Most important factual problems:\n- " . implode( "\n- ", array_map( 'strval', $problems ) );
+		}
+		$required = isset( $rollup['requiredCorrections'] ) && is_array( $rollup['requiredCorrections'] ) ? $rollup['requiredCorrections'] : array();
+		if ( count( $required ) > 0 ) {
+			$parts[] = "Required corrections:\n- " . implode( "\n- ", array_map( 'strval', $required ) );
+		}
+		$optional = isset( $rollup['optionalImprovements'] ) && is_array( $rollup['optionalImprovements'] ) ? $rollup['optionalImprovements'] : array();
+		if ( count( $optional ) > 0 ) {
+			$parts[] = "Optional improvements:\n- " . implode( "\n- ", array_map( 'strval', $optional ) );
+		}
+		$publication = trim( (string) ( $rollup['publication'] ?? '' ) );
+		if ( $publication !== '' ) {
+			$parts[] = 'Publication recommendation: ' . $publication;
+		}
+		$next = isset( $rollup['nextSteps'] ) && is_array( $rollup['nextSteps'] ) ? $rollup['nextSteps'] : array();
 		if ( count( $next ) > 0 ) {
 			$parts[] = "What needs to happen:\n- " . implode( "\n- ", array_map( 'strval', $next ) );
 		}
@@ -173,14 +195,19 @@ class Neo_Pulse_App_Fact_Checker_Mail {
 
 	/**
 	 * @param array<string,mixed> $counts
+	 * @param array<string,mixed> $rollup
 	 */
 	private static function html(
 		string $site_name,
 		string $when,
 		string $overview,
 		array $counts,
-		string $folder_link = ''
+		string $folder_link = '',
+		array $rollup = array()
 	): string {
+		$aiseo = isset( $counts['aiseoScore'] )
+			? ( (string) (float) $counts['aiseoScore'] . '/10 ' . (string) ( $counts['aiseoLetter'] ?? '' ) )
+			: 'n/a';
 		$body = '<!DOCTYPE html><html><body style="margin:0;padding:0;background:#202124;">'
 			. '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#202124;padding:32px 16px;">'
 			. '<tr><td align="center">'
@@ -194,7 +221,16 @@ class Neo_Pulse_App_Fact_Checker_Mail {
 			. self::stat_cell( (string) (int) ( $counts['pagesAudited'] ?? 0 ), 'Pages', '#e8eaed' )
 			. self::stat_cell( (string) (int) ( $counts['claimCount'] ?? 0 ), 'Claims', '#fdd663' )
 			. self::stat_cell( (string) (int) ( $counts['unsupported'] ?? 0 ), 'Need review', '#f28b82' )
-			. '</tr></table></td></tr>';
+			. '</tr></table></td></tr>'
+			. '<tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:24px;color:#e8eaed;padding-top:16px;">AISEO ' . esc_html( trim( $aiseo ) ) . '</td></tr>';
+
+		$body .= self::html_list_section( 'Most important factual problems', isset( $rollup['mainProblems'] ) && is_array( $rollup['mainProblems'] ) ? $rollup['mainProblems'] : array() );
+		$body .= self::html_list_section( 'Required corrections', isset( $rollup['requiredCorrections'] ) && is_array( $rollup['requiredCorrections'] ) ? $rollup['requiredCorrections'] : array() );
+		$body .= self::html_list_section( 'Optional improvements', isset( $rollup['optionalImprovements'] ) && is_array( $rollup['optionalImprovements'] ) ? $rollup['optionalImprovements'] : array() );
+		$publication = trim( (string) ( $rollup['publication'] ?? '' ) );
+		if ( $publication !== '' ) {
+			$body .= '<tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:24px;color:#e8eaed;padding-top:16px;"><strong>Publication recommendation</strong><br>' . esc_html( $publication ) . '</td></tr>';
+		}
 
 		$folder_link = trim( $folder_link );
 		if ( $folder_link !== '' ) {
@@ -205,6 +241,30 @@ class Neo_Pulse_App_Fact_Checker_Mail {
 			. '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;"><tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:20px;color:#9aa0a6;padding:16px 8px 0;">NEO Digital</td></tr></table>'
 			. '</td></tr></table></body></html>';
 		return $body;
+	}
+
+	/**
+	 * @param array<int,mixed> $items
+	 */
+	private static function html_list_section( string $heading, array $items ): string {
+		if ( count( $items ) === 0 ) {
+			return '';
+		}
+		$lis = '';
+		foreach ( $items as $item ) {
+			$text = trim( (string) $item );
+			if ( $text === '' ) {
+				continue;
+			}
+			$lis .= '<li style="margin:0 0 8px 0;">' . esc_html( $text ) . '</li>';
+		}
+		if ( $lis === '' ) {
+			return '';
+		}
+		return '<tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:24px;color:#e8eaed;padding-top:16px;">'
+			. '<strong>' . esc_html( $heading ) . '</strong>'
+			. '<ul style="margin:8px 0 0 18px;padding:0;color:#e8eaed;">' . $lis . '</ul>'
+			. '</td></tr>';
 	}
 
 	private static function stat_cell( string $value, string $label, string $color ): string {
@@ -224,6 +284,7 @@ class Neo_Pulse_App_Fact_Checker_Mail {
 			'Page title',
 			'Page URL',
 			'Claim',
+			'Product',
 			'Claim link',
 			'Category',
 			'Verdict',
@@ -232,6 +293,8 @@ class Neo_Pulse_App_Fact_Checker_Mail {
 			'Source type',
 			'Qualification',
 			'Suggested wording',
+			'Evidence',
+			'Severity',
 		);
 		foreach ( $rows as $row ) {
 			if ( ! is_array( $row ) ) {
@@ -241,6 +304,7 @@ class Neo_Pulse_App_Fact_Checker_Mail {
 				(string) ( $row['title'] ?? '' ),
 				(string) ( $row['url'] ?? '' ),
 				(string) ( $row['quote'] ?? '' ),
+				(string) ( $row['product'] ?? '' ),
 				(string) ( $row['claimLink'] ?? '' ),
 				str_replace( '_', ' ', (string) ( $row['category'] ?? '' ) ),
 				str_replace( '_', ' ', (string) ( $row['verdict'] ?? '' ) ),
@@ -249,6 +313,8 @@ class Neo_Pulse_App_Fact_Checker_Mail {
 				(string) ( $row['sourceType'] ?? '' ),
 				(string) ( $row['qualification'] ?? '' ),
 				(string) ( $row['suggestedWording'] ?? '' ),
+				(string) ( $row['evidence'] ?? '' ),
+				(string) ( $row['severity'] ?? '' ),
 			);
 		}
 		return $matrix;

@@ -9,6 +9,7 @@ import type { PromptBulkSitemapInventoryLink } from "@/lib/bulk/prompt-bulk-site
 import type { BulkGscKeywordsHostedLink } from "@/lib/bulk/bulk-gsc-keywords-hosted-link";
 import type { OverviewSitemapSource } from "@/lib/overview/overview-sitemap-source";
 import type { OptimizationFileManager } from "@/lib/optimization-file-manager";
+import type { WordPressSite } from "@/components/integrations/types";
 
 export type OverviewBulkDetailsBindingsInput = ContentOptimizerBulkGeneratorBindingsInput & {
   sitemapInventoryLinks?: PromptBulkSitemapInventoryLink[];
@@ -17,6 +18,7 @@ export type OverviewBulkDetailsBindingsInput = ContentOptimizerBulkGeneratorBind
   sitemapSource?: OverviewSitemapSource;
   bulkActionProgress?: Partial<Record<MetaBulkActionKey, BulkProgressSlice>>;
   bulkScopeUrlKeys?: Set<string>;
+  detailsSite?: WordPressSite | null;
 };
 
 export type MultiSiteBulkDetailsInput = {
@@ -32,5 +34,6 @@ export type MultiSiteBulkDetailsInput = {
   sitemapInventoryLinks?: PromptBulkSitemapInventoryLink[];
   siteKwHostedLink?: BulkGscKeywordsHostedLink | null;
   sitemapInventoryLoading?: boolean;
+  detailsSite?: WordPressSite | null;
 };
 

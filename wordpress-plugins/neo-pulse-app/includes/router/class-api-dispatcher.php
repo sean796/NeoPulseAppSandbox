@@ -316,6 +316,20 @@ class Neo_Pulse_App_Api_Dispatcher {
 			Neo_Pulse_App_Fact_Checker_Route::dispatch_http( substr( $route, strlen( 'fact-checker/' ) ), $method, $body );
 			return;
 		}
+		if ( str_starts_with( $route, 'cannibalization-audit/' ) ) {
+			Neo_Pulse_App_Cannibalization_Audit_Route::dispatch_http( substr( $route, strlen( 'cannibalization-audit/' ) ), $method, $body );
+			return;
+		}
+		if ( str_starts_with( $route, 'google-seo-updates/' ) || $route === 'google-seo-updates' ) {
+			$gseo_route = $route === 'google-seo-updates' ? '' : substr( $route, strlen( 'google-seo-updates/' ) );
+			Neo_Pulse_App_Google_Seo_Updates_Route::dispatch_http( $gseo_route, $method, $body );
+			return;
+		}
+		if ( str_starts_with( $route, 'window-treatments-vertical/' ) || $route === 'window-treatments-vertical' ) {
+			$wt_route = $route === 'window-treatments-vertical' ? '' : substr( $route, strlen( 'window-treatments-vertical/' ) );
+			Neo_Pulse_App_Window_Treatments_Vertical_Route::dispatch_http( $wt_route, $method, $body );
+			return;
+		}
 
 		if ( 0 === strpos( $route, 'semrush/' ) ) {
 			Neo_Pulse_App_Semrush_Route_Handlers::dispatch_http( substr( $route, 8 ), $method, $body );

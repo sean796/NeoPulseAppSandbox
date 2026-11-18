@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   defaultSplashStatusForStep,
+  FACT_CHECKER_SPLASH_STATUS,
   FACT_CHECKING_SPLASH_STATUS,
+  isFactCheckerSplashStep,
   isFactCheckingSplashStep,
 } from "../use-bulk-splash-ai-status";
 
@@ -18,6 +20,13 @@ describe("defaultSplashStatusForStep", () => {
     expect(defaultSplashStatusForStep("Fact checking")).toEqual(FACT_CHECKING_SPLASH_STATUS);
     expect(defaultSplashStatusForStep("Fact checking").status).toBe("Fact checking");
     expect(defaultSplashStatusForStep("Fact checking").visual).toBe("factcheck");
+  });
+
+  it("keeps the Fact checker label and factchecker graphic exact", () => {
+    expect(isFactCheckerSplashStep("Fact checker")).toBe(true);
+    expect(defaultSplashStatusForStep("Fact checker")).toEqual(FACT_CHECKER_SPLASH_STATUS);
+    expect(defaultSplashStatusForStep("Fact checker").status).toBe("Fact checker");
+    expect(defaultSplashStatusForStep("Fact checker").visual).toBe("factchecker");
   });
 
   it("does not treat content checklist or CSV steps as blog idea curation", () => {

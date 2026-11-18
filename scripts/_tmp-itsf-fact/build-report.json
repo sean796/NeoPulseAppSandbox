@@ -1,0 +1,1439 @@
+{
+  "reports": [
+    {
+      "pageUrl": "https://intheshadeflorida.com/blinds-parker-florida/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blinds-pembroke-pines-florida/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blinds-shades-palmetto-bay-florida/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/automated-shading-systems/",
+      "id": 3777,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/banded-roller-shades-banded-roller-shades/",
+      "id": 5464,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Banded roller shades use two parallel textile layers that feature alternating horizontal stripes of solid fabric and she",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/benefits-of-top-down-bottom-up-shades/",
+      "id": 3831,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/best-top-down-bottom-up-shades/",
+      "id": 4351,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/blackout-roman-shades/",
+      "id": 4190,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/blind-repair-diy-guide/",
+      "id": 4435,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/cellular-vs-roman-shades/",
+      "id": 3989,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Cellular shades help protect interiors from sun damage, though UV protection varies by fabric and opacity, from light-fi",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/clean-silhouette-blinds/",
+      "id": 4454,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/custom-curtains-vs-ready-made/",
+      "id": 4355,
+      "replaced": 5,
+      "missed": [],
+      "linked": 5,
+      "homepageSkipped": 0,
+      "sourceCount": 5
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/custom-drapery-vs-ready-made-panels/",
+      "id": 3612,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/custom-upholstery-is-the-secret/",
+      "id": 3602,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/custom-window-measurement/",
+      "id": 3613,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/custom-window-treatments/",
+      "id": 4100,
+      "replaced": 4,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 4,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/duolite-lightlock-bedroom-darkness/",
+      "id": 3601,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "PowerView Automation can schedule your shades to open and close at set times.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/energy-efficient-shades-top-5/",
+      "id": 4437,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Cellular shades offer superior insulation from honeycomb pockets, reducing heat transfer.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Duette Honeycomb Shades offer enhanced insulation and sound absorption.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/energy-efficient-shades/",
+      "id": 3765,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/fabric-blinds-cleaning-at-home/",
+      "id": 4732,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/florida-interior-design-styles/",
+      "id": 4188,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/high-tech-window-blinds/",
+      "id": 4456,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/hunter-douglas-alta-blinds-comparison/",
+      "id": 4742,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/hunter-douglas-blinds-shades/",
+      "id": 4105,
+      "replaced": 3,
+      "missed": [
+        {
+          "claim": "PowerView Automation offers convenient control using a remote, app, or voice commands.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/hunter-douglas-blinds-vs-shades/",
+      "id": 3834,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Hunter Douglas Blinds feature hard slats, typically made of wood, metal, or faux wood, allowing precise control over lig",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/hunter-douglas-dealer/",
+      "id": 4186,
+      "replaced": 3,
+      "missed": [
+        {
+          "claim": "Luminette Privacy Sheers or Vertical Blinds are ideal for wide openings; offers diffused light and privacy for expansive",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Silhouette Window Shadings filter harmful UV rays while preserving exterior views and softening natural light.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/hunter-douglas-guide/",
+      "id": 4777,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/indoor-window-coverings/",
+      "id": 4103,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Blackout shades for Brenda’s west-facing bedrooms help control glare and strong light.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Cellular shades offer excellent insulation for energy savings.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Motorized shades improve comfort and energy efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/interior-design-styles-trends/",
+      "id": 4579,
+      "replaced": 2,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 1,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/lightlock-system-explained-ultimate-darkness/",
+      "id": 4746,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/motorized-blinds-power-battery-options/",
+      "id": 4772,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/plantation-shutter-care/",
+      "id": 4452,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Natural wood shutters require dry cleaning methods, such as a high-density microfiber cloth or a dedicated wooden shutte",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/powerview-advanced-features/",
+      "id": 3773,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/powerview-vs-softtouch/",
+      "id": 3835,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/powerview-vs-tahoma-smart-blind-comparison/",
+      "id": 4753,
+      "replaced": 5,
+      "missed": [],
+      "linked": 5,
+      "homepageSkipped": 0,
+      "sourceCount": 5
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/roman-shade-vs-cellular-shade/",
+      "id": 6171,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Roman shades rely on optional thermal or blackout linings for insulation.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/simple-steps-to-repair-your-blinds-at-home/",
+      "id": 4283,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window fashion products are covered for defects in materials, workmanship, or failure to operate for as l",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Hunter Douglas motorization components are covered for 5 years from the date of purchase.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/smart-blind-motorization/",
+      "id": 3788,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/smart-shades-101/",
+      "id": 3802,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Cellular shades saved up to 20% on heating energy and up to 15% on total energy from heating and cooling compared to sce",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/smart-window-automation/",
+      "id": 3987,
+      "replaced": 4,
+      "missed": [
+        {
+          "claim": "PowerView Automation offers precise scheduling capabilities, which directly translates into energy savings for our clien",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/solarium-roof-blinds-guide/",
+      "id": 4758,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/sustainable-power-solar-chargers/",
+      "id": 3616,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/sync-smart-shades-alexa-google-home/",
+      "id": 3827,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/trending-interior-designs/",
+      "id": 3833,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Duette Honeycomb Shades with Top-Down/Bottom-Up allows light entry from top while maintaining privacy below; superior in",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/types-window-blinds/",
+      "id": 4439,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/venetian-blinds-repair/",
+      "id": 3793,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/what-are-aura-illuminated-shades/",
+      "id": 3363,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Aura shades can be ordered with several Hunter Douglas operating systems, including PowerView Automation.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Aura Illuminated Shades are available in a range of fabrics and lift styles.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/what-happens-at-a-window-treatment-consultation/",
+      "id": 3832,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas Duette Honeycomb Shades provide UV protection and heat reduction for comfort and to preserve interiors.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Faux wood blinds withstand Florida humidity, providing the appearance of wood at a lower cost.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/window-blind-repair/",
+      "id": 4737,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Everwood® Alternative Wood Blinds resist fading, yellowing, bowing, and warping, making them a good choice for humid bat",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Hunter Douglas products offer updated features, fresh fabrics, and the Hunter Douglas Limited Lifetime Warranty, with te",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Modern Precious Metals® Aluminum Blinds are durable, making them great for high-traffic homes with kids and pets.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/blog/window-treatment-care/",
+      "id": 4766,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/custom-blinds-installation-palm-city-fl/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/custom-blinds-installation-port-st-lucie-fl/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/diy-blind-repair-home/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/energy-efficient-shades-stuart-fl/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/hunter-douglas-shades-stuart-fl/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/interior-design-styles-palm-city-fl/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/ready-made-curtains-palm-city-fl/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/automated-blinds-installation-rio-fl/",
+      "id": 4539,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/automated-shade-services-rio-fl/",
+      "id": 4535,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/best-custom-blinds-palm-city-fl/",
+      "id": 4832,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/best-custom-blinds-stuart-fl/",
+      "id": 4794,
+      "replaced": 3,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 3,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/best-home-window-coverings-st-lucie-river-fl/",
+      "id": 4557,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/blinds-shades-shutters-near-jensen-beach-florida/",
+      "id": 3640,
+      "replaced": 6,
+      "missed": [],
+      "linked": 6,
+      "homepageSkipped": 0,
+      "sourceCount": 6
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/blinds-shades-shutters-near-port-salerno-florida/",
+      "id": 3642,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/blinds-shades-shutters-near-rio-florida/",
+      "id": 3627,
+      "replaced": 2,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 1,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/blinds-shades-shutters-near-snug-harbour-florida/",
+      "id": 3650,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "PowerView® Automation... offering convenience and smart home integration.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "SoftTouch® Motorization... providing simple, intuitive wand control",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/blinds-shades-shutters-sewalls-point-florida/",
+      "id": 3646,
+      "replaced": 5,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 1,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/blinds-shades-shutters-snug-harbour-florida/",
+      "id": 5013,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Solar shades block UV rays, preserving furnishings and reducing heat gain.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/buy-custom-blinds-palm-city-fl/",
+      "id": 4824,
+      "replaced": 3,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 1,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/buy-custom-blinds-stuart-fl/",
+      "id": 4802,
+      "replaced": 3,
+      "missed": [
+        {
+          "claim": "Faux wood or aluminum blinds are recommended for Stuart's humid and sunny weather.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 4,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/curtain-design-consultation-hutchinson-island-south-fl/",
+      "id": 4507,
+      "replaced": 3,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 2,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/curtain-design-services-hutchinson-island-south-fl/",
+      "id": 4505,
+      "replaced": 4,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 4,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-blinds-installation-ocean-breeze-fl/",
+      "id": 4515,
+      "replaced": 4,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 4,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-blinds-installation-stuart-fl/",
+      "id": 4814,
+      "replaced": 3,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 2,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-curtain-design-hutchinson-island-south-fl/",
+      "id": 4509,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Synthetic blends with UV-blocking properties resist fading and warping from salt air and sun exposure.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        },
+        {
+          "claim": "Mold-resistant fabrics help maintain cleanliness and longevity in humid climates.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 2,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-drapery-design-ocean-breeze-fl/",
+      "id": 4527,
+      "replaced": 2,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 2,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-drapery-ocean-breeze-fl/",
+      "id": 4525,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-drapery-stuart-fl/",
+      "id": 4790,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-plantation-shutters-jensen-beach-fl/",
+      "id": 4828,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Moisture-resistant materials like polysatin and composite shutters are ideal for durability, resisting warping and fadin",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-plantation-shutters-stuart-fl/",
+      "id": 4765,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "NewStyle hybrid custom plantation shutters offer excellent longevity and are well-suited for various room conditions.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Palm Beach Polysatin shutters provide a durable, low-maintenance option for humid coastal conditions.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-shades-home-ocean-breeze-fl/",
+      "id": 4523,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-shades-installation-palm-city-fl/",
+      "id": 4784,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Top-Down/Bottom-Up Shades allow you to lower them from the top or raise them from the bottom, offering flexible light co",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        },
+        {
+          "claim": "Cellular shades are highly valued for their energy efficiency due to their unique cell construction, which traps air.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 2,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-shades-installation-stuart-fl/",
+      "id": 4792,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-window-treatments-treasure-coast-fl/",
+      "id": 4553,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Composite shutters are specifically designed to resist warping and mold in high-humidity environments.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Palm Beach™ Polysatin™ Vinyl Shutters are resistant to moisture, heat, and UV rays.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Faux wood blinds resist warping and moisture damage.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/drapery-installation-services-ocean-breeze-fl/",
+      "id": 4529,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/free-curtain-consultation-hutchinson-island-south-fl/",
+      "id": 4503,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/home-window-covering-consultation-st-lucie-river-fl/",
+      "id": 4559,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "PowerView Automation... allows scheduling and remote control, ideal for windows above furniture or in tall spaces.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/home-window-coverings-st-lucie-river-fl/",
+      "id": 4555,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/hunter-douglas-blinds-stuart-fl/",
+      "id": 4796,
+      "replaced": 3,
+      "missed": [
+        {
+          "claim": "Silhouette Window Shadings allow precise light diffusion, helping to reduce harsh glare.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/hunter-douglas-dealer-abacoa-florida-2/",
+      "id": 4995,
+      "replaced": 3,
+      "missed": [
+        {
+          "claim": "Motorized options like SoftTouch motorization allow for convenient control of window treatments, especially for large or",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/hunter-douglas-dealer-abacoa-florida/",
+      "id": 4345,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/hunter-douglas-dealer-north-palm-beach-heights/",
+      "id": 4361,
+      "replaced": 3,
+      "missed": [
+        {
+          "claim": "Palm Beach Polysatin Shutters resist warping and fading in coastal climates with salty air.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/hunter-douglas-shades-palm-city-fl/",
+      "id": 4800,
+      "replaced": 5,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 5,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/interior-curtain-design-hutchinson-island-south-fl/",
+      "id": 4511,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/interior-design-styles-stuart-fl/",
+      "id": 4806,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/motorized-shades-palm-city-fl/",
+      "id": 4808,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/palm-city-energy-efficient-shades-fl/",
+      "id": 4786,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/palm-city-window-treatment-design-fl/",
+      "id": 4810,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Motorized Window Treatments... allowing you to adjust your window coverings with the touch of a button or through smart ",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/plantation-shutter-fitting-jensen-beach-stuart-fl/",
+      "id": 4565,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Hunter Douglas Palm Beach Polysatin Shutters are engineered to resist moisture, warping, and UV yellowing in this enviro",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/plantation-shutter-installers-jensen-beach-stuart-fl/",
+      "id": 4563,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/plantation-shutters-installation-jensen-beach-stuart-fl/",
+      "id": 4561,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/plantation-shutters-palm-city-fl/",
+      "id": 4788,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Palm Beach™ Polysatin™ Shutters combine classic style with unbeatable durability, making them a perfect fit for homes in",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "These shutters also offer advanced convenience with optional PowerView® Automation.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/plantation-shutters-port-st-lucie-fl/",
+      "id": 4836,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Plantation shutters, especially those made from faux wood, are exceptionally well-suited for humid environments.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 1,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/plantation-shutters-stuart-fl/",
+      "id": 4751,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/residential-blinds-installation-jensen-beach-fl/",
+      "id": 4479,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/residential-window-coverings-treasure-coast-fl/",
+      "id": 4551,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Palm Beach Polysatin Shutters offer the highest heat and moisture resistance levels, guaranteed by the Palm Beach Promis",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        },
+        {
+          "claim": "Composite shutters have a classic wood profile but resist moisture damage.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        },
+        {
+          "claim": "Solar shades filter out UV rays while maintaining outdoor views.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 4,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/shutters-for-sale-hobe-sound-fl/",
+      "id": 4782,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Composite shutters are recommended for durability against moisture and ease of maintenance in a coastal environment.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Hunter Douglas Palm Beach Shutters offer durability and precise light adjustment, suitable for humid conditions.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Hunter Douglas NewStyle Composite Shutters resist humidity and temperature fluctuations without warping.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/shutters-for-sale-stuart-fl/",
+      "id": 4826,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Composite Shutters: Combining the look of real wood with enhanced durability, resisting fading, cracking, and warping.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Faux Wood Shutters: A durable and moisture-resistant alternative to real wood, perfect for high-humidity areas.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/smart-automated-blinds-rio-fl/",
+      "id": 4541,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/smart-blinds-automation-rio-fl/",
+      "id": 4547,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Hunter Douglas PowerView Automation integrates with existing smart devices to enhance convenience and energy efficiency ",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/smart-blinds-rio-fl/",
+      "id": 4543,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/smart-home-automation-palm-city-fl/",
+      "id": 4774,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/window-curtains-consultation-hutchinson-island-south-fl/",
+      "id": 4501,
+      "replaced": 4,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 2,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/window-shade-repair-cost-treasure-coast-fl/",
+      "id": 4497,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/window-shades-st-lucie-west-florida/",
+      "id": 5032,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "UV-stabilized fabrics are recommended to prevent fading from intense UV exposure and extend the shades’ lifespan.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Solar shades help reduce heat gain and lower air conditioning costs, particularly during the hot summer months.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Cellular shades offer superior temperature regulation due to their honeycomb structure.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/window-treatment-consultation-palm-city-fl/",
+      "id": 4804,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/service-area/window-treatment-design-stuart-fl/",
+      "id": 4834,
+      "replaced": 3,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 1,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/smart-home-automation-stuart-fl/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/window-blinds-repair-services/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/window-shades-altamonte-springs-florida/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/window-shades-apalachicola-florida-2/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/window-treatment-consultation-stuart-fl/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/window-treatments-star-island-florida/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://intheshadeflorida.com/window-treatments-virginia-park-florida/",
+      "error": "not-found"
+    }
+  ]
+}

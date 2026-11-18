@@ -1,0 +1,642 @@
+{
+  "ok": 106,
+  "fail": 0,
+  "results": [
+    {
+      "id": 3777,
+      "pageUrl": "https://intheshadeflorida.com/blog/automated-shading-systems/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 5464,
+      "pageUrl": "https://intheshadeflorida.com/blog/banded-roller-shades-banded-roller-shades/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3831,
+      "pageUrl": "https://intheshadeflorida.com/blog/benefits-of-top-down-bottom-up-shades/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4351,
+      "pageUrl": "https://intheshadeflorida.com/blog/best-top-down-bottom-up-shades/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4190,
+      "pageUrl": "https://intheshadeflorida.com/blog/blackout-roman-shades/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4435,
+      "pageUrl": "https://intheshadeflorida.com/blog/blind-repair-diy-guide/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3989,
+      "pageUrl": "https://intheshadeflorida.com/blog/cellular-vs-roman-shades/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4454,
+      "pageUrl": "https://intheshadeflorida.com/blog/clean-silhouette-blinds/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4355,
+      "pageUrl": "https://intheshadeflorida.com/blog/custom-curtains-vs-ready-made/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3612,
+      "pageUrl": "https://intheshadeflorida.com/blog/custom-drapery-vs-ready-made-panels/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3602,
+      "pageUrl": "https://intheshadeflorida.com/blog/custom-upholstery-is-the-secret/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3613,
+      "pageUrl": "https://intheshadeflorida.com/blog/custom-window-measurement/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4100,
+      "pageUrl": "https://intheshadeflorida.com/blog/custom-window-treatments/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3601,
+      "pageUrl": "https://intheshadeflorida.com/blog/duolite-lightlock-bedroom-darkness/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4437,
+      "pageUrl": "https://intheshadeflorida.com/blog/energy-efficient-shades-top-5/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3765,
+      "pageUrl": "https://intheshadeflorida.com/blog/energy-efficient-shades/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4732,
+      "pageUrl": "https://intheshadeflorida.com/blog/fabric-blinds-cleaning-at-home/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4188,
+      "pageUrl": "https://intheshadeflorida.com/blog/florida-interior-design-styles/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4456,
+      "pageUrl": "https://intheshadeflorida.com/blog/high-tech-window-blinds/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4742,
+      "pageUrl": "https://intheshadeflorida.com/blog/hunter-douglas-alta-blinds-comparison/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4105,
+      "pageUrl": "https://intheshadeflorida.com/blog/hunter-douglas-blinds-shades/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3834,
+      "pageUrl": "https://intheshadeflorida.com/blog/hunter-douglas-blinds-vs-shades/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4186,
+      "pageUrl": "https://intheshadeflorida.com/blog/hunter-douglas-dealer/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4777,
+      "pageUrl": "https://intheshadeflorida.com/blog/hunter-douglas-guide/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4103,
+      "pageUrl": "https://intheshadeflorida.com/blog/indoor-window-coverings/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4579,
+      "pageUrl": "https://intheshadeflorida.com/blog/interior-design-styles-trends/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4746,
+      "pageUrl": "https://intheshadeflorida.com/blog/lightlock-system-explained-ultimate-darkness/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4772,
+      "pageUrl": "https://intheshadeflorida.com/blog/motorized-blinds-power-battery-options/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4452,
+      "pageUrl": "https://intheshadeflorida.com/blog/plantation-shutter-care/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3773,
+      "pageUrl": "https://intheshadeflorida.com/blog/powerview-advanced-features/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3835,
+      "pageUrl": "https://intheshadeflorida.com/blog/powerview-vs-softtouch/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4753,
+      "pageUrl": "https://intheshadeflorida.com/blog/powerview-vs-tahoma-smart-blind-comparison/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 6171,
+      "pageUrl": "https://intheshadeflorida.com/blog/roman-shade-vs-cellular-shade/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4283,
+      "pageUrl": "https://intheshadeflorida.com/blog/simple-steps-to-repair-your-blinds-at-home/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3788,
+      "pageUrl": "https://intheshadeflorida.com/blog/smart-blind-motorization/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3802,
+      "pageUrl": "https://intheshadeflorida.com/blog/smart-shades-101/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3987,
+      "pageUrl": "https://intheshadeflorida.com/blog/smart-window-automation/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4758,
+      "pageUrl": "https://intheshadeflorida.com/blog/solarium-roof-blinds-guide/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3616,
+      "pageUrl": "https://intheshadeflorida.com/blog/sustainable-power-solar-chargers/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3827,
+      "pageUrl": "https://intheshadeflorida.com/blog/sync-smart-shades-alexa-google-home/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3833,
+      "pageUrl": "https://intheshadeflorida.com/blog/trending-interior-designs/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4439,
+      "pageUrl": "https://intheshadeflorida.com/blog/types-window-blinds/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3793,
+      "pageUrl": "https://intheshadeflorida.com/blog/venetian-blinds-repair/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3363,
+      "pageUrl": "https://intheshadeflorida.com/blog/what-are-aura-illuminated-shades/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3832,
+      "pageUrl": "https://intheshadeflorida.com/blog/what-happens-at-a-window-treatment-consultation/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4737,
+      "pageUrl": "https://intheshadeflorida.com/blog/window-blind-repair/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4766,
+      "pageUrl": "https://intheshadeflorida.com/blog/window-treatment-care/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4535,
+      "pageUrl": "https://intheshadeflorida.com/service-area/automated-shade-services-rio-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4832,
+      "pageUrl": "https://intheshadeflorida.com/service-area/best-custom-blinds-palm-city-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4794,
+      "pageUrl": "https://intheshadeflorida.com/service-area/best-custom-blinds-stuart-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4557,
+      "pageUrl": "https://intheshadeflorida.com/service-area/best-home-window-coverings-st-lucie-river-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3640,
+      "pageUrl": "https://intheshadeflorida.com/service-area/blinds-shades-shutters-near-jensen-beach-florida/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3642,
+      "pageUrl": "https://intheshadeflorida.com/service-area/blinds-shades-shutters-near-port-salerno-florida/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3627,
+      "pageUrl": "https://intheshadeflorida.com/service-area/blinds-shades-shutters-near-rio-florida/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3650,
+      "pageUrl": "https://intheshadeflorida.com/service-area/blinds-shades-shutters-near-snug-harbour-florida/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 3646,
+      "pageUrl": "https://intheshadeflorida.com/service-area/blinds-shades-shutters-sewalls-point-florida/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 5013,
+      "pageUrl": "https://intheshadeflorida.com/service-area/blinds-shades-shutters-snug-harbour-florida/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4824,
+      "pageUrl": "https://intheshadeflorida.com/service-area/buy-custom-blinds-palm-city-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4802,
+      "pageUrl": "https://intheshadeflorida.com/service-area/buy-custom-blinds-stuart-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4507,
+      "pageUrl": "https://intheshadeflorida.com/service-area/curtain-design-consultation-hutchinson-island-south-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4505,
+      "pageUrl": "https://intheshadeflorida.com/service-area/curtain-design-services-hutchinson-island-south-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4515,
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-blinds-installation-ocean-breeze-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4814,
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-blinds-installation-stuart-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4509,
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-curtain-design-hutchinson-island-south-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4527,
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-drapery-design-ocean-breeze-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4525,
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-drapery-ocean-breeze-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4790,
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-drapery-stuart-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4828,
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-plantation-shutters-jensen-beach-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4765,
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-plantation-shutters-stuart-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4523,
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-shades-home-ocean-breeze-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4784,
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-shades-installation-palm-city-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4792,
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-shades-installation-stuart-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4553,
+      "pageUrl": "https://intheshadeflorida.com/service-area/custom-window-treatments-treasure-coast-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4529,
+      "pageUrl": "https://intheshadeflorida.com/service-area/drapery-installation-services-ocean-breeze-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4503,
+      "pageUrl": "https://intheshadeflorida.com/service-area/free-curtain-consultation-hutchinson-island-south-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4559,
+      "pageUrl": "https://intheshadeflorida.com/service-area/home-window-covering-consultation-st-lucie-river-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4555,
+      "pageUrl": "https://intheshadeflorida.com/service-area/home-window-coverings-st-lucie-river-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4796,
+      "pageUrl": "https://intheshadeflorida.com/service-area/hunter-douglas-blinds-stuart-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4995,
+      "pageUrl": "https://intheshadeflorida.com/service-area/hunter-douglas-dealer-abacoa-florida-2/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4345,
+      "pageUrl": "https://intheshadeflorida.com/service-area/hunter-douglas-dealer-abacoa-florida/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4361,
+      "pageUrl": "https://intheshadeflorida.com/service-area/hunter-douglas-dealer-north-palm-beach-heights/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4800,
+      "pageUrl": "https://intheshadeflorida.com/service-area/hunter-douglas-shades-palm-city-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4511,
+      "pageUrl": "https://intheshadeflorida.com/service-area/interior-curtain-design-hutchinson-island-south-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4806,
+      "pageUrl": "https://intheshadeflorida.com/service-area/interior-design-styles-stuart-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4808,
+      "pageUrl": "https://intheshadeflorida.com/service-area/motorized-shades-palm-city-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4786,
+      "pageUrl": "https://intheshadeflorida.com/service-area/palm-city-energy-efficient-shades-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4810,
+      "pageUrl": "https://intheshadeflorida.com/service-area/palm-city-window-treatment-design-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4565,
+      "pageUrl": "https://intheshadeflorida.com/service-area/plantation-shutter-fitting-jensen-beach-stuart-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4563,
+      "pageUrl": "https://intheshadeflorida.com/service-area/plantation-shutter-installers-jensen-beach-stuart-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4561,
+      "pageUrl": "https://intheshadeflorida.com/service-area/plantation-shutters-installation-jensen-beach-stuart-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4788,
+      "pageUrl": "https://intheshadeflorida.com/service-area/plantation-shutters-palm-city-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4836,
+      "pageUrl": "https://intheshadeflorida.com/service-area/plantation-shutters-port-st-lucie-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4751,
+      "pageUrl": "https://intheshadeflorida.com/service-area/plantation-shutters-stuart-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4479,
+      "pageUrl": "https://intheshadeflorida.com/service-area/residential-blinds-installation-jensen-beach-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4551,
+      "pageUrl": "https://intheshadeflorida.com/service-area/residential-window-coverings-treasure-coast-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4782,
+      "pageUrl": "https://intheshadeflorida.com/service-area/shutters-for-sale-hobe-sound-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4826,
+      "pageUrl": "https://intheshadeflorida.com/service-area/shutters-for-sale-stuart-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4541,
+      "pageUrl": "https://intheshadeflorida.com/service-area/smart-automated-blinds-rio-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4547,
+      "pageUrl": "https://intheshadeflorida.com/service-area/smart-blinds-automation-rio-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4543,
+      "pageUrl": "https://intheshadeflorida.com/service-area/smart-blinds-rio-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4774,
+      "pageUrl": "https://intheshadeflorida.com/service-area/smart-home-automation-palm-city-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4501,
+      "pageUrl": "https://intheshadeflorida.com/service-area/window-curtains-consultation-hutchinson-island-south-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4497,
+      "pageUrl": "https://intheshadeflorida.com/service-area/window-shade-repair-cost-treasure-coast-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 5032,
+      "pageUrl": "https://intheshadeflorida.com/service-area/window-shades-st-lucie-west-florida/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4804,
+      "pageUrl": "https://intheshadeflorida.com/service-area/window-treatment-consultation-palm-city-fl/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 4834,
+      "pageUrl": "https://intheshadeflorida.com/service-area/window-treatment-design-stuart-fl/",
+      "ok": true,
+      "status": 200
+    }
+  ]
+}

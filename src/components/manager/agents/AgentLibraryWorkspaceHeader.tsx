@@ -28,6 +28,7 @@ export interface AgentLibraryWorkspaceHeaderProps {
 
 const DOMAIN_OPTIONS: { value: AgentLibraryDomainFilter; label: string }[] = [
   { value: "all", label: "All domains" },
+  { value: "system", label: "System" },
   { value: "slack-hub", label: "Slack & Hub Agents" },
   { value: "aiseo", label: "AISEO Optimizer" },
   { value: "blog-generator", label: "Blog Generator" },

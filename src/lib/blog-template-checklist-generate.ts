@@ -193,6 +193,7 @@ export async function generateChecklistFromSelections(
       { role: "user", content: userPrompt },
     ],
     contentHarness: true,
+    siteId: options.siteId ?? null,
     temperature,
     maxTokens,
     topP,

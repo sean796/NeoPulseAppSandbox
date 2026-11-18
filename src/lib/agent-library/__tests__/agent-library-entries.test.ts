@@ -103,6 +103,47 @@ describe("agent library entries", () => {
     expect(ASSIGNABLE_SITE_AGENTS.some((a) => a.id === "content.product.fact-check")).toBe(true);
   });
 
+  it("keeps Cannibalization Audit out of the agent library and in the skills library", () => {
+    const agents = buildUnifiedAgentLibraryEntries([], {});
+    const skills = buildSkillsLibraryEntries([], {});
+    expect(agents.some((e) => e.id === "content.blog.cannibalization-audit")).toBe(false);
+    const skill = skills.find((e) => e.id === "content.blog.cannibalization-audit");
+    expect(skill).toBeDefined();
+    expect(skill?.label).toBe("Cannibalization Audit");
+    expect(skill?.appPath).toBeUndefined();
+  });
+
+  it("lists Cannibalization Audit as an assignable site agent", () => {
+    expect(ASSIGNABLE_SITE_AGENTS.some((a) => a.id === "content.blog.cannibalization-audit")).toBe(true);
+  });
+
+  it("keeps Google SEO Updates out of the agent library and in the skills library", () => {
+    const agents = buildUnifiedAgentLibraryEntries([], {});
+    const skills = buildSkillsLibraryEntries([], {});
+    expect(agents.some((e) => e.id === "seo.google.updates")).toBe(false);
+    const skill = skills.find((e) => e.id === "seo.google.updates");
+    expect(skill).toBeDefined();
+    expect(skill?.label).toBe("Google SEO Updates");
+    expect(skill?.domain).toBe("system");
+    expect(skill?.appPath).toBeUndefined();
+  });
+
+  it("keeps Google SEO Updates off client profile assignable skills", () => {
+    expect(ASSIGNABLE_SITE_AGENTS.some((a) => a.id === "seo.google.updates")).toBe(false);
+  });
+
+  it("keeps Window Treatments Vertical in the skills library only", () => {
+    const agents = buildUnifiedAgentLibraryEntries([], {});
+    const skills = buildSkillsLibraryEntries([], {});
+    expect(agents.some((e) => e.id === "vertical.window-treatments.guide")).toBe(false);
+    const skill = skills.find((e) => e.id === "vertical.window-treatments.guide");
+    expect(skill).toBeDefined();
+    expect(skill?.label).toBe("Window Treatments Vertical");
+    expect(ASSIGNABLE_SITE_AGENTS.some((a) => a.id === "vertical.window-treatments.guide")).toBe(
+      false,
+    );
+  });
+
   it("leaves plain agents without an Open path", () => {
     const entries = buildUnifiedAgentLibraryEntries([], {});
     const withPath = new Set(["reporting.changelog.app-update-log"]);

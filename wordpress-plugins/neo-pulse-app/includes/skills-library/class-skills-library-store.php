@@ -15,6 +15,9 @@ class Neo_Pulse_App_Skills_Library_Store {
 	const SKILL_MONEY_LINKS = 'content.internal-links.money-pages';
 	const SKILL_EDITORIAL_AUDIT = 'content.editorial.audit';
 	const SKILL_FACT_CHECKER = 'content.product.fact-check';
+	const SKILL_CANNIBALIZATION_AUDIT = 'content.blog.cannibalization-audit';
+	const SKILL_GOOGLE_SEO_UPDATES = 'seo.google.updates';
+	const SKILL_WINDOW_TREATMENTS_VERTICAL = 'vertical.window-treatments.guide';
 
 	/** URL path slug (no dots — WP rewrites truncate dotted segments). */
 	const SKILL_SAFE_FIX_SLUG  = 'semrush-safe-fix';
@@ -23,6 +26,9 @@ class Neo_Pulse_App_Skills_Library_Store {
 	const SKILL_MONEY_LINKS_SLUG = 'content-internal-links-money-pages';
 	const SKILL_EDITORIAL_AUDIT_SLUG = 'editorial-content-audit';
 	const SKILL_FACT_CHECKER_SLUG = 'fact-checker';
+	const SKILL_CANNIBALIZATION_AUDIT_SLUG = 'cannibalization-audit';
+	const SKILL_GOOGLE_SEO_UPDATES_SLUG = 'google-seo-updates';
+	const SKILL_WINDOW_TREATMENTS_VERTICAL_SLUG = 'window-treatments-vertical';
 
 	const FILES = array( 'schema.json', 'prompts.json', 'evals.json' );
 
@@ -50,6 +56,15 @@ class Neo_Pulse_App_Skills_Library_Store {
 		}
 		if ( $token === self::SKILL_FACT_CHECKER || $token === self::SKILL_FACT_CHECKER_SLUG ) {
 			return self::SKILL_FACT_CHECKER;
+		}
+		if ( $token === self::SKILL_CANNIBALIZATION_AUDIT || $token === self::SKILL_CANNIBALIZATION_AUDIT_SLUG ) {
+			return self::SKILL_CANNIBALIZATION_AUDIT;
+		}
+		if ( $token === self::SKILL_GOOGLE_SEO_UPDATES || $token === self::SKILL_GOOGLE_SEO_UPDATES_SLUG ) {
+			return self::SKILL_GOOGLE_SEO_UPDATES;
+		}
+		if ( $token === self::SKILL_WINDOW_TREATMENTS_VERTICAL || $token === self::SKILL_WINDOW_TREATMENTS_VERTICAL_SLUG ) {
+			return self::SKILL_WINDOW_TREATMENTS_VERTICAL;
 		}
 		return new WP_Error( 'neo-pulse_skills_unknown', 'Unknown skill id', array( 'status' => 404 ) );
 	}
@@ -163,6 +178,28 @@ class Neo_Pulse_App_Skills_Library_Store {
 				return new WP_Error( 'neo-pulse_skills_corrupt', 'Skill library file is missing or invalid: ' . $file, array( 'status' => 500 ) );
 			}
 		}
+		if ( $skill_id === self::SKILL_GOOGLE_SEO_UPDATES ) {
+			$had_results = isset( $bundle['prompts.json']['entries'] );
+			$stale_prompt = ! isset( $bundle['prompts.json']['topics'] ) || ! is_array( $bundle['prompts.json']['topics'] ) || count( $bundle['prompts.json']['topics'] ) < 5;
+			$bundle = self::split_google_seo_prompts( $bundle );
+			if ( $stale_prompt ) {
+				$defaults = self::default_google_seo_updates_prompts();
+				$rewrite = $bundle['prompts.json']['rewrite'] ?? $defaults['rewrite'];
+				$bundle['prompts.json'] = array(
+					'topics'  => $defaults['topics'],
+					'rewrite' => is_array( $rewrite ) ? $rewrite : $defaults['rewrite'],
+				);
+			}
+			$input = $bundle['schema.json']['archive']['input'] ?? null;
+			$stale_schema = is_array( $input ) && isset( $input['blogRss'] );
+			if ( $stale_schema ) {
+				$bundle['schema.json'] = self::default_google_seo_updates_schema();
+			}
+			$root['skills'][ $skill_id ] = $bundle;
+			if ( $had_results || $stale_schema || $stale_prompt ) {
+				self::write_root( $root );
+			}
+		}
 		$prompts_err = self::validate_prompts( $bundle['prompts.json'], $skill_id );
 		if ( is_wp_error( $prompts_err ) ) {
 			return $prompts_err;
@@ -222,6 +259,64 @@ class Neo_Pulse_App_Skills_Library_Store {
 	 *
 	 * @return array<string,mixed>|WP_Error
 	 */
+	/**
+	 * Search results stay out of prompts.json. prompts.json is the fan-out prompt only.
+	 *
+	 * @param array<string,mixed> $bundle
+	 * @return array<string,mixed>
+	 */
+	private static function split_google_seo_prompts( array $bundle ): array {
+		$prompts = isset( $bundle['prompts.json'] ) && is_array( $bundle['prompts.json'] ) ? $bundle['prompts.json'] : array();
+		if ( ! isset( $prompts['entries'] ) ) {
+			return $bundle;
+		}
+		if ( ! isset( $prompts['entries'] ) ) {
+			return $bundle;
+		}
+		$bundle['archive.json'] = array(
+			'entries'      => is_array( $prompts['entries'] ) ? $prompts['entries'] : array(),
+			'livePrompt'   => isset( $prompts['livePrompt'] ) && is_string( $prompts['livePrompt'] ) ? $prompts['livePrompt'] : '',
+			'updatedAt'    => isset( $prompts['updatedAt'] ) ? (string) $prompts['updatedAt'] : '',
+			'lastRunKey'   => isset( $prompts['lastRunKey'] ) ? (string) $prompts['lastRunKey'] : '',
+			'lastRunError' => isset( $prompts['lastRunError'] ) ? (string) $prompts['lastRunError'] : '',
+		);
+		$defaults = self::default_google_seo_updates_prompts();
+		$bundle['prompts.json'] = array(
+			'topics'  => $defaults['topics'],
+			'rewrite' => is_array( $prompts['rewrite'] ?? null ) ? $prompts['rewrite'] : $defaults['rewrite'],
+		);
+		return $bundle;
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	public static function read_google_seo_archive(): array {
+		$root = self::read_root();
+		$skill = $root['skills'][ self::SKILL_GOOGLE_SEO_UPDATES ] ?? null;
+		if ( ! is_array( $skill ) ) {
+			return array();
+		}
+		$archive = $skill['archive.json'] ?? null;
+		return is_array( $archive ) ? $archive : array();
+	}
+
+	/**
+	 * @param array<string,mixed> $archive
+	 * @return true|WP_Error
+	 */
+	public static function write_google_seo_archive( array $archive ) {
+		$root = self::read_root();
+		if ( ! isset( $root['skills'][ self::SKILL_GOOGLE_SEO_UPDATES ] ) || ! is_array( $root['skills'][ self::SKILL_GOOGLE_SEO_UPDATES ] ) ) {
+			$root['skills'][ self::SKILL_GOOGLE_SEO_UPDATES ] = self::default_skill_bundle( self::SKILL_GOOGLE_SEO_UPDATES );
+		}
+		$root['skills'][ self::SKILL_GOOGLE_SEO_UPDATES ]['archive.json'] = $archive;
+		if ( ! self::write_root( $root ) ) {
+			return new WP_Error( 'neo-pulse_skills_write', 'Could not write Google SEO archive', array( 'status' => 500 ) );
+		}
+		return true;
+	}
+
 	public static function load_prompts( string $skill_id = self::SKILL_SAFE_FIX ) {
 		$bundle = self::get_skill( $skill_id );
 		if ( is_wp_error( $bundle ) ) {
@@ -289,6 +384,27 @@ class Neo_Pulse_App_Skills_Library_Store {
 				'schema.json'  => self::default_fact_checker_schema(),
 				'prompts.json' => self::default_fact_checker_prompts(),
 				'evals.json'   => self::default_fact_checker_evals(),
+			);
+		}
+		if ( $skill_id === self::SKILL_CANNIBALIZATION_AUDIT ) {
+			return array(
+				'schema.json'  => self::default_cannibalization_audit_schema(),
+				'prompts.json' => self::default_cannibalization_audit_prompts(),
+				'evals.json'   => self::default_cannibalization_audit_evals(),
+			);
+		}
+		if ( $skill_id === self::SKILL_GOOGLE_SEO_UPDATES ) {
+			return array(
+				'schema.json'  => self::default_google_seo_updates_schema(),
+				'prompts.json' => self::default_google_seo_updates_prompts(),
+				'evals.json'   => self::default_google_seo_updates_evals(),
+			);
+		}
+		if ( $skill_id === self::SKILL_WINDOW_TREATMENTS_VERTICAL ) {
+			return array(
+				'schema.json'  => self::default_window_treatments_vertical_schema(),
+				'prompts.json' => self::default_window_treatments_vertical_prompts(),
+				'evals.json'   => self::default_window_treatments_vertical_evals(),
 			);
 		}
 		return array(
@@ -556,7 +672,8 @@ class Neo_Pulse_App_Skills_Library_Store {
 					'page'          => 'id, url, title, status, type, meta, text',
 				),
 				'output' => array(
-					'claims' => 'array of {quote, category, verdict, sourceTitle, sourceUrl, sourceType, qualification, suggestedWording}',
+					'claims' => 'array of {quote, category, verdict, sourceTitle, sourceUrl, sourceType, qualification, suggestedWording, evidence, severity}',
+					'aiseo'  => '{score:0-10}',
 				),
 			),
 			'skillPath'   => 'skills/fact-checker',
@@ -569,8 +686,8 @@ class Neo_Pulse_App_Skills_Library_Store {
 	private static function default_fact_checker_prompts(): array {
 		return array(
 			'pageClaims' => array(
-				'system'       => 'You are a product claim fact-checker for WordPress blog posts and service-area pages. Return JSON claims only. Product and service claims only. No geo or NAP. Prefer manufacturer docs for MACRO_LOCATION.country. Supported claims need http(s) sourceUrl that is not the client site.',
-				'userTemplate' => "Read skills/fact-checker/references/fact-check-rules.md.\n\nMACRO_LOCATION JSON:\n{macroLocationJson}\n\nPAGE JSON:\n{pageJson}\n\nPAGE TEXT:\n{pageText}\n\nExtract important product and service claims. Search for sources. Return JSON claims only.",
+				'system'       => 'Loaded at run time from skills/fact-checker/SKILL.md and skills/fact-checker/references/fact-check-rules.md (Property Skills Auto / Run). Do not maintain a parallel hardcoded prompt.',
+				'userTemplate' => "Follow the Fact Checker skill and fact-check-rules loaded in the system prompt.\n\nMACRO_LOCATION JSON:\n{macroLocationJson}\n\nPAGE JSON:\n{pageJson}\n\nPAGE TEXT:\n{pageText}\n\nExtract material claims. Ground them with competitive-neutral sources that support the exact wording. Every suggestion needs that external sourceUrl. Omit claims with no source. Include evidence, severity, and aiseo.score. Return JSON only.",
 			),
 		);
 	}
@@ -588,16 +705,265 @@ class Neo_Pulse_App_Skills_Library_Store {
 					'expected_output' => 'JSON claims with energy category, partially_supported or unsupported verdict, and qualification when partial.',
 					'assertions'      => array(
 						'Output is valid JSON with claims',
-						'Supported or partial claims include http(s) sourceUrl',
+						'Supported or partial claims include an http(s) sourceUrl on a domain other than the client site',
+						'Material claims include evidence and severity',
 					),
 				),
 				array(
 					'id'              => 2,
 					'prompt'          => 'A service-area page only names cities and phones with no product specs.',
-					'expected_output' => 'One claim with verdict no_product_claims.',
+					'expected_output' => 'One claim with verdict no_product_claim.',
 					'assertions'      => array(
 						'Output is valid JSON with claims',
-						'Geo and NAP are not reported as product claims',
+						'Streets, phones, and NAP are not reported as product claims',
+					),
+				),
+			),
+		);
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_cannibalization_audit_schema(): array {
+		return array(
+			'id'          => self::SKILL_CANNIBALIZATION_AUDIT,
+			'label'       => 'Cannibalization Audit',
+			'category'    => 'research',
+			'domain'      => 'aiseo',
+			'temperature' => 0.1,
+			'maxTokens'   => 2048,
+			'redirectMap' => array(
+				'input'  => array(
+					'blogPosts' => 'published /blog/ urls with dateGmt',
+					'gscWindow' => 'about 90 days page + page/query rows',
+				),
+				'output' => array(
+					'redirects' => 'array of {from,to,reason,ageDays,clicks90d,foldIn}',
+					'leave'     => 'array of {url,why}',
+				),
+			),
+			'skillPath'   => 'skills/cannibalization-audit',
+		);
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_cannibalization_audit_prompts(): array {
+		return array(
+			'redirectMap' => array(
+				'system'       => 'You build a blog cannibalization redirect map. One keeper per intent. Suggest 301s only. Never apply redirects. Leave young posts and unique-query URLs alone.',
+				'userTemplate' => "Read skills/cannibalization-audit/references/redirect-map-rules.md.\n\nSITE:\n{siteJson}\n\nPOSTS:\n{postsJson}\n\nGSC:\n{gscJson}\n\nReturn JSON redirect map only.",
+			),
+		);
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_google_seo_updates_schema(): array {
+		return array(
+			'id'          => self::SKILL_GOOGLE_SEO_UPDATES,
+			'label'       => 'Google SEO Updates',
+			'category'    => 'research',
+			'domain'      => 'aiseo',
+			'temperature' => 0.2,
+			'maxTokens'   => 4096,
+			'archive'     => array(
+				'input'  => array(
+					'openRouterOnline' => 'openai/gpt-6-sol:online query fan-out for the current month',
+				),
+				'output' => array(
+					'entries'    => 'dated searches newest first',
+					'livePrompt' => 'standing post-writing rules with sources',
+				),
+			),
+			'checklist'   => array(
+				'Official Google sources only',
+				'One dated entry per search',
+				'Rewrite livePrompt only when the new entry has items',
+			),
+		);
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	public static function default_google_seo_updates_prompts(): array {
+		$rules = 'Search the live web for this topic only in {month} {year}. Write detailed bullets, not one-liners. No URLs, markdown links, or domain names in title, whatChanged, or postRule. Put the page you opened only in sourceUrl. Never invent dates. Never use the em dash. If nothing in this topic changes how a post should be written, return {"items":[]}. Otherwise return JSON only: {"items":[{"publishedAt":"YYYY-MM-DD","title":"...","sourceUrl":"https://...","whatChanged":"- bullet\\n- bullet","postRule":"- bullet"}]}. whatChanged is 4 to 6 bullets.';
+		return array(
+			'topics' => array(
+				array(
+					'id'           => 'core-update',
+					'system'       => $rules,
+					'userTemplate' => "Topic: Google core update.\nSearch: Google core update {month} {year}.\nWrite when it started, where it applies, how long the rollout is, and what a post writer should do during it.",
+				),
+				array(
+					'id'           => 'ranking',
+					'system'       => $rules,
+					'userTemplate' => "Topic: ranking changes.\nSearch: Google Search ranking update {month} {year}.\nWrite which ranking systems or spam policies changed and what to change in posts.",
+				),
+				array(
+					'id'           => 'ai-updates',
+					'system'       => $rules . ' This topic is AI Overviews, AI Mode, and Gemini in Search. It is a required section when Google changed any of those.',
+					'userTemplate' => "Topic: AI updates.\nSearch: Google AI Overviews, AI Mode, and Gemini in Search {month} {year}.\nWrite what changed in AI answers, what that means for posts, and what to do. This is its own section.",
+				),
+				array(
+					'id'           => 'search-central',
+					'system'       => $rules,
+					'userTemplate' => "Topic: Search Central.\nSearch: Google Search Central blog {month} {year}.\nWrite only posts that change how a page should be written.",
+				),
+				array(
+					'id'           => 'search-console',
+					'system'       => $rules,
+					'userTemplate' => "Topic: Search Console.\nSearch: Google Search Console issues {month} {year}.\nWrite reporting bugs or data gaps that would make someone misread performance. Say what not to change because of bad data.",
+				),
+			),
+			'rewrite'      => array(
+				'system'       => 'You rewrite the standing livePrompt for Neo Pulse post writing from dated Google SEO archive entries. Every rule must cite a sourceUrl and the entry date that introduced it. No rule without an archive item. No invented updates. Never use the em dash. Output JSON only: {"livePrompt":"..."}.',
+				'userTemplate' => "Archive entries (newest first):\n{entriesJson}\n\nWrite the livePrompt JSON now.",
+			),
+		);
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_google_seo_updates_evals(): array {
+		return array(
+			'skill_name' => 'google-seo-updates',
+			'evals'      => array(
+				array(
+					'id'              => 1,
+					'prompt'          => 'Official ranking doc announces a core update that changes how helpful content is judged.',
+					'expected_output' => 'JSON extract with one item and a postRule that cites the official sourceUrl.',
+					'assertions'      => array(
+						'Output is valid JSON with title and items',
+						'Each item has sourceUrl title whatChanged postRule',
+					),
+				),
+				array(
+					'id'              => 2,
+					'prompt'          => 'RSS only has a Search Console UI note with no post-writing impact.',
+					'expected_output' => 'JSON extract with items as an empty array.',
+					'assertions'      => array(
+						'items is an empty array',
+						'No invented sourceUrl',
+					),
+				),
+			),
+		);
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_window_treatments_vertical_schema(): array {
+		return array(
+			'id'          => self::SKILL_WINDOW_TREATMENTS_VERTICAL,
+			'label'       => 'Window Treatments Vertical',
+			'category'    => 'blog',
+			'domain'      => 'aiseo',
+			'temperature' => 0.2,
+			'maxTokens'   => 2048,
+			'checklist'   => array(
+				'Library only; not assigned on client profiles',
+				'Injected on content runs for Window treatments clients plus Tailored Interiors and Interiors by Laura',
+				'Standing prompt only; no Generate job',
+			),
+		);
+	}
+
+	/**
+	 * Standing prompt text (matches skills/window-treatments-vertical/references/standing-prompt.md).
+	 */
+	public static function default_window_treatments_vertical_live_prompt(): string {
+		return <<<'PROMPT'
+WINDOW TREATMENTS RULES (Hunter Douglas dealers for Neo Digital):
+
+COUNTRY FIRST: Confirm Canada vs United States from the dealer profile before writing. A .com domain does not mean a US dealer. Canadian dealers use Canadian spelling (colour, centre, neighbourhood, grey), CAD, and provincial tax language. US dealers use American spelling, USD, and state or ZIP language. Official Hunter Douglas product, fabric, and colour names keep their own spelling even for Canadian dealers.
+
+SAFE SYSTEMS: For Canadian dealers promote PowerView® Automation, SoftTouch® Motorization, LiteRise® (cordless), and wand controls. Do not advertise corded or cord-loop operating systems for Canadian dealers. For US dealers cordless and motorized lead; corded is allowed only when the dealer page supports it. Never claim Wells Fargo financing for Canadian dealers. Never invent energy or utility rebates.
+
+TRADEMARKS: Spell and capitalise every Hunter Douglas and ALTA name exactly. Put the mark directly after the name with no space (Duette®). Never pluralise or possess a brand name. Never use a Hunter Douglas name to describe another brand. Write Hunter Douglas as two capitalised words.
+
+® PRODUCTS: Duette®, Applause®, Sonnette®, Silhouette®, Pirouette®, Luminette®, Vignette®, Provenance®, Alustra®, Woven Textures®, Skyline®, Parkland®, EverWood®, Modern Precious Metals®, Heritance®, NewStyle®, Somner®, Aura®.
+™ PRODUCTS: Nantucket™, Aria™, Palm Beach™, Polysatin™.
+NO MARK: Designer Roller Shades, Designer Screen Shades, Designer Solar Shades, Designer Banded Shades, Carole Fabrics.
+® FEATURES: PowerView® Automation (never PowerView Motorization), SoftTouch® Motorization, LiteRise®, UltraGlide®, Duolite®, Architella®.
+™ FEATURES: Vertiglide™, EasyRise™, HiddenTilt™, TruView™, SoftClose™, Simplicity™.
+NO MARK FEATURE: Top-Down/Bottom-Up. Avoid LightLock in copy unless the dealer page uses that exact string.
+
+ALTA: Always capitals ALTA. Features are PowerWand™ and SmartAdjust™. Never put a Hunter Douglas feature name on an ALTA product or the reverse.
+
+PRODUCT NAMES: Prefer website names for keywords and headings; formal names appear in promotions. Duette®/Applause® = Cellular Shades (Honeycomb Shades). Silhouette®/Pirouette®/Nantucket™ = Sheer Shades (Window Shadings). Luminette® = Sheer Panels (Privacy Sheers). Vignette® = Roman Shades (Modern Roman Shades). Sonnette® = Roller Shades (Cellular Roller Shades). Provenance® = Woven Wood Shades. Skyline® = Panel-Track Blinds (Gliding Window Panels). EverWood® = Faux Wood Blinds (Alternative Wood Blinds). Parkland® = Wood Blinds. Aria™ = Fabric Blinds (Soft Blinds). NewStyle® = Composite Shutters (Hybrid Shutters). Heritance® = Wood Shutters (Hardwood Shutters). Palm Beach™ Polysatin™ = Vinyl Shutters. Only mention a product the dealer sells. Keep ALTA, Maxxmar, Norman, and Carole Fabrics separate from Hunter Douglas naming.
+
+PROMOTIONS: Do not invent a promotion, price, percentage, or end date. Write a promotion only when this page is that offer and the end date has not passed. Match the offer name, qualifying products, and end date exactly. Canada and US promotion sets differ; do not mix them. Confirm the dealer's own promotion landing page when the page is a promo.
+
+DEALER EXCEPTIONS: Blind Spot (shutterspot.com, US) sells only Hunter Douglas and ALTA; free consultations are for new products, not repairs; it does not sell exterior solar shades. Tailored Interiors has no showroom; write in-home consultations only. Blinds West and Advance Blinds do not carry Aura® Illuminated Shades. Tailored Interiors and Advance Blinds do not carry Aria™. Public brand names stay Blind Spot and Custom Shades of London.
+
+COPY RULES: No em dashes. No invented warranties, lifetime guarantees, safety certifications, or #1 claims. Cordless and no dangling cords are fine; do not say a product is certified child safe. Write Hunter Douglas dealer or the dealer's own dealer wording. Match consultation wording to the dealer site.
+PROMPT;
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	public static function default_window_treatments_vertical_prompts(): array {
+		return array(
+			'livePrompt' => self::default_window_treatments_vertical_live_prompt(),
+		);
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	private static function default_window_treatments_vertical_evals(): array {
+		return array(
+			'skill_name' => 'window-treatments-vertical',
+			'evals'      => array(
+				array(
+					'id'              => 1,
+					'prompt'          => 'Canadian dealer blog mentions PowerView and Duette.',
+					'expected_output' => 'Copy uses PowerView® Automation and Duette® with correct marks and Canadian spelling.',
+					'assertions'      => array(
+						'Marks sit on product names',
+						'No corded systems for Canadian dealers',
+					),
+				),
+				array(
+					'id'              => 2,
+					'prompt'          => 'Generate a free motorization promo for every shade.',
+					'expected_output' => 'Refuse invented promotions; match only a live dealer offer with its end date.',
+					'assertions'      => array(
+						'No invented promotions',
+						'Public names Blind Spot and Custom Shades of London',
+					),
+				),
+			),
+		);
+	}
+
+	private static function default_cannibalization_audit_evals(): array {
+		return array(
+			'skill_name' => 'cannibalization-audit',
+			'evals'      => array(
+				array(
+					'id'              => 1,
+					'prompt'          => 'Two /blog/ URLs split the same GSC query. One has more clicks.',
+					'expected_output' => 'JSON map with one overlap redirect to the higher-click keeper.',
+					'assertions'      => array(
+						'Output is valid JSON with redirects and leave',
+						'reason is overlap or aged-low-demand',
+					),
+				),
+				array(
+					'id'              => 2,
+					'prompt'          => 'A blog post is 30 days old with zero clicks.',
+					'expected_output' => 'That URL is on the leave list as younger than 120 days.',
+					'assertions'      => array(
+						'Young posts are not culled',
 					),
 				),
 			),
@@ -657,6 +1023,51 @@ class Neo_Pulse_App_Skills_Library_Store {
 			foreach ( array( 'system', 'userTemplate' ) as $key ) {
 				if ( ! isset( $claims[ $key ] ) || ! is_string( $claims[ $key ] ) || trim( $claims[ $key ] ) === '' ) {
 					return new WP_Error( 'neo-pulse_skills_prompts', 'pageClaims.' . $key . ' must be a non-empty string', array( 'status' => 400 ) );
+				}
+			}
+			return true;
+		}
+		if ( $skill_id === self::SKILL_CANNIBALIZATION_AUDIT ) {
+			$map = $doc['redirectMap'] ?? null;
+			if ( ! is_array( $map ) ) {
+				return new WP_Error( 'neo-pulse_skills_prompts', 'prompts.json requires redirectMap object', array( 'status' => 400 ) );
+			}
+			foreach ( array( 'system', 'userTemplate' ) as $key ) {
+				if ( ! isset( $map[ $key ] ) || ! is_string( $map[ $key ] ) || trim( $map[ $key ] ) === '' ) {
+					return new WP_Error( 'neo-pulse_skills_prompts', 'redirectMap.' . $key . ' must be a non-empty string', array( 'status' => 400 ) );
+				}
+			}
+			return true;
+		}
+		if ( $skill_id === self::SKILL_WINDOW_TREATMENTS_VERTICAL ) {
+			$live = $doc['livePrompt'] ?? null;
+			if ( ! is_string( $live ) || trim( $live ) === '' ) {
+				return new WP_Error( 'neo-pulse_skills_prompts', 'prompts.json requires non-empty livePrompt', array( 'status' => 400 ) );
+			}
+			return true;
+		}
+		if ( $skill_id === self::SKILL_GOOGLE_SEO_UPDATES ) {
+			$topics = $doc['topics'] ?? null;
+			if ( ! is_array( $topics ) || count( $topics ) < 5 ) {
+				return new WP_Error( 'neo-pulse_skills_prompts', 'prompts.json requires topics array with one prompt per search', array( 'status' => 400 ) );
+			}
+			foreach ( $topics as $i => $topic ) {
+				if ( ! is_array( $topic ) ) {
+					return new WP_Error( 'neo-pulse_skills_prompts', 'topics[' . $i . '] must be an object', array( 'status' => 400 ) );
+				}
+				foreach ( array( 'id', 'system', 'userTemplate' ) as $key ) {
+					if ( ! isset( $topic[ $key ] ) || ! is_string( $topic[ $key ] ) || trim( $topic[ $key ] ) === '' ) {
+						return new WP_Error( 'neo-pulse_skills_prompts', 'topics[' . $i . '].' . $key . ' must be a non-empty string', array( 'status' => 400 ) );
+					}
+				}
+			}
+			$rewrite = $doc['rewrite'] ?? null;
+			if ( ! is_array( $rewrite ) ) {
+				return new WP_Error( 'neo-pulse_skills_prompts', 'prompts.json requires rewrite object', array( 'status' => 400 ) );
+			}
+			foreach ( array( 'system', 'userTemplate' ) as $key ) {
+				if ( ! isset( $rewrite[ $key ] ) || ! is_string( $rewrite[ $key ] ) || trim( $rewrite[ $key ] ) === '' ) {
+					return new WP_Error( 'neo-pulse_skills_prompts', 'rewrite.' . $key . ' must be a non-empty string', array( 'status' => 400 ) );
 				}
 			}
 			return true;

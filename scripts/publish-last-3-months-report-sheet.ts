@@ -171,7 +171,24 @@ async function publishOne(site: WordPressSite, token: string): Promise<string> {
     highlights = placeholder;
   }
 
+  // Prefer hub grids; if empty, pull from local staging disk via API after sync.
   let gridScans = await fetchAllLocalGridScansForSite(site.id).catch(() => []);
+  if (gridScans.length === 0) {
+    setPostCreatorWorkerApiBase("http://127.0.0.1:8080");
+    gridScans = await fetchAllLocalGridScansForSite(site.id).catch(() => []);
+    setPostCreatorWorkerApiBase(HUB);
+  }
+  const completeGrids = gridScans.filter(
+    (g) =>
+      g.points.length >= 49 &&
+      g.points.filter((p) => p.items.length > 0).length >= 49,
+  );
+  if (completeGrids.length === 0) {
+    throw new Error(
+      `Local Grid missing or incomplete for full report (got ${gridScans.length} scan(s)). Sync grids to hub first.`,
+    );
+  }
+  gridScans = completeGrids;
   const { shareUrl } = await publishOrganicClientReportDeckAndBuildShareUrl({
     siteId: site.id,
     siteDisplayName: site.name,

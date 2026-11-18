@@ -67,7 +67,9 @@ describe("generateBulkSplashStatus", () => {
     expect(call?.system).toContain('"image"');
     expect(call?.system).toContain('"writing"');
     expect(call?.system).toContain('"factcheck"');
+    expect(call?.system).toContain('"factchecker"');
     expect(call?.system).toContain("Fact checking");
+    expect(call?.system).toContain("Fact checker");
   });
 
   it("accepts the factcheck visual kind", async () => {
@@ -84,6 +86,23 @@ describe("generateBulkSplashStatus", () => {
     ).resolves.toEqual({
       status: "Fact checking",
       visual: "factcheck",
+    });
+  });
+
+  it("accepts the factchecker visual kind", async () => {
+    mockCall.mockResolvedValue({
+      raw: null,
+      content: JSON.stringify({
+        status: "Fact checker",
+        visual: "factchecker",
+      }),
+    });
+
+    await expect(
+      generateBulkSplashStatus({ step: "Fact checker" }),
+    ).resolves.toEqual({
+      status: "Fact checker",
+      visual: "factchecker",
     });
   });
 

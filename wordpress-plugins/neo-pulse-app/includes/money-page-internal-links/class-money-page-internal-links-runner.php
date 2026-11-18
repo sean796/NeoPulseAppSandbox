@@ -332,6 +332,13 @@ class Neo_Pulse_App_Money_Page_Internal_Links_Runner {
 		$min     = Neo_Pulse_App_Money_Page_Internal_Links_Pipeline::MIN_APPLIED_LINKS;
 		$target  = Neo_Pulse_App_Money_Page_Internal_Links_Pipeline::TARGET_APPLIED_LINKS;
 		if ( count( $links ) > 0 ) {
+			if ( Neo_Pulse_App_Agent_Runs_Store::is_cancelled( $team_id, $run_id ) ) {
+				return array(
+					'ok'        => true,
+					'runId'     => $run_id,
+					'cancelled' => true,
+				);
+			}
 			self::step(
 				$team_id,
 				$run_id,

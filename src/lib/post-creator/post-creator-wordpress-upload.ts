@@ -14,6 +14,7 @@ import { NEO_PULSE_DEFAULT_FIELD_MAPPING } from "@/lib/content-generation/post-f
 import { buildAcfPayload } from "@/lib/content-generation/apply-meta-fields-payload";
 import { sanitizeContentForUpload } from "@/lib/content-generation/content-sanitizer";
 import { prepareHarnessContentForUpload } from "@/lib/content-generation/harness-upload-prep";
+import { runProductFactChecker } from "@/lib/content-generation/product-fact-checker";
 import type { KeywordData } from "@/lib/keyword-types";
 import { extractEndpointFromEntitySitemapUrl } from "@/lib/entity-endpoint-extractor";
 import { generateExcerpt } from "@/lib/markdown-to-html";
@@ -136,6 +137,9 @@ export async function uploadPostCreatorRowToWordPress(
     keyword: primaryKw,
     articleTitle: postTitle,
     model: getResearchModel(site.id),
+    site,
+    skipProductFactCheck: true,
+    onProgress,
   });
 
   htmlContent = sanitizeContentForUpload(htmlContent, site.siteUrl, wordPressPosts);
@@ -185,6 +189,15 @@ export async function uploadPostCreatorRowToWordPress(
       htmlContent = appended.html;
     }
   }
+
+  htmlContent = await runProductFactChecker({
+    html: htmlContent,
+    site,
+    keyword: primaryKw,
+    title: postTitle,
+    onProgress,
+  });
+  htmlContent = sanitizeContentForUpload(htmlContent, site.siteUrl, wordPressPosts);
 
   let slug: string | undefined;
   try {

@@ -61,6 +61,24 @@ describe("fact-checker scripts", () => {
     expect(result.ok).toBe(true);
   });
 
+  it("validateClaimsDoc rejects a non-string product", () => {
+    const result = validateClaimsDoc({
+      claims: [
+        {
+          pageId: 10,
+          quote: "SoftTouch runs from a wand at the headrail.",
+          product: 4,
+          category: "operating_system",
+          verdict: "unsupported",
+        },
+      ],
+    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.errors.some((e) => e.includes("product"))).toBe(true);
+    }
+  });
+
   it("validateClaimsDoc rejects supported claims without a source URL", () => {
     const result = validateClaimsDoc({
       claims: [
@@ -70,12 +88,74 @@ describe("fact-checker scripts", () => {
           category: "energy",
           verdict: "supported",
           sourceUrl: "",
+          evidence: "No source.",
         },
       ],
     });
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.errors.some((e) => e.includes("sourceUrl"))).toBe(true);
+    }
+  });
+
+  it("validateClaimsDoc accepts an externally supported claim", () => {
+    const result = validateClaimsDoc({
+      claims: [
+        {
+          pageId: 10,
+          quote: "Duette cellular shades insulate windows.",
+          category: "energy",
+          verdict: "supported",
+          sourceUrl: "https://www.hunterdouglas.ca/duette",
+          sourceType: "manufacturer",
+          evidence: "The manufacturer page states Duette provides insulation.",
+          severity: "",
+        },
+      ],
+      aiseo: { score: 7.5 },
+    });
+    expect(result.ok).toBe(true);
+  });
+
+  it("validateClaimsDoc rejects suggested wording without an external source URL", () => {
+    const result = validateClaimsDoc({
+      claims: [
+        {
+          pageId: 11,
+          quote: "In-home consults start at $99.",
+          category: "pricing",
+          verdict: "partially_supported",
+          sourceUrl: "",
+          qualification: "No public fee schedule found.",
+          evidence: "No external source states the fee.",
+          severity: "major",
+          suggestedWording: "Ask the showroom for the current consult fee.",
+        },
+      ],
+    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.errors.some((e) => e.includes("sourceUrl"))).toBe(true);
+    }
+  });
+
+  it("validateClaimsDoc rejects material claims without evidence", () => {
+    const result = validateClaimsDoc({
+      claims: [
+        {
+          pageId: 12,
+          quote: "Battery lasts 30 days.",
+          category: "product_spec",
+          verdict: "unsupported",
+          evidence: "",
+          severity: "major",
+          suggestedWording: "Check the current battery runtime on the product sheet.",
+        },
+      ],
+    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.errors.some((e) => e.includes("evidence"))).toBe(true);
     }
   });
 

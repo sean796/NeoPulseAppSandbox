@@ -31,7 +31,11 @@ import type { ResearchBatchSignals } from "@/lib/overview/overview-bulk-pipeline
 import { BulkSitemapInventoryRunDetail } from "@/components/keyword-research/bulk/BulkSitemapInventoryRunDetail";
 import { WordBlacklistRunDetail } from "@/components/keyword-research/bulk/WordBlacklistRunDetail";
 import { HumanizerRunDetail } from "@/components/keyword-research/bulk/HumanizerRunDetail";
+import { GoogleSeoRulesRunDetail } from "@/components/keyword-research/bulk/GoogleSeoRulesRunDetail";
+import { WindowTreatmentsRunDetail } from "@/components/keyword-research/bulk/WindowTreatmentsRunDetail";
 import { SitemapInventoryLinksList } from "@/components/keyword-research/bulk/SitemapInventoryLinksList";
+import { siteUsesWindowTreatmentsSkill } from "@/lib/window-treatments-vertical/site-uses-window-treatments-skill";
+import type { WordPressSite } from "@/components/integrations/types";
 import { Button, Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/ui";
 
 export type BulkGeneratorDetailsVariant = "csv" | "prompt" | "blog-import";
@@ -88,6 +92,8 @@ export type BulkGeneratorDetailsPanelProps = {
   urlStatuses?: BulkOptimizationState["urlStatuses"];
   /** Global row index of first visible row when details are paginated (default 0). */
   detailsPageStart?: number;
+  /** Site used to gate blinds vertical rules in the Details drawer. */
+  detailsSite?: WordPressSite | null;
 };
 
 function BlogImportWorkspaceInline({
@@ -416,6 +422,8 @@ export function BulkGeneratorDetailsPanel(props: BulkGeneratorDetailsPanelProps)
           <>
             <WordBlacklistRunDetail />
             <HumanizerRunDetail />
+            <GoogleSeoRulesRunDetail />
+            {siteUsesWindowTreatmentsSkill(props.detailsSite) ? <WindowTreatmentsRunDetail /> : null}
             <BulkSitemapInventoryRunDetail
               links={props.sitemapInventoryLinks ?? []}
               gscHostedLink={props.siteKwHostedLink ?? null}

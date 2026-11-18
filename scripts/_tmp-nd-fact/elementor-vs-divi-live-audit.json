@@ -1,0 +1,21 @@
+{
+  "pricingLinks": [
+    {
+      "t": "Elementor",
+      "href": "https://howtowp.com/divi-vs-elementor/",
+      "wc": 1
+    },
+    {
+      "t": "visual drag-and-drop",
+      "href": "https://kinsta.com/blog/divi-vs-elementor/",
+      "wc": 2
+    },
+    {
+      "t": "integrated solution",
+      "href": "https://kinsta.com/blog/divi-vs-elementor/",
+      "wc": 2
+    }
+  ],
+  "bad": [],
+  "hasSentenceSpan": false
+}

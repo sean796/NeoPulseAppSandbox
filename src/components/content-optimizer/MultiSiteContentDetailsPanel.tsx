@@ -9,6 +9,9 @@ import type { OptimizationFileManager } from "@/lib/optimization-file-manager";
 import { BulkSitemapInventoryRunDetail } from "@/components/keyword-research/bulk/BulkSitemapInventoryRunDetail";
 import { WordBlacklistRunDetail } from "@/components/keyword-research/bulk/WordBlacklistRunDetail";
 import { HumanizerRunDetail } from "@/components/keyword-research/bulk/HumanizerRunDetail";
+import { GoogleSeoRulesRunDetail } from "@/components/keyword-research/bulk/GoogleSeoRulesRunDetail";
+import { WindowTreatmentsRunDetail } from "@/components/keyword-research/bulk/WindowTreatmentsRunDetail";
+import { siteUsesWindowTreatmentsSkill } from "@/lib/window-treatments-vertical/site-uses-window-treatments-skill";
 import {
   buildMultiSiteBulkGeneratorDetailsProps,
   buildOverviewWarmInventoryDetailsProps,
@@ -65,6 +68,7 @@ export function MultiSiteContentDetailsPanel({
             sitemapInventoryLinks,
             siteKwHostedLink: gscHostedLink,
             sitemapInventoryLoading,
+            detailsSite: batchSite,
           },
           workspaceBusy,
         )
@@ -76,6 +80,7 @@ export function MultiSiteContentDetailsPanel({
         sitemapInventoryLinks,
         siteKwHostedLink: gscHostedLink,
         sitemapInventoryLoading,
+        detailsSite: batchSite,
       })
     : null;
 
@@ -87,6 +92,8 @@ export function MultiSiteContentDetailsPanel({
         <>
           <WordBlacklistRunDetail />
           <HumanizerRunDetail />
+          <GoogleSeoRulesRunDetail />
+          {siteUsesWindowTreatmentsSkill(batchSite) ? <WindowTreatmentsRunDetail /> : null}
           <BulkSitemapInventoryRunDetail
             links={sitemapInventoryLinks}
             gscHostedLink={gscHostedLink}

@@ -78,6 +78,7 @@ function recipeBucketKey(run: AgentRun): AgentRunRecipeBucketKey | null {
   if (recipe === "money_page_internal_links") return "editorial";
   if (recipe === "editorial_content_audit") return "editorial";
   if (recipe === "fact_checker") return "editorial";
+  if (recipe === "cannibalization_audit") return "editorial";
   if (recipe === "post_creator") return "editorial";
   if (recipe === "entity_page_creator" || recipe === "entity_generator" || recipe === "sap_generator") {
     return "editorial";

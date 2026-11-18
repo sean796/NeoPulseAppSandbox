@@ -1,0 +1,924 @@
+{
+  "ok": 149,
+  "fail": 4,
+  "results": [
+    {
+      "id": 991,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/5-ways-to-give-your-living-room-a-fun-refresh/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 985,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/add-biophilic-design-with-hunter-douglas-natural-shades/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2089,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/battery-wand-repair/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 693,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/best-skylight-shades-solutions/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2793,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/best-wallpaper-outlets/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1183,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/blinds-vs-shutters-which-is-the-best-investment-for-your-windows/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1106,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/cellular-shades-vs-roman-shades/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1505,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/commercial-window-treatments/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1407,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/composite-shutters-interior/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1527,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/composite-shutters-vs-wood/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1403,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/custom-interior-designers/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1302,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/custom-window-treatments/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1003,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/energy-efficient-blinds-and-shades/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2069,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/fabric-blinds-cleaning/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 981,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/faux-vs-real-wood-shutters/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1725,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/furniture-styles-guide/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1181,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/heritance-hardwood-vs-palm-beach-polysatin/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1443,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/home-office-interior-design/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1449,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/honeycomb-vs-pleated-shades/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 987,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/how-to-control-light-with-hunter-douglas-duolite/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2137,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/hunter-douglas-guide/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1717,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/interior-color-palettes-guide/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1375,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/interior-design-services/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1523,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/interior-design-trends-tips/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1401,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/interior-designer-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2109,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/lightlock-system-explained/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1182,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/luminette-vs-designer-banded-shades/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1001,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/modern-innovations-in-shades-and-blinds/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/powerview-automated-window-treatments/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2099,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/powerview-guide/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2646,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/residential-space-planning-space-planning/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 997,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/shades-shutters-blinds-oh-my/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2629,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/shutters-blinds-security/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1723,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/space-planning-maximize-home/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 979,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/vertical-blinds-design-ideas/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2645,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/vertical-blinds-rooms/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1378,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/wallpaper-stores-atlanta/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 989,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/why-should-i-choose-custom-window-coverings/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2080,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/window-blind-repair/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1113,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/wood-vs-faux-wood-blinds/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1445,
+      "pageUrl": "https://dminteriorsanddesign.com/blog/woven-wood-shades-guide/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1290,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/blinds-near-me-dixon-memorial-state-forest/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1540,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/blinds-near-me-east-marietta/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1367,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/blinds-near-me-marshall-forest/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1545,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/blinds-near-me-mountain-view/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1543,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/blinds-near-me-sandy-plains/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1156,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/blinds-shades-window-treatments-near-ben-hill-atlanta-georgia/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1222,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/blinds-shades-window-treatments-near-thomas-w-talbot-monument-atlanta-georgia/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1223,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/blinds-shades-window-treatments-near-world-athletes-monument-atlanta-georgia/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2544,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/blinds-vs-shutters-smyrna-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1697,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/cellular-roman-shades-canton-rd-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2543,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/cellular-shades-east-cobb-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2703,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/cellular-shades-heritage-milton-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2695,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/cellular-shades-morgan-falls-sandysprings-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1677,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/climate-control-window-coverings-south-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1629,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/commercial-interior-design-south-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2817,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/commercial-window-treatments-big-creek-greenway-roswell-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1699,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/composite-wood-shutters-canton-rd-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1661,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/composite-wood-shutters-east-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1653,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/custom-home-design-south-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1601,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/custom-interior-design-advice-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1581,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/custom-interior-design-services-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1599,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/custom-interior-design-solutions-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1673,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/custom-interior-designers-canton-rd-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2013,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/custom-interior-services-historic-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2711,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/custom-window-treatments-the-manor-milton-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2541,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/custom-window-treatments-vinings-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2031,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/design-texture-historic-old-town-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1703,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/design-trends-east-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1657,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/energy-efficient-shades-east-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2539,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/fabric-stores-smyrna-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2709,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/faux-wood-blinds-deerfield-milton-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1715,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/faux-wood-shutters-east-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1645,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/holiday-window-decor-east-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1617,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/home-interior-design-ideas-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1687,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/home-office-design-east-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1689,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/home-office-interior-design-canton-rd-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1685,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/home-refresh-south-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1679,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/honeycomb-pleated-shades-canton-rd-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1649,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/honeycomb-shades-east-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1464,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/hunter-douglas-dealer-eastlake/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1466,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/hunter-douglas-dealer-eastside-atlanta/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1468,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/hunter-douglas-dealer-edgewood-atlanta/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1470,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/hunter-douglas-dealer-fairlie-poplar/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1472,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/hunter-douglas-dealer-five-points-atlanta/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2545,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/hunter-douglas-kennesaw-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2697,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/hunter-douglas-powers-ferry-corridor-sandysprings-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2538,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-decorating-east-cobb-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1621,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-decorating-near-me-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1609,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-decorators-near-me-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1370,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-adair-park/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1372,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-adamsville-atlanta/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1411,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-andalusia/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1413,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-andersonville/",
+      "ok": false,
+      "error": "terminated"
+    },
+    {
+      "id": 1337,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-ansley-park/",
+      "ok": false,
+      "error": "fetch failed"
+    },
+    {
+      "id": 1376,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-ardmore-atlanta/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1380,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-ashview-heights/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1382,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-atkins-park/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1385,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-atlanta/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1421,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-augusta-arsenal/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1423,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-augusta-canal/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1389,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-benteen-park/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1391,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-berkeley-park/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1341,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-brookwood-atlanta/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1339,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-brookwood-hills/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1344,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-buckhead-forest/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1347,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-cabbagetown/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1354,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-capitol-view/",
+      "ok": false,
+      "error": "fetch failed"
+    },
+    {
+      "id": 1356,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-carey-park-atlanta/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1360,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-castleberry-hill/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1362,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-centennial-hill/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1364,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-centennial-park/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1450,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-center-hill-atlanta/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1454,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-collier-heights/",
+      "ok": false,
+      "error": "fetch failed"
+    },
+    {
+      "id": 1456,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-collier-hills/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1605,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-consultation-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1607,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-cost-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1462,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-east-atlanta/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2533,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-east-cobb-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2687,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-north-springs-sandysprings-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1659,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-services-east-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2001,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-tips-old-town-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1647,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-trends-canton-rd-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1641,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-designer-marietta-ga-east/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1707,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-services-canton-rd-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2707,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-shutters-windward-milton-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1619,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/local-interior-decorating-services-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1993,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/office-interior-design-historic-old-town-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1691,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/office-window-treatments-south-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2705,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/plantation-shutters-providence-milton-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1683,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/pleated-shades-south-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1675,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/productivity-home-office-south-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1665,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/real-wood-shutters-south-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1611,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/residential-interior-design-services-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2542,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/roman-shades-acworth-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2701,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/roman-shades-crabapple-milton-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2693,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/roman-shades-north-river-sandysprings-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1643,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/roman-shades-south-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1669,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/room-refresh-ideas-east-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1711,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/seasonal-decor-ideas-south-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1631,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/seasonal-window-decor-trends-canton-rd-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1655,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/shades-for-wellness-south-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2691,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/space-planning-sandy-springs-historic-district-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2699,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/upholstery-services-west-village-sandysprings-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1427,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/window-treatments-baker-county/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1431,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/window-treatments-banks-county/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1433,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/window-treatments-barrow-county/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1671,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/window-treatments-business-east-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1637,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/window-treatments-extreme-climates-canton-rd-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 2540,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/window-treatments-kennesaw-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1693,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/wood-shutters-south-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 1633,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/woven-wood-shades-canton-rd-marietta-ga/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 797,
+      "pageUrl": "https://dminteriorsanddesign.com/vertical-blinds/",
+      "ok": true,
+      "status": 200
+    }
+  ]
+}

@@ -80,9 +80,9 @@ describe("AUTHENTICITY rules extended for A-Level", () => {
     expect(AUTHENTICITY_CHECKLIST_RULE).not.toContain("h3 Scenario question");
   });
 
-  it("writer rule requires named persona illustrative and when-it-matters matrix", () => {
+  it("writer rule requires situation illustrative and when-it-matters matrix", () => {
     expect(AUTHENTICITY_WRITER_RULE).toContain("[ILLUSTRATIVE]");
-    expect(AUTHENTICITY_WRITER_RULE).toContain("short-H2 + intro + blockquote persona pattern");
+    expect(AUTHENTICITY_WRITER_RULE).toContain("short-H2 + intro + blockquote situation pattern");
     expect(AUTHENTICITY_WRITER_RULE).toContain("when-it-matters matrix");
     expect(AUTHENTICITY_WRITER_RULE).toContain("[RECOMMENDATION]");
     expect(AUTHENTICITY_WRITER_RULE).toContain("FIELD OBSERVATION");
@@ -106,9 +106,10 @@ describe("FACTUAL_VERIFICATION_SOURCE_RULE", () => {
 });
 
 describe("ILLUSTRATIVE_SCENARIO_PERSONA_RULE", () => {
-  it("requires copying OpenRouter-assigned persona only", () => {
+  it("requires copying OpenRouter-assigned situation with no invented first name", () => {
     expect(ILLUSTRATIVE_SCENARIO_PERSONA_RULE).toContain("Copy ILLUSTRATIVE EXAMPLE only");
-    expect(ILLUSTRATIVE_SCENARIO_PERSONA_RULE).toContain("forbidden to rename personaName");
+    expect(ILLUSTRATIVE_SCENARIO_PERSONA_RULE).toContain("forbidden to invent a first name");
+    expect(ILLUSTRATIVE_SCENARIO_PERSONA_RULE).toContain("situationOpener");
     expect(ILLUSTRATIVE_SCENARIO_PERSONA_RULE).not.toMatch(/Morgan|Quinn|Finley|Jordan|Alex|Riley/);
   });
   it("requires short H2, intro, blockquote, and titled recommendation h3", () => {
@@ -200,8 +201,8 @@ describe("harness section prompts", () => {
     );
     expect(overviewUser).not.toContain("FIRST PARAGRAPH RULE");
     expect(overviewUser).toContain("map remaining sections");
-    expect(overviewUser).toContain("OVERVIEW PERSONA NAME");
-    expect(prompt).toContain("OVERVIEW PERSONA NAME");
+    expect(overviewUser).toContain("OVERVIEW SITUATION TEASER");
+    expect(prompt).toContain("OVERVIEW SITUATION TEASER");
   });
 
   it("Answer prompt includes comparison verdict rule for vs keywords", () => {
@@ -292,7 +293,7 @@ describe("connected-site system prompt", () => {
     expect(prompt).toContain("When does [key spec/tier] actually matter?");
     expect(prompt).toContain("so what should I actually buy");
     expect(prompt).toContain("If-X-choose-Y");
-    expect(prompt).toContain("ILLUSTRATIVE PERSONA + SITE RECOMMENDATION");
+    expect(prompt).toContain("ILLUSTRATIVE SITUATION + SITE RECOMMENDATION");
     expect(prompt).toContain("ILLUSTRATIVE OUTPUT SHAPE");
   });
 });

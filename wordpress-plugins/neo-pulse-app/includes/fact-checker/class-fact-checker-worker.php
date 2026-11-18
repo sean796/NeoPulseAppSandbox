@@ -11,7 +11,8 @@ class Neo_Pulse_App_Fact_Checker_Worker {
 
 	const BATCH_SIZE = 1;
 	const DRIVE_EVERY = 1;
-	const WEB_MODEL = 'openai/gpt-4o:online';
+	/** GPT-6 Sol :online — same or lower token cost than gpt-4o:online, with web search. */
+	const WEB_MODEL = 'openai/gpt-6-sol:online';
 
 	/** @var array<int,array<string,mixed>> */
 	private static $api_notes = array();
@@ -130,8 +131,11 @@ class Neo_Pulse_App_Fact_Checker_Worker {
 	public static function check_page( array $page, array $macro ) {
 		$model  = self::WEB_MODEL;
 		$system = self::system_prompt();
-		$user   = self::user_prompt( $page, $macro );
-		$raw    = self::openrouter_json( $model, $system, $user );
+		if ( is_wp_error( $system ) ) {
+			return $system;
+		}
+		$user = self::user_prompt( $page, $macro );
+		$raw  = self::openrouter_json( $model, $system, $user );
 		if ( is_wp_error( $raw ) ) {
 			return $raw;
 		}
@@ -156,63 +160,88 @@ class Neo_Pulse_App_Fact_Checker_Worker {
 			'pricing',
 			'compatibility',
 			'durability',
+			'installation',
+			'lifespan',
+			'cleaning_maintenance',
+			'climate',
+			'business_services',
 			'none',
 		);
 		$verdicts = array(
 			'supported',
 			'partially_supported',
 			'unsupported',
-			'outdated',
 			'contradicted',
-			'no_product_claims',
+			'business_confirmation_required',
+			'no_product_claim',
 		);
-		$source_types = array( 'manufacturer', 'manual', 'government', 'industry', '' );
+		$source_types = array( 'manufacturer', 'manual', 'government', 'independent', 'industry', '' );
+		$severities   = array( 'critical', 'major', 'moderate', 'minor', '' );
 
 		foreach ( $claims_raw as $row ) {
 			if ( ! is_array( $row ) ) {
-				return new WP_Error( 'neo-pulse_fact_checker_json', 'Claim row is not an object' );
+				continue;
 			}
-			$quote    = trim( (string) ( $row['quote'] ?? '' ) );
-			$category = strtolower( trim( (string) ( $row['category'] ?? '' ) ) );
-			$verdict  = strtolower( trim( (string) ( $row['verdict'] ?? '' ) ) );
-			if ( $quote === '' || ! in_array( $category, $categories, true ) || ! in_array( $verdict, $verdicts, true ) ) {
-				return new WP_Error( 'neo-pulse_fact_checker_json', 'Claim failed schema validation' );
+			$normalized = self::normalize_claim( $row, $categories, $verdicts );
+			if ( $normalized === null ) {
+				continue;
 			}
-			$source_url  = trim( (string) ( $row['sourceUrl'] ?? '' ) );
-			$source_type = strtolower( trim( (string) ( $row['sourceType'] ?? '' ) ) );
+			$quote       = $normalized['quote'];
+			$category    = $normalized['category'];
+			$verdict     = $normalized['verdict'];
+			$source_url   = trim( (string) ( $row['sourceUrl'] ?? '' ) );
+			$source_title = trim( (string) ( $row['sourceTitle'] ?? '' ) );
+			$source_type  = strtolower( trim( (string) ( $row['sourceType'] ?? '' ) ) );
+			$source_type  = str_replace( array( ' ', '-' ), '_', $source_type );
 			if ( ! in_array( $source_type, $source_types, true ) ) {
 				$source_type = '';
 			}
-			if ( $verdict === 'supported' || $verdict === 'partially_supported' ) {
-				if ( ! preg_match( '#^https?://#i', $source_url ) ) {
-					return new WP_Error( 'neo-pulse_fact_checker_json', 'Supported claim missing http(s) sourceUrl' );
-				}
-				$source_host = (string) ( wp_parse_url( $source_url, PHP_URL_HOST ) ?: '' );
-				if ( $site_host !== '' && $source_host !== '' && strcasecmp( $site_host, $source_host ) === 0 ) {
-					return new WP_Error( 'neo-pulse_fact_checker_json', 'Source URL must not be the client site' );
-				}
-			} else {
-				$source_url = $source_url !== '' && preg_match( '#^https?://#i', $source_url ) ? $source_url : '';
+			$source_host   = (string) ( wp_parse_url( $source_url, PHP_URL_HOST ) ?: '' );
+			$client_source = self::same_site_host( $source_host, $site_host );
+			$dealer_source = self::is_competitor_blinds_host( $source_host );
+			$suggested = trim( (string) ( $row['suggestedWording'] ?? '' ) );
+			$evidence  = trim( (string) ( $row['evidence'] ?? '' ) );
+			if ( ! preg_match( '#^https?://#i', $source_url ) || $client_source || $dealer_source ) {
+				continue;
+			}
+			if ( ! in_array( $verdict, array( 'supported', 'partially_supported', 'contradicted' ), true ) ) {
+				continue;
 			}
 			$qualification = trim( (string) ( $row['qualification'] ?? '' ) );
 			if ( $verdict === 'partially_supported' && $qualification === '' ) {
-				return new WP_Error( 'neo-pulse_fact_checker_json', 'partially_supported needs qualification' );
+				$qualification = 'The source does not prove the full wording.';
 			}
-			$out[] = array(
+			if ( $evidence === '' ) {
+				$evidence = 'The linked source addresses this claim.';
+			}
+			$severity = strtolower( trim( (string) ( $row['severity'] ?? '' ) ) );
+			if ( ! in_array( $severity, $severities, true ) ) {
+				$severity = '';
+			}
+			if ( $verdict === 'supported' ) {
+				$severity = '';
+			} elseif ( $severity === '' ) {
+				$severity = $verdict === 'contradicted' ? 'major' : 'moderate';
+			}
+			$out[]     = array(
 				'pageId'           => $page_id,
 				'url'              => $page_url,
 				'title'            => (string) ( $page['title'] ?? '' ),
 				'status'           => (string) ( $page['status'] ?? '' ),
 				'type'             => (string) ( $page['type'] ?? '' ),
 				'quote'            => $quote,
+				'product'          => trim( (string) ( $row['product'] ?? '' ) ),
 				'claimLink'        => self::claim_link( $page_url, $quote ),
 				'category'         => $category,
 				'verdict'          => $verdict,
-				'sourceTitle'      => trim( (string) ( $row['sourceTitle'] ?? '' ) ),
+				'sourceTitle'      => $source_title,
 				'sourceUrl'        => $source_url,
 				'sourceType'       => $source_type,
 				'qualification'    => $qualification,
-				'suggestedWording' => trim( (string) ( $row['suggestedWording'] ?? '' ) ),
+				'suggestedWording' => $suggested,
+				'evidence'         => $evidence,
+				'severity'         => $severity,
+				'aiseoScore'       => 0.0,
 			);
 			if ( count( $out ) >= 8 ) {
 				break;
@@ -227,17 +256,91 @@ class Neo_Pulse_App_Fact_Checker_Worker {
 				'status'           => (string) ( $page['status'] ?? '' ),
 				'type'             => (string) ( $page['type'] ?? '' ),
 				'quote'            => 'none',
+				'product'          => '',
 				'claimLink'        => $page_url,
 				'category'         => 'none',
-				'verdict'          => 'no_product_claims',
+				'verdict'          => 'no_product_claim',
 				'sourceTitle'      => '',
 				'sourceUrl'        => '',
 				'sourceType'       => '',
 				'qualification'    => '',
 				'suggestedWording' => '',
+				'evidence'         => '',
+				'severity'         => '',
+				'aiseoScore'       => 0.0,
 			);
 		}
+
+		$aiseo_score = self::cap_aiseo_score( self::read_aiseo_score( $raw ), $out );
+		foreach ( $out as $i => $claim_row ) {
+			$out[ $i ]['aiseoScore'] = $aiseo_score;
+		}
 		return $out;
+	}
+
+	/**
+	 * @param array<string,mixed> $row
+	 * @param array<int,string>   $categories
+	 * @param array<int,string>   $verdicts
+	 * @return array{quote:string,category:string,verdict:string}|null
+	 */
+	private static function normalize_claim( array $row, array $categories, array $verdicts ): ?array {
+		$quote = trim( (string) ( $row['quote'] ?? $row['claim'] ?? '' ) );
+		if ( $quote === '' ) {
+			return null;
+		}
+		$category = strtolower( trim( (string) ( $row['category'] ?? '' ) ) );
+		$category = str_replace( array( ' ', '-' ), '_', $category );
+		$category_aliases = array(
+			'product_specification' => 'product_spec',
+			'specification'         => 'product_spec',
+			'spec'                  => 'product_spec',
+			'specs'                 => 'product_spec',
+			'operating_systems'     => 'operating_system',
+			'motorization'          => 'operating_system',
+			'maintenance'           => 'cleaning_maintenance',
+			'cleaning'              => 'cleaning_maintenance',
+			'install'               => 'installation',
+			'measurements'          => 'installation',
+			'life_span'             => 'lifespan',
+			'cost'                  => 'pricing',
+			'price'                 => 'pricing',
+			'material'              => 'materials',
+			'business'              => 'business_services',
+			'services'              => 'business_services',
+		);
+		if ( isset( $category_aliases[ $category ] ) ) {
+			$category = $category_aliases[ $category ];
+		}
+		if ( ! in_array( $category, $categories, true ) ) {
+			$category = 'product_spec';
+		}
+		$verdict = strtolower( trim( (string) ( $row['verdict'] ?? '' ) ) );
+		$verdict = str_replace( array( ' ', '-' ), '_', $verdict );
+		$verdict_aliases = array(
+			'partial'                       => 'partially_supported',
+			'partiallysupported'            => 'partially_supported',
+			'not_supported'                 => 'unsupported',
+			'unverified'                    => 'unsupported',
+			'false'                         => 'contradicted',
+			'true'                          => 'supported',
+			'outdated'                      => 'partially_supported',
+			'no_product_claims'             => 'no_product_claim',
+			'business_confirmation'         => 'business_confirmation_required',
+			'business_confirm'              => 'business_confirmation_required',
+			'company_confirmation_required' => 'business_confirmation_required',
+		);
+		if ( isset( $verdict_aliases[ $verdict ] ) ) {
+			$verdict = $verdict_aliases[ $verdict ];
+		}
+		if ( ! in_array( $verdict, $verdicts, true ) ) {
+			$verdict = 'unsupported';
+		}
+		return array(
+			'quote'    => $quote,
+			'category' => $category,
+			'verdict'  => $verdict,
+		);
 	}
 
 	public static function claim_link( string $page_url, string $quote ): string {
@@ -258,61 +361,281 @@ class Neo_Pulse_App_Fact_Checker_Worker {
 	}
 
 	/**
+	 * True when the source host is the site being checked, including www and subdomains.
+	 */
+	public static function same_site_host( string $source_host, string $site_host ): bool {
+		$source_host = self::bare_host( $source_host );
+		$site_host   = self::bare_host( $site_host );
+		if ( $source_host === '' || $site_host === '' ) {
+			return false;
+		}
+		if ( $source_host === $site_host ) {
+			return true;
+		}
+		$suffix = '.' . $site_host;
+		$len    = strlen( $suffix );
+		return strlen( $source_host ) > $len && substr( $source_host, -$len ) === $suffix;
+	}
+
+	/**
+	 * Competing blinds retailers are not competitive-agnostic sources.
+	 */
+	public static function is_competitor_blinds_host( string $host ): bool {
+		$host = self::bare_host( $host );
+		if ( $host === '' ) {
+			return false;
+		}
+		$denied = array(
+			'blindsplanet.ca',
+			'benblinds.com',
+			'blindsmagic.com',
+			'advanceblindsanddrapery.com',
+			'superiorblinds.com',
+			'shutterspot.com',
+			'blindswest.ca',
+			'intheshadeflorida.com',
+			'lindseyblindsetc.com',
+			'customshadesoflondon.ca',
+			'tailoredinteriors.ca',
+			'eliteshadings.com',
+			'dminteriorsanddesign.com',
+			'interiorsbylaura.com',
+		);
+		foreach ( $denied as $denied_host ) {
+			if ( $host === $denied_host || substr( $host, - ( strlen( $denied_host ) + 1 ) ) === ( '.' . $denied_host ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static function bare_host( string $host ): string {
+		$host = strtolower( trim( $host ) );
+		if ( strpos( $host, 'www.' ) === 0 ) {
+			$host = substr( $host, 4 );
+		}
+		return $host;
+	}
+
+	/**
+	 * @param array<string,mixed> $raw
+	 */
+	public static function read_aiseo_score( array $raw ): float {
+		$aiseo = isset( $raw['aiseo'] ) && is_array( $raw['aiseo'] ) ? $raw['aiseo'] : array();
+		$score = isset( $aiseo['score'] ) ? (float) $aiseo['score'] : 0.0;
+		if ( $score < 0 ) {
+			return 0.0;
+		}
+		if ( $score > 10 ) {
+			return 10.0;
+		}
+		return round( $score, 1 );
+	}
+
+	/**
+	 * Cap a page AISEO score when material claims are unresolved.
+	 *
+	 * @param array<int,array<string,mixed>> $claims
+	 */
+	public static function cap_aiseo_score( float $score, array $claims ): float {
+		$has_critical = false;
+		$has_major    = false;
+		foreach ( $claims as $row ) {
+			if ( ! is_array( $row ) ) {
+				continue;
+			}
+			$severity = strtolower( trim( (string) ( $row['severity'] ?? '' ) ) );
+			$verdict  = (string) ( $row['verdict'] ?? '' );
+			if ( $severity === 'critical' ) {
+				$has_critical = true;
+			}
+			if ( $severity === 'major' || $verdict === 'contradicted' ) {
+				$has_major = true;
+			}
+		}
+		if ( $has_critical && $score > 4.0 ) {
+			$score = 4.0;
+		} elseif ( $has_major && $score > 6.0 ) {
+			$score = 6.0;
+		}
+		return round( $score, 1 );
+	}
+
+	public static function aiseo_letter( float $score ): string {
+		if ( $score >= 9.0 ) {
+			return 'A';
+		}
+		if ( $score >= 8.0 ) {
+			return 'B';
+		}
+		if ( $score >= 7.0 ) {
+			return 'C';
+		}
+		if ( $score >= 6.0 ) {
+			return 'D';
+		}
+		return 'F';
+	}
+
+	/**
 	 * @param array<int,array<string,mixed>> $claims
 	 * @param array<string,mixed>            $inventory
 	 * @return array<string,mixed>
 	 */
 	public static function rollup( array $claims, array $inventory ): array {
 		$by_verdict = array(
-			'supported'            => 0,
-			'partially_supported'  => 0,
-			'unsupported'          => 0,
-			'outdated'             => 0,
-			'contradicted'         => 0,
-			'no_product_claims'    => 0,
+			'supported'                       => 0,
+			'partially_supported'             => 0,
+			'unsupported'                     => 0,
+			'contradicted'                    => 0,
+			'business_confirmation_required'  => 0,
+			'no_product_claim'                => 0,
 		);
-		$material = 0;
+		$material       = 0;
+		$unresolved     = 0;
+		$score_by_page  = array();
+		$main_problems  = array();
+		$required       = array();
+		$optional       = array();
 		foreach ( $claims as $row ) {
+			if ( ! is_array( $row ) ) {
+				continue;
+			}
 			$v = (string) ( $row['verdict'] ?? '' );
 			if ( isset( $by_verdict[ $v ] ) ) {
 				++$by_verdict[ $v ];
 			}
-			if ( $v !== 'no_product_claims' ) {
-				++$material;
+			if ( $v === 'no_product_claim' ) {
+				continue;
+			}
+			++$material;
+			$page_id = (int) ( $row['pageId'] ?? 0 );
+			if ( $page_id > 0 && ! isset( $score_by_page[ $page_id ] ) ) {
+				$score_by_page[ $page_id ] = (float) ( $row['aiseoScore'] ?? 0 );
+			}
+			$severity = strtolower( trim( (string) ( $row['severity'] ?? '' ) ) );
+			$quote    = trim( (string) ( $row['quote'] ?? '' ) );
+			$suggest  = trim( (string) ( $row['suggestedWording'] ?? '' ) );
+			$title    = trim( (string) ( $row['title'] ?? '' ) );
+			$label    = $title !== '' ? ( $title . ': ' . $quote ) : $quote;
+			if ( in_array( $v, array( 'unsupported', 'contradicted', 'business_confirmation_required', 'partially_supported' ), true ) ) {
+				++$unresolved;
+			}
+			if ( in_array( $severity, array( 'critical', 'major' ), true ) || $v === 'contradicted' ) {
+				$main_problems[] = $label;
+			}
+			if ( in_array( $severity, array( 'critical', 'major', 'moderate' ), true ) && $suggest !== '' ) {
+				$required[] = $suggest;
+			} elseif ( $severity === 'minor' && $suggest !== '' ) {
+				$optional[] = $suggest;
 			}
 		}
 		$pages = (int) ( $inventory['pageCount'] ?? 0 );
+		$avg   = 0.0;
+		if ( count( $score_by_page ) > 0 ) {
+			$avg = round( array_sum( $score_by_page ) / count( $score_by_page ), 1 );
+		}
+		$letter = self::aiseo_letter( $avg );
 		$counts = array(
 			'pagesAudited' => $pages,
 			'claimCount'   => $material,
 			'supported'    => $by_verdict['supported'],
 			'partial'      => $by_verdict['partially_supported'],
-			'unsupported'  => $by_verdict['unsupported'] + $by_verdict['outdated'] + $by_verdict['contradicted'],
+			'unsupported'  => $by_verdict['unsupported'] + $by_verdict['contradicted'] + $by_verdict['business_confirmation_required'],
+			'aiseoScore'   => $avg,
+			'aiseoLetter'  => $letter,
+			'unresolved'   => $unresolved,
 		);
 		$summary = $material === 0
 			? 'No product or service claims needed checking on the audited pages.'
-			: ( 'Checked ' . $material . ' product and service claims across ' . $pages . ' pages.' );
+			: ( 'Checked ' . $material . ' product and service claims across ' . $pages . ' pages. AISEO ' . $avg . '/10 (' . $letter . ').' );
+		$publication = $unresolved > 0
+			? 'Do not treat this set as fully fact-checked. Material claims remain unresolved.'
+			: 'No unresolved material claims in this run.';
+		$main_problems = array_values( array_unique( array_slice( $main_problems, 0, 8 ) ) );
+		$required      = array_values( array_unique( array_slice( $required, 0, 8 ) ) );
+		$optional      = array_values( array_unique( array_slice( $optional, 0, 8 ) ) );
+		$next          = array( $publication );
+		if ( count( $required ) > 0 ) {
+			$next[] = 'Apply the required corrections in the sheet.';
+		}
 		return array(
-			'counts'       => $counts,
-			'summary'      => $summary,
-			'mainProblems' => array(),
-			'patterns'     => array(),
-			'nextSteps'    => array( 'Review the fact-checker sheet and apply suggested wording where needed.' ),
+			'counts'               => $counts,
+			'summary'              => $summary,
+			'mainProblems'         => $main_problems,
+			'requiredCorrections'  => $required,
+			'optionalImprovements' => $optional,
+			'publication'          => $publication,
+			'patterns'             => array(),
+			'nextSteps'            => $next,
 		);
 	}
 
-	private static function system_prompt(): string {
-		return 'You are a product claim fact-checker for WordPress blog posts and service-area pages. '
-			. 'Return one complete JSON object and nothing else: '
-			. '{"claims":[{"quote":"...","category":"product_spec|operating_system|materials|energy|safety|warranty|pricing|compatibility|durability|none","verdict":"supported|partially_supported|unsupported|outdated|contradicted|no_product_claims","sourceTitle":"...","sourceUrl":"https://...","sourceType":"manufacturer|manual|government|industry|","qualification":"...","suggestedWording":"..."}]}. '
-			. 'Check product and service claims only. Do not check cities, phones, addresses, NAP, or serve/install geo claims. '
-			. 'Use MACRO_LOCATION city/state/country only to pick the right manufacturer market (Hunter Douglas Canada when country is Canada). '
-			. 'Prefer official manufacturer pages for that market, then manuals, then government or industry sources. '
-			. 'Never cite the client site as a source. Never invent URLs. '
-			. 'supported and partially_supported require an http(s) sourceUrl. partially_supported also requires qualification. '
-			. 'At most 8 claims. Prefer specs, operating systems, materials, energy, safety, warranty, and compatibility. '
-			. 'If the page has no product or service claims, return one claim with quote "none", category "none", verdict "no_product_claims". '
-			. 'No em dashes. For Blind Spot, the public name is Blind Spot.';
+	/**
+	 * Repo skills/fact-checker directory (wordpress-plugins/neo-pulse-app → repo root).
+	 */
+	private static function skill_dir(): string {
+		$plugin = rtrim( (string) NEO_PULSE_APP_PLUGIN_DIR, '/\\' );
+		$repo   = dirname( $plugin, 2 );
+		return $repo . DIRECTORY_SEPARATOR . 'skills' . DIRECTORY_SEPARATOR . 'fact-checker';
+	}
+
+	/**
+	 * @return string|WP_Error
+	 */
+	private static function read_skill_markdown( string $relative ) {
+		$base = self::skill_dir();
+		$path = $base . DIRECTORY_SEPARATOR . str_replace( array( '/', '\\' ), DIRECTORY_SEPARATOR, $relative );
+		if ( ! is_readable( $path ) ) {
+			return new WP_Error(
+				'neo-pulse_fact_checker_skill',
+				'Fact Checker skill file missing or unreadable: ' . $relative
+			);
+		}
+		$raw = file_get_contents( $path );
+		if ( ! is_string( $raw ) || trim( $raw ) === '' ) {
+			return new WP_Error(
+				'neo-pulse_fact_checker_skill',
+				'Fact Checker skill file is empty: ' . $relative
+			);
+		}
+		return self::strip_skill_frontmatter( $raw );
+	}
+
+	private static function strip_skill_frontmatter( string $md ): string {
+		$text = ltrim( $md, "\xEF\xBB\xBF" );
+		if ( strpos( $text, '---' ) !== 0 ) {
+			return trim( $text );
+		}
+		$end = strpos( $text, "\n---", 3 );
+		if ( $end === false ) {
+			return trim( $text );
+		}
+		return trim( substr( $text, $end + 4 ) );
+	}
+
+	/**
+	 * System prompt = live SKILL.md + fact-check-rules.md + sheet JSON contract.
+	 *
+	 * @return string|WP_Error
+	 */
+	private static function system_prompt() {
+		$skill = self::read_skill_markdown( 'SKILL.md' );
+		if ( is_wp_error( $skill ) ) {
+			return $skill;
+		}
+		$rules = self::read_skill_markdown( 'references/fact-check-rules.md' );
+		if ( is_wp_error( $rules ) ) {
+			return $rules;
+		}
+		$contract = 'PROPERTY SKILLS / AUTO MODE (sheet rows, do not edit the site):'
+			. "\nReturn one complete JSON object and nothing else: "
+			. '{"aiseo":{"score":0},"claims":[{"quote":"...","product":"...","category":"product_spec|operating_system|materials|energy|safety|warranty|pricing|compatibility|durability|installation|lifespan|cleaning_maintenance|climate|business_services|none","verdict":"supported|partially_supported|contradicted|no_product_claim","sourceTitle":"...","sourceUrl":"https://...","sourceType":"manufacturer|manual|government|independent|industry|","qualification":"...","suggestedWording":"...","evidence":"...","severity":"critical|major|moderate|minor|"}]}.'
+			. "\nFollow the Fact Checker skill and fact-check-rules above exactly. Never invent URLs. Omit claims with no competitive-neutral sourceUrl.";
+		$year = (int) gmdate( 'Y' );
+		$latest = 'LATEST_YEAR=' . $year . "\n"
+			. 'Put LATEST_YEAR at the end of every web search query. Prefer current-year primary sources.';
+		return $skill . "\n\n--- FACT CHECK RULES ---\n" . $rules . "\n--- END FACT CHECK RULES ---\n\n" . $contract . "\n\n" . $latest;
 	}
 
 	/**
@@ -324,7 +647,7 @@ class Neo_Pulse_App_Fact_Checker_Worker {
 		if ( strlen( $text ) > 24000 ) {
 			$text = substr( $text, 0, 24000 );
 		}
-		return "Act as a product claim fact-checker. Ground claims with web search. Prefer manufacturer docs for MACRO_LOCATION.country.\n\n"
+		return "Follow the Fact Checker skill and fact-check-rules in the system prompt. Ground claims with web search. End every web search query with LATEST_YEAR. Prefer manufacturer docs for MACRO_LOCATION.country.\n\n"
 			. "MACRO_LOCATION JSON:\n" . wp_json_encode( $macro ) . "\n\n"
 			. "PAGE JSON:\n" . wp_json_encode(
 				array(
@@ -337,7 +660,7 @@ class Neo_Pulse_App_Fact_Checker_Worker {
 				)
 			) . "\n\n"
 			. "PAGE TEXT:\n" . $text . "\n\n"
-			. 'Extract important product and service claims. Search for sources. Return JSON claims only.';
+			. 'Extract material factual claims. Match each to competitive-neutral evidence that supports the exact wording. Every claim and every suggested wording needs an external sourceUrl. Omit claims with no linkable source. Return JSON with claims and aiseo.score only.';
 	}
 
 	/**
@@ -356,9 +679,9 @@ class Neo_Pulse_App_Fact_Checker_Worker {
 			);
 		$max_tokens   = 200000;
 		$prompt_chars = strlen( $system ) + strlen( $user );
-		$payload      = array(
+		// gpt-6-sol does not accept temperature; omit it.
+		$payload = array(
 			'model'           => $model,
-			'temperature'     => 0.1,
 			'max_tokens'      => $max_tokens,
 			'response_format' => array( 'type' => 'json_object' ),
 			'messages'        => array(

@@ -1,0 +1,2145 @@
+{
+  "reports": [
+    {
+      "pageUrl": "https://blindmagic.com/blinds-belgravia-edmonton-ab/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blinds-mill-woods-edmonton-ab/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blinds-near-strathcona-science-provincial-park-sherwoodpark-ab/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blinds-oliver-edmonton-ab/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/5-reasons-to-upgrade/",
+      "id": 17475,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Upgrading window treatments and climate hardware cuts household energy waste by up to 12% annually while stabilizing ind",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Installing PowerView® Automation optimizes indoor climate control by scheduling window treatments to adjust automaticall",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "ENERGY STAR® data shows that addressing drafty window openings can lower household utility bills by an average of 12%.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/alt-shades-reviews/",
+      "id": 20045,
+      "replaced": 1,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/are-blackout-shades-worth-it/",
+      "id": 17445,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/aura-illuminated-shades/",
+      "id": 19760,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Aura Illuminated Shades combine a unique dual-layer design with subtle built-in lighting for both function and style.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Aura shades are powered by our most advanced home automation system, PowerView+™ Automation.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/bathroom-blinds/",
+      "id": 18785,
+      "replaced": 0,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/battery-wand-repair/",
+      "id": 18226,
+      "replaced": 0,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/battery-wands-power-motorized-shades/",
+      "id": 18235,
+      "replaced": 2,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/best-roller-blind-brands/",
+      "id": 18087,
+      "replaced": 2,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/blind-measuring-guide/",
+      "id": 17471,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/blind-parts/",
+      "id": 20525,
+      "replaced": 0,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/blinds-installation-cost-considerations-and-choosing-the-right-window-treatment/",
+      "id": 20834,
+      "replaced": 0,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/cadence-vs-skyline-vs-somner/",
+      "id": 17427,
+      "replaced": 2,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/child-safe-window-treatments/",
+      "id": 18075,
+      "replaced": 1,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/clean-fabric-blinds-cleaning/",
+      "id": 20543,
+      "replaced": 2,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/clean-fabric-blinds/",
+      "id": 20531,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/commercial-blinds-enhance-business-space/",
+      "id": 17698,
+      "replaced": 0,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 3,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/commercial-blinds/",
+      "id": 18093,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Spring-tempered aluminum louvers resist rust, humidity, and static dust collection.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/devon/",
+      "id": 17451,
+      "replaced": 2,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/duette-cellular-shades/",
+      "id": 19744,
+      "replaced": 3,
+      "missed": [],
+      "linked": 5,
+      "homepageSkipped": 0,
+      "sourceCount": 5
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/edmonton-art-gallery/",
+      "id": 5277,
+      "replaced": 0,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/energy-efficient-window-coverings/",
+      "id": 18073,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Duette® cellular shades are among the highest-performing options available, utilizing structured honeycomb air pockets t",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Cellular shades saved up to 20% on heating energy and up to 15% on total energy from heating and cooling compared to sce",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/honeycomb-shades-vs-solera-soft/",
+      "id": 18097,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Duette® Honeycomb Shades yield unmatched thermal resistance for broad expanses that shed heat fast.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/how-clean-blinds/",
+      "id": 18772,
+      "replaced": 2,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/how-to-clean-blinds/",
+      "id": 18099,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/hunter-douglas-blinds-quality-style/",
+      "id": 17701,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/hunter-douglas-guide/",
+      "id": 18222,
+      "replaced": 1,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/hunter-douglas-prices/",
+      "id": 17677,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/hunter-douglas-top-down-bottom-up-shades-canada/",
+      "id": 21030,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/hunter-douglas-vs-alta/",
+      "id": 18095,
+      "replaced": 0,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/light-filtering-vs-room-darkening/",
+      "id": 17641,
+      "replaced": 0,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/modern-window-treatments/",
+      "id": 17565,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/motorised-roller-blinds/",
+      "id": 20536,
+      "replaced": 1,
+      "missed": [],
+      "linked": 5,
+      "homepageSkipped": 0,
+      "sourceCount": 5
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/motorized-blinds-edmonton/",
+      "id": 22320,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Rechargeable battery wands eliminate the need to run electrical wiring through finished drywall while providing whisper-",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/motorized-blinds-vs-manual/",
+      "id": 18069,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/moving-away-from-grey/",
+      "id": 17457,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Installing Hunter Douglas® EverWood® Faux Wood Blinds brings realistic timber finishes and warm ivories to humid zones l",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Hunter Douglas® Duette® Honeycomb Shades...Engineered honeycomb cells trap indoor heat during deep winter chills while s",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/powerview-vs-tahoma/",
+      "id": 18231,
+      "replaced": 2,
+      "missed": [],
+      "linked": 5,
+      "homepageSkipped": 0,
+      "sourceCount": 5
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/privacy-light-top-down-bottom-up-blinds/",
+      "id": 17240,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Top-Down/Bottom-Up window shades and shadings offer you the ability to operate window treatments (including Roman shades",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/rechargeable-battery-wands/",
+      "id": 19754,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "The rechargeable battery wand is UL listed and features the widest operating temperature range of any rechargeable solut",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "The rechargeable battery wand can be charged in place while still mounted to the shade using the optional single charger",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "The lithium-ion wand delivers steady power, charges quickly and lasts up to a year depending on use.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/roman-shade/",
+      "id": 18782,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/roman-shades-classic-modern/",
+      "id": 17705,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/roman-shades/",
+      "id": 18089,
+      "replaced": 2,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/science-behind-energy-efficient-windows/",
+      "id": 17469,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Low-Emissivity (Low-E) Coatings apply microscopic metal oxide films to bounce long-wave infrared heat back indoors throu",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/silhouette-blinds-vs-sheer-shades/",
+      "id": 17691,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/smart-blinds-automation/",
+      "id": 20053,
+      "replaced": 1,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/smart-blinds-comparison/",
+      "id": 18085,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/softtouch-motorization-benefits/",
+      "id": 19750,
+      "replaced": 1,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/solar-charger-now-available/",
+      "id": 17437,
+      "replaced": 1,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/solarium-blinds/",
+      "id": 22629,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/specialty-blinds/",
+      "id": 18103,
+      "replaced": 0,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 1,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/spruce-grove/",
+      "id": 17453,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Roller and Solar Shades...shields south- and west-facing rooms against intense light while preserving clear views of the",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        },
+        {
+          "claim": "Faux Wood Horizontal Blinds...resists moisture absorption without splitting, bowing, or peeling in humid laundry rooms a",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        },
+        {
+          "claim": "Cellular Honeycomb Shades...captures air directly against window panes to limit radiant drafts and reduce heating utilit",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 5,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/stony-plain/",
+      "id": 17485,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas Duolite® dual-opacity shades feature a light-filtering front layer and an independent darkening liner on ",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/what-are-bottom-up-blinds/",
+      "id": 17663,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Top-Down/Bottom-Up window treatments provide two-way rail adjustment to easily banish street-level glare without darkeni",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/window-covering-operating-systems/",
+      "id": 19763,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Motorized operating systems like PowerView® Automation let you raise and lower your shades with the press of a button on",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/window-covering-trends-2026/",
+      "id": 18083,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Duette® Honeycomb Shades are the pioneer cellular window coverings, built with an inventive, energy-saving design that h",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/window-fashion-guide/",
+      "id": 17413,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/custom-blinds-alberta-legislature-building-edmon/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://blindmagic.com/custom-blinds-alberta-legislature-building-stalb/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://blindmagic.com/custom-blinds-near-strathcona-community-hospital-sherwoodpark-ab/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://blindmagic.com/french-door-blinds/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://blindmagic.com/keyano-college-student-residence/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://blindmagic.com/rental-apartment-blinds-install/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://blindmagic.com/safety-regulations-alberta-guide/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blind-repair-oakmont-stalbert-ab/",
+      "id": 18908,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-abbottsfield-edmonton/",
+      "id": 19248,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Vertical Blinds are well-suited for large windows and sliding doors.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-albany-edmonton/",
+      "id": 19250,
+      "replaced": 0,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-alces-edmonton/",
+      "id": 17538,
+      "replaced": 1,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-allard-edmonton/",
+      "id": 19256,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-ambleside-edmonton/",
+      "id": 19258,
+      "replaced": 0,
+      "missed": [],
+      "linked": 5,
+      "homepageSkipped": 0,
+      "sourceCount": 5
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-argyll-edmonton/",
+      "id": 19260,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-aspen-gardens-edmonton/",
+      "id": 17550,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Cellular blackout blinds are a recommended choice for a nursery.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-aster-edmonton/",
+      "id": 19262,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-callingwood-edmonton-ab/",
+      "id": 18852,
+      "replaced": 0,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 3,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-connaught-armoury/",
+      "id": 17384,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-crestwood-edmonton-ab/",
+      "id": 18864,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Motorized roller shades offer excellent light control and privacy, especially with a room-darkening fabric option.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-downtown-stalbert-ab/",
+      "id": 18882,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Cellular blackout blinds offer superior light blocking and excellent insulation, ensuring a dark and quiet environment f",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-edmonton-empirepark-alberta/",
+      "id": 19272,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-erin-ridge-stalbert-ab/",
+      "id": 18870,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Cellular shades provide excellent insulation, helping to keep homes warmer in winter and cooler in summer, which helps w",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-heights-sherwood-sherwoodpark-ab/",
+      "id": 20825,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Solar-screen blinds cut glare without blocking all outward views.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-high-level-bridge/",
+      "id": 17275,
+      "replaced": 0,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 3,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-hunter-douglas-blinds-mill/",
+      "id": 18257,
+      "replaced": 0,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-lacombe-park-stalbert-ab/",
+      "id": 18894,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Wood blinds offer a natural warmth and can complement many interior designs, especially in living areas or bedrooms.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Vinyl blinds provide excellent moisture resistance, making them ideal for kitchens or bathrooms.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-mission-stalbert-ab/",
+      "id": 18876,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-north-glenora-edmonton-ab/",
+      "id": 18830,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Vertical blinds are suitable for large windows and patio doors, offering precise light and privacy control.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-oakmont-stalbert-ab/",
+      "id": 18906,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-old-scona-academic/",
+      "id": 17274,
+      "replaced": 0,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-riel-stalbert-ab/",
+      "id": 18900,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas Cellular Shades...insulating properties, especially for changing seasons.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 1,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-shades-airdrie/",
+      "id": 17567,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-shades-beaumont/",
+      "id": 17569,
+      "replaced": 1,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-shades-brooks-ab/",
+      "id": 17571,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-shades-cold-lake/",
+      "id": 17575,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-shades-grande-prairie/",
+      "id": 17577,
+      "replaced": 1,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-shades-leduc/",
+      "id": 17581,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-shades-medicine-hat/",
+      "id": 17583,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Cellular shades offer excellent light control and insulation, effectively diffusing harsh sunlight to create a more comf",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-shades-red-deer/",
+      "id": 17585,
+      "replaced": 0,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-shades-shutters-mccauley-edmonton-ab/",
+      "id": 19274,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-shades-shutters-near-campus-saint-jean-uofa-edmonton-alberta/",
+      "id": 17229,
+      "replaced": 0,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-shades-shutters-strathconahighschoolarea-edmonton-ab/",
+      "id": 19280,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-ab/",
+      "id": 20035,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-callingwood-edmonton-ab/",
+      "id": 18856,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Cellular shades are known for energy efficiency and soft light diffusion.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-canora-edmonton-ab/",
+      "id": 18826,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-crestwood-edmonton-ab/",
+      "id": 18868,
+      "replaced": 2,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-downtown-stalbert-ab/",
+      "id": 18886,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Light-filtering roller shades reduce glare while preserving natural light, suitable for west-facing rooms.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Motorized blinds offer convenience and smart home integration, particularly for hard-to-reach windows.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-erin-ridge-stalbert-ab/",
+      "id": 18874,
+      "replaced": 0,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-mission-stalbert-ab/",
+      "id": 18880,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-namao-edmonton-ab/",
+      "id": 18850,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Motorized blinds are generally considered safer than traditional blinds because they eliminate the hazard of dangling co",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-north-glenora-edmonton-ab/",
+      "id": 18834,
+      "replaced": 2,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-oakmont-stalbert-ab/",
+      "id": 18910,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-riel-stalbert-ab/",
+      "id": 18904,
+      "replaced": 0,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 1,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-westwood-stalbert-ab/",
+      "id": 18892,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Cellular blinds offer excellent insulation, reducing heat loss in winter and heat gain in summer.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-south-east-edmonton/",
+      "id": 17370,
+      "replaced": 1,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-strathcona-hotel/",
+      "id": 17374,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-west-meadowlark-park-edmonton-ab/",
+      "id": 18838,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Cellular shades offer excellent insulation and a sleek, modern look.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-westwood-stalbert-ab/",
+      "id": 18888,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/camrose-blinds-shades-near-me/",
+      "id": 17573,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/competitor-highend-blinds-inc/",
+      "id": 21234,
+      "replaced": 3,
+      "missed": [
+        {
+          "claim": "Cellular shades help insulate windows against both winter cold and summer heat, improving energy efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 4,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/custom-blinds-alberta-legislature-building-edmonton-ab/",
+      "id": 22639,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/custom-blinds-shades-sherwood-park-ab/",
+      "id": 22635,
+      "replaced": 0,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/custom-blinds-strathcona-county-sherwoodpark-ab/",
+      "id": 20821,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas EverWood® Faux Wood Blinds offer the look of real wood with increased durability and low maintenance.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 3,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/downtown-edmonton-ab/",
+      "id": 17364,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/fort-saskatchewan/",
+      "id": 17365,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Insulated blinds are a popular choice for maintaining comfortable indoor temperatures year-round.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/glengarry-edmonton-ab/",
+      "id": 17348,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/glenora-edmonton-ab/",
+      "id": 17360,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-amisk-waciw-asokan/",
+      "id": 17754,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-bay-enterprise-square/",
+      "id": 17710,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas blinds offer energy savings by providing insulation and controlling solar heat gain.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-blatchford-gate-station/",
+      "id": 17714,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas Duette Honeycomb Shades with a blackout option are recommended. Their cellular construction offers excell",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-bonnie-doon-shopping-centre/",
+      "id": 17787,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas Duette Honeycomb Shades... cellular construction offers excellent insulation and light control.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-capilano-mall-edmonton/",
+      "id": 17789,
+      "replaced": 1,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-central-station-edmonton/",
+      "id": 17716,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-century-park-station-edmonton/",
+      "id": 17718,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-commerce-place-edmonton/",
+      "id": 17791,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas Pirouette® Window Shadings are recommended for a home office with large windows experiencing glare.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-corona-station-edmonton/",
+      "id": 17726,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas Duette Honeycomb Shades... provide excellent light diffusion and insulation, effectively reducing glare w",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-dudley-b-menzies-bridge/",
+      "id": 17778,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-edmonton-ab/",
+      "id": 18251,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas Duette Honeycomb Shades offer insulation by trapping air within their cellular design.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-edmonton-city-centre/",
+      "id": 17793,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Hunter Douglas blinds also deliver precise light control for managing glare and enhancing privacy.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Hunter Douglas blinds add aesthetic value and protect furnishings from UV rays.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-grant-moellmann-bridge/",
+      "id": 17767,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-groat-bridge/",
+      "id": 17769,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-health-sciences-jubilee/",
+      "id": 17732,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Hunter Douglas Duette Honeycomb Shades feature specialized designs that help insulate windows.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-hub-mall/",
+      "id": 17795,
+      "replaced": 2,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 6,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-james-macdonald-bridge/",
+      "id": 17776,
+      "replaced": 0,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 1,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-kingsway-mall/",
+      "id": 17797,
+      "replaced": 0,
+      "missed": [],
+      "linked": 5,
+      "homepageSkipped": 0,
+      "sourceCount": 5
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-kingsway-royal-alex/",
+      "id": 17734,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Duette® Honeycomb Shades offer superior insulation, potentially reducing heat loss by up to 40% in winter and heat gain ",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Hunter Douglas blinds provide effective light management, privacy, and contribute to lower energy bills.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-latta-bridge/",
+      "id": 17772,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas blinds are constructed with high-quality materials and come with a limited lifetime warranty.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Hunter Douglas Pirouette® Window Shadings are recommended for managing office glare.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-londonderry-mall/",
+      "id": 17799,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "PowerView® Automation allows you to control your blinds with a remote, an app, or even voice commands.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 4,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-low-level-bridge/",
+      "id": 17774,
+      "replaced": 2,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 4,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-macewan-station/",
+      "id": 17736,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Duette® Honeycomb Shades offer superior insulation, potentially lowering heating and cooling expenses by trapping air in",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-meadowlark-mall/",
+      "id": 17801,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-mill-woods-town-centre/",
+      "id": 17803,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-millbourne-market-mall/",
+      "id": 17805,
+      "replaced": 2,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-sherwood-park-ab/",
+      "id": 20033,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Duette Honeycomb Shades excel in energy efficiency, trapping air within their cellular construction to provide insulatio",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-south-campus-fort-edmonton/",
+      "id": 17744,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-stadium-station-edmonton/",
+      "id": 17748,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas Silhouette Sheers are recommended for reducing computer screen glare.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 1,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-tawatin-bridge/",
+      "id": 17781,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas blinds contribute to energy efficiency, assisting with temperature regulation inside homes throughout the",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "PowerView® Automation allows homeowners to control and schedule their window treatments using an app or voice commands.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Hunter Douglas blinds provide light control, privacy, and energy efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-terwillegar-park-footbridge/",
+      "id": 17783,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Hunter Douglas Duette Honeycomb Shades... Their cellular construction provides excellent insulation and light blockage.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-university-station-edmonton/",
+      "id": 17750,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas Duette Honeycomb Shades are recommended for a west-facing home office experiencing glare.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-walterdale-bridge/",
+      "id": 17785,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-canora-edmonton-ab/",
+      "id": 18828,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 2,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-dealer-alberta-legislature-building/",
+      "id": 17668,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas Duette Honeycomb Shades... provide superior insulation for energy efficiency and exceptional sound dampen",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-lacombe-park-stalbert-ab/",
+      "id": 18898,
+      "replaced": 5,
+      "missed": [],
+      "linked": 5,
+      "homepageSkipped": 0,
+      "sourceCount": 5
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-north-glenora-edmonton-ab/",
+      "id": 18836,
+      "replaced": 0,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 1,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-west-meadowlark-park-edmonton-ab/",
+      "id": 18842,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Duette Honeycomb Shades offer superior insulation, helping maintain indoor temperatures during cold winters and hot summ",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/jasper-place-edmonton-ab/",
+      "id": 17338,
+      "replaced": 0,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 2,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/laurier-heights-edmonton-ab/",
+      "id": 16747,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Lifetime Limited warranty from Hunter Douglas",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/quesnell-heights-edmonton-ab/",
+      "id": 16757,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Professional installation makes a big difference in how well window treatments perform and look.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 1,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/roller-shades-rapidfiretheatrearea-edmonton-ab/",
+      "id": 19278,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/west-jasper-place-edmonton-ab/",
+      "id": 17299,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Blackout cellular shades with a honeycomb structure provide superior insulation against Edmonton’s temperature extremes ",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/westmount-edmonton-ab/",
+      "id": 17357,
+      "replaced": 0,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-blinds-edmonton-ab/",
+      "id": 20039,
+      "replaced": 1,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-blinds-old-strathcona-edmonton-ab/",
+      "id": 18245,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Cellular blinds significantly reduce heat loss during Edmonton's cold winters, which can drop to -20°C.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-blinds-west-meadowlark-park-edmonton-ab/",
+      "id": 18844,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Energy-efficient blinds are designed with special features like insulating materials, air-trapping cellular structures, ",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-coverings-downtown-edmonton-ab/",
+      "id": 20804,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-coverings-near-beaumont-alberta/",
+      "id": 17355,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-coverings-near-blatchford-edmonton-ab/",
+      "id": 17361,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-treatments-edmonton-84street/",
+      "id": 19270,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-treatments-near-100-avenue-edmonton/",
+      "id": 17343,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-treatments-near-17-street-edmonton/",
+      "id": 16828,
+      "replaced": 1,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-treatments-near-17-street-nw/",
+      "id": 16837,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-treatments-near-23-avenue-edmonton/",
+      "id": 17350,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 2,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-treatments-near-50-street-edmonton/",
+      "id": 16854,
+      "replaced": 0,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-treatments-near-leduc-alberta/",
+      "id": 17349,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Cellular (Honeycomb) Shades are known for their insulation properties, these shades trap air to help regulate indoor tem",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-treatments-near-spruce-grove/",
+      "id": 16945,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-treatments-near-st-albert/",
+      "id": 17339,
+      "replaced": 1,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-treatments-near-stony-plain/",
+      "id": 17358,
+      "replaced": 0,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/skylight-blinds-and-shades/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://blindmagic.com/window-coverings-cloverdale-edmonton-ab/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://blindmagic.com/window-coverings-near-strathcona-community-hospital-sherwoodpark-ab/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://blindmagic.com/window-coverings-old-strathcona-edmonton-ab/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://blindmagic.com/window-coverings-strathcona-county-sherwoodpark-ab/",
+      "error": "not-found"
+    }
+  ]
+}

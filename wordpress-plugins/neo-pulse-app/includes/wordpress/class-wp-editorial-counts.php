@@ -30,7 +30,8 @@ class Neo_Pulse_App_Wp_Editorial_Counts {
 
 	/**
 	 * Monthly editorial counts via Neo MCP WP-CLI only.
-	 * Counts publish + future by post_date_gmt (never sitemap lastmod).
+	 * Counts publish + future by the WordPress post_date calendar month (the date in wp-admin).
+	 * A post scheduled or published on any day of that month is included. Sitemap lastmod is not used.
 	 * Pass `ranges: [{after,before},…]` to bucket every month from one remote list per status.
 	 *
 	 * @param array<string,mixed> $body Request body.
@@ -59,38 +60,37 @@ class Neo_Pulse_App_Wp_Editorial_Counts {
 		// Pin strip = Service Areas CPT on every Neo Digital site (never location).
 		$entity_pt         = self::SAP_REST_COLLECTION;
 
-		$post_pub_ts = $mcp->list_post_date_timestamps_wp_cli( 'post', 'publish' );
-		if ( empty( $post_pub_ts['ok'] ) ) {
-			return array( 200, self::quarter_error( (string) $post_pub_ts['error'], $entity_configured ) );
+		$post_pub = $mcp->list_post_dates_wp_cli( 'post', 'publish' );
+		if ( empty( $post_pub['ok'] ) ) {
+			return array( 200, self::quarter_error( (string) $post_pub['error'], $entity_configured ) );
 		}
-		$post_sched_ts = $mcp->list_post_date_timestamps_wp_cli( 'post', 'future' );
-		if ( empty( $post_sched_ts['ok'] ) ) {
-			return array( 200, self::quarter_error( (string) $post_sched_ts['error'], $entity_configured ) );
+		$post_sched = $mcp->list_post_dates_wp_cli( 'post', 'future' );
+		if ( empty( $post_sched['ok'] ) ) {
+			return array( 200, self::quarter_error( (string) $post_sched['error'], $entity_configured ) );
 		}
 
 		$entity_counts_available = true;
-		$ent_pub = $mcp->list_post_date_timestamps_wp_cli( $entity_pt, 'publish' );
+		$ent_pub = $mcp->list_post_dates_wp_cli( $entity_pt, 'publish' );
 		if ( empty( $ent_pub['ok'] ) ) {
-			$entity_pub_ts = array();
+			$entity_pub_dates = array();
 		} else {
-			$entity_pub_ts = $ent_pub['timestamps'];
+			$entity_pub_dates = $ent_pub['dates'];
 		}
-		$ent_sched       = $mcp->list_post_date_timestamps_wp_cli( $entity_pt, 'future' );
-		$entity_sched_ts = empty( $ent_sched['ok'] ) ? array() : $ent_sched['timestamps'];
+		$ent_sched         = $mcp->list_post_dates_wp_cli( $entity_pt, 'future' );
+		$entity_sched_dates = empty( $ent_sched['ok'] ) ? array() : $ent_sched['dates'];
 
 		$months = array();
 		foreach ( $ranges as $range ) {
 			$after     = $range['after'];
 			$before    = $range['before'];
-			$after_ts  = strtotime( trim( $after ) );
-			$before_ts = strtotime( trim( $before ) );
-			if ( ! $after_ts || ! $before_ts || $before_ts <= $after_ts ) {
+			$month_key = self::month_key_from_after( $after );
+			if ( $month_key === '' || trim( (string) $before ) === '' ) {
 				return array( 200, self::quarter_error( 'Invalid after/before for month count', $entity_configured ) );
 			}
-			$posts_pub   = self::count_timestamps_in_range( $post_pub_ts['timestamps'], $after_ts, $before_ts );
-			$posts_sched = self::count_timestamps_in_range( $post_sched_ts['timestamps'], $after_ts, $before_ts );
-			$ent_pub_n   = self::count_timestamps_in_range( $entity_pub_ts, $after_ts, $before_ts );
-			$ent_sched_n = self::count_timestamps_in_range( $entity_sched_ts, $after_ts, $before_ts );
+			$posts_pub   = self::count_dates_in_month( $post_pub['dates'], $month_key );
+			$posts_sched = self::count_dates_in_month( $post_sched['dates'], $month_key );
+			$ent_pub_n   = self::count_dates_in_month( $entity_pub_dates, $month_key );
+			$ent_sched_n = self::count_dates_in_month( $entity_sched_dates, $month_key );
 			$months[]    = array(
 				'after'                 => $after,
 				'before'                => $before,
@@ -152,16 +152,35 @@ class Neo_Pulse_App_Wp_Editorial_Counts {
 	}
 
 	/**
-	 * @param array<int,int> $timestamps Unix timestamps.
-	 * @param int            $after_ts Inclusive.
-	 * @param int            $before_ts Exclusive.
+	 * Calendar month (`YYYY-MM`) of a range start. The clock time is ignored so a
+	 * post dated on any day of that month is not dropped.
+	 *
+	 * @param string $after Range start, ISO or `YYYY-MM-DD`.
+	 * @return string
+	 */
+	public static function month_key_from_after( $after ) {
+		$after = trim( (string) $after );
+		if ( preg_match( '/^(\d{4}-\d{2})-\d{2}/', $after, $m ) ) {
+			return $m[1];
+		}
+		return '';
+	}
+
+	/**
+	 * How many WordPress dates fall in `$month_key` (`YYYY-MM`).
+	 *
+	 * @param array<int,string> $dates `YYYY-MM-DD` from post_date.
+	 * @param string            $month_key Month.
 	 * @return int
 	 */
-	private static function count_timestamps_in_range( $timestamps, $after_ts, $before_ts ) {
-		$count = 0;
-		foreach ( $timestamps as $ts ) {
-			$ts = (int) $ts;
-			if ( $ts >= $after_ts && $ts < $before_ts ) {
+	public static function count_dates_in_month( $dates, $month_key ) {
+		if ( ! preg_match( '/^\d{4}-\d{2}$/', (string) $month_key ) ) {
+			return 0;
+		}
+		$prefix = $month_key . '-';
+		$count  = 0;
+		foreach ( $dates as $date ) {
+			if ( is_string( $date ) && str_starts_with( $date, $prefix ) ) {
 				++$count;
 			}
 		}

@@ -13,6 +13,7 @@ export async function callOpenRouterChatCompletion(args: {
   /** When set, requests JSON-only output on models that support OpenAI-style response_format. */
   responseFormat?: OpenRouterAppResponseFormat;
   reasoning?: OpenRouterAppReasoning;
+  siteId?: string | null;
 }): Promise<{
   raw: unknown;
   content: string;
@@ -30,5 +31,6 @@ export async function callOpenRouterChatCompletion(args: {
     temperature: args.temperature ?? REPORT_TEMPERATURE,
     responseFormat: args.responseFormat,
     reasoning: args.reasoning ?? { effort: "low" },
+    siteId: args.siteId,
   });
 }

@@ -168,21 +168,21 @@ export function createBlogHarnessSectionRuntime(args: {
             : undefined,
         ),
       ].join("\n\n");
-      cachedOverviewPersonaTeaser = formatOverviewPersonaTeaserBlock(persona.personaName ?? "");
+      cachedOverviewPersonaTeaser = formatOverviewPersonaTeaserBlock(persona.situationOpener ?? "");
     } else {
       cachedIllustrativePersonaBlock = [
         formatPageLocalContextPromptBlock(pageCtx),
         [
-          "--- ILLUSTRATIVE EXAMPLE (planner fallback — persona extract unavailable) ---",
+          "--- ILLUSTRATIVE EXAMPLE (planner fallback — situation extract unavailable) ---",
           `target H2: ${illustrativeTitle} (exact — use this checklist title verbatim in <h2>)`,
           `Connected business: ${companyName}`,
-          "Write the [ILLUSTRATIVE] section from the Answer section and blueprint. One named local homeowner scenario, blockquote story, then site-first recommendation from the connected business. Do not stop the article; complete the full section.",
-          "Output shape (HTML tags required): <h2>{target H2}</h2> then <p>{general intro, no persona name}</p> then <blockquote><p>{personaName} {scenario story}</p></blockquote> then <h3>Recommendation: {short pick title}</h3> then <p>{site-first recommendation opening with the connected business name}</p>. The h3 reads exactly \"Recommendation: {short pick title}\" (colon required, never the title alone, never a period after Recommendation).",
+          "Write the [ILLUSTRATIVE] section from the Answer section and blueprint. One local situation with no invented first name, blockquote story, then site-first recommendation from the connected business. Vary the opener (In this scenario / Consider a common situation / For example / In most cases). Do not stop the article; complete the full section.",
+          "Output shape (HTML tags required): <h2>{target H2}</h2> then <p>{general intro, no first name}</p> then <blockquote><p>{situationOpener} {scenario story with a homeowner / their — never a first name}</p></blockquote> then <h3>Recommendation: {short pick title}</h3> then <p>{site-first recommendation opening with the connected business name}</p>. The h3 reads exactly \"Recommendation: {short pick title}\" (colon required, never the title alone, never a period after Recommendation).",
           "--- END ILLUSTRATIVE EXAMPLE ---",
         ].join("\n"),
       ].join("\n\n");
-      cachedOverviewPersonaTeaser = "";
-      logger.warn("[Harness] Using illustrative planner fallback (no DFS/OpenRouter persona JSON)");
+      cachedOverviewPersonaTeaser = formatOverviewPersonaTeaserBlock("");
+      logger.warn("[Harness] Using illustrative planner fallback (no DFS/OpenRouter situation JSON)");
     }
   };
 
@@ -319,6 +319,7 @@ export function createBlogHarnessSectionRuntime(args: {
       maxTokens: opts.maxTokens,
       topP: options.topP || 0.9,
       httpReferer,
+      siteId: promptEnv?.siteId,
     });
     const sectionContent = (result.content || '').trim();
     const finishReason = result.finishReason;

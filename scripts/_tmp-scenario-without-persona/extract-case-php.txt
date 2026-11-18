@@ -1,0 +1,53 @@
+$names = ['Nadia','Anya','Maya','Olivia','Quinn','Elena','Eleanor','Clara','Liam','Chloe','Evelyn','Morgan','Casey','Finley','Jordan','Riley','Jamie','Avery','Harper','Noah','Emma','Sophia','Lucas','Mia','Ethan','Isabella','Amelia','Benjamin','Charlotte','Henry','Grace','Owen','Nora','Leo','Zoe','Nathan','Sarah','Daniel','Rachel','Jennifer','Emily','Brenda'];
+$ids = array_map('intval', $ids ?? []);
+if (!$ids) {
+  $q = new WP_Query(['post_type'=>['post','page','service-area','location'],'post_status'=>'publish','posts_per_page'=>-1,'fields'=>'ids']);
+  $ids = $q->posts;
+}
+$out = [];
+foreach ($ids as $id) {
+  $p = get_post($id);
+  if (!$p) continue;
+  $html = $p->post_content;
+  if (stripos($html, '<blockquote') === false) continue;
+  if (!preg_match_all('/<blockquote[\s>][\s\S]*?<\/blockquote>/i', $html, $bqs, PREG_OFFSET_CAPTURE)) continue;
+  foreach ($bqs[0] as $bq) {
+    $bqHtml = $bq[0];
+    $bqStart = $bq[1];
+    $found = [];
+    foreach ($names as $n) {
+      if (preg_match('/\b'.preg_quote($n,'/').'\b/', $bqHtml)) $found[] = $n;
+    }
+    if (!$found) continue;
+    $before = substr($html, 0, $bqStart);
+    if (!preg_match_all('/<h2\b[^>]*>[\s\S]*?<\/h2>/i', $before, $h2s, PREG_OFFSET_CAPTURE)) continue;
+    $last = $h2s[0][count($h2s[0]) - 1];
+    $start = $last[1];
+    $between = substr($html, $start + strlen($last[0]), $bqStart - ($start + strlen($last[0])));
+    if (preg_match('/<h2\b/i', $between)) continue;
+    $end = $bqStart + strlen($bqHtml);
+    $after = substr($html, $end);
+    $nextH2 = preg_match('/<h2\b/i', $after, $m, PREG_OFFSET_CAPTURE) ? $m[0][1] : strlen($after);
+    $recWindow = substr($after, 0, $nextH2);
+    if (preg_match('/^(\s|<!--[\s\S]*?-->)*<h3[^>]*>[\s\S]*?Recommendation:[\s\S]*?<\/h3>/i', $recWindow, $recH3)) {
+      $end += strlen($recH3[0]);
+      $afterRec = substr($html, $end);
+      $cut = preg_match('/<h2\b/i', $afterRec, $mm, PREG_OFFSET_CAPTURE) ? $mm[0][1] : strlen($afterRec);
+      $beforeNext = substr($afterRec, 0, $cut);
+      if (preg_match('/^(\s|<!--[\s\S]*?-->)*<p[\s>][\s\S]*?<\/p>/i', $beforeNext, $recP)) {
+        $end += strlen($recP[0]);
+      }
+    }
+    $block = substr($html, $start, $end - $start);
+    if (preg_match_all('/<h2\b/i', $block) !== 1) continue;
+    $out[] = [
+      'id' => (int)$id,
+      'title' => get_the_title($id),
+      'names' => $found,
+      'find_b64' => base64_encode($block),
+      'bytes' => strlen($block),
+    ];
+    break;
+  }
+}
+return $out;

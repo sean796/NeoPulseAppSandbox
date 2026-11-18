@@ -180,7 +180,7 @@ function buildIllustrativeHarnessAgent(h2Title: string): AgentConfig {
       title: h2Title,
       description: "Local scenario",
       features: [
-        "[STRUCTURE]: 1 general intro paragraph (no persona name), then named persona in blockquote.",
+        "[STRUCTURE]: 1 general intro paragraph (no first name), then situationOpener + homeowner wording in blockquote.",
         "[ILLUSTRATIVE]: labeled hypothetical worked example.",
         "[BLOCKQUOTE]: scenario in the quote, not in the heading.",
       ],
@@ -328,7 +328,7 @@ async function generateIllustrativeSectionHtml(args: GenerateScenarioSectionArgs
 ${ILLUSTRATIVE_SCENARIO_PERSONA_RULE}
 ${ILLUSTRATIVE_BLOCKQUOTE_RULE}
 ${ILLUSTRATIVE_PERSONA_OUTPUT_SHAPE}
-Mandatory HTML: <h2>${h2Title}</h2> (exact title — must start with "Scenario: ") then <p> situationHook only — 1-2 sentences introducing the general decision context for readers (no persona name, no question, no repeat of blockquote), then <blockquote><p>personaName + scenarioNarrative (+ scenarioQuestion as a sentence inside the quote when assigned)</p></blockquote>, then <h3>Recommendation: recommendationTitle</h3>, then <p> recommendationParagraph. Forbidden: persona name in intro p; intro repeating blockquote; scenario story outside <blockquote>. Forbidden: skipping <blockquote> tags. Forbidden: "Scenario:" in H3 or body paragraphs.`;
+Mandatory HTML: <h2>${h2Title}</h2> (exact title — must start with "Scenario: ") then <p> situationHook only — 1-2 sentences introducing the general decision context for readers (no invented first name, no question, no repeat of blockquote), then <blockquote><p>situationOpener + scenarioNarrative with a homeowner / their (+ scenarioQuestion as a sentence inside the quote when assigned)</p></blockquote>, then <h3>Recommendation: recommendationTitle</h3>, then <p> recommendationParagraph. Forbidden: inventing a first name; intro repeating blockquote; scenario story outside <blockquote>. Forbidden: skipping <blockquote> tags. Forbidden: "Scenario:" in H3 or body paragraphs.`;
 
   if (entity) {
     const canonical = normalizeEntityHintCommaLabel(entity);
@@ -371,6 +371,7 @@ Mandatory HTML: <h2>${h2Title}</h2> (exact title — must start with "Scenario: 
     maxTokens: 1400,
     topP: 0.9,
     httpReferer: resolveHarnessHttpReferer(),
+    siteId: args.site.id,
   });
 
   return scenarioSectionHtmlFromModel(result.content || "");

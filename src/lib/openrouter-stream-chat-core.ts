@@ -29,6 +29,7 @@ export interface StreamOpenRouterCoreParams {
   /** Unused; kept so existing callers compile. Server sets OpenRouter referer. */
   httpReferer: string;
   signal?: AbortSignal;
+  siteId?: string | null;
   onContentChunk: (chunk: string) => void;
   onFinishReason?: (reason: string) => void;
 }
@@ -69,6 +70,7 @@ export async function streamOpenRouterChatCompletionCore({
   maxTokens,
   topP,
   signal,
+  siteId,
   onContentChunk,
   onFinishReason,
 }: StreamOpenRouterCoreParams): Promise<{ content: string; isGenerating: boolean; finishReason?: string }> {
@@ -84,6 +86,7 @@ export async function streamOpenRouterChatCompletionCore({
       maxTokens: safeMaxTokens,
       topP,
       reasoning: { effort: "low" },
+      siteId,
       signal,
     });
     const content = (res.content ?? "").trim();
@@ -116,6 +119,7 @@ export async function streamOpenRouterChatCompletionCore({
         topP,
         reasoning: { effort: "low" },
         stream: true,
+        ...(typeof siteId === "string" && siteId.trim() ? { siteId: siteId.trim() } : {}),
       }),
       signal,
     });

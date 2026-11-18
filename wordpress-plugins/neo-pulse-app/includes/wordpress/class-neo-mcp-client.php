@@ -136,17 +136,17 @@ class Neo_Pulse_App_Neo_Mcp_Client {
 	}
 
 	/**
-	 * List post_date_gmt unix timestamps via WP-CLI (one remote call).
+	 * List WordPress post_date calendar days (the date shown in wp-admin) via WP-CLI.
 	 *
 	 * @param string $post_type Post type slug.
 	 * @param string $status Post status.
-	 * @return array{ok:bool,timestamps?:array<int,int>,error?:string}
+	 * @return array{ok:bool,dates?:array<int,string>,error?:string}
 	 */
-	public function list_post_date_timestamps_wp_cli( $post_type, $status ) {
+	public function list_post_dates_wp_cli( $post_type, $status ) {
 		$pt  = preg_replace( '/[^a-z0-9_-]/i', '', (string) $post_type );
 		$st  = preg_replace( '/[^a-z0-9_-]/i', '', (string) $status );
 		$cmd = sprintf(
-			'post list --post_type=%s --post_status=%s --posts_per_page=-1 --fields=ID,post_date_gmt --format=json',
+			'post list --post_type=%s --post_status=%s --posts_per_page=-1 --fields=ID,post_date --format=json',
 			$pt ? $pt : 'post',
 			$st ? $st : 'future'
 		);
@@ -170,7 +170,7 @@ class Neo_Pulse_App_Neo_Mcp_Client {
 		}
 
 		if ( $stdout === '' || $stdout === '[]' ) {
-			return array( 'ok' => true, 'timestamps' => array() );
+			return array( 'ok' => true, 'dates' => array() );
 		}
 
 		$rows = json_decode( $stdout, true );
@@ -178,24 +178,17 @@ class Neo_Pulse_App_Neo_Mcp_Client {
 			return array( 'ok' => false, 'error' => 'Could not parse WP-CLI post list' );
 		}
 
-		$timestamps = array();
+		$dates = array();
 		foreach ( $rows as $row ) {
 			if ( ! is_array( $row ) ) {
 				continue;
 			}
-			$raw = isset( $row['post_date_gmt'] ) ? (string) $row['post_date_gmt'] : '';
-			if ( $raw === '' ) {
-				continue;
-			}
-			$ts = strtotime( $raw . ( strpos( $raw, 'Z' ) !== false || strpos( $raw, '+' ) !== false ? '' : ' UTC' ) );
-			if ( ! $ts ) {
-				$ts = strtotime( $raw );
-			}
-			if ( $ts ) {
-				$timestamps[] = (int) $ts;
+			$raw = isset( $row['post_date'] ) ? (string) $row['post_date'] : '';
+			if ( preg_match( '/^(\d{4}-\d{2}-\d{2})/', $raw, $m ) ) {
+				$dates[] = $m[1];
 			}
 		}
-		return array( 'ok' => true, 'timestamps' => $timestamps );
+		return array( 'ok' => true, 'dates' => $dates );
 	}
 
 	/**
@@ -208,22 +201,19 @@ class Neo_Pulse_App_Neo_Mcp_Client {
 	 * @return array{ok:bool,count?:int,error?:string}
 	 */
 	public function count_posts_wp_cli( $post_type, $status, $after_iso, $before_iso ) {
-		$list = $this->list_post_date_timestamps_wp_cli( $post_type, $status );
+		unset( $before_iso );
+		$list = $this->list_post_dates_wp_cli( $post_type, $status );
 		if ( empty( $list['ok'] ) ) {
 			return $list;
 		}
-		$after_ts  = strtotime( trim( (string) $after_iso ) );
-		$before_ts = strtotime( trim( (string) $before_iso ) );
-		if ( ! $after_ts || ! $before_ts ) {
+		$month = Neo_Pulse_App_Wp_Editorial_Counts::month_key_from_after( $after_iso );
+		if ( $month === '' ) {
 			return array( 'ok' => false, 'error' => 'Invalid after/before for scheduled count' );
 		}
-		$count = 0;
-		foreach ( $list['timestamps'] as $ts ) {
-			if ( $ts >= $after_ts && $ts < $before_ts ) {
-				++$count;
-			}
-		}
-		return array( 'ok' => true, 'count' => $count );
+		return array(
+			'ok'    => true,
+			'count' => Neo_Pulse_App_Wp_Editorial_Counts::count_dates_in_month( $list['dates'], $month ),
+		);
 	}
 
 	/**

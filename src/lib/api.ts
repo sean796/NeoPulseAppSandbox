@@ -260,6 +260,8 @@ export interface StreamChatRequest {
   signal?: AbortSignal;
   /** When true, prepends read-only WORD BLACKLIST RAG to the first user message. */
   contentHarness?: boolean;
+  /** Integrations site id for server-side blinds vertical inject. */
+  siteId?: string | null;
 }
 
 export const streamChatCompletion = async ({
@@ -273,6 +275,7 @@ export const streamChatCompletion = async ({
   onFinishReason,
   signal,
   contentHarness,
+  siteId,
 }: StreamChatRequest & { 
   onContentChunk: (chunk: string) => void;
   onFinishReason?: (reason: string) => void;
@@ -294,6 +297,7 @@ export const streamChatCompletion = async ({
     topP,
     httpReferer,
     signal,
+    siteId,
     onContentChunk,
     onFinishReason,
   });

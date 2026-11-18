@@ -35,6 +35,7 @@ export function resolveAgentRunRecipeKey(
     key === "money_page_internal_links" ||
     key === "editorial_content_audit" ||
     key === "fact_checker" ||
+    key === "cannibalization_audit" ||
     key === "content_optimizer_bulk" ||
     key === "overview_pages_meta_batch"
   ) {
@@ -79,6 +80,7 @@ export function agentRunProgressHeading(recipeKey: string): string {
   if (recipeKey === "money_page_internal_links") return "Money page internal links";
   if (recipeKey === "editorial_content_audit") return "Editorial content audit";
   if (recipeKey === "fact_checker") return "Fact Checker";
+  if (recipeKey === "cannibalization_audit") return "Cannibalization Audit";
   if (recipeKey === "entity_page_creator" || recipeKey === "entity_generator" || recipeKey === "sap_generator") return "Progress";
   if (recipeKey === "post_creator") return "";
   return "Current post";
@@ -115,6 +117,7 @@ function isKnownNonOptimizerRecipe(recipeKey: string): recipeKey is AgentRunReci
     recipeKey === "money_page_internal_links" ||
     recipeKey === "editorial_content_audit" ||
     recipeKey === "fact_checker" ||
+    recipeKey === "cannibalization_audit" ||
     recipeKey === "content_optimizer_bulk" ||
     recipeKey === "overview_pages_meta_batch"
   );

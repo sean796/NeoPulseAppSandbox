@@ -3,6 +3,9 @@ import { MetaOptimizerPageRowCompact } from "@/components/overview/MetaOptimizer
 import { BulkSitemapInventoryRunDetail } from "@/components/keyword-research/bulk/BulkSitemapInventoryRunDetail";
 import { WordBlacklistRunDetail } from "@/components/keyword-research/bulk/WordBlacklistRunDetail";
 import { HumanizerRunDetail } from "@/components/keyword-research/bulk/HumanizerRunDetail";
+import { GoogleSeoRulesRunDetail } from "@/components/keyword-research/bulk/GoogleSeoRulesRunDetail";
+import { WindowTreatmentsRunDetail } from "@/components/keyword-research/bulk/WindowTreatmentsRunDetail";
+import { siteUsesWindowTreatmentsSkill } from "@/lib/window-treatments-vertical/site-uses-window-treatments-skill";
 import {
   csvRowToEntitySapOverviewRowDisplay,
   csvRowToOverviewRowDisplay,
@@ -282,6 +285,14 @@ export function BulkGeneratorDetailsDrawer(props: BulkGeneratorDetailsPanelProps
                 <div className={contentOptimizerRowStripeClass(rowStripeBase++)}>
                   <HumanizerRunDetail />
                 </div>
+                <div className={contentOptimizerRowStripeClass(rowStripeBase++)}>
+                  <GoogleSeoRulesRunDetail />
+                </div>
+                {siteUsesWindowTreatmentsSkill(props.detailsSite) ? (
+                  <div className={contentOptimizerRowStripeClass(rowStripeBase++)}>
+                    <WindowTreatmentsRunDetail />
+                  </div>
+                ) : null}
                 <div className={contentOptimizerRowStripeClass(rowStripeBase++)}>
                   <BulkSitemapInventoryRunDetail
                     links={sitemapInventoryLinks ?? []}

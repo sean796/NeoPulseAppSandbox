@@ -13,7 +13,7 @@ import {
 import { callAgentCategoryOpenRouterChat } from "@/lib/openrouter-agent-category-api";
 import { resolveOpenRouterApiKeyForHarness } from "@/lib/openrouter-api-key-resolve";
 import { getBlogModel } from "@/lib/optimization-settings-storage";
-import { stripTrailingFaqSection } from "@/lib/overview/overview-blog-faq-append";
+import { isFaqHeadingTitle, stripTrailingFaqSection } from "@/lib/overview/overview-blog-faq-append";
 import {
   extractAnswerSectionHtml,
   extractOverviewSectionHtml,
@@ -25,6 +25,7 @@ import {
 import {
   allocateUniquePassageAnchorId,
   rewriteBlogPassageSection,
+  splitHtmlBodyIntoH2PassageSections,
   stitchHtmlBodyFromH2PassageSections,
   stitchOverviewBlogPostHtml,
   type BlogPassageSection,
@@ -35,6 +36,10 @@ import {
   rankFuzzySitemapLinksForSection,
   resolveSitemapFuzzyLinkPool,
 } from "@/lib/overview/overview-blog-sitemap-fuzzy-links";
+import {
+  RESEARCH_DISCLOSURE_ANCHOR_ID,
+  stripResearchDisclosureSection,
+} from "@/lib/overview/overview-research-disclosure";
 import { recordOverviewStudioRevision } from "@/lib/overview/record-overview-studio-revision";
 import type { OverviewSitemapSource } from "@/lib/overview/overview-sitemap-source";
 import { normalizePageUrlKey } from "@/lib/sitemap-optimizer/normalize-page-url";
@@ -45,6 +50,82 @@ const BODY_H2_MAX = MAX_CHECKLIST_ITEMS_BLOG;
 /** Always Answer + Overview + Intro + 5–6 body H2s. */
 export function countAutoSeoBlogBodySteps(_sourceHtml?: string): number {
   return 1 + 1 + 1 + BODY_H2_MAX;
+}
+
+function isBodyPassageSection(sec: BlogPassageSection): boolean {
+  const title = sec.title.trim().toLowerCase();
+  if (!title) return false;
+  if (isFaqHeadingTitle(sec.title)) return false;
+  if (sec.id === RESEARCH_DISCLOSURE_ANCHOR_ID) return false;
+  if (title.includes("research") && title.includes("fact")) return false;
+  if (title === "introduction" || title === "intro") return false;
+  return true;
+}
+
+const SectionFitSchema = z.object({
+  decisions: z.array(
+    z.object({
+      index: z.number().int().nonnegative(),
+      action: z.enum(["keep", "rewrite"]),
+    }),
+  ),
+});
+
+/** AI marks which existing body H2s already fit the keyword/brief (keep) vs misfit (rewrite). */
+async function classifyBodySectionFit(args: {
+  articleTitle: string;
+  focusKeyword: string;
+  sections: BlogPassageSection[];
+  seoResearchBrief?: string;
+  siteId?: string | null;
+  apiKey?: string;
+}): Promise<Array<"keep" | "rewrite">> {
+  const n = args.sections.length;
+  if (n === 0) return [];
+  const catalog = args.sections
+    .map((sec, i) => {
+      const preview = prosePlainText(sec.bodyHtml).trim().slice(0, 400);
+      return `${i}. TITLE: ${sec.title}\nBODY: ${preview || "(empty)"}`;
+    })
+    .join("\n\n");
+  const { content } = await callAgentCategoryOpenRouterChat({
+    category: "blog",
+    siteId: args.siteId,
+    apiKey: args.apiKey,
+    system: [
+      "You score existing blog H2 sections for Auto SEO surgical rewrite.",
+      'Mark keep when the section title and body already fit the article focus, are unique vs siblings, and are not empty, off-topic, or duplicate-theme.',
+      "Mark rewrite when empty, off-topic, wrong product, duplicate thermal/energy theme, or mismatched to the focus keyword / research brief.",
+      `Return one decision per index 0..${n - 1}.`,
+      'JSON only: {"decisions":[{"index":0,"action":"keep"|"rewrite"}]}',
+    ].join(" "),
+    user: [
+      `Article title: ${args.articleTitle || "(untitled)"}`,
+      `Focus keyword: ${args.focusKeyword || "(none)"}`,
+      args.seoResearchBrief?.trim()
+        ? `Research:\n${args.seoResearchBrief.trim().slice(0, 3000)}`
+        : "",
+      `Sections:\n${catalog}`,
+      "Return decisions now.",
+    ]
+      .filter(Boolean)
+      .join("\n\n"),
+    temperature: 0.2,
+    maxTokens: 2048,
+    responseFormat: { type: "json_object" },
+    useMasterInstructions: false,
+    useWordBlacklist: false,
+  });
+  const parsed = SectionFitSchema.parse(parseAssistantJsonObject(content));
+  const byIndex = new Map<number, "keep" | "rewrite">();
+  for (const d of parsed.decisions) {
+    if (d.index >= 0 && d.index < n) byIndex.set(d.index, d.action);
+  }
+  return args.sections.map((sec, i) => {
+    const plain = prosePlainText(sec.bodyHtml).trim();
+    if (!plain) return "rewrite";
+    return byIndex.get(i) ?? "rewrite";
+  });
 }
 
 export interface RunAutoSeoBlogBodyRewriteArgs {
@@ -176,8 +257,9 @@ async function rewriteIntroHtml(args: {
 }
 
 /**
- * One Auto SEO body path every time: plan 5–6 H2s, then rewrite Answer + Overview +
- * Intro + every body section from scratch. No thin-body skips.
+ * Auto SEO body path: Answer + Overview + Intro always rewrite.
+ * Existing body H2s are kept when they fit; only misfit sections rewrite.
+ * When the post lacks 5–6 body H2s, plan titles and rewrite those slots.
  */
 export async function runAutoSeoBlogBodyRewrite(
   args: RunAutoSeoBlogBodyRewriteArgs,
@@ -205,7 +287,7 @@ export async function runAutoSeoBlogBodyRewrite(
     withoutLead.length > coreOnly.length
       ? withoutLead.slice(coreOnly.length).trim()
       : "";
-  const legacyCoreHtml = coreOnly.trim();
+  const legacyCoreHtml = stripResearchDisclosureSection(coreOnly.trim()).trim();
   if (!legacyCoreHtml) {
     throw new Error(`Auto SEO requires article body HTML for ${pageUrl}.`);
   }
@@ -214,31 +296,70 @@ export async function runAutoSeoBlogBodyRewrite(
   let stepCursor = 0;
   const apiKey = await resolveOpenRouterApiKeyForHarness();
 
-  const plannedTitles = await planBodyH2Titles({
-    articleTitle,
-    focusKeyword,
-    legacyCoreHtml,
-    seoResearchBrief,
-    researchReadingDigest,
-    siteId: site?.id ?? null,
-    businessName: site?.name,
-    apiKey,
-  });
-  if (!shouldContinue()) {
-    return { html: sourceHtml, h2Titles: plannedTitles, trailingFaq };
-  }
+  const existingDoc = splitHtmlBodyIntoH2PassageSections(legacyCoreHtml);
+  const existingBodySections = existingDoc.sections.filter(isBodyPassageSection);
+  const introSeedHtml = existingDoc.leadingHtml.trim() || legacyCoreHtml;
 
-  const usedIds = new Set<string>();
-  const workingSections: BlogPassageSection[] = plannedTitles.map((title, i) => {
-    const id = allocateUniquePassageAnchorId(title, usedIds);
-    return {
-      id,
+  let workingSections: BlogPassageSection[] = [];
+  let sectionActions: Array<"keep" | "rewrite"> = [];
+
+  if (
+    existingBodySections.length >= BODY_H2_MIN &&
+    existingBodySections.length <= BODY_H2_MAX
+  ) {
+    const actions = await classifyBodySectionFit({
+      articleTitle,
+      focusKeyword,
+      sections: existingBodySections,
+      seoResearchBrief,
+      siteId: site?.id ?? null,
+      apiKey,
+    });
+    if (!shouldContinue()) {
+      return {
+        html: sourceHtml,
+        h2Titles: existingBodySections.map((s) => s.title),
+        trailingFaq,
+      };
+    }
+    workingSections = existingBodySections.map((sec, i) => ({
+      ...sec,
       index: i,
-      h2OpenTag: `<h2 id="${id}">`,
-      title,
-      bodyHtml: legacyCoreHtml,
-    };
-  });
+    }));
+    sectionActions = actions;
+    logger.start(
+      `[Auto SEO] Surgical rewrite ${pageUrl}: keep ${actions.filter((a) => a === "keep").length}, rewrite ${actions.filter((a) => a === "rewrite").length} of ${workingSections.length} H2s`,
+    );
+  } else {
+    const plannedTitles = await planBodyH2Titles({
+      articleTitle,
+      focusKeyword,
+      legacyCoreHtml,
+      seoResearchBrief,
+      researchReadingDigest,
+      siteId: site?.id ?? null,
+      businessName: site?.name,
+      apiKey,
+    });
+    if (!shouldContinue()) {
+      return { html: sourceHtml, h2Titles: plannedTitles, trailingFaq };
+    }
+    const usedIds = new Set<string>();
+    workingSections = plannedTitles.map((title, i) => {
+      const id = allocateUniquePassageAnchorId(title, usedIds);
+      return {
+        id,
+        index: i,
+        h2OpenTag: `<h2 id="${id}">`,
+        title,
+        bodyHtml: legacyCoreHtml,
+      };
+    });
+    sectionActions = workingSections.map(() => "rewrite");
+    logger.start(
+      `[Auto SEO] Full body outline ${pageUrl}: ${workingSections.length} H2s (existing count ${existingBodySections.length} outside ${BODY_H2_MIN}-${BODY_H2_MAX})`,
+    );
+  }
 
   let ansHtml = ansBefore;
   let ovHtml = ovBefore;
@@ -297,11 +418,18 @@ export async function runAutoSeoBlogBodyRewrite(
     if (k) usedLinkUrlKeys.add(k);
   }
 
+  for (const sec of workingSections) {
+    if (sectionActions[sec.index] === "keep") {
+      recordUsedLinksFromHtml(sec.bodyHtml);
+    }
+  }
+
   const preassignedSectionCandidates = workingSections.map((sec) => {
     const candidates = rankFuzzySitemapLinksForSection({
       pool: sitemapLinkPool,
       sectionTitle: sec.title,
-      sectionBodyHtml: legacyCoreHtml,
+      sectionBodyHtml:
+        sectionActions[sec.index] === "keep" ? sec.bodyHtml : legacyCoreHtml,
       articleTitle,
       focusKeyword,
       pageUrl,
@@ -323,10 +451,6 @@ export async function runAutoSeoBlogBodyRewrite(
       bodyHtml: "<p>Body section.</p>",
     })),
   });
-
-  logger.start(
-    `[Auto SEO] Full rewrite ${pageUrl}: Answer + Overview + Intro + ${workingSections.length} H2s`,
-  );
 
   const answerTask = (async () => {
     if (!shouldContinue()) return null;
@@ -382,7 +506,7 @@ export async function runAutoSeoBlogBodyRewrite(
     stepCursor += 1;
     onStepProgress?.(stepCursor, totalBodySteps, "Introduction");
     const intro = await rewriteIntroHtml({
-      legacyCoreHtml,
+      legacyCoreHtml: introSeedHtml,
       articleTitle,
       focusKeyword,
       siblingTitles: workingSections.map((s) => s.title),
@@ -401,6 +525,17 @@ export async function runAutoSeoBlogBodyRewrite(
       if (!shouldContinue()) return null;
       stepCursor += 1;
       onStepProgress?.(stepCursor, totalBodySteps, sec.title || `Section ${sIdx + 1}`);
+      if (sectionActions[sIdx] === "keep") {
+        logger.success(
+          `[Auto SEO] H2 ${sIdx + 1}/${workingSections.length} kept: "${sec.title}"`,
+        );
+        return {
+          sIdx,
+          sec,
+          rewritten: { title: sec.title, bodyHtml: sec.bodyHtml },
+          kept: true as const,
+        };
+      }
       const rewritten = await rewriteBlogPassageSection({
         mode: "both",
         section: sec,
@@ -411,7 +546,7 @@ export async function runAutoSeoBlogBodyRewrite(
       logger.success(
         `[Auto SEO] H2 ${sIdx + 1}/${workingSections.length}: "${sec.title}" -> "${rewritten.title}"`,
       );
-      return { sIdx, sec, rewritten };
+      return { sIdx, sec, rewritten, kept: false as const };
     })(),
   );
 
@@ -447,12 +582,14 @@ export async function runAutoSeoBlogBodyRewrite(
   const usedPassageIds = new Set<string>();
   for (const res of sectionResults) {
     if (!res) throw new Error(`Auto SEO section missing for ${pageUrl}`);
-    const { sIdx, sec, rewritten } = res;
+    const { sIdx, sec, rewritten, kept } = res;
     const oldAnchorIds = new Set(
       [sec.id, headingTitleToHarnessAnchorId(sec.title)].filter(Boolean),
     );
     let nextTitle = (rewritten.title || sec.title).trim();
-    const nextBody = normalizeSectionProseHtml(rewritten.bodyHtml);
+    const nextBody = kept
+      ? normalizeSectionProseHtml(sec.bodyHtml)
+      : normalizeSectionProseHtml(rewritten.bodyHtml);
     if (!prosePlainText(nextBody).trim()) {
       throw new Error(`Auto SEO section ${sIdx + 1} empty body for ${pageUrl}`);
     }
@@ -461,7 +598,7 @@ export async function runAutoSeoBlogBodyRewrite(
     const taken = workingSections
       .map((s, i) => (i === sIdx ? "" : s.title.trim().toLowerCase()))
       .filter(Boolean);
-    if (nextTitle && taken.includes(nextTitle.toLowerCase())) {
+    if (!kept && nextTitle && taken.includes(nextTitle.toLowerCase())) {
       const unique = await rewriteBlogPassageSection({
         mode: "header",
         section: { ...sec, title: nextTitle, bodyHtml: nextBody },
@@ -473,7 +610,11 @@ export async function runAutoSeoBlogBodyRewrite(
       if (unique.title?.trim()) nextTitle = unique.title.trim();
     }
 
-    const nextId = allocateUniquePassageAnchorId(nextTitle, usedPassageIds);
+    const nextId = allocateUniquePassageAnchorId(
+      nextTitle,
+      usedPassageIds,
+      kept ? sec.id : undefined,
+    );
     const nextH2OpenTag = `<h2 id="${nextId}">`;
     if (ovHtml && nextId) {
       for (const oldAnchorId of oldAnchorIds) {
@@ -489,7 +630,9 @@ export async function runAutoSeoBlogBodyRewrite(
 
     recordOverviewStudioRevision({
       pageUrl,
-      stepLabel: nextTitle || `Section ${sIdx + 1}`,
+      stepLabel: kept
+        ? `${nextTitle || `Section ${sIdx + 1}`} (kept)`
+        : nextTitle || `Section ${sIdx + 1}`,
       sectionTitle: nextTitle || undefined,
       runId: revisionRunId,
       beforeHtml: `${sec.h2OpenTag}${sec.title}</h2>\n${sec.bodyHtml.slice(0, 1500)}`,

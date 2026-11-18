@@ -17,9 +17,11 @@ import {
 } from "@/lib/agent-library/agent-library-api";
 import { cn } from "@/lib/utils";
 import { AgentLibraryWorkspaceHeader } from "./AgentLibraryWorkspaceHeader";
+import { GoogleSeoUpdatesArchive } from "./GoogleSeoUpdatesArchive";
 import { SkillJsonLibrary } from "./SkillJsonLibrary";
 
 const DOMAIN_BADGE_LABELS: Record<Exclude<AgentLibraryDomainFilter, "all">, string> = {
+  system: "System",
   "slack-hub": "Slack & Hub",
   aiseo: "AISEO",
   "blog-generator": "Blog Generator",
@@ -144,11 +146,18 @@ export function AgentLibraryTabContent({
 
       <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden px-3 pb-4 pt-3">
         {inspectEntry ? (
-          <SkillJsonLibrary
-            skillId={inspectEntry.id}
-            skillLabel={inspectEntry.label}
-            onBack={() => setInspectSkillId(null)}
-          />
+          inspectEntry.id === "seo.google.updates" ? (
+            <GoogleSeoUpdatesArchive
+              skillLabel={inspectEntry.label}
+              onBack={() => setInspectSkillId(null)}
+            />
+          ) : (
+            <SkillJsonLibrary
+              skillId={inspectEntry.id}
+              skillLabel={inspectEntry.label}
+              onBack={() => setInspectSkillId(null)}
+            />
+          )
         ) : (
           <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto">
             {errorMessage ? (

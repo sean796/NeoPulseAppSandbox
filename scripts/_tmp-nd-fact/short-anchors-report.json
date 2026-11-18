@@ -1,0 +1,421 @@
+{
+  "scanned": 210,
+  "changed": 69,
+  "totalShortened": 156,
+  "reports": [
+    {
+      "id": 8500,
+      "pageUrl": "https://neodigital.ca/blog/elementor-vs-divi/",
+      "type": "post",
+      "shortened": 7
+    },
+    {
+      "id": 8490,
+      "pageUrl": "https://neodigital.ca/blog/social-media-ads/",
+      "type": "post",
+      "shortened": 2
+    },
+    {
+      "id": 8192,
+      "pageUrl": "https://neodigital.ca/blog/wordpress-maintenance-safe-site/",
+      "type": "post",
+      "shortened": 3
+    },
+    {
+      "id": 8213,
+      "pageUrl": "https://neodigital.ca/blog/website-design-matters/",
+      "type": "post",
+      "shortened": 4
+    },
+    {
+      "id": 8186,
+      "pageUrl": "https://neodigital.ca/blog/hire-elementor-experts/",
+      "type": "post",
+      "shortened": 2
+    },
+    {
+      "id": 9287,
+      "pageUrl": "https://neodigital.ca/blog/national-seo/",
+      "type": "post",
+      "shortened": 3
+    },
+    {
+      "id": 9330,
+      "pageUrl": "https://neodigital.ca/blog/national-seo-strategy/",
+      "type": "post",
+      "shortened": 3
+    },
+    {
+      "id": 9282,
+      "pageUrl": "https://neodigital.ca/blog/ethical-seo-edmonton/",
+      "type": "post",
+      "shortened": 2
+    },
+    {
+      "id": 9183,
+      "pageUrl": "https://neodigital.ca/blog/eeat-ai-generated-content/",
+      "type": "post",
+      "shortened": 5
+    },
+    {
+      "id": 9179,
+      "pageUrl": "https://neodigital.ca/blog/sitemap-optimization-wordpress/",
+      "type": "post",
+      "shortened": 3
+    },
+    {
+      "id": 9175,
+      "pageUrl": "https://neodigital.ca/blog/google-search-console-edmonton/",
+      "type": "post",
+      "shortened": 3
+    },
+    {
+      "id": 8184,
+      "pageUrl": "https://neodigital.ca/blog/seo-strategy-roadmap-success/",
+      "type": "post",
+      "shortened": 2
+    },
+    {
+      "id": 9157,
+      "pageUrl": "https://neodigital.ca/blog/entity-based-seo/",
+      "type": "post",
+      "shortened": 2
+    },
+    {
+      "id": 8205,
+      "pageUrl": "https://neodigital.ca/blog/elementor-help-vs-builders/",
+      "type": "post",
+      "shortened": 3
+    },
+    {
+      "id": 8750,
+      "pageUrl": "https://neodigital.ca/blog/local-seo-specialists/",
+      "type": "post",
+      "shortened": 10
+    },
+    {
+      "id": 8736,
+      "pageUrl": "https://neodigital.ca/blog/local-seo-company/",
+      "type": "post",
+      "shortened": 4
+    },
+    {
+      "id": 8698,
+      "pageUrl": "https://neodigital.ca/blog/best-seo/",
+      "type": "post",
+      "shortened": 2
+    },
+    {
+      "id": 8693,
+      "pageUrl": "https://neodigital.ca/blog/seo-edmonton/",
+      "type": "post",
+      "shortened": 3
+    },
+    {
+      "id": 8674,
+      "pageUrl": "https://neodigital.ca/blog/seo-agency/",
+      "type": "post",
+      "shortened": 1
+    },
+    {
+      "id": 8176,
+      "pageUrl": "https://neodigital.ca/blog/wordpress-features/",
+      "type": "post",
+      "shortened": 2
+    },
+    {
+      "id": 8199,
+      "pageUrl": "https://neodigital.ca/blog/website-audit-fix-errors/",
+      "type": "post",
+      "shortened": 3
+    },
+    {
+      "id": 8174,
+      "pageUrl": "https://neodigital.ca/blog/local-seo-boost-visibility/",
+      "type": "post",
+      "shortened": 1
+    },
+    {
+      "id": 8223,
+      "pageUrl": "https://neodigital.ca/blog/blinds-marketing-edmonton/",
+      "type": "post",
+      "shortened": 4
+    },
+    {
+      "id": 8221,
+      "pageUrl": "https://neodigital.ca/blog/local-seo-for-blinds-companies/",
+      "type": "post",
+      "shortened": 1
+    },
+    {
+      "id": 8219,
+      "pageUrl": "https://neodigital.ca/blog/seo-for-window-treatments/",
+      "type": "post",
+      "shortened": 2
+    },
+    {
+      "id": 7965,
+      "pageUrl": "https://neodigital.ca/blog/elementor-help/",
+      "type": "post",
+      "shortened": 1
+    },
+    {
+      "id": 7805,
+      "pageUrl": "https://neodigital.ca/blog/elementor-support/",
+      "type": "post",
+      "shortened": 2
+    },
+    {
+      "id": 7813,
+      "pageUrl": "https://neodigital.ca/blog/wordpress-websites/",
+      "type": "post",
+      "shortened": 4
+    },
+    {
+      "id": 7809,
+      "pageUrl": "https://neodigital.ca/blog/seo-spruce-grove/",
+      "type": "post",
+      "shortened": 2
+    },
+    {
+      "id": 7833,
+      "pageUrl": "https://neodigital.ca/blog/wordpress-elementor-specialists/",
+      "type": "post",
+      "shortened": 3
+    },
+    {
+      "id": 7765,
+      "pageUrl": "https://neodigital.ca/blog/website-analytics-explained/",
+      "type": "post",
+      "shortened": 2
+    },
+    {
+      "id": 7763,
+      "pageUrl": "https://neodigital.ca/blog/on-page-seo-checklist/",
+      "type": "post",
+      "shortened": 5
+    },
+    {
+      "id": 7761,
+      "pageUrl": "https://neodigital.ca/blog/local-vs-national-seo/",
+      "type": "post",
+      "shortened": 2
+    },
+    {
+      "id": 7753,
+      "pageUrl": "https://neodigital.ca/blog/local-digital-presence-that-converts/",
+      "type": "post",
+      "shortened": 1
+    },
+    {
+      "id": 7749,
+      "pageUrl": "https://neodigital.ca/blog/edmonton-wordpress-website-features/",
+      "type": "post",
+      "shortened": 2
+    },
+    {
+      "id": 7664,
+      "pageUrl": "https://neodigital.ca/blog/wordpress-features-edmonton-local-success/",
+      "type": "post",
+      "shortened": 2
+    },
+    {
+      "id": 8488,
+      "pageUrl": "https://neodigital.ca/service-area/elementor-website-help-westwood-edmonton/",
+      "type": "service-area",
+      "shortened": 1
+    },
+    {
+      "id": 8484,
+      "pageUrl": "https://neodigital.ca/service-area/wordpress-features-brewery-district-edmonton-ab/",
+      "type": "service-area",
+      "shortened": 3
+    },
+    {
+      "id": 8158,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-alberta-highway-14a/",
+      "type": "service-area",
+      "shortened": 1
+    },
+    {
+      "id": 8124,
+      "pageUrl": "https://neodigital.ca/service-area/113114-street-edmonton-window-treatment-seo-113-114-street-edmonton/",
+      "type": "service-area",
+      "shortened": 1
+    },
+    {
+      "id": 8122,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-112-avenue-edmonton/",
+      "type": "service-area",
+      "shortened": 1
+    },
+    {
+      "id": 8118,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-111-112-avenue/",
+      "type": "service-area",
+      "shortened": 1
+    },
+    {
+      "id": 8114,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-107-avenue-edmonton/",
+      "type": "service-area",
+      "shortened": 1
+    },
+    {
+      "id": 8112,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-106-avenue-edmonton/",
+      "type": "service-area",
+      "shortened": 2
+    },
+    {
+      "id": 8110,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-105-street-edmonton/",
+      "type": "service-area",
+      "shortened": 2
+    },
+    {
+      "id": 8102,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-103a-avenue-edmonton/",
+      "type": "service-area",
+      "shortened": 1
+    },
+    {
+      "id": 8100,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-103-street-edmonton/",
+      "type": "service-area",
+      "shortened": 1
+    },
+    {
+      "id": 8098,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-101-street-edmonton/",
+      "type": "service-area",
+      "shortened": 2
+    },
+    {
+      "id": 8094,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-100-street-edmonton/",
+      "type": "service-area",
+      "shortened": 1
+    },
+    {
+      "id": 8084,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-97-street/",
+      "type": "service-area",
+      "shortened": 1
+    },
+    {
+      "id": 8080,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-91-street-edmonton/",
+      "type": "service-area",
+      "shortened": 3
+    },
+    {
+      "id": 8070,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-83-street-edmonton/",
+      "type": "service-area",
+      "shortened": 3
+    },
+    {
+      "id": 8064,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-66-street-edmonton/",
+      "type": "service-area",
+      "shortened": 2
+    },
+    {
+      "id": 8060,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-51-avenue-edmonton/",
+      "type": "service-area",
+      "shortened": 1
+    },
+    {
+      "id": 8058,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-50-street-edmonton/",
+      "type": "service-area",
+      "shortened": 2
+    },
+    {
+      "id": 8056,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-41-avenue-sw-edmonton/",
+      "type": "service-area",
+      "shortened": 2
+    },
+    {
+      "id": 8046,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-23-avenue-nw-edmonton/",
+      "type": "service-area",
+      "shortened": 1
+    },
+    {
+      "id": 8040,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-17-street-nw-edmonton/",
+      "type": "service-area",
+      "shortened": 3
+    },
+    {
+      "id": 8034,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-list-of-avenues-edmonton/",
+      "type": "service-area",
+      "shortened": 1
+    },
+    {
+      "id": 8032,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-list-of-edmonton-lrt/",
+      "type": "service-area",
+      "shortened": 1
+    },
+    {
+      "id": 8030,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-centennial-garage-edmonton/",
+      "type": "service-area",
+      "shortened": 1
+    },
+    {
+      "id": 8028,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-walterdale-bridge-edmonton/",
+      "type": "service-area",
+      "shortened": 3
+    },
+    {
+      "id": 8022,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-ques/",
+      "type": "service-area",
+      "shortened": 2
+    },
+    {
+      "id": 8011,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-groat-bridge-edmonton/",
+      "type": "service-area",
+      "shortened": 1
+    },
+    {
+      "id": 8005,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-dawson-bridge/",
+      "type": "service-area",
+      "shortened": 2
+    },
+    {
+      "id": 8003,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-clover-bar-railway-bridge-edmonton/",
+      "type": "service-area",
+      "shortened": 2
+    },
+    {
+      "id": 7996,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-amisk-wacw-asokan/",
+      "type": "service-area",
+      "shortened": 1
+    },
+    {
+      "id": 7988,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-edmonton-morinville/",
+      "type": "service-area",
+      "shortened": 1
+    },
+    {
+      "id": 7986,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-edmonton-lechelt-field/",
+      "type": "service-area",
+      "shortened": 2
+    }
+  ]
+}

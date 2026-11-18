@@ -1,0 +1,749 @@
+{
+  "site": "blindswest.ca",
+  "businessName": "Blinds West",
+  "dryRun": false,
+  "model": "google/gemini-2.5-flash",
+  "openRouter": true,
+  "total": 71,
+  "accepted": [
+    {
+      "id": 4767,
+      "title": "Window Covering Durability",
+      "link": "https://blindswest.ca/blog/windowcoveringdurability/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5141,
+      "title": "Faux Wood Bathroom Shutters For Humid Home Spaces",
+      "link": "https://blindswest.ca/blog/faux-wood-shutters-durable-bathrooms/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor",
+        "Marisol"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4762,
+      "title": "Panel Track Blinds Vs Vertical Blinds For Large Windows Guide",
+      "link": "https://blindswest.ca/blog/panel-track-blinds/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Liam"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4758,
+      "title": "Sloped Window Blinds Options And Installation For Homes",
+      "link": "https://blindswest.ca/blog/sloped-window-blinds/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Arthur"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5135,
+      "title": "Best Bathroom Window Treatments For Privacy And Moisture Control",
+      "link": "https://blindswest.ca/blog/bathroom-window-treatments-blinds/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5134,
+      "title": "Bathroom Window Treatments For Privacy And High Humidity In Calgary",
+      "link": "https://blindswest.ca/blog/bathroom-window-treatments/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Chloe"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5131,
+      "title": "Alustra Architectural Shades Features For Home Light Control And Privacy",
+      "link": "https://blindswest.ca/blog/alustra-architectural-shades-hunter-douglas/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4751,
+      "title": "Window Blind Cleaning Methods And Year Round Maintenance Tips",
+      "link": "https://blindswest.ca/blog/window-blind-cln/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4582,
+      "title": "Window Blind Repair Costs And Common DIY Fixes For Home Owners",
+      "link": "https://blindswest.ca/blog/window-blind-repair-issues-fixes/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4577,
+      "title": "Window Fashions Comparison Of Hunter Douglas And Alta Brands",
+      "link": "https://blindswest.ca/blog/window-fashions-comparison-hunter-douglas-alta/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Liam"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4744,
+      "title": "Hunter Douglas Shades Features And Operating Systems Guide",
+      "link": "https://blindswest.ca/blog/hunter-douglas-shades/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Chloe"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4551,
+      "title": "Blackout Blinds Uses For Sleep And Home Energy Efficiency Benefits",
+      "link": "https://blindswest.ca/blog/blackout-blinds-uses/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Ethan"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4553,
+      "title": "Choosing Motorized Blinds Vs Manual Window Treatments For Calgary Homes",
+      "link": "https://blindswest.ca/blog/motorized-blinds-vs-manual/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4549,
+      "title": "Smart Blinds Benefits For Home Comfort And Energy Savings Explained",
+      "link": "https://blindswest.ca/blog/smart-blinds-benefits/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Liam",
+        "Morgan"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4547,
+      "title": "Roller Shades Types For Light Control And Home Privacy Choices",
+      "link": "https://blindswest.ca/blog/roller-shades-types/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Liam"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4545,
+      "title": "Window Treatment Cost Factors And Style Price Comparisons Guide",
+      "link": "https://blindswest.ca/blog/window-treatment-cost-guide/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Nadia"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4386,
+      "title": "Window Treatments Style Guide For Calgary Homes And Rooms Online",
+      "link": "https://blindswest.ca/blog/calgary-window-treatments-style-guide/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Arthur"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4382,
+      "title": "Key Window Consultation Steps For Choosing Home Treatments",
+      "link": "https://blindswest.ca/blog/window-consultation-design-journey/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4310,
+      "title": "Motorized Shades Installation Options And Benefits For Homes",
+      "link": "https://blindswest.ca/blog/motorized-shades-installation/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Nadia"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4308,
+      "title": "Custom Window Shutters Calgary Styles And Material Options Guide",
+      "link": "https://blindswest.ca/blog/custom-window-shutters/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4332,
+      "title": "Comparing Faux Wood Vs Real Wood Shutters For Cost And Care Guide",
+      "link": "https://blindswest.ca/blog/faux-wood-vs-real-wood-shutters/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Ethan"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4336,
+      "title": "Durable Window Treatments For Kitchens And Material Options Guide",
+      "link": "https://blindswest.ca/blog/durable-kitchen-window-treatments/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Chloe"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4267,
+      "title": "How To Choose A Hunter Douglas Dealer Calgary For Blinds Today",
+      "link": "https://blindswest.ca/blog/hunter-douglas-dealer/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4248,
+      "title": "How To Clean Fabric Blinds And Remove Tough Stains Safely At Home",
+      "link": "https://blindswest.ca/blog/how-to-clean-fabric-blinds/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4197,
+      "title": "Wood Vs Composite Shutters For Northwest Calgary Homes Compared",
+      "link": "https://blindswest.ca/blog/wood-vs-composite-choosing-the-best-northwest-calgary-shutters-for-your-homes-climate/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Arthur"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4195,
+      "title": "Calgary T2X In Home Consultations For Window Treatments Facts",
+      "link": "https://blindswest.ca/blog/what-really-happens-during-a-hunter-douglas-dealer-calgary-t2x-in-home-consultation/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4053,
+      "title": "4 Window Treatment Opacities For Light And Privacy Control",
+      "link": "https://blindswest.ca/blog/decoding-window-treatment-opacities/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Evelyn"
+      ],
+      "saved": true
+    },
+    {
+      "id": 4047,
+      "title": "Motorized Shades Comparison Of PowerView And SoftTouch Systems Differences",
+      "link": "https://blindswest.ca/blog/powerview-vs-softtouch/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 3983,
+      "title": "Cordless Blind Maintenance Tips For Cleaning And Longevity Today",
+      "link": "https://blindswest.ca/blog/are-cordless-blinds-maintenance-free/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "post",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5180,
+      "title": "Plantation Shutters Near Inglewood Calgary",
+      "link": "https://blindswest.ca/?post_type=service-area&p=5180",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5186,
+      "title": "Plantation Shutters For Killarney Calgary Homes",
+      "link": "https://blindswest.ca/?post_type=service-area&p=5186",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5178,
+      "title": "Custom Drapery Near Marda Loop Calgary",
+      "link": "https://blindswest.ca/?post_type=service-area&p=5178",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5176,
+      "title": "Motorized Shades Near Beltline Calgary",
+      "link": "https://blindswest.ca/?post_type=service-area&p=5176",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Anya"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5174,
+      "title": "Roller Shades Near Thorncliffe Calgary",
+      "link": "https://blindswest.ca/?post_type=service-area&p=5174",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Arthur",
+        "Catherine"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5172,
+      "title": "Motorized Coverings Near Greenview Calgary",
+      "link": "https://blindswest.ca/?post_type=service-area&p=5172",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Liam"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5170,
+      "title": "Custom Drapery Near Collingwood Calgary",
+      "link": "https://blindswest.ca/?post_type=service-area&p=5170",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5192,
+      "title": "Motorized Coverings Near Highland Park Calgary",
+      "link": "https://blindswest.ca/?post_type=service-area&p=5192",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Arthur"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5190,
+      "title": "Motorized Blinds For Homes Near Mission Calgary",
+      "link": "https://blindswest.ca/?post_type=service-area&p=5190",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Arthur"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5188,
+      "title": "Custom Drapery Near Midnapore Calgary",
+      "link": "https://blindswest.ca/?post_type=service-area&p=5188",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5454,
+      "title": "Finding Custom Blinds In Beltline Calgary",
+      "link": "https://blindswest.ca/service-area/custom-blinds-beltline-calgary/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Nadia"
+      ],
+      "saved": true
+    },
+    {
+      "id": 5168,
+      "title": "Plantation Shutters For Homes In Winston Heights Mountview Calgary",
+      "link": "https://blindswest.ca/service-area/plantation-shutters-winston-heights-mountview-calgary-ab/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Eleanor"
+      ],
+      "saved": true
+    }
+  ],
+  "skipped": [
+    {
+      "id": 5554,
+      "title": "French Door Blinds: Options for Narrow Windows and Sidelights",
+      "link": "https://blindswest.ca/?p=5554",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "post"
+    },
+    {
+      "id": 5156,
+      "title": "Finding The Best Cellular Shades Shop In Calgary",
+      "link": "https://blindswest.ca/?p=5156",
+      "status": "skipped",
+      "reason": "placeholder-leak",
+      "kind": "post"
+    },
+    {
+      "id": 4696,
+      "title": "Cellular Shades Calgary: Your Guide To Brentwood",
+      "link": "https://blindswest.ca/service-area/cellular-shades-brentwood-calgary/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 5497,
+      "title": "Custom Blinds For Homes Near Crowfoot In Calgary, AB",
+      "link": "https://blindswest.ca/service-area/custom-blinds-crowfoot-calgary-ab/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4972,
+      "title": "Window Blinds Near Greenview, Calgary, AB",
+      "link": "https://blindswest.ca/service-area/window-blinds-greenview-calgary-ab/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4532,
+      "title": "Hunter Douglas Support near 16 Avenue NE",
+      "link": "https://blindswest.ca/service-area/hunter-douglas-support-calgary-ab/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4530,
+      "title": "Hunter Douglas Maintenance in North-Central Calgary",
+      "link": "https://blindswest.ca/service-area/hunter-douglas-maintenance-north-central-calgary-ab/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4528,
+      "title": "Hunter Douglas Service on Edmonton Trail",
+      "link": "https://blindswest.ca/service-area/hunter-douglas-service-calgary-edmonton-trail-ab/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4520,
+      "title": "Motorized Window Treatments Installation in NE Calgary Corri",
+      "link": "https://blindswest.ca/service-area/motorized-window-treatments-installation-ne-calgary-ab/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4518,
+      "title": "Automated Shades Installation in Franklin/Marlborough Area",
+      "link": "https://blindswest.ca/service-area/automated-shades-installation-franklin-marlborough-calgary-ab/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4514,
+      "title": "Motorized Blinds Installation in Mayland Heights",
+      "link": "https://blindswest.ca/service-area/motorized-blinds-installation-calgary-mayland-heights-ab/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4510,
+      "title": "Hunter Douglas Window Coverings in the East Calgary Business Area",
+      "link": "https://blindswest.ca/service-area/hunter-douglas-showroom-east-calgary-ab/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4496,
+      "title": "Window Treatments for High Traffic Areas in Calgary NW",
+      "link": "https://blindswest.ca/service-area/window-treatments-high-traffic-calgary-nw-ab/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4494,
+      "title": "Heavy Duty Window Treatments in NW Calgary Commercial Area",
+      "link": "https://blindswest.ca/service-area/heavy-duty-window-treatments-nw-calgary-ab/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4484,
+      "title": "Energy Saving Window Treatments Near Crowchild Trail",
+      "link": "https://blindswest.ca/service-area/energy-saving-window-treatments-crowchild-calgary-ab/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4478,
+      "title": "Faux Wood Shutters Near Kensington",
+      "link": "https://blindswest.ca/service-area/faux-wood-shutters-near-me-kensington-calgary-ab/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4476,
+      "title": "Buy Faux Wood Shutters in Sunnyside Neighborhood",
+      "link": "https://blindswest.ca/service-area/buy-faux-wood-shutters-sunnyside-calgary-ab/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4460,
+      "title": "Residential Window Shutters in Anderson Road Area",
+      "link": "https://blindswest.ca/service-area/residential-window-shutters-anderson-road-calgary-ab/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4458,
+      "title": "Custom Window Shutters Installation on Macleod Trail South",
+      "link": "https://blindswest.ca/service-area/custom-window-shutters-installation-calgary-ab/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4456,
+      "title": "Automated Blinds Installation in Downtown Calgary",
+      "link": "https://blindswest.ca/service-area/automated-blinds-installation-downtown-calgary-ab/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4405,
+      "title": "Hunter Douglas Blinds Near Kensington, Calgary",
+      "link": "https://blindswest.ca/service-area/hunter-douglas-blinds-kensington-calgary/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4403,
+      "title": "Hunter Douglas Blinds Near Jack and Jean Leslie RiverWalk",
+      "link": "https://blindswest.ca/service-area/hunter-douglas-blinds-jack-and-jean-leslie-riverwalk/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4346,
+      "title": "Best Hunter Douglas Dealer Near Beltline, Calgary",
+      "link": "https://blindswest.ca/service-area/hunter-douglas-dealer-beltline/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4289,
+      "title": "Blinds Near Me: Altadore Calgary Window Guide",
+      "link": "https://blindswest.ca/service-area/blinds-near-me-altadore-calgary/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4279,
+      "title": "Blinds West Near The Military Museums",
+      "link": "https://blindswest.ca/service-area/blinds-near-me-military-museums/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4273,
+      "title": "Blinds Near Chinese Cultural Centre (Calgary)",
+      "link": "https://blindswest.ca/service-area/blinds-chinese-cultural-centre-calgary/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4227,
+      "title": "Blinds Near Me: Expert Window Treatment Solutions Near Stampede Park",
+      "link": "https://blindswest.ca/service-area/blinds-near-me-expert-window-treatment-solutions-near-stampede-park/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    },
+    {
+      "id": 4219,
+      "title": "Blinds Near Glenbow Museum: Local Guide",
+      "link": "https://blindswest.ca/service-area/blinds-near-me-near-glenbow-museum-a-local-guide-to-window-treatments/",
+      "status": "skipped",
+      "reason": "no-known-name",
+      "kind": "service-area"
+    }
+  ],
+  "failed": [
+    {
+      "id": 5182,
+      "title": "Motorized Coverings Near Forest Lawn Calgary",
+      "link": "https://blindswest.ca/?post_type=service-area&p=5182",
+      "status": "failed",
+      "reason": "Bad control character in string literal in JSON at position 10902 (line 3 column 10868)",
+      "kind": "service-area"
+    },
+    {
+      "id": 5184,
+      "title": "Custom Shades For Homes Near Bowness Calgary",
+      "link": "https://blindswest.ca/?post_type=service-area&p=5184",
+      "status": "failed",
+      "reason": "Bad control character in string literal in JSON at position 4506 (line 3 column 4472)",
+      "kind": "service-area"
+    }
+  ]
+}

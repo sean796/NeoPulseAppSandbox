@@ -1,0 +1,17 @@
+{
+  "green": "#84BD00",
+  "results": [
+    {
+      "label": "Blog Single",
+      "templateId": 7745,
+      "badgeId": "ndrbfc7d07",
+      "removed": 1
+    },
+    {
+      "label": "Service Area Single",
+      "templateId": 7601,
+      "badgeId": "ndrb8ff7fd",
+      "removed": 1
+    }
+  ]
+}

@@ -180,6 +180,8 @@ export async function publishBulkRowToWordPressSites(
           keyword: bulkPrimaryKwResolved,
           articleTitle: bulkResolvedPostTitle,
           model: pipelineBlogModel,
+          site: firstSite ?? null,
+          onProgress: (message) => options.onProgress?.(rowIndex, 0, message),
         });
       }
       if (options.wordPressPagesForOfferTable?.length && firstSite?.siteUrl) {
@@ -309,6 +311,7 @@ export async function publishBulkRowToWordPressSites(
             keywordData,
             postTitle,
             rowIndex,
+            site,
           });
           const ensuredFeatured = await ensureBulkSiteFeaturedImageFromMaps({
             options,

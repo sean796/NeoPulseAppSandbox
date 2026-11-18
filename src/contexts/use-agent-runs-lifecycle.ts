@@ -79,6 +79,7 @@ export function useAgentRunsLifecycle({
         resolveAgentRunRecipeKey(run) !== "money_page_internal_links" &&
         resolveAgentRunRecipeKey(run) !== "editorial_content_audit" &&
         resolveAgentRunRecipeKey(run) !== "fact_checker" &&
+        resolveAgentRunRecipeKey(run) !== "cannibalization_audit" &&
         !serverProcessInFlight.current.has(run.id)
       ) {
         serverProcessInFlight.current.add(run.id);
@@ -109,6 +110,7 @@ export function useAgentRunsLifecycle({
           resolveAgentRunRecipeKey(run) !== "money_page_internal_links" &&
           resolveAgentRunRecipeKey(run) !== "editorial_content_audit" &&
           resolveAgentRunRecipeKey(run) !== "fact_checker" &&
+          resolveAgentRunRecipeKey(run) !== "cannibalization_audit" &&
           (run.status === "queued" || run.status === "running"),
       );
       if (active.length === 0) return;

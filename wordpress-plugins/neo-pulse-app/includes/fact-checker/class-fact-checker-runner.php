@@ -214,7 +214,20 @@ class Neo_Pulse_App_Fact_Checker_Runner {
 	 * @param array<string,mixed> $site
 	 * @return array<string,mixed>
 	 */
+	private static function run_cancelled( int $team_id, int $run_id ): bool {
+		$fresh = Neo_Pulse_App_Agent_Runs_Store::get_run( $team_id, $run_id, false );
+		return is_array( $fresh ) && (string) ( $fresh['status'] ?? '' ) === 'cancelled';
+	}
+
 	private static function tick( int $team_id, int $run_id, string $site_id, array $site, string $to ): array {
+		if ( self::run_cancelled( $team_id, $run_id ) ) {
+			return array(
+				'ok'        => true,
+				'runId'     => $run_id,
+				'running'   => false,
+				'cancelled' => true,
+			);
+		}
 		$work = self::load_work( $run_id );
 		if ( $work === null ) {
 			$work = array(
@@ -272,22 +285,6 @@ class Neo_Pulse_App_Fact_Checker_Runner {
 				$skipped = isset( $work['skipped'] ) && is_array( $work['skipped'] ) ? $work['skipped'] : array();
 				$skipped[] = (int) ( $page['id'] ?? 0 );
 				$work['skipped'] = $skipped;
-				$claims[]        = array(
-					'pageId'           => (int) ( $page['id'] ?? 0 ),
-					'url'              => (string) ( $page['url'] ?? '' ),
-					'title'            => (string) ( $page['title'] ?? '' ),
-					'status'           => (string) ( $page['status'] ?? '' ),
-					'type'             => (string) ( $page['type'] ?? '' ),
-					'quote'            => 'page check failed',
-					'claimLink'        => (string) ( $page['url'] ?? '' ),
-					'category'         => 'none',
-					'verdict'          => 'unsupported',
-					'sourceTitle'      => '',
-					'sourceUrl'        => '',
-					'sourceType'       => '',
-					'qualification'    => $result->get_error_message(),
-					'suggestedWording' => '',
-				);
 				self::step( $team_id, $run_id, 'check', 'Skipped ' . $title, 'running' );
 				self::keep_console_log( $work );
 				continue;
@@ -306,6 +303,15 @@ class Neo_Pulse_App_Fact_Checker_Runner {
 		self::save_work( $run_id, $work );
 		self::patch_cursor( $team_id, $run_id, $end );
 		self::patch_console_log( $team_id, $run_id, $work );
+
+		if ( self::run_cancelled( $team_id, $run_id ) ) {
+			return array(
+				'ok'        => true,
+				'runId'     => $run_id,
+				'running'   => false,
+				'cancelled' => true,
+			);
+		}
 
 		// Rewrite the sheet before the next URL. A page with no errors still gets a row.
 		self::publish_drive_progress( $team_id, $run_id, $site, $work, $end, $total );
@@ -570,6 +576,9 @@ class Neo_Pulse_App_Fact_Checker_Runner {
 	 * @param array<string,mixed> $work
 	 */
 	private static function publish_drive_progress( int $team_id, int $run_id, array $site, array &$work, int $done, int $total ): void {
+		if ( Neo_Pulse_App_Agent_Runs_Store::is_cancelled( $team_id, $run_id ) ) {
+			return;
+		}
 		$folder_id = trim( (string) ( $work['driveFolderId'] ?? '' ) );
 		if ( $folder_id === '' ) {
 			self::patch_drive_result( $team_id, $run_id, $work, $done, $total );

@@ -30,6 +30,14 @@ function splashFromBatchStep(
   const message = statusMessage?.trim() ?? "";
   const s = step?.trim() ?? "";
   if (
+    s.toLowerCase() === "fact checker" ||
+    s.toLowerCase().startsWith("fact checker") ||
+    message.toLowerCase() === "fact checker" ||
+    message.toLowerCase().startsWith("fact checker")
+  ) {
+    return { text: "Fact checker", visual: "factchecker" };
+  }
+  if (
     s.toLowerCase() === "fact checking" ||
     message.toLowerCase() === "fact checking"
   ) {
@@ -265,6 +273,7 @@ export function OverviewVisualDocCanvas({
       customDrawerContent={customDrawerContent}
       bulkGeneratorDetailsPanel={bulkGeneratorDetailsPanel}
       hasSite={Boolean(c.site)}
+      site={c.site}
       siteWarm={siteWarm}
       drawerStepRows={drawerStepRows}
     />

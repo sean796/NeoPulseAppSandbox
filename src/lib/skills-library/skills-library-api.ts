@@ -20,6 +20,9 @@ export function skillsLibraryPathSlug(skillId: string): string {
   if (skillId === "content.internal-links.money-pages") return "content-internal-links-money-pages";
   if (skillId === "content.editorial.audit") return "editorial-content-audit";
   if (skillId === "content.product.fact-check") return "fact-checker";
+  if (skillId === "content.blog.cannibalization-audit") return "cannibalization-audit";
+  if (skillId === "seo.google.updates") return "google-seo-updates";
+  if (skillId === "vertical.window-treatments.guide") return "window-treatments-vertical";
   return skillId.replace(/\./g, "-");
 }
 

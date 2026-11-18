@@ -481,6 +481,33 @@ export const PULSE_AGENT_REGISTRY: readonly PulseRegisteredAgentEntry[] = [
       "Reads every blog post and service-area page on one Integrations property, grounds product and service claims with an OpenRouter web model, writes claim rows into one Google Sheet named fact-checker, and emails sean@neodigital.ca.",
     sourceModule: "skills/fact-checker/SKILL.md",
   },
+  {
+    id: "content.blog.cannibalization-audit",
+    label: "Cannibalization Audit",
+    category: "research",
+    domain: "aiseo",
+    reason:
+      "Asks that site's Neo MCP which published /blog/ posts should redirect and which one URL each group keeps, writes one Pulse Redirect sheet (id, source, matching, destination, type, category, status, ignore), and emails sean@neodigital.ca. Suggests only; does not apply 301s until accepted.",
+    sourceModule: "skills/cannibalization-audit/SKILL.md",
+  },
+  {
+    id: "seo.google.updates",
+    label: "Google SEO Updates",
+    category: "research",
+    domain: "system",
+    reason:
+      "Searches official Google Search Central sources every Monday and on Generate, appends one dated archive entry of major SEO changes that affect post writing, and rewrites the standing livePrompt injected beside the word blacklist on content actions. Profile agnostic.",
+    sourceModule: "skills/google-seo-updates/SKILL.md",
+  },
+  {
+    id: "vertical.window-treatments.guide",
+    label: "Window Treatments Vertical",
+    category: "blog",
+    domain: "aiseo",
+    reason:
+      "Standing Hunter Douglas dealer rules for blinds clients. Injected on every content run for Window treatments clients plus Tailored Interiors and Interiors by Laura. Skills Library only; not assigned on profiles.",
+    sourceModule: "skills/window-treatments-vertical/SKILL.md",
+  },
 ] as const;
 
 export function getPulseAgentById(id: string): PulseRegisteredAgentEntry | undefined {

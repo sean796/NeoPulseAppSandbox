@@ -6,6 +6,7 @@ import { resolveModelForAgentCategory } from "@/lib/openrouter-agent-category-ap
 
 export type AgentLibraryDomainFilter =
   | "all"
+  | "system"
   | "slack-hub"
   | "aiseo"
   | "blog-generator"
@@ -45,11 +46,24 @@ export const ASSIGNABLE_SITE_AGENTS = [
     id: "content.product.fact-check",
     label: "Fact Checker",
   },
+  {
+    id: "content.blog.cannibalization-audit",
+    label: "Cannibalization Audit",
+  },
 ] as const;
 
 export type AssignableSiteAgentId = (typeof ASSIGNABLE_SITE_AGENTS)[number]["id"];
 
-const SKILL_IDS = new Set<string>(ASSIGNABLE_SITE_AGENTS.map((agent) => agent.id));
+/** Skills Library only. Not assigned on client profiles. */
+export const LIBRARY_ONLY_SKILL_IDS = [
+  "seo.google.updates",
+  "vertical.window-treatments.guide",
+] as const;
+
+const SKILL_IDS = new Set<string>([
+  ...ASSIGNABLE_SITE_AGENTS.map((agent) => agent.id),
+  ...LIBRARY_ONLY_SKILL_IDS,
+]);
 
 export interface HubAgentDefinitionItem {
   id: string;

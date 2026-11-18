@@ -146,6 +146,7 @@ export async function runPressReleaseHarnessContent(args: {
         maxTokens: perSectionMax,
         topP: options.topP || 0.9,
         httpReferer,
+        siteId: promptEnv?.siteId,
       });
 
       let sectionContent = (result.content || '').trim();

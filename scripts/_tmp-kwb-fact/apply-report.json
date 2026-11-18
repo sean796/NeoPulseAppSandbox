@@ -1,0 +1,475 @@
+{
+  "ok": 67,
+  "fail": 0,
+  "results": [
+    {
+      "id": 20351,
+      "pageUrl": "https://kwbllp.com/blog/2026-alberta-physician-privatization-changes/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 23769,
+      "pageUrl": "https://kwbllp.com/blog/2026-cra-mail-in-policy/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 18611,
+      "pageUrl": "https://kwbllp.com/blog/alberta-productivity-grant/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 8805,
+      "pageUrl": "https://kwbllp.com/blog/bare-trust-rules/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 20355,
+      "pageUrl": "https://kwbllp.com/blog/bc-pst-expansion-2026-business-rules/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 11680,
+      "pageUrl": "https://kwbllp.com/blog/business-credit-availability/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 20875,
+      "pageUrl": "https://kwbllp.com/blog/business-valuation-and-price-drivers/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 7460,
+      "pageUrl": "https://kwbllp.com/blog/canadian-albertan-tax-brackets/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 18527,
+      "pageUrl": "https://kwbllp.com/blog/canadian-interest-rates-q3-2026/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 9914,
+      "pageUrl": "https://kwbllp.com/blog/canadian-interest-rates/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 20759,
+      "pageUrl": "https://kwbllp.com/blog/canadian-tax-pmts/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 25235,
+      "pageUrl": "https://kwbllp.com/blog/capital-dividend-account/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 3008,
+      "pageUrl": "https://kwbllp.com/blog/change-in-property-use/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 25182,
+      "pageUrl": "https://kwbllp.com/blog/corporate-critical-illness-insurance/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 10473,
+      "pageUrl": "https://kwbllp.com/blog/corporate-insured-retirement-plans/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 25179,
+      "pageUrl": "https://kwbllp.com/blog/corporation-dissolution-steps/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 9650,
+      "pageUrl": "https://kwbllp.com/blog/cpp-and-oas/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 2818,
+      "pageUrl": "https://kwbllp.com/blog/cpp-child-rearing-provision/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 3026,
+      "pageUrl": "https://kwbllp.com/blog/cra-direct-deposit/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 8879,
+      "pageUrl": "https://kwbllp.com/blog/cra-instalment-payments/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 20745,
+      "pageUrl": "https://kwbllp.com/blog/cra-instalment-reminder/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 25508,
+      "pageUrl": "https://kwbllp.com/blog/cra-mileage-rate-canada/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 3058,
+      "pageUrl": "https://kwbllp.com/blog/cra-my-account/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 9746,
+      "pageUrl": "https://kwbllp.com/blog/cra-my-business-account/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 10711,
+      "pageUrl": "https://kwbllp.com/blog/cra-prescribed-interest-rates/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 10714,
+      "pageUrl": "https://kwbllp.com/blog/cra-review-letter/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 12839,
+      "pageUrl": "https://kwbllp.com/blog/cra-tax-instalments/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 9084,
+      "pageUrl": "https://kwbllp.com/blog/ei-premium-reduction-program/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 18621,
+      "pageUrl": "https://kwbllp.com/blog/employment-expenses-checklist-canada/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 25507,
+      "pageUrl": "https://kwbllp.com/blog/estate-planning-accounting-canada/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 9796,
+      "pageUrl": "https://kwbllp.com/blog/gig-workers-cra-rules/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 2648,
+      "pageUrl": "https://kwbllp.com/blog/gst-quick-method/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 9861,
+      "pageUrl": "https://kwbllp.com/blog/maximize-tax-deductions/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 8876,
+      "pageUrl": "https://kwbllp.com/blog/opt-out-of-cpp/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 7357,
+      "pageUrl": "https://kwbllp.com/blog/personal-services-businesses/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 25506,
+      "pageUrl": "https://kwbllp.com/blog/prairiescan-tariff-relief-rtri/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 11687,
+      "pageUrl": "https://kwbllp.com/blog/receipt-bank-now-dext/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 10318,
+      "pageUrl": "https://kwbllp.com/blog/rrsp-rrif-beneficiary/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 25176,
+      "pageUrl": "https://kwbllp.com/blog/sales-pipeline-strategy/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 9601,
+      "pageUrl": "https://kwbllp.com/blog/small-business-taxes-canada/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 18521,
+      "pageUrl": "https://kwbllp.com/blog/solar-inv-tax-credit-elig-canada/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 20731,
+      "pageUrl": "https://kwbllp.com/blog/t2125-canada/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 9966,
+      "pageUrl": "https://kwbllp.com/blog/t2125-explained/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 10491,
+      "pageUrl": "https://kwbllp.com/blog/tax-brackets-canada/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 9869,
+      "pageUrl": "https://kwbllp.com/blog/tax-deadlines-canada/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 25133,
+      "pageUrl": "https://kwbllp.com/service-area/bare-trust-reporting-old-strathcona-ab-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 20598,
+      "pageUrl": "https://kwbllp.com/service-area/bare-trust-reporting-strathcona-county-sherwoodpark-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 25281,
+      "pageUrl": "https://kwbllp.com/service-area/business-accountants-tax-advisors-royal-alberta-museum-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 13599,
+      "pageUrl": "https://kwbllp.com/service-area/business-accounting-albany-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 13613,
+      "pageUrl": "https://kwbllp.com/service-area/business-financial-accounting-alberta-ave-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 13651,
+      "pageUrl": "https://kwbllp.com/service-area/charitable-giving-tax-ambleside-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 25119,
+      "pageUrl": "https://kwbllp.com/service-area/cloud-bookkeeping-services-strathcona-ab-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 20626,
+      "pageUrl": "https://kwbllp.com/service-area/corporate-accounting-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 25174,
+      "pageUrl": "https://kwbllp.com/service-area/corporate-accounting-glenora-alberta-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 13640,
+      "pageUrl": "https://kwbllp.com/service-area/cost-accounting-allendale-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 20599,
+      "pageUrl": "https://kwbllp.com/service-area/cra-review-letter-strathcona-county-sherwoodpark-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 25139,
+      "pageUrl": "https://kwbllp.com/service-area/cross-border-tax-planning-central-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 25137,
+      "pageUrl": "https://kwbllp.com/service-area/holding-company-tax-planning-south-central-ab-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 20600,
+      "pageUrl": "https://kwbllp.com/service-area/kwb-accountants-strathcona-county-sherwoodpark-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 25121,
+      "pageUrl": "https://kwbllp.com/service-area/payroll-processing-mckernan-ab-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 25129,
+      "pageUrl": "https://kwbllp.com/service-area/quickbooks-online-setup-capilano-ab-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 11723,
+      "pageUrl": "https://kwbllp.com/service-area/small-business-accounting-boyle-st-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 20622,
+      "pageUrl": "https://kwbllp.com/service-area/t2125-form-sherwood-park-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 20601,
+      "pageUrl": "https://kwbllp.com/service-area/t2125-form-strathcona-county-sherwoodpark-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 13590,
+      "pageUrl": "https://kwbllp.com/service-area/tax-accountant-abbotsfield-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 13653,
+      "pageUrl": "https://kwbllp.com/service-area/tax-efficient-charitable-ambleside-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 25170,
+      "pageUrl": "https://kwbllp.com/service-area/tax-preparation-downtown-edmonton-alberta-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    }
+  ]
+}

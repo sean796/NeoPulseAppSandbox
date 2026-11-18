@@ -82,6 +82,7 @@ export async function postOpenRouterAppChat(args: {
   toolChoice?: unknown;
   webSearchOptions?: Record<string, unknown>;
   reasoning?: OpenRouterAppReasoning;
+  siteId?: string | null;
   signal?: AbortSignal;
 }): Promise<{
   raw: unknown;
@@ -273,6 +274,7 @@ export async function streamOpenRouterAppChat(args: {
   maxTokens?: number;
   responseFormat?: OpenRouterAppResponseFormat;
   reasoning?: OpenRouterAppReasoning;
+  siteId?: string | null;
   signal?: AbortSignal;
   onDelta: (delta: OpenRouterAppStreamDelta) => void;
 }): Promise<{ content: string; reasoning: string; finishReason?: string }> {

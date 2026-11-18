@@ -206,6 +206,7 @@ export async function generateExtraTextForPage(
           { role: "user", content: userContent },
         ],
         contentHarness: true,
+        siteId: siteId ?? null,
         temperature,
         maxTokens: 1200,
         topP: 0.9,

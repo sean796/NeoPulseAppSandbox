@@ -49,7 +49,8 @@ export type AgentRunRecipeKey =
   | "entities_content_gap_check"
   | "money_page_internal_links"
   | "editorial_content_audit"
-  | "fact_checker";
+  | "fact_checker"
+  | "cannibalization_audit";
 
 export type AgentRunStepArtifact = {
   id: string;

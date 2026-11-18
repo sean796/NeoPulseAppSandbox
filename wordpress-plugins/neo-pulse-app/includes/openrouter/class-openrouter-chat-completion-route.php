@@ -69,6 +69,12 @@ class Neo_Pulse_App_Openrouter_Chat_Completion_Route {
 			}
 			$messages = $expanded;
 		}
+		if ( class_exists( 'Neo_Pulse_App_Google_Seo_Updates_Inject' ) ) {
+			$messages = Neo_Pulse_App_Google_Seo_Updates_Inject::maybe_inject( $messages );
+		}
+		if ( class_exists( 'Neo_Pulse_App_Window_Treatments_Vertical_Inject' ) ) {
+			$messages = Neo_Pulse_App_Window_Treatments_Vertical_Inject::maybe_inject( $messages, $body );
+		}
 		if ( count( $messages ) === 0 ) {
 			Neo_Pulse_App_Api_Dispatcher::send_json(
 				array(

@@ -1,0 +1,300 @@
+{
+  "ok": 42,
+  "fail": 0,
+  "results": [
+    {
+      "id": 17471,
+      "pageUrl": "https://blindmagic.com/blog/blind-measuring-guide/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 20834,
+      "pageUrl": "https://blindmagic.com/blog/blinds-installation-cost-considerations-and-choosing-the-right-window-treatment/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 18075,
+      "pageUrl": "https://blindmagic.com/blog/child-safe-window-treatments/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 20543,
+      "pageUrl": "https://blindmagic.com/blog/clean-fabric-blinds-cleaning/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 20531,
+      "pageUrl": "https://blindmagic.com/blog/clean-fabric-blinds/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 19744,
+      "pageUrl": "https://blindmagic.com/blog/duette-cellular-shades/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 18772,
+      "pageUrl": "https://blindmagic.com/blog/how-clean-blinds/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 18222,
+      "pageUrl": "https://blindmagic.com/blog/hunter-douglas-guide/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 21030,
+      "pageUrl": "https://blindmagic.com/blog/hunter-douglas-top-down-bottom-up-shades-canada/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 17565,
+      "pageUrl": "https://blindmagic.com/blog/modern-window-treatments/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 20536,
+      "pageUrl": "https://blindmagic.com/blog/motorised-roller-blinds/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 18231,
+      "pageUrl": "https://blindmagic.com/blog/powerview-vs-tahoma/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 18089,
+      "pageUrl": "https://blindmagic.com/blog/roman-shades/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 20053,
+      "pageUrl": "https://blindmagic.com/blog/smart-blinds-automation/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 22629,
+      "pageUrl": "https://blindmagic.com/blog/solarium-blinds/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 17413,
+      "pageUrl": "https://blindmagic.com/blog/window-fashion-guide/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 19262,
+      "pageUrl": "https://blindmagic.com/service-area/blinds-aster-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 17384,
+      "pageUrl": "https://blindmagic.com/service-area/blinds-connaught-armoury/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 19272,
+      "pageUrl": "https://blindmagic.com/service-area/blinds-edmonton-empirepark-alberta/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 18830,
+      "pageUrl": "https://blindmagic.com/service-area/blinds-north-glenora-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 17567,
+      "pageUrl": "https://blindmagic.com/service-area/blinds-shades-airdrie/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 17569,
+      "pageUrl": "https://blindmagic.com/service-area/blinds-shades-beaumont/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 17575,
+      "pageUrl": "https://blindmagic.com/service-area/blinds-shades-cold-lake/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 17577,
+      "pageUrl": "https://blindmagic.com/service-area/blinds-shades-grande-prairie/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 17229,
+      "pageUrl": "https://blindmagic.com/service-area/blinds-shades-shutters-near-campus-saint-jean-uofa-edmonton-alberta/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 18868,
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-crestwood-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 18886,
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-downtown-stalbert-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 18850,
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-namao-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 17573,
+      "pageUrl": "https://blindmagic.com/service-area/camrose-blinds-shades-near-me/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 17364,
+      "pageUrl": "https://blindmagic.com/service-area/downtown-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 17754,
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-amisk-waciw-asokan/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 17718,
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-century-park-station-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 17767,
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-grant-moellmann-bridge/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 17732,
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-health-sciences-jubilee/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 17736,
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-macewan-station/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 17803,
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-mill-woods-town-centre/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 20033,
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-sherwood-park-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 17748,
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-stadium-station-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 17750,
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-university-station-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 19278,
+      "pageUrl": "https://blindmagic.com/service-area/roller-shades-rapidfiretheatrearea-edmonton-ab/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 17343,
+      "pageUrl": "https://blindmagic.com/service-area/window-treatments-near-100-avenue-edmonton/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 16837,
+      "pageUrl": "https://blindmagic.com/service-area/window-treatments-near-17-street-nw/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    }
+  ]
+}

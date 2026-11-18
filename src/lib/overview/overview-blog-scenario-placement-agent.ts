@@ -76,7 +76,7 @@ export async function analyzeScenarioInsertionPlan(args: {
 
 Return JSON only: { "afterSectionHeader": string, "illustrativeH2Title": string }.
 
-afterSectionHeader: exact H2 title from the list below. The new scenario section will be inserted immediately AFTER this section's content (before the next H2). Pick the section where a genderless named persona example best supports the reader's decision on "${args.focusKeyword.trim() || args.pageTitle.trim()}". Prefer a mid-article topical section, not Answer or Overview. Never pick FAQ.
+afterSectionHeader: exact H2 title from the list below. The new scenario section will be inserted immediately AFTER this section's content (before the next H2). Pick the section where a situation example (no invented first name) best supports the reader's decision on "${args.focusKeyword.trim() || args.pageTitle.trim()}". Prefer a mid-article topical section, not Answer or Overview. Never pick FAQ.
 
 illustrativeH2Title: topical title for the NEW scenario section (3-8 words). Short decision-focused title tied to the article topic. Do NOT include "Scenario:" in this field — the app adds that prefix. Topical only (e.g. "Import tariff cost pressure"). Forbidden: persona names or possessives (Alex, Liam, Alex's, Liam's); questions; "A realistic local situation"; "Local homeowner example"; Section N labels; place-name slugs; duplicate titles from the list below. Persona names belong only in blockquote prose, never in the H2.`;
 

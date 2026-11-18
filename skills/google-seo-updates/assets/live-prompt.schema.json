@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "google-seo-updates-live-prompt",
+  "type": "object",
+  "required": ["livePrompt"],
+  "additionalProperties": false,
+  "properties": {
+    "livePrompt": { "type": "string" }
+  }
+}

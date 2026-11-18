@@ -482,7 +482,7 @@ class Neo_Pulse_App_Agent_Runs_Route_Handlers {
 			// Editorial audits: one page per tick. Keep poll bursts short so HTTP does not time out.
 			$ticks  = in_array( $recipe, array( 'semrush_safe_fix', 'posts_content_gap_check' ), true )
 				? 1
-				: ( in_array( $recipe, array( 'editorial_content_audit', 'fact_checker' ), true ) ? 8 : 24 );
+				: ( in_array( $recipe, array( 'editorial_content_audit', 'fact_checker', 'cannibalization_audit' ), true ) ? 8 : 24 );
 			for ( $i = 0; $i < $ticks; $i++ ) {
 				$current = Neo_Pulse_App_Agent_Runs_Store::get_run( $team_id, $run_id, true );
 				if ( ! $current ) {

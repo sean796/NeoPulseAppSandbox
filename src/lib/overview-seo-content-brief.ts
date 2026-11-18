@@ -83,12 +83,21 @@ export type IllustrativeExample = {
   quoteBody: string;
   asOf: string;
   illustrativeH2Title?: string;
+  /**
+   * Legacy field from older briefs. New extracts leave this empty.
+   * Do not invent a homeowner first name.
+   */
   personaName?: string;
+  /**
+   * Situation opener for the blockquote (vary per page):
+   * "In this scenario", "Consider a common situation", "For example", or "In most cases".
+   */
+  situationOpener?: string;
   householdProfile?: string;
   situationHook?: string;
   /** Brief question for the illustrative intro or blockquote (OpenRouter extract). Never used as a heading. */
   scenarioQuestion?: string;
-  /** One named persona narrative for blockquote (OpenRouter extract). */
+  /** Situation narrative for blockquote with no invented first name (OpenRouter extract). */
   scenarioNarrative?: string;
   recommendationTitle?: string;
   recommendationParagraph?: string;

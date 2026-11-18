@@ -361,7 +361,7 @@ describe("Universal Pulse Engine Agent & Pipeline Contract", () => {
     const docsPath = resolve("docs/api/pulse-engine/agent-registry.md");
     const docs = readFileSync(docsPath, "utf8");
     const docIds = new Set(
-      [...docs.matchAll(/^\| `([^`]+)` \| `(?:aiseo|blog-generator|competitor-research|entity-sap|ppc-ads|reporting|sitemap-optimizer|video|wikipedia)` \|/gm)].map(
+      [...docs.matchAll(/^\| `([^`]+)` \| `(?:system|aiseo|blog-generator|competitor-research|entity-sap|ppc-ads|reporting|sitemap-optimizer|video|wikipedia)` \|/gm)].map(
         (m) => m[1],
       ),
     );

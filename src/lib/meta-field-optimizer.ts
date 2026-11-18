@@ -171,6 +171,7 @@ Return ONLY a JSON object with the optimized meta fields.`;
         { role: 'user', content: userPrompt },
       ],
       contentHarness: true,
+      siteId: siteId ?? null,
       temperature: 0.7,
       maxTokens: 4000,
       topP: 0.9,

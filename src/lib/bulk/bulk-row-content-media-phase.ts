@@ -128,6 +128,7 @@ export async function runBulkRowContentAndMediaPhase(input: {
       const resolvedSiteId = serpSite?.id ?? primarySiteForAcf?.id ?? connectedSite?.id;
       const resolvedSiteUrl =
         serpSite?.siteUrl ?? primarySiteForAcf?.siteUrl ?? connectedSite?.siteUrl;
+      const siteForFactCheck = serpSite ?? primarySiteForAcf ?? connectedSite ?? null;
       let contentHtml = await prepareHarnessContentForUpload({
         markdownContent: md,
         blueprintAgents: blueprintResult.agents,
@@ -142,6 +143,8 @@ export async function runBulkRowContentAndMediaPhase(input: {
         articleTitle: bulkResolvedPostTitle,
         model: pipelineBlogModel,
         linkTargetsPlan,
+        site: siteForFactCheck,
+        onProgress: (message) => options.onProgress?.(rowIndex, 0, message),
       });
       if (resolvedSiteUrl) {
         contentHtml = sanitizeContentForUpload(

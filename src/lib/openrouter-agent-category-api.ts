@@ -177,6 +177,7 @@ export async function streamAgentCategoryOpenRouterChat(args: {
     maxTokens: args.maxTokens,
     responseFormat: args.responseFormat,
     reasoning: args.reasoning,
+    siteId: args.siteId,
     signal: args.signal,
     onDelta: args.onDelta,
   });
@@ -229,6 +230,7 @@ export async function callAgentCategoryOpenRouterChat(args: {
       maxTokens: args.maxTokens,
       responseFormat: args.responseFormat,
       reasoning: args.reasoning ?? (args.category === "research" || args.category === "report" ? { effort: "low" } : undefined),
+      siteId: args.siteId,
       signal: args.signal,
     });
   }
@@ -242,6 +244,7 @@ export async function callAgentCategoryOpenRouterChat(args: {
     temperature: args.temperature,
     responseFormat: args.responseFormat,
     reasoning: args.reasoning ?? (args.category === "research" || args.category === "report" ? { effort: "low" } : undefined),
+    siteId: args.siteId,
     signal: args.signal,
   });
 }
@@ -267,5 +270,6 @@ export async function runAgentCategoryWorkerSection(args: {
     maxTokens: args.maxTokens,
     topP: args.topP,
     httpReferer: args.httpReferer,
+    siteId: args.siteId,
   });
 }

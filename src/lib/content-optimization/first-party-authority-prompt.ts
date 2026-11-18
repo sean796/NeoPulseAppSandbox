@@ -122,11 +122,11 @@ Early in Answer or the first comparison body H2, distinguish three tiers in plai
 3. **Smart/automated**: motorized plus app, scheduling, sensors, voice control, or smart-home integration.
 Forbidden: using motorized and smart interchangeably without defining the difference. Comparison tables must label rows with the correct tier.`;
 
-/** Overview must use pre-assigned personaName, not invent one. */
-export const OVERVIEW_ASSIGNED_PERSONA_RULE = `**OVERVIEW PERSONA NAME (NON-NEGOTIABLE when ASSIGNED ILLUSTRATIVE PERSONA block is present)**:
-- When teasing the Real-World Example, use the assigned personaName exactly. Forbidden to invent a different first name.
-- When no assigned personaName block is present, do not invent any persona first name in Overview. Say "a labeled real-world hypothetical" without naming the person.
-- Forbidden: "hypothetical scenario about {name}" unless {name} matches assigned personaName exactly.`;
+/** Overview teases the Real-World Example with no invented first name. */
+export const OVERVIEW_ASSIGNED_PERSONA_RULE = `**OVERVIEW SITUATION TEASER (NON-NEGOTIABLE)**:
+- When teasing the Real-World Example, say "a labeled real-world hypothetical" or "a common situation" with no invented first name.
+- Forbidden: inventing any homeowner first name (Nadia, Arthur, Anya, Maya, Olivia, or any other proper first name).
+- Forbidden: "hypothetical scenario about {name}" or "featuring {name}".`;
 
 /** Anchor text must align with resolved destination page title. */
 export const INTERNAL_LINK_ANCHOR_MATCH_RULE = `**INTERNAL LINK ANCHOR MATCH (NON-NEGOTIABLE)**:
@@ -138,14 +138,14 @@ export const INTERNAL_LINK_ANCHOR_MATCH_RULE = `**INTERNAL LINK ANCHOR MATCH (NO
 ${INTERNAL_LINK_ANCHOR_CASE_RULE}
 ${INTERNAL_LINKS_PER_SECTION_RULE}`;
 
-export function formatOverviewPersonaTeaserBlock(personaName: string): string {
-  const name = personaName.trim();
-  if (!name) return "";
+export function formatOverviewPersonaTeaserBlock(situationOpener?: string): string {
+  const opener = situationOpener?.trim() || "a labeled real-world hypothetical";
   return [
-    "--- ASSIGNED ILLUSTRATIVE PERSONA (Overview only — do not paste full scenario) ---",
-    `personaName: ${name}`,
-    "When teasing the Real-World Example in Overview, use this exact first name only. Forbidden to invent a different name.",
-    "--- END ASSIGNED ILLUSTRATIVE PERSONA ---",
+    "--- ASSIGNED ILLUSTRATIVE SITUATION (Overview only — do not paste full scenario) ---",
+    `situationOpener: ${opener}`,
+    "When teasing the Real-World Example in Overview, use a situation phrase with no invented first name.",
+    "Forbidden: inventing a homeowner first name.",
+    "--- END ASSIGNED ILLUSTRATIVE SITUATION ---",
   ].join("\n");
 }
 
@@ -181,7 +181,7 @@ export const PRIMARY_CITY_CONSISTENCY_RULE = `**PRIMARY CITY CONSISTENCY (NON-NE
 export const A_LEVEL_CONNECTED_SITE_ARTICLE_RULE = `**A-LEVEL CONNECTED-SITE ARTICLE (NON-NEGOTIABLE)**:
 1. **Search intent first**: Answer the decision behind the keyword (what the reader is trying to choose, afford, or avoid), not a dictionary definition or generic topic overview. In Overview or the first body H2, include 2-3 concrete example queries or searcher questions implied by the writing keyword (use peopleAlsoAsk / related searches when present). Forbidden: abstract intent labels with no example queries.
 2. **Company perspective**: In body sections, write as we evaluating options — how we quote, what we see on site, what we recommend and why. Use FIRST-PARTY CLAIMS and connected identity when present.
-3. **Illustrative scenario (named persona)**: Exactly one [ILLUSTRATIVE] section. Copy the injected ILLUSTRATIVE EXAMPLE block exactly. Short H2 (3-8 words, same length as sibling H2s, no links). Intro <p>, then scenario in <blockquote> (personaName inside quote only). <h3>Recommendation: {short title}</h3>, mandatory recommendation <p> naming the connected business. Forbidden: "A realistic local situation" as the H2; a scenario question as H2 or H3; links inside headings.
+3. **Illustrative scenario (situation, no invented name)**: Exactly one [ILLUSTRATIVE] section. Copy the injected ILLUSTRATIVE EXAMPLE block exactly. Short H2 (3-8 words, same length as sibling H2s, no links). Intro <p>, then scenario in <blockquote> with situationOpener and no first name. <h3>Recommendation: {short title}</h3>, mandatory recommendation <p> naming the connected business. Forbidden: inventing a homeowner first name; "A realistic local situation" as the H2; a scenario question as H2 or H3; links inside headings.
 4. **Recommendation**: Exactly one [RECOMMENDATION] section that answers "so what should I actually buy?" Blog: extractable Best for {job}: {option} list (4-6 rows when sources have options) plus one closing sentence naming the connected business from the identity block. When SAP PAGE TEMPLATE is present: that extractable list IS the four-column table Product | Best for | Budget | Reason (not a bullet list). No new H2 beyond the SAP Local Recommendation heading.
 5. **Watch out for**: On cost, ROI, financing, or rebate topics, name assumptions that skew economics (usage, roof, budget, payback horizon, program eligibility).
 6. **When not**: At least two cases where the recommendation may not fit (reuse tradeoff spirit — budget, property type, timeline, shade, access, etc.).
@@ -196,52 +196,52 @@ export const A_LEVEL_CONNECTED_SITE_ARTICLE_RULE = `**A-LEVEL CONNECTED-SITE ART
 export const A_LEVEL_DECISION_PRECISION_RULE = `**A-LEVEL DECISION PRECISION (NON-NEGOTIABLE — no new H2s)**:
 1. **No new sections**: Fit all requirements inside existing checklist H2s. Replace weak table rows instead of adding length.
 2. **Spec vs performance**: In Answer or the first body section, distinguish **rated spec** (label rating, efficiency %, SEER, R-value, tier grade, etc.) from **real-world job or system performance** (layout, access, environment, install quality, usage). Forbidden: treating the rated spec alone as a guaranteed field outcome.
-3. **Contrast illustrative**: The [ILLUSTRATIVE] section is one worked example: short H2, intro <p>, scenario in <blockquote> (one genderless persona name in prose; scenarioQuestion as a sentence in the intro or quote, never as a heading), <h3>Recommendation: {short titled pick}</h3>, then **mandatory** site-first recommendation <p> (2-3 sentences) that opens with the connected business name as the subject. Forbidden: Recommendation h3 with no following p. Forbidden: "{persona} should…" as the recommendation opener. Forbidden: a long situation/question as H2 or H3. A-vs-B contrast belongs in the when-it-matters matrix, not a second illustrative block.
+3. **Contrast illustrative**: The [ILLUSTRATIVE] section is one worked example: short H2, intro <p>, scenario in <blockquote> (situationOpener + homeowner/buyer wording with no invented first name; scenarioQuestion as a sentence in the quote, never as a heading), <h3>Recommendation: {short titled pick}</h3>, then **mandatory** site-first recommendation <p> (2-3 sentences) that opens with the connected business name as the subject. Forbidden: Recommendation h3 with no following p. Forbidden: inventing a first name. Forbidden: a long situation/question as H2 or H3. A-vs-B contrast belongs in the when-it-matters matrix, not a second illustrative block.
 4. **When-it-matters matrix**: Exactly one [DECISION] or [TABLE] must be a **"When does [key spec/tier] actually matter?"** matrix with columns **Situation | Importance** (Very high / Moderate / Lower / Depends on …). Format each row as \`<li><strong>Situation</strong>: … <strong>Importance</strong>: …</li>\` or a two-column HTML table. Never use em dash (U+2014) or en dash between labels and values. Adapt rows to the topic (space constraint, budget priority, environment, tight target, lowest upfront cost, etc.). Obstruction or shade rows must not equate rated spec with the fix unless sources tie them.
 5. **Premium worth-it rule**: The [TRADEOFF] section must state explicit criteria for when paying more for the premium or higher-tier option is worth it — and when it is not. Forbidden: premium spec automatically means faster ROI, payback, or resale premium.
-6. **Matrix + persona synergy**: The matrix is the extractable decision rules; the illustrative section is one local worked example with **one** named persona. Do not repeat the same points in both without adding new detail.
+6. **Matrix + situation synergy**: The matrix is the extractable decision rules; the illustrative section is one local worked example with **no invented first name**. Do not repeat the same points in both without adding new detail.
 7. **If-X-choose-Y**: Across the article, write 2-4 inline sentences of the form "If {named constraint}, choose {option}". Place them in [DECISION] and/or [RECOMMENDATION]. Forbidden: empty "if you want quality" filler. This is in addition to the one chooser table or Choose A when pair.`;
 
-/** Forbidden dual-homeowner pattern (A/B contrast belongs in [DECISION] matrix, not [ILLUSTRATIVE]). */
-export const ILLUSTRATIVE_ONE_PERSONA_FORBIDDEN = `Forbidden in [ILLUSTRATIVE]: "Consider two homeowners", "Homeowner A", "Homeowner B", comparing two unnamed homeowners, Situation A/B, or any second persona. Exactly one OpenRouter-assigned personaName — one detailed scenario for this post only.`;
+/** Forbidden dual-homeowner pattern and invented first names (A/B contrast belongs in [DECISION] matrix). */
+export const ILLUSTRATIVE_ONE_PERSONA_FORBIDDEN = `Forbidden in [ILLUSTRATIVE]: inventing a homeowner first name; "Nadia", "Arthur", or any other proper first name; "Consider two homeowners", "Homeowner A", "Homeowner B", Situation A/B, or a second scenario. Exactly one situation example for this post — vary the opener (In this scenario / Consider a common situation / For example / In most cases).`;
 
-/** Exact HTML/markdown shape: one persona, one decision matching Answer, compact. */
+/** Exact HTML/markdown shape: one situation, one decision matching Answer, compact. */
 export const ILLUSTRATIVE_PERSONA_OUTPUT_SHAPE = `**ILLUSTRATIVE OUTPUT SHAPE (exact — compact, one decision matching Answer)**:
-Do NOT output lead-in labels. Forbidden: the word "Scenario:" anywhere in this section. Do NOT use a persona name as h3. Keep this block **short** — do not add extra paragraphs or expand word count.
+Do NOT output lead-in labels. Forbidden: the word "Scenario:" anywhere in this section. Do NOT invent a first name. Keep this block **short** — do not add extra paragraphs or expand word count.
 After the section H2 (use this section's checklist title exactly — 3-8 words, unique, no links, no place names, no keyword slug. Never retitle it to a stock label. Never write a second homeowner-example H2):
 HTML:
-<p>{situationHook only — 1-2 sentences: general decision context for readers facing this topic. Introduce the tension at industry/reader level. Forbidden: personaName or any proper name; scenarioQuestion; repeating blockquote prose; "Scenario:" prefix.}</p>
-<blockquote><p>{personaName} + scenarioNarrative — 2-3 sentences: the specific stuck moment, ONE choice from the Answer, why they are stuck. Weave scenarioQuestion here as a normal sentence when assigned. Weave the place name inside this sentence as [[LINK:service-area page title|short place]] when CITY INTERNAL LINK is listed. Forbidden: a location cite as the first child of the blockquote; forbidden "{place} —" or "{place} -" before the scenario sentence; forbidden copying situationHook from the intro.}</p></blockquote>
+<p>{situationHook only — 1-2 sentences: general decision context for readers facing this topic. Introduce the tension at industry/reader level. Forbidden: any invented first name; scenarioQuestion; repeating blockquote prose; "Scenario:" prefix.}</p>
+<blockquote><p>{situationOpener + scenarioNarrative — 2-3 sentences: the specific stuck moment, ONE choice from the Answer, why they are stuck. Use "a homeowner", "their", or "the household" — never a first name. Weave scenarioQuestion here as a normal sentence when assigned. Weave the place name inside this sentence as [[LINK:service-area page title|short place]] when CITY INTERNAL LINK is listed. Forbidden: a location cite as the first child of the blockquote; forbidden "{place} —" or "{place} -" before the scenario sentence; forbidden copying situationHook from the intro.}</p></blockquote>
 <h3>Recommendation: {specific pick title that matches Answer, short}</h3>
-<p>MANDATORY SITE-FIRST: {Connected business name} would recommend / recommends … (2 sentences max: the quote and why it resolves their decision). Forbidden: opening with personaName should, they should, or a generic a-business-should.</p>
+<p>MANDATORY SITE-FIRST: {Connected business name} would recommend / recommends … (2 sentences max: the quote and why it resolves their decision). Forbidden: opening with a first name, they should, or a generic a-business-should.</p>
 Markdown — same shape: ## {this section's checklist title}, summary paragraph, blockquote, ### Recommendation: {specific pick title that matches Answer, short}, then the same mandatory SITE-FIRST paragraph.
 ${ILLUSTRATIVE_ONE_PERSONA_FORBIDDEN}
 Forbidden: "A realistic local situation" or "A realistic local scenario" as the H2; a full scenario question as H2 or H3; Scenario as an H3 heading; any link inside H2 or H3; demonstrating that products exist without a decision; a vertical Answer does not discuss; checklist-dumping every article topic; keyword+location slug in the H2; ending after Recommendation h3 with no p.`;
 
-/** Genderless named persona + connected-business recommendation (site-first POV). */
-export const ILLUSTRATIVE_SCENARIO_PERSONA_RULE = `**ILLUSTRATIVE PERSONA + SITE RECOMMENDATION (NON-NEGOTIABLE — connected site)**:
-1. **Copy ILLUSTRATIVE EXAMPLE only**: personaName, householdProfile, situationHook, scenarioQuestion, scenarioNarrative, recommendationTitle, recommendationParagraph are assigned by OpenRouter before this section runs. Copy them exactly — forbidden to rename personaName or invent a different persona.
-2. **Name in blockquote only**: personaName appears inside blockquote prose — never as <h2> or <h3>.
+/** Situation example + connected-business recommendation (site-first POV). */
+export const ILLUSTRATIVE_SCENARIO_PERSONA_RULE = `**ILLUSTRATIVE SITUATION + SITE RECOMMENDATION (NON-NEGOTIABLE — connected site)**:
+1. **Copy ILLUSTRATIVE EXAMPLE only**: situationOpener, householdProfile, situationHook, scenarioQuestion, scenarioNarrative, recommendationTitle, recommendationParagraph are assigned by OpenRouter before this section runs. Copy them exactly — forbidden to invent a first name.
+2. **No invented first names**: Use situationOpener + "a homeowner" / "their" / "the household" in the blockquote — never Nadia, Arthur, or any other proper first name.
 3. **Decision matching Answer (mandatory)**: Blockquote + recommendation show ONE decision from Keyword + Answer — not a product catalog and not a different vertical.
-4. **Short H2, scenario in body**: H2 is a short topic title (3-8 words), like other body H2s. Intro <p> sets general context (situationHook). Blockquote carries personaName + scenarioNarrative. Put scenarioQuestion in the blockquote only. Forbidden: persona names in the intro p; scenarioQuestion in the intro p; scenarioQuestion as H2 or H3; Scenario as an H3 heading.
-5. **Compact, non-redundant**: Intro 1-2 sentences (general setup only); blockquote 2-3 sentences (named persona only); recommendation p 2 sentences max. Intro and blockquote must not say the same thing.
+4. **Short H2, scenario in body**: H2 is a short topic title (3-8 words), like other body H2s. Intro <p> sets general context (situationHook). Blockquote carries situationOpener + scenarioNarrative. Put scenarioQuestion in the blockquote only. Forbidden: first names in the intro p; scenarioQuestion in the intro p; scenarioQuestion as H2 or H3; Scenario as an H3 heading.
+5. **Compact, non-redundant**: Intro 1-2 sentences (general setup only); blockquote 2-3 sentences (situation only); recommendation p 2 sentences max. Intro and blockquote must not say the same thing.
 6. **Titled recommendation h3 + mandatory paragraph**: The recommendation h3 reads exactly "Recommendation: {short pick title}" (the word Recommendation, a colon, then the short pick title). Forbidden: the pick title alone as h3, "Recommendation" with a period or no colon, stopping after the Recommendation h3 with no <p>. Forbidden: links in H2 or H3.
-7. **Site-first recommendation**: Recommendation <p> opens with the connected business name as the grammatical subject ("{Business} would recommend…"). Forbidden: persona-first advice ("{persona} should…").
+7. **Site-first recommendation**: Recommendation <p> opens with the connected business name as the grammatical subject ("{Business} would recommend…"). Forbidden: advice that opens with an invented first name.
 8. **Answer ceiling**: Economic numbers must not exceed Answer qualification.
 9. **One block only**: Forbidden: a second Recommendation pair in this H2.
 ${ILLUSTRATIVE_PERSONA_OUTPUT_SHAPE}`;
 
-/** Body [ILLUSTRATIVE] H2: mandatory persona scenario + site recommendation (prompt-level; no HTML injectors). */
+/** Body [ILLUSTRATIVE] H2: mandatory situation + site recommendation (prompt-level; no HTML injectors). */
 export const ILLUSTRATIVE_BLOCKQUOTE_RULE = `**ILLUSTRATIVE SCENARIO (NON-NEGOTIABLE)**:
 1. Exactly one body H2 carries [ILLUSTRATIVE]: short H2 + intro p + blockquote + an h3 that reads exactly "Recommendation: {short pick title}" + **mandatory recommendation p (2-3 sentences)**. Forbidden: ending after Recommendation h3 with no following <p>. Forbidden: Scenario as an H3.
-2. Ground to Answer: the persona decision must match Answer topic; economic numbers and payback framing must not exceed Answer qualification. When ANSWER GROUNDING block is present, treat Answer text as the topic contract and the ceiling.
-3. **ILLUSTRATIVE EXAMPLE block is mandatory**: Copy its structured fields with minimal edit: situationHook → intro p (general context, no persona name), scenarioQuestion + scenarioNarrative → blockquote (personaName inside quote only; never a heading), recommendationTitle → Recommendation h3, recommendationParagraph → following p. Intro and blockquote must not repeat each other. Forbidden to invent or rename the persona. ${ILLUSTRATIVE_ONE_PERSONA_FORBIDDEN}
-4. Overview announces the example; the full persona scenario lives only in the [ILLUSTRATIVE] body section. No other body section may output Recommendation h3 blocks or ILLUSTRATIVE EXAMPLE text.`;
+2. Ground to Answer: the situation decision must match Answer topic; economic numbers and payback framing must not exceed Answer qualification. When ANSWER GROUNDING block is present, treat Answer text as the topic contract and the ceiling.
+3. **ILLUSTRATIVE EXAMPLE block is mandatory**: Copy its structured fields with minimal edit: situationHook → intro p (general context, no first name), scenarioQuestion + scenarioNarrative → blockquote (situationOpener, no first name; never a heading), recommendationTitle → Recommendation h3, recommendationParagraph → following p. Intro and blockquote must not repeat each other. Forbidden to invent a first name. ${ILLUSTRATIVE_ONE_PERSONA_FORBIDDEN}
+4. Overview announces the example; the full situation lives only in the [ILLUSTRATIVE] body section. No other body section may output Recommendation h3 blocks or ILLUSTRATIVE EXAMPLE text.`;
 
 /** Non-[ILLUSTRATIVE] body sections: forbid duplicating the worked hypothetical. */
 export const NON_ILLUSTRATIVE_HYPOTHETICAL_BAN_RULE = `**NO DUPLICATE HYPOTHETICAL (NON-NEGOTIABLE — this section is NOT [ILLUSTRATIVE])**:
-Forbidden in this section: H2 titled "A Local Homeowner Example", "Section 1", any "Section N", "Hypothetical scenario:", "Hypothetical homeowner situation:", Homeowner A/B, <h3>Scenario:</h3> blocks, <h3>Recommendation:</h3> blocks, <blockquote> hypothetical scenarios, or copying ILLUSTRATIVE EXAMPLE leadIn/quoteBody.
-The full labeled hypothetical with persona scenarios and site recommendations lives in exactly one other [ILLUSTRATIVE] body section. Use brief inline when/skip-if or one-sentence tradeoff instead. Overview already points readers to Real-World Example — do not repeat that setup here.`;
+Forbidden in this section: H2 titled "A Local Homeowner Example", "Section 1", any "Section N", "Hypothetical scenario:", "Hypothetical homeowner situation:", invented first names, Homeowner A/B, <h3>Scenario:</h3> blocks, <h3>Recommendation:</h3> blocks, <blockquote> hypothetical scenarios, or copying ILLUSTRATIVE EXAMPLE leadIn/quoteBody.
+The full labeled hypothetical with a situation opener and site recommendations lives in exactly one other [ILLUSTRATIVE] body section. Use brief inline when/skip-if or one-sentence tradeoff instead. Overview already points readers to Real-World Example — do not repeat that setup here.`;
 
 /** Verified facts from QFO official-source pass are the source of truth for checkable claims. */
 export const FACTUAL_VERIFICATION_SOURCE_RULE = `**FACTUAL VERIFICATION (NON-NEGOTIABLE — EVERY CHECKABLE CLAIM)**:
@@ -309,20 +309,20 @@ export function formatIllustrativePersonaPromptBlock(
   const lines = [
     "--- ILLUSTRATIVE EXAMPLE (MANDATORY — copy into [ILLUSTRATIVE] section) ---",
   ];
-  if (ex?.personaName?.trim()) {
-    lines.push(`personaName (only person in section): ${ex.personaName.trim()}`);
+  if (ex.situationOpener?.trim()) {
+    lines.push(`situationOpener (blockquote opener — no first name): ${ex.situationOpener.trim()}`);
   }
   if (ex.householdProfile?.trim()) lines.push(`householdProfile: ${ex.householdProfile.trim()}`);
   if (ex.situationHook?.trim()) {
     lines.push(
-      `situationHook (intro p only — general reader context, no persona name, no question): ${ex.situationHook.trim()}`,
+      `situationHook (intro p only — general reader context, no first name, no question): ${ex.situationHook.trim()}`,
     );
   }
   if (ex.scenarioQuestion?.trim()) {
     lines.push(`scenarioQuestion (blockquote only; never intro p; never a heading): ${ex.scenarioQuestion.trim()}`);
   }
   if (ex.scenarioNarrative?.trim()) {
-    lines.push(`scenarioNarrative (blockquote p with personaName — specific stuck moment): ${ex.scenarioNarrative.trim()}`);
+    lines.push(`scenarioNarrative (blockquote p with situationOpener — specific stuck moment, no first name): ${ex.scenarioNarrative.trim()}`);
   }
   if (ex.recommendationTitle?.trim()) {
     lines.push(`recommendationTitle (h3 after "Recommendation: "): ${ex.recommendationTitle.trim()}`);
@@ -337,7 +337,7 @@ export function formatIllustrativePersonaPromptBlock(
   }
   const targetH2 = ex.illustrativeH2Title?.trim();
   if (!targetH2) {
-    throw new Error("Illustrative persona block requires illustrativeH2Title from the planner H2.");
+    throw new Error("Illustrative situation block requires illustrativeH2Title from the planner H2.");
   }
   lines.push(`target H2: ${targetH2} (exact — use this checklist title verbatim in <h2>. Never retitle it. Never write a second homeowner H2.)`);
   if (cityServiceArea?.pageTitle.trim() && cityServiceArea.anchor.trim()) {
@@ -346,9 +346,9 @@ export function formatIllustrativePersonaPromptBlock(
     );
   }
   lines.push(
-    "Output shape (HTML tags required — EVERY tag is MANDATORY): <h2>{target H2}</h2> then <p>{situationHook — general intro, no persona name}</p> then <blockquote><p>{personaName} {scenarioNarrative}{scenarioQuestion woven in when assigned}</p></blockquote> then <h3>Recommendation: {recommendationTitle}</h3> then <p>{recommendationParagraph}</p>. Copy persona fields exactly. The <h3>Recommendation: {recommendationTitle}</h3> heading and the following <p>{recommendationParagraph}</p> are NON-NEGOTIABLE — never omit the Recommendation h3 or stop after </blockquote>. Intro p introduces the general decision context; blockquote is the named persona story only. Forbidden: persona name in intro p; intro repeating blockquote; scenarioNarrative outside <blockquote>. Forbidden: omitting <blockquote> tags or omitting <h3>Recommendation: ...</h3>. Forbidden: Scenario as H3; Scenario: in paragraphs; links in headings. Forbidden: a place name cite on top of the blockquote.",
+    "Output shape (HTML tags required — EVERY tag is MANDATORY): <h2>{target H2}</h2> then <p>{situationHook — general intro, no first name}</p> then <blockquote><p>{situationOpener} {scenarioNarrative}{scenarioQuestion woven in when assigned}</p></blockquote> then <h3>Recommendation: {recommendationTitle}</h3> then <p>{recommendationParagraph}</p>. Copy situation fields exactly. The <h3>Recommendation: {recommendationTitle}</h3> heading and the following <p>{recommendationParagraph}</p> are NON-NEGOTIABLE — never omit the Recommendation h3 or stop after </blockquote>. Intro p introduces the general decision context; blockquote is the situation story only. Forbidden: inventing a first name; intro repeating blockquote; scenarioNarrative outside <blockquote>. Forbidden: omitting <blockquote> tags or omitting <h3>Recommendation: ...</h3>. Forbidden: Scenario as H3; Scenario: in paragraphs; links in headings. Forbidden: a place name cite on top of the blockquote.",
     ILLUSTRATIVE_ONE_PERSONA_FORBIDDEN,
-    "Ground to Answer + VERIFIED FACTS. Persona decision must match Keyword + Answer topic. Recommendation p is site-first (Company would recommend…), never persona-first (persona should…). Natural local phrasing only — no keyword+location slug stuffing.",
+    "Ground to Answer + VERIFIED FACTS. Situation decision must match Keyword + Answer topic. Recommendation p is site-first (Company would recommend…). Natural local phrasing only — no keyword+location slug stuffing.",
     "--- END ILLUSTRATIVE EXAMPLE ---",
   );
   return lines.join("\n");

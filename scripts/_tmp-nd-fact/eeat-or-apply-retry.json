@@ -1,0 +1,46 @@
+{
+  "results": [
+    {
+      "id": 8199,
+      "pageUrl": "https://neodigital.ca/blog/website-audit-fix-errors/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 8213,
+      "pageUrl": "https://neodigital.ca/blog/website-design-matters/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 7664,
+      "pageUrl": "https://neodigital.ca/blog/wordpress-features-edmonton-local-success/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 8192,
+      "pageUrl": "https://neodigital.ca/blog/wordpress-maintenance-safe-site/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 8064,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-66-street-edmonton/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 8076,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-87-avenue-edmonton/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": 7986,
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-edmonton-lechelt-field/",
+      "ok": true,
+      "status": 200
+    }
+  ]
+}

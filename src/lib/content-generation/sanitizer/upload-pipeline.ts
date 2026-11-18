@@ -13,6 +13,7 @@ import {
   removeNonWikipediaExternalLinks,
   ensureNoLinkEndsInPeriod,
   stripDanglingForMoreTail,
+  stampExternalLinksNofollow,
 } from "@/lib/content-generation/sanitizer/link-rules";
 import { forceConvertMarkdownLinks } from "@/lib/content-generation/sanitizer/markdown-rules";
 import { enforceOneImagePerSection } from "@/lib/content-generation/sanitizer/structure-rules";
@@ -89,6 +90,9 @@ export function sanitizeContentForUpload(
 
   // Step 10: Remove orphan " for more." tails (never reintroduce SEO stubs)
   sanitized = stripDanglingForMoreTail(sanitized);
+
+  // Step 11: Every remaining external link is nofollow (after link repair)
+  sanitized = stampExternalLinksNofollow(sanitized, connectedSiteUrl);
   
   return sanitized;
 }

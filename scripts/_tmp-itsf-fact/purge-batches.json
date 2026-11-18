@@ -1,0 +1,20 @@
+{
+  "total": 106,
+  "batches": [
+    {
+      "idx": 1,
+      "path": "scripts/_tmp-itsf-fact/purge-batch-1.php.txt",
+      "count": 40
+    },
+    {
+      "idx": 2,
+      "path": "scripts/_tmp-itsf-fact/purge-batch-2.php.txt",
+      "count": 40
+    },
+    {
+      "idx": 3,
+      "path": "scripts/_tmp-itsf-fact/purge-batch-3.php.txt",
+      "count": 26
+    }
+  ]
+}

@@ -172,7 +172,11 @@ function attachInventoryProps(
   props: BulkGeneratorDetailsPanelProps,
   input: Pick<
     OverviewBulkDetailsBindingsInput,
-    "sitemapInventoryLinks" | "siteKwHostedLink" | "sitemapInventoryLoading" | "sitemapSource"
+    | "sitemapInventoryLinks"
+    | "siteKwHostedLink"
+    | "sitemapInventoryLoading"
+    | "sitemapSource"
+    | "detailsSite"
   >,
   pipelineSectionTitles?: readonly string[],
 ): BulkGeneratorDetailsPanelProps {
@@ -183,6 +187,7 @@ function attachInventoryProps(
     sitemapInventoryLoading: input.sitemapInventoryLoading ?? false,
     pipelineSectionTitles: pipelineSectionTitles ? [...pipelineSectionTitles] : props.pipelineSectionTitles,
     entitySapRowDisplay: input.sitemapSource === "sap",
+    detailsSite: input.detailsSite ?? props.detailsSite,
   };
 }
 
@@ -195,6 +200,7 @@ export function buildOverviewWarmInventoryDetailsProps(
     | "sitemapSource"
     | "overviewRows"
     | "gridPageIndex"
+    | "detailsSite"
   >,
 ): BulkGeneratorDetailsPanelProps {
   const allRows = input.overviewRows;
@@ -225,6 +231,7 @@ export function buildOverviewWarmInventoryDetailsProps(
     sitemapInventoryLoading: input.sitemapInventoryLoading ?? false,
     entitySapRowDisplay: input.sitemapSource === "sap",
     filesByRow: new Map(),
+    detailsSite: input.detailsSite,
   };
 }
 
@@ -328,6 +335,7 @@ export function buildMultiSiteBulkGeneratorDetailsProps(
       siteKwHostedLink: input.siteKwHostedLink,
       sitemapInventoryLoading: input.sitemapInventoryLoading,
       sitemapSource: undefined,
+      detailsSite: input.detailsSite,
     },
     pipelineSectionTitles,
   );

@@ -1,0 +1,27 @@
+﻿$ok = 0;
+if (function_exists('nitropack_purge')) { nitropack_purge(); $ok++; }
+if (function_exists('nitropack_sdk_purge_local')) { nitropack_sdk_purge_local(); $ok++; }
+if (class_exists('\Elementor\Plugin')) { \Elementor\Plugin::$instance->files_manager->clear_cache(); }
+$p = get_posts(['name'=>'capital-dividend-account','post_type'=>'post','post_status'=>'any','numberposts'=>1]);
+$check = null;
+if ($p) {
+  $c = $p[0]->post_content;
+  $check = [
+    'id' => $p[0]->ID,
+    'tech' => (bool)preg_match('/Technical Review/i', $c),
+    'cra' => stripos($c, 'CRA') !== false,
+    'window' => stripos($c, 'window covering') !== false,
+    'gov_boilerplate' => (bool)preg_match('/government and industry/i', $c),
+    'research_id' => (bool)preg_match('/id=["\']research-and-fact-checking["\']/', $c),
+    'nofollow' => str_contains($c, 'rel="nofollow"'),
+    'canada' => stripos($c, 'canada.ca') !== false,
+    'team' => stripos($c, 'KWB Team') !== false,
+    'accountants' => stripos($c, 'chartered professional accountants') !== false,
+  ];
+}
+$tpl = get_post_meta(337, '_elementor_data', true);
+return [
+  'purge' => $ok,
+  'post' => $check,
+  'badge' => is_string($tpl) && str_contains($tpl, 'neo-fact-check') && str_contains($tpl, 'fact-checked by humans'),
+];

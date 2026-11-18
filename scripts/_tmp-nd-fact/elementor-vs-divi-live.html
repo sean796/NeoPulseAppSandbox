@@ -1,0 +1,1325 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="profile" href="https://gmpg.org/xfn/11">
+	<title>Elementor Vs Divi: Which Page Builder Reigns Supreme? | Neo Digital</title>
+<meta name='robots' content='follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large' />
+<script data-cfasync="false" data-no-defer="1" data-no-optimize="1" id="ndet-form-guard" nitro-exclude>
+window.ndetFormGuard={"ts":true,"sending":"Sending\u2026","verify":"Verify above, then submit"};/* Neo Tools: holds an Elementor form sent before the page is ready (includes/modules/form-guard.php).
+ * Page speed tools (NitroPack, WP Rocket…) hold every script back until the visitor first scrolls
+ * or taps. If that first tap is Submit, Elementor's own handler isn't there yet, the browser posts
+ * the form the plain way and Elementor drops it: the page reloads and the lead is lost. This runs
+ * in the head, untouched by those tools, and holds the submit until Elementor (and Turnstile's
+ * answer, where a form is checked) is ready, then sends it through Elementor. A submit made when
+ * everything is ready passes straight through. Printed inline; no dependencies. */
+( function () {
+	var cfg = window.ndetFormGuard || {};
+	var STEP = 100;      // ms between looks
+	var TS_WAIT = 150;   // looks to wait for Turnstile once Elementor is ready (15 s)
+	var GIVE_UP = 300;   // looks before leaving the form alone (30 s)
+
+	function bound( form ) {
+		var $ = window.jQuery;
+		if ( ! $ || ! $._data ) {
+			return false;
+		}
+		var events = $._data( form, 'events' );
+		return !! ( events && events.submit );
+	}
+
+	// Turnstile checks this form: the tool is on (told by PHP, so it is known before any other
+	// script runs) and the form isn't left out in its own settings.
+	function tsWanted( form ) {
+		if ( ! cfg.ts ) {
+			return false;
+		}
+		var widget = form.closest( '.elementor-widget-form' );
+		if ( ! widget ) {
+			return false;
+		}
+		try {
+			return 'off' !== JSON.parse( widget.getAttribute( 'data-settings' ) || '{}' ).ndet_turnstile;
+		} catch ( e ) {
+			return true;
+		}
+	}
+
+	function tsToken( form ) {
+		var input = form.querySelector( 'input[name="cf-turnstile-response"]' );
+		return !! ( input && input.value );
+	}
+
+	// What turnstile.js last heard from Cloudflare for this form: '', 'interactive' (the visitor
+	// has to click), 'error' or 'ok'.
+	function tsState( form ) {
+		return form.getAttribute( 'data-ndet-ts' ) || '';
+	}
+
+	document.addEventListener( 'submit', function ( e ) {
+		var form = e.target;
+		if ( ! form || ! form.matches || ! form.matches( 'form.elementor-form' ) ) {
+			return;
+		}
+		if ( bound( form ) && ( ! tsWanted( form ) || tsToken( form ) || 'error' === tsState( form ) ) ) {
+			return; // Ready: Elementor sends it.
+		}
+		e.preventDefault();
+		e.stopImmediatePropagation();
+		if ( form.getAttribute( 'data-ndet-hold' ) ) {
+			return; // Already waiting; ignore more taps.
+		}
+		form.setAttribute( 'data-ndet-hold', '1' );
+		var button = form.querySelector( 'button[type="submit"]' );
+		var text = button && button.querySelector( '.elementor-button-text' );
+		var old = text ? text.textContent : '';
+		function label( words ) {
+			if ( text && words && text.textContent !== words ) {
+				text.textContent = words;
+			}
+		}
+		label( cfg.sending );
+		if ( button ) {
+			button.setAttribute( 'disabled', 'disabled' );
+		}
+		function done() {
+			if ( text ) {
+				text.textContent = old;
+			}
+			if ( button ) {
+				button.removeAttribute( 'disabled' );
+			}
+			form.removeAttribute( 'data-ndet-hold' );
+		}
+		var n = 0;
+		var readyAt = -1;
+		( function wait() {
+			n++;
+			if ( bound( form ) ) {
+				if ( readyAt < 0 ) {
+					readyAt = n;
+				}
+				var state = tsState( form );
+				if ( ! tsWanted( form ) || tsToken( form ) || 'error' === state || ( 'interactive' !== state && n - readyAt >= TS_WAIT ) ) {
+					done();
+					window.jQuery( form ).trigger( 'submit' );
+					return;
+				}
+			}
+			// Cloudflare wants a click: say so instead of sitting on "Sending…" (Elementor ready or not).
+			label( tsWanted( form ) && 'interactive' === tsState( form ) ? cfg.verify : cfg.sending );
+			if ( n >= GIVE_UP ) {
+				done();
+				return;
+			}
+			setTimeout( wait, STEP );
+		}() );
+	}, true );
+}() );
+</script>
+
+<!-- SEO by Neo Pulse -->
+<meta name="description" content="Confused by Elementor vs Divi? Get a clear comparison of WordPress page builders to choose the best for your site. Find out now."/>
+<link rel="canonical" href="https://neodigital.ca/blog/elementor-vs-divi/" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Elementor Vs Divi: Which Page Builder Reigns Supreme? | Neo Digital" />
+<meta property="og:description" content="Confused by Elementor vs Divi? Get a clear comparison of WordPress page builders to choose the best for your site. Find out now." />
+<meta property="og:url" content="https://neodigital.ca/blog/elementor-vs-divi/" />
+<meta property="og:site_name" content="Neo Digital" />
+<meta property="article:publisher" content="https://facebook.com/neodigitalca" />
+<meta property="article:section" content="Uncategorized" />
+<meta property="og:updated_time" content="2026-11-17T15:32:15-06:00" />
+<meta property="og:image" content="https://neodigital.ca/wp-content/uploads/2026/06/elementor-divi-page-builder-comparison-featured.webp" />
+<meta property="og:image:secure_url" content="https://neodigital.ca/wp-content/uploads/2026/06/elementor-divi-page-builder-comparison-featured.webp" />
+<meta property="og:image:width" content="1408" />
+<meta property="og:image:height" content="768" />
+<meta property="og:image:alt" content="Elementor Vs Divi: Which Page Builder Reigns Supreme?" />
+<meta property="og:image:type" content="image/webp" />
+<meta property="article:published_time" content="2026-11-14T03:00:00-06:00" />
+<meta property="article:modified_time" content="2026-11-17T15:32:15-06:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Elementor Vs Divi: Which Page Builder Reigns Supreme? | Neo Digital" />
+<meta name="twitter:description" content="Confused by Elementor vs Divi? Get a clear comparison of WordPress page builders to choose the best for your site. Find out now." />
+<meta name="twitter:image" content="https://neodigital.ca/wp-content/uploads/2026/06/elementor-divi-page-builder-comparison-featured.webp" />
+<meta name="twitter:label1" content="Written by" />
+<meta name="twitter:data1" content="Sean Craig" />
+<meta name="twitter:label2" content="Time to read" />
+<meta name="twitter:data2" content="8 minutes" />
+<script type="application/ld+json" class="neo-pulse-seo-schema">{"@context":"https://schema.org","@graph":[{"@type":"Place","@id":"https://neodigital.ca/#place","address":{"@type":"PostalAddress","streetAddress":"10619 170 St NW","addressLocality":"Edmonton","addressRegion":"AB","postalCode":"T5P4W2","addressCountry":"CA"}},{"@type":["ProfessionalService","Organization"],"@id":"https://neodigital.ca/#organization","name":"Neo Digital","url":"https://neodigital.ca/","sameAs":["https://facebook.com/neodigitalca","https://instagram.com/neodigitalca"],"email":"info@neodigital.ca","address":{"@type":"PostalAddress","streetAddress":"10619 170 St NW","addressLocality":"Edmonton","addressRegion":"AB","postalCode":"T5P4W2","addressCountry":"CA"},"logo":{"@type":"ImageObject","@id":"https://neodigital.ca/#logo","url":"https://neodigital.ca/wp-content/uploads/2025/02/Light.svg","contentUrl":"https://neodigital.ca/wp-content/uploads/2025/02/Light.svg","caption":"Neo Digital","inLanguage":"en-US","width":"876","height":"191"},"contactPoint":[{"@type":"ContactPoint","telephone":"+1-587-416-4130","contactType":"customer support"}],"openingHours":["Mo,Tu,We,Th,Fr,Sa,Su 09:00-17:00"],"location":{"@id":"https://neodigital.ca/#place"},"image":{"@id":"https://neodigital.ca/#logo"}},{"@type":"WebSite","@id":"https://neodigital.ca/#website","url":"https://neodigital.ca/","name":"Neo Digital","alternateName":"Neo","publisher":{"@id":"https://neodigital.ca/#organization"},"inLanguage":"en-US"},{"@type":"ImageObject","@id":"https://neodigital.ca/wp-content/uploads/2026/06/elementor-divi-page-builder-comparison-featured.webp","url":"https://neodigital.ca/wp-content/uploads/2026/06/elementor-divi-page-builder-comparison-featured.webp","width":"1408","height":"768","inLanguage":"en-US"},{"@type":"WebPage","@id":"https://neodigital.ca/blog/elementor-vs-divi/#webpage","url":"https://neodigital.ca/blog/elementor-vs-divi/","name":"Elementor Vs Divi: Which Page Builder Reigns Supreme? | Neo Digital","isPartOf":{"@id":"https://neodigital.ca/#website"},"inLanguage":"en-US","datePublished":"2026-11-14T03:00:00-06:00","dateModified":"2026-06-17T18:00:00-06:00","primaryImageOfPage":{"@id":"https://neodigital.ca/wp-content/uploads/2026/06/elementor-divi-page-builder-comparison-featured.webp"}},{"@type":"Person","@id":"https://neodigital.ca/blog/author/seanneodigital-ca/","name":"Sean Craig","url":"https://neodigital.ca/blog/author/seanneodigital-ca/","image":{"@type":"ImageObject","@id":"https://secure.gravatar.com/avatar/6f3e55396e73e5fba369e00a1edc5faa44bbbea288a229c18b9f94dccf634808?s=96&d=mm&r=g","url":"https://secure.gravatar.com/avatar/6f3e55396e73e5fba369e00a1edc5faa44bbbea288a229c18b9f94dccf634808?s=96&d=mm&r=g","caption":"Sean Craig","inLanguage":"en-US"},"worksFor":{"@id":"https://neodigital.ca/#organization"}},{"@type":"BlogPosting","headline":"Elementor Vs Divi: Which Page Builder Reigns Supreme? | Neo Digital","datePublished":"2026-11-14T03:00:00-06:00","dateModified":"2026-11-17T15:32:15-06:00","articleSection":"Uncategorized","author":{"@id":"https://neodigital.ca/blog/author/seanneodigital-ca/","name":"Sean Craig"},"description":"Confused by Elementor vs Divi? Get a clear comparison of WordPress page builders to choose the best for your site. Find out now.","name":"Elementor Vs Divi: Which Page Builder Reigns Supreme? | Neo Digital","publisher":{"@id":"https://neodigital.ca/#organization"},"image":{"@id":"https://neodigital.ca/wp-content/uploads/2026/06/elementor-divi-page-builder-comparison-featured.webp"},"@id":"https://neodigital.ca/blog/elementor-vs-divi/#richSnippet","isPartOf":{"@id":"https://neodigital.ca/blog/elementor-vs-divi/#webpage"},"inLanguage":"en-US","mainEntityOfPage":{"@id":"https://neodigital.ca/blog/elementor-vs-divi/#webpage"}}]}</script>
+<!-- /SEO by Neo Pulse -->
+<style id="neo-pulse-a11y-skip">.neo-pulse-skip-link{position:absolute;left:8px;top:-48px;z-index:100000;padding:8px 12px;background:#84bd00;color:#02050A}.neo-pulse-skip-link:focus{top:8px}</style>
+<link rel="alternate" type="application/rss+xml" title="Neo Digital &raquo; Feed" href="https://neodigital.ca/feed/" />
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://neodigital.ca/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fneodigital.ca%2Fblog%2Felementor-vs-divi%2F" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://neodigital.ca/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fneodigital.ca%2Fblog%2Felementor-vs-divi%2F&#038;format=xml" />
+<style id="wp-img-auto-sizes-contain-inline-css">
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<style id="wp-emoji-styles-inline-css">
+
+	img.wp-smiley, img.emoji {
+		display: inline !important;
+		border: none !important;
+		box-shadow: none !important;
+		height: 1em !important;
+		width: 1em !important;
+		margin: 0 0.07em !important;
+		vertical-align: -0.1em !important;
+		background: none !important;
+		padding: 0 !important;
+	}
+/*# sourceURL=wp-emoji-styles-inline-css */
+</style>
+<link rel='stylesheet' id='wp-block-library-css' href='https://neodigital.ca/wp-includes/css/dist/block-library/style.min.css?ver=7.1.4' media='all' />
+<style id="global-styles-inline-css">
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgb(252,185,0) 0%,rgb(255,105,0) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgb(255,105,0) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgb(255, 255, 255), 6px 6px rgb(0, 0, 0);--wp--preset--shadow--crisp: 6px 6px 0px rgb(0, 0, 0);}.wp-block-button{--wp--preset--dimension--25: 25%;--wp--preset--dimension--50: 50%;--wp--preset--dimension--75: 75%;--wp--preset--dimension--100: 100%;}:root { --wp--style--global--content-size: 800px;--wp--style--global--wide-size: 1200px; }:where(body) { margin: 0; }.wp-site-blocks > .alignleft { float: left; margin-right: 2em; }.wp-site-blocks > .alignright { float: right; margin-left: 2em; }.wp-site-blocks > .aligncenter { justify-content: center; margin-left: auto; margin-right: auto; }:where(.wp-site-blocks) > * { margin-block-start: 24px; margin-block-end: 0; }:where(.wp-site-blocks) > :first-child { margin-block-start: 0; }:where(.wp-site-blocks) > :last-child { margin-block-end: 0; }:root { --wp--style--block-gap: 24px; }:root :where(.is-layout-flow) > :first-child{margin-block-start: 0;}:root :where(.is-layout-flow) > :last-child{margin-block-end: 0;}:root :where(.is-layout-flow) > *{margin-block-start: 24px;margin-block-end: 0;}:root :where(.is-layout-constrained) > :first-child{margin-block-start: 0;}:root :where(.is-layout-constrained) > :last-child{margin-block-end: 0;}:root :where(.is-layout-constrained) > *{margin-block-start: 24px;margin-block-end: 0;}:root :where(.is-layout-flex){gap: 24px;}:root :where(.is-layout-grid){gap: 24px;}.is-layout-flow > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}.is-layout-flow > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}.is-layout-flow > .aligncenter{margin-left: auto !important;margin-right: auto !important;}.is-layout-constrained > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}.is-layout-constrained > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}.is-layout-constrained > .aligncenter{margin-left: auto !important;margin-right: auto !important;}.is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width: var(--wp--style--global--content-size);margin-left: auto !important;margin-right: auto !important;}.is-layout-constrained > .alignwide{max-width: var(--wp--style--global--wide-size);}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}body{padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;}:root :where(.wp-element-button, .wp-block-button__link){background-color: #32373c;border-width: 0;color: #fff;font-family: inherit;font-size: inherit;font-style: inherit;font-weight: inherit;letter-spacing: inherit;line-height: inherit;padding-top: calc(0.667em + 2px);padding-right: calc(1.333em + 2px);padding-bottom: calc(0.667em + 2px);padding-left: calc(1.333em + 2px);text-decoration: none;text-transform: inherit;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+:root :where(.wp-block-icon svg){width: 24px;}
+:root :where(.wp-block-pullquote){font-size: 1.5em;line-height: 1.6;}
+/*# sourceURL=global-styles-inline-css */
+</style>
+<link rel='stylesheet' id='hello-elementor-css' href='https://neodigital.ca/wp-content/themes/hello-elementor/assets/css/reset.css?ver=3.5.2' media='all' />
+<link rel='stylesheet' id='hello-elementor-theme-style-css' href='https://neodigital.ca/wp-content/themes/hello-elementor/assets/css/theme.css?ver=3.5.2' media='all' />
+<link rel='stylesheet' id='hello-elementor-header-footer-css' href='https://neodigital.ca/wp-content/themes/hello-elementor/assets/css/header-footer.css?ver=3.5.2' media='all' />
+<link rel='stylesheet' id='elementor-frontend-css' href='https://neodigital.ca/wp-content/uploads/elementor/css/custom-frontend.min.css?ver=1794906329' media='all' />
+<link rel='stylesheet' id='elementor-post-5564-css' href='https://neodigital.ca/wp-content/uploads/elementor/css/post-5564.css?ver=1794906328' media='all' />
+<link rel='stylesheet' id='widget-image-css' href='https://neodigital.ca/wp-content/plugins/elementor/assets/css/widget-image.min.css?ver=4.4.0' media='all' />
+<link rel='stylesheet' id='widget-nav-menu-css' href='https://neodigital.ca/wp-content/uploads/elementor/css/custom-pro-widget-nav-menu.min.css?ver=1794906329' media='all' />
+<link rel='stylesheet' id='neo-pulse-ai-sidebar-shell-css' href='https://neodigital.ca/wp-content/plugins/neo-pulse-wp/assets/shared/neo-pulse-ai-sidebar-shell.css?ver=0.15.2.1794855690.1794855690&#038;neo-pulse_cv=1794855711' media='all' />
+<link rel='stylesheet' id='neo-pulse-search-css' href='https://neodigital.ca/wp-content/plugins/neo-pulse-wp/assets/search/neo-pulse-search.css?ver=0.15.2.1794855690.1794855690&#038;neo-pulse_cv=1794855711' media='all' />
+<link rel='stylesheet' id='widget-heading-css' href='https://neodigital.ca/wp-content/plugins/elementor/assets/css/widget-heading.min.css?ver=4.4.0' media='all' />
+<link rel='stylesheet' id='widget-table-of-contents-css' href='https://neodigital.ca/wp-content/plugins/elementor-pro/assets/css/widget-table-of-contents.min.css?ver=4.4.0' media='all' />
+<link rel='stylesheet' id='widget-loop-common-css' href='https://neodigital.ca/wp-content/plugins/elementor-pro/assets/css/widget-loop-common.min.css?ver=4.4.0' media='all' />
+<link rel='stylesheet' id='widget-loop-grid-css' href='https://neodigital.ca/wp-content/uploads/elementor/css/custom-pro-widget-loop-grid.min.css?ver=1794906329' media='all' />
+<link rel='stylesheet' id='elementor-icons-css' href='https://neodigital.ca/wp-content/plugins/elementor/assets/lib/eicons/css/elementor-icons.min.css?ver=5.57.0' media='all' />
+<link rel='stylesheet' id='elementor-post-9939-css' href='https://neodigital.ca/wp-content/uploads/elementor/css/post-9939.css?ver=1794906321' media='all' />
+<link rel='stylesheet' id='elementor-post-9945-css' href='https://neodigital.ca/wp-content/uploads/elementor/css/post-9945.css?ver=1794906321' media='all' />
+<link rel='stylesheet' id='elementor-post-7745-css' href='https://neodigital.ca/wp-content/uploads/elementor/css/post-7745.css?ver=1794906323' media='all' />
+<style id="elementor-pro-custom-fonts-inline-css">
+@font-face {
+	font-family: 'Chillax';
+	font-style: normal;
+	font-weight: normal;
+	font-display: auto;
+	src: url('https://neodigital.ca/wp-content/uploads/2025/03/Chillax-Variable.eot');
+	src: url('https://neodigital.ca/wp-content/uploads/2025/03/Chillax-Variable.eot?#iefix') format('embedded-opentype'),
+		url('https://neodigital.ca/wp-content/uploads/2025/03/Chillax-Variable.woff2') format('woff2'),
+		url('https://neodigital.ca/wp-content/uploads/2025/03/Chillax-Variable.woff') format('woff'),
+		url('https://neodigital.ca/wp-content/uploads/2025/03/Chillax-Variable.ttf') format('truetype');
+}
+
+/*# sourceURL=elementor-pro-custom-fonts-inline-css */
+</style>
+<link rel='stylesheet' id='hello-elementor-child-style-css' href='https://neodigital.ca/wp-content/themes/hello-theme-child-master/style.css?ver=2.0.0' media='all' />
+<link rel='stylesheet' id='elementor-gf-local-poppins-css' href='https://neodigital.ca/wp-content/uploads/elementor/google-fonts/css/poppins.css?ver=1742231647' media='all' />
+<link rel='stylesheet' id='elementor-icons-shared-0-css' href='https://neodigital.ca/wp-content/plugins/elementor/assets/lib/font-awesome/css/fontawesome.min.css?ver=5.15.3' media='all' />
+<link rel='stylesheet' id='elementor-icons-fa-solid-css' href='https://neodigital.ca/wp-content/plugins/elementor/assets/lib/font-awesome/css/solid.min.css?ver=5.15.3' media='all' />
+<script id="jquery-core-js" src="https://neodigital.ca/wp-includes/js/jquery/jquery.min.js?ver=3.7.1"></script>
+<script id="jquery-migrate-js" src="https://neodigital.ca/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1"></script>
+<link rel="https://api.w.org/" href="https://neodigital.ca/wp-json/" /><link rel="alternate" title="JSON" type="application/json" href="https://neodigital.ca/wp-json/wp/v2/posts/8500" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://neodigital.ca/xmlrpc.php?rsd" />
+<link rel='shortlink' href='https://neodigital.ca/?p=8500' />
+		<script type="text/javascript">
+			(function(c, l, a, r, i, t, y) {
+				c[a] = c[a] || function() {
+					(c[a].q = c[a].q || []).push(arguments)
+				};
+				t = l.createElement(r);
+				t.async = 1;
+				t.src = "https://www.clarity.ms/tag/" + i + "?ref=wordpress";
+				y = l.getElementsByTagName(r)[0];
+				y.parentNode.insertBefore(t, y);
+			})(window, document, "clarity", "script", "o1nsgf2esu");
+		</script>
+	<meta name="generator" content="Elementor 4.4.0; features: additional_custom_breakpoints; settings: css_print_method-external, google_font-enabled, font_display-swap">
+			<style>
+				.e-con.e-parent:nth-of-type(n+4):not(.e-lazyloaded):not(.e-no-lazyload),
+				.e-con.e-parent:nth-of-type(n+4):not(.e-lazyloaded):not(.e-no-lazyload) * {
+					background-image: none !important;
+				}
+				@media screen and (max-height: 1024px) {
+					.e-con.e-parent:nth-of-type(n+3):not(.e-lazyloaded):not(.e-no-lazyload),
+					.e-con.e-parent:nth-of-type(n+3):not(.e-lazyloaded):not(.e-no-lazyload) * {
+						background-image: none !important;
+					}
+				}
+				@media screen and (max-height: 640px) {
+					.e-con.e-parent:nth-of-type(n+2):not(.e-lazyloaded):not(.e-no-lazyload),
+					.e-con.e-parent:nth-of-type(n+2):not(.e-lazyloaded):not(.e-no-lazyload) * {
+						background-image: none !important;
+					}
+				}
+			</style>
+			<script id='nitro-telemetry-meta' nitro-exclude>window.NPTelemetryMetadata={missReason: (!window.NITROPACK_STATE ? 'cache not found' : 'hit'),pageType: 'post',isEligibleForOptimization: true,}</script><script id='nitro-generic' nitro-exclude>(()=>{if(window.NitroPack=window.NitroPack||{coreVersion:"na",isCounted:!1},!window.NitroPack.isCounted){window.NitroPack.isCounted=!0;const e=()=>{let e=performance?.getEntriesByType?.("navigation")?.[0];return document.prerendering||e?.activationStart>0?"_prr":"navigational-prefetch"===e?.deliveryType||void 0===e?.deliveryType&&e&&e.responseStart-e.requestStart<=5?"_pre":"_dow"},i=(e,i)=>{navigator.sendBeacon("https://to.getnitropack.com/p",JSON.stringify({siteId:"ZHorDGlqzscKdJBJUJFUMAfyuRVjNoqZ",url:window.location.href,referrer:i||"",isOptimized:!!window.IS_NITROPACK,coreVersion:"na",missReason:window.NPTelemetryMetadata?.missReason||"",pageType:window.NPTelemetryMetadata?.pageType||"",isEligibleForOptimization:!!window.NPTelemetryMetadata?.isEligibleForOptimization||!1,pageLoadMode:e}))};(async()=>{await new Promise(e=>{document.prerendering?document.addEventListener("prerenderingchange",e,{once:!0}):e()}),await new Promise(e=>{"complete"===document.readyState?e():window.addEventListener("load",e)}),i(e(),document.referrer)})(),window.addEventListener("pageshow",e=>{if(e.persisted){let e=document.prerendering||self.performance?.getEntriesByType?.("navigation")[0]?.activationStart>0;"visible"!==document.visibilityState||e||i("_bfr","")}})}})();</script><link rel="icon" href="https://neodigital.ca/wp-content/uploads/2025/02/favicon-150x150.png" sizes="32x32" />
+<link rel="icon" href="https://neodigital.ca/wp-content/uploads/2025/02/favicon-300x300.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://neodigital.ca/wp-content/uploads/2025/02/favicon-300x300.png" />
+<meta name="msapplication-TileImage" content="https://neodigital.ca/wp-content/uploads/2025/02/favicon-300x300.png" />
+
+<!-- Google Tag Manager -->
+<script nitro-exclude>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NQ83HRJ4');</script>
+<!-- End Google Tag Manager -->
+
+<script nitro-exclude async src="https://www.googletagmanager.com/gtag/js?id=G-66V042XXCE"></script>
+<script nitro-exclude>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-66V042XXCE');
+</script>
+</head>
+<body class="wp-singular post-template-default single single-post postid-8500 single-format-standard wp-custom-logo wp-embed-responsive wp-theme-hello-elementor wp-child-theme-hello-theme-child-master esm-default hello-elementor-default elementor-default elementor-kit-5564 elementor-page-7745">
+
+<a class="neo-pulse-skip-link" href="#content">Skip to content</a>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NQ83HRJ4"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+
+		<header data-elementor-type="header" data-elementor-id="9939" class="elementor elementor-9939 elementor-location-header" data-elementor-post-type="elementor_library">
+			<div class="elementor-element elementor-element-fe02587 e-con-full ndh e-flex e-con e-parent" data-id="fe02587" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-deb8895 nd-boot elementor-widget elementor-widget-html" data-id="deb8895" data-element_type="widget" data-e-type="widget" data-widget_type="html.default">
+				<div class="elementor-widget-container">
+					<link rel="stylesheet" id="nd-svc-css" href="/wp-content/themes/hello-theme-child-master/nd-svc.css?v=35" media="all">
+<script nitro-exclude>(function(){function lq(){if(!document.getElementById('nd-goo-svg')){var w=document.createElement('div');w.innerHTML='<svg id="nd-goo-svg" width="0" height="0" style="position:absolute;width:0;height:0" aria-hidden="true" focusable="false"><defs><filter id="nd-goo" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="5"/><feColorMatrix mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10"/></filter></defs></svg>';document.body.appendChild(w.firstChild);}var bs=document.querySelectorAll('.nd-btn .elementor-button');for(var i=0;i<bs.length;i++){var b=bs[i];if(b.classList.contains('nd-lq')||!b.querySelector('.elementor-button-icon'))continue;var g=document.createElement('span');g.className='nd-lq__goo';g.setAttribute('aria-hidden','true');g.innerHTML='<i class="nd-lq__pill"></i><i class="nd-lq__drop"></i>';b.insertBefore(g,b.firstChild);b.classList.add('nd-lq');}}if(document.readyState!=='loading')lq();else document.addEventListener('DOMContentLoaded',lq);window.addEventListener('load',lq);})();</script>
+<script nitro-exclude>(function(){function f(){var w=document.getElementById('nd-goo-svg');if(!w)return false;if(!document.getElementById('nd-goo-nav')){var ns='http://www.w3.org/2000/svg',fl=document.createElementNS(ns,'filter');fl.setAttribute('id','nd-goo-nav');fl.setAttribute('x','-50%');fl.setAttribute('y','-50%');fl.setAttribute('width','200%');fl.setAttribute('height','200%');fl.setAttribute('color-interpolation-filters','sRGB');var b=document.createElementNS(ns,'feGaussianBlur');b.setAttribute('in','SourceGraphic');b.setAttribute('stdDeviation','8');var m=document.createElementNS(ns,'feColorMatrix');m.setAttribute('mode','matrix');m.setAttribute('values','1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10');fl.appendChild(b);fl.appendChild(m);w.querySelector('defs').appendChild(fl);}return true;}
+function nav(){var n=document.querySelector('.ndh nav.elementor-nav-menu--main');if(!n||n.classList.contains('nd-lqn')||!f())return;var ul=n.querySelector('.elementor-nav-menu');if(!ul)return;var g=document.createElement('span');g.className='nd-lqn__goo';g.setAttribute('aria-hidden','true');g.innerHTML='<i class="nd-lqn__tail"></i><i class="nd-lqn__head"></i>';n.insertBefore(g,n.firstChild);n.classList.add('nd-lqn','nd-lqn--still');var links=[].slice.call(ul.querySelectorAll(':scope > li > a.elementor-item'));var rest=ul.querySelector(':scope > li > a.elementor-item-active')||ul.querySelector(':scope > li.current-menu-ancestor > a, :scope > li.current-menu-parent > a');var cur=null;
+function set(a){links.forEach(function(l){l.classList.toggle('is-lq',l===a);});cur=a;if(!a){g.style.setProperty('--o',0);return;}var gr=g.getBoundingClientRect(),r=a.getBoundingClientRect();if(!r.width)return;g.style.setProperty('--x',(r.left-gr.left)+'px');g.style.setProperty('--y',(r.top-gr.top)+'px');g.style.setProperty('--w',r.width+'px');g.style.setProperty('--h',r.height+'px');g.style.setProperty('--o',1);}
+links.forEach(function(a){var li=a.parentElement;li.addEventListener('pointerenter',function(e){if(e.pointerType==='mouse'||e.pointerType==='pen')set(a);});a.addEventListener('focus',function(){set(a);});});ul.addEventListener('pointerleave',function(){set(rest);});ul.addEventListener('focusout',function(e){if(!ul.contains(e.relatedTarget))set(rest);});
+set(rest);requestAnimationFrame(function(){requestAnimationFrame(function(){n.classList.remove('nd-lqn--still');});});
+var t;function re(){clearTimeout(t);t=setTimeout(function(){n.classList.add('nd-lqn--still');set(cur);requestAnimationFrame(function(){n.classList.remove('nd-lqn--still');});},120);}window.addEventListener('resize',re);if(window.ResizeObserver)new ResizeObserver(re).observe(ul);window.addEventListener('load',re);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(re);}
+if(document.readyState!=='loading')setTimeout(nav,0);else document.addEventListener('DOMContentLoaded',function(){setTimeout(nav,0);});window.addEventListener('load',nav);})();</script>
+<script nitro-exclude>(function(){var L=[['.ndh-search-w','Search'],['.ndh-cta','Start a Project'],['.ndh-phone-w','Call 587-416-4130']];function filt(){var w=document.getElementById('nd-goo-svg');if(!w)return false;if(!document.getElementById('nd-goo-nav')){var ns='http://www.w3.org/2000/svg',fl=document.createElementNS(ns,'filter');fl.setAttribute('id','nd-goo-nav');fl.setAttribute('x','-50%');fl.setAttribute('y','-50%');fl.setAttribute('width','200%');fl.setAttribute('height','200%');fl.setAttribute('color-interpolation-filters','sRGB');var b=document.createElementNS(ns,'feGaussianBlur');b.setAttribute('in','SourceGraphic');b.setAttribute('stdDeviation','8');var m=document.createElementNS(ns,'feColorMatrix');m.setAttribute('mode','matrix');m.setAttribute('values','1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10');fl.appendChild(b);fl.appendChild(m);w.querySelector('defs').appendChild(fl);}return true;}
+function tt(){if(!filt())return;L.forEach(function(p){var w=document.querySelector('.ndh '+p[0]);if(!w||w.classList.contains('nd-tt'))return;var g=document.createElement('span');g.className='nd-tt__goo';g.setAttribute('aria-hidden','true');g.innerHTML='<i class="nd-tt__tip"></i><i class="nd-tt__dot"></i>';var lb=document.createElement('span');lb.className='nd-tt__label';lb.setAttribute('aria-hidden','true');lb.textContent=p[1];w.insertBefore(g,w.firstChild);w.appendChild(lb);w.classList.add('nd-tt');
+function size(){var tw=lb.offsetWidth;if(!tw)return;w.style.setProperty('--d',(w.offsetWidth||48)+'px');w.style.setProperty('--tw',tw+'px');var r=w.getBoundingClientRect(),cx=r.left+r.width/2,over=cx+tw/2-(document.documentElement.clientWidth-12);w.style.setProperty('--tx',(over>0?-Math.round(over):0)+'px');}
+size();window.addEventListener('resize',size);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(size);
+w.addEventListener('pointerenter',function(e){if(e.pointerType==='touch')return;size();w.classList.add('is-open');});w.addEventListener('pointerleave',function(){w.classList.remove('is-open');});w.addEventListener('focusin',function(){size();w.classList.add('is-open');});w.addEventListener('focusout',function(){w.classList.remove('is-open');});w.addEventListener('click',function(){w.classList.remove('is-open');});});}
+if(document.readyState!=='loading')setTimeout(tt,0);else document.addEventListener('DOMContentLoaded',function(){setTimeout(tt,0);});window.addEventListener('load',tt);})();</script>				</div>
+				</div>
+				<div class="elementor-element elementor-element-435e257 ndh-boot elementor-widget elementor-widget-html" data-id="435e257" data-element_type="widget" data-e-type="widget" data-widget_type="html.default">
+				<div class="elementor-widget-container">
+					<style>
+@font-face{font-family:"Chillax";src:url("/wp-content/uploads/2025/03/Chillax-Variable.woff2") format("woff2");font-weight:200 700;font-display:swap}
+:root{--ndh-h:104px;--ndh-s:34px;--ndh-g:6px;--ndh-green:#84bd00;--ndh-ink:#081000;--ndh-dark:#0d141c;--ndh-text:#f7f4f2;--ndh-line:rgba(247,244,242,.12)}
+body:has(.ndh){padding-top:var(--ndh-h)}
+.ndh{position:fixed!important;top:14px;left:0;right:0;z-index:9990;padding:0 clamp(.75rem,2.5vw,2rem)!important;background:transparent!important;pointer-events:none;transition:transform .5s cubic-bezier(.16,1,.3,1)}
+.admin-bar .ndh{top:46px}
+.ndh.is-hidden{transform:translateY(-140%)}
+.ndh__bar{pointer-events:auto;position:relative;isolation:isolate;display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:stretch!important;gap:0!important;width:100%!important;max-width:1380px;height:74px;margin:0 auto!important;padding:0!important;transition:height .4s cubic-bezier(.16,1,.3,1);filter:drop-shadow(0 18px 34px rgba(0,0,0,.45))}
+.ndh.is-scrolled .ndh__bar{height:64px}
+.ndh__bar>.e-con{position:relative;isolation:isolate;--width:auto;width:auto!important;padding-top:0!important;padding-bottom:0!important;flex-direction:row!important;align-items:center!important;min-width:0}
+.ndh__bar>.e-con::before{content:"";position:absolute;inset:0;z-index:-1;transition:background .3s}
+.ndh__brand{flex:0 0 auto!important;padding-left:clamp(18px,2vw,30px)!important;padding-right:calc(var(--ndh-s) + 22px)!important}
+.ndh__brand::before{background:var(--ndh-green);border-radius:22px 0 0 22px;clip-path:polygon(0 0,calc(100% - var(--ndh-s)) 0,100% 100%,0 100%)}
+.ndh__brand img{display:block;height:34px!important;width:auto!important;max-width:none!important;filter:brightness(0);transition:height .4s}
+.ndh.is-scrolled .ndh__brand img{height:30px!important}
+.ndh__nav{flex:1 1 auto!important;justify-content:center!important;margin-left:calc(var(--ndh-g) - var(--ndh-s))!important;margin-right:calc(var(--ndh-g) - var(--ndh-s))!important;padding-left:calc(var(--ndh-s) + 12px)!important;padding-right:calc(var(--ndh-s) + 12px)!important}
+.ndh__nav::before{background:var(--ndh-dark);clip-path:polygon(0 0,100% 0,calc(100% - var(--ndh-s)) 100%,var(--ndh-s) 100%)}
+.ndh__nav>.elementor-element{width:auto!important;--width:auto}
+.ndh__nav::after{content:"";position:absolute;left:calc(var(--ndh-s) + 8px);right:calc(var(--ndh-s) + 8px);bottom:0;height:2px;z-index:-1;background:linear-gradient(90deg,transparent,rgba(132,189,0,.55),transparent);opacity:.6}
+.ndh__actions{flex:0 0 auto!important;gap:10px!important;padding-left:calc(var(--ndh-s) + 14px)!important;padding-right:13px!important}
+.ndh__actions::before{background:var(--ndh-green);border-radius:0 22px 22px 0;clip-path:polygon(var(--ndh-s) 0,100% 0,100% 100%,0 100%)}
+.ndh__actions>.elementor-element{width:auto!important;--width:auto}
+/* menu */
+.ndh .elementor-nav-menu--main .elementor-nav-menu>li>a.elementor-item{position:relative;color:var(--ndh-text)!important;font-family:"Poppins",system-ui,sans-serif;font-size:15px;font-weight:500;letter-spacing:.01em;padding:10px clamp(10px,1.3vw,18px)!important;background:none!important;transition:color .3s}
+.ndh .elementor-nav-menu--main .elementor-nav-menu>li>a.elementor-item::after{content:"";position:absolute;left:50%;bottom:2px;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:var(--ndh-green);transform:scale(0);transition:transform .35s cubic-bezier(.16,1,.3,1);opacity:1!important;top:auto!important}
+.ndh .elementor-nav-menu--main .elementor-nav-menu>li>a.elementor-item:hover,.ndh .elementor-nav-menu--main .elementor-nav-menu>li>a.elementor-item.elementor-item-active,.ndh .elementor-nav-menu--main .elementor-nav-menu>li.current-menu-ancestor>a{color:var(--ndh-green)!important}
+.ndh .elementor-nav-menu--main .elementor-nav-menu>li>a.elementor-item:hover::after,.ndh .elementor-nav-menu--main .elementor-nav-menu>li>a.elementor-item-active::after{transform:scale(1)}
+.ndh .elementor-nav-menu--main .sub-menu{background:var(--ndh-dark)!important;border:1px solid var(--ndh-line);border-radius:16px;padding:8px!important;min-width:250px!important;box-shadow:0 24px 50px -10px rgba(0,0,0,.6);margin-top:14px!important}
+.ndh .elementor-nav-menu--main .sub-menu a.elementor-sub-item{color:var(--ndh-text)!important;background:none!important;border-radius:10px;padding:11px 14px!important;font-family:"Poppins",system-ui,sans-serif;font-size:14.5px;border:0!important}
+.ndh .elementor-nav-menu--main .sub-menu a.elementor-sub-item:hover{background:rgba(132,189,0,.12)!important;color:var(--ndh-green)!important}
+.ndh .sub-arrow{color:currentColor}
+.ndh .elementor-menu-toggle{align-items:center;justify-content:center;width:42px;height:42px;background:transparent!important;color:var(--ndh-text)!important;font-size:26px;line-height:1;padding:0!important;border-radius:10px}
+.ndh .elementor-menu-toggle i{display:block;line-height:1;height:1em}
+.ndh .elementor-menu-toggle:hover{color:var(--ndh-green)!important}
+.ndh .elementor-menu-toggle svg{fill:currentColor}
+.ndh .elementor-nav-menu--dropdown{background:var(--ndh-dark)!important;border:1px solid var(--ndh-line);border-radius:18px;margin-top:18px!important;padding:8px!important;box-shadow:0 30px 60px -10px rgba(0,0,0,.7)}
+/* mobile dropdown: always line up with the header bar (positions are set by the script below, so they never go stale) */
+.ndh .elementor-nav-menu--stretch nav.elementor-nav-menu--dropdown{left:var(--ndd-l,0px)!important;width:var(--ndd-w,100%)!important;max-width:none!important;box-sizing:border-box}
+.ndh .elementor-nav-menu--dropdown a{color:var(--ndh-text)!important;background:none!important;font-family:"Poppins",system-ui,sans-serif;font-size:16px;padding:13px 16px!important;border-radius:12px;border:0!important}
+.ndh .elementor-nav-menu--dropdown a:hover,.ndh .elementor-nav-menu--dropdown a.elementor-item-active{background:rgba(132,189,0,.12)!important;color:var(--ndh-green)!important}
+/* actions */
+.ndh-cta .elementor-button{display:inline-flex;align-items:center;gap:.6rem;background:var(--ndh-ink)!important;color:var(--ndh-text)!important;border-radius:999px!important;padding:14px 22px!important;font-family:"Poppins",system-ui,sans-serif;font-size:15px!important;font-weight:600!important;line-height:1!important;white-space:nowrap;border:0!important;transition:background .3s,color .3s}
+.ndh-cta .elementor-button:hover{background:var(--ndh-text)!important;color:var(--ndh-ink)!important}
+.ndh-cta .elementor-button-icon{order:2;margin:0!important;transition:transform .4s cubic-bezier(.16,1,.3,1)}
+.ndh-cta .elementor-button-icon svg{width:.9em;height:.9em;fill:currentColor}
+.ndh-cta .elementor-button:hover .elementor-button-icon{transform:rotate(-45deg)}
+a.ndh-phone{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:var(--ndh-ink);color:var(--ndh-green)!important;text-decoration:none;font-size:20px;transition:transform .4s cubic-bezier(.16,1,.3,1),background .3s,color .3s}
+a.ndh-phone:hover{background:var(--ndh-text);color:var(--ndh-ink)!important;transform:rotate(-12deg)}
+a.ndh-phone svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2}
+.ndh a:focus-visible{outline:2px solid var(--ndh-text);outline-offset:3px}
+@media (max-width:1200px){.ndh-cta .elementor-button{padding:13px 16px!important;font-size:14px!important}}
+@media (max-width:1024px){
+:root{--ndh-h:92px;--ndh-s:26px}
+.ndh .elementor-menu-toggle{display:flex!important}
+.ndh__bar{height:66px}
+.ndh.is-scrolled .ndh__bar{height:60px}
+.ndh__nav{justify-content:flex-end!important;flex:1 1 auto!important}
+.ndh__brand img,.ndh.is-scrolled .ndh__brand img{height:28px!important}
+}
+@media (max-width:767px){
+:root{--ndh-h:84px}
+.ndh{top:10px}
+.ndh__bar,.ndh.is-scrolled .ndh__bar{height:60px}
+.ndh-cta{display:none!important}
+.ndh__brand{padding-right:calc(var(--ndh-s) + 12px)!important}
+.ndh__brand img,.ndh.is-scrolled .ndh__brand img{height:24px!important}
+a.ndh-phone{width:42px;height:42px}
+}
+@media (prefers-reduced-motion:reduce){.ndh,.ndh__bar{transition:none}}
+
+/* search launcher: match the phone button */
+.ndh__actions .nps-launcher{width:48px!important;height:48px!important;min-width:0!important;padding:0!important;border:0!important;box-shadow:none!important;border-radius:50%!important;background:var(--ndh-ink)!important;color:var(--ndh-green)!important;display:grid!important;place-items:center!important;cursor:pointer;transition:transform .4s cubic-bezier(.16,1,.3,1),background .3s,color .3s}
+.ndh__actions .nps-launcher:hover{background:var(--ndh-text)!important;color:var(--ndh-ink)!important;transform:rotate(-12deg)}
+.ndh__actions .nps-launcher:focus-visible{outline:2px solid var(--ndh-text);outline-offset:3px}
+.ndh__actions .nps-launcher i,.ndh__actions .nps-launcher svg{font-size:18px!important;width:18px;height:18px;line-height:1;color:inherit!important;fill:currentColor}
+@media (max-width:1200px){.ndh__actions .nps-launcher{width:42px!important;height:42px!important}}
+</style>
+<script>(function(){var h=document.querySelector('.ndh');if(!h)return;var last=0,ticking=false;function u(){var y=window.scrollY||0;h.classList.toggle('is-scrolled',y>30);var open=h.querySelector('.elementor-menu-toggle.elementor-active');if(!open&&y>300&&y>last+4)h.classList.add('is-hidden');else if(y<last-4||y<300)h.classList.remove('is-hidden');last=y;ticking=false;}window.addEventListener('scroll',function(){if(!ticking){ticking=true;requestAnimationFrame(u);}},{passive:true});h.addEventListener('focusin',function(){h.classList.remove('is-hidden');});u();
+/* keep the mobile dropdown aligned to the header bar (elements looked up when needed, since this script runs before the menu is in the page) */
+function fit(){var mw=h.querySelector('.elementor-nav-menu--stretch'),bar=h.querySelector('.ndh__bar');if(!mw||!bar)return;var b=bar.getBoundingClientRect(),m=mw.getBoundingClientRect();mw.style.setProperty('--ndd-l',(b.left-m.left)+'px');mw.style.setProperty('--ndd-w',b.width+'px');}
+h.addEventListener('click',function(e){if(e.target.closest('.elementor-menu-toggle'))fit();},true);window.addEventListener('resize',fit);window.addEventListener('load',fit);document.addEventListener('DOMContentLoaded',fit);
+})();</script>
+				</div>
+				</div>
+		<div class="elementor-element elementor-element-857f52c e-con-full ndh__bar e-flex e-con e-child" data-id="857f52c" data-element_type="container" data-e-type="container">
+		<div class="elementor-element elementor-element-80d783d e-con-full ndh__brand e-flex e-con e-child" data-id="80d783d" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-9d06ac8 ndh-logo elementor-widget elementor-widget-image" data-id="9d06ac8" data-element_type="widget" data-e-type="widget" data-widget_type="image.default">
+				<div class="elementor-widget-container">
+																<a href="/">
+							<img fetchpriority="high" width="876" height="191" src="https://neodigital.ca/wp-content/uploads/2026/10/neo-digital-logo-black.svg" class="attachment-full size-full wp-image-10010" alt="" />								</a>
+															</div>
+				</div>
+				</div>
+		<div class="elementor-element elementor-element-39989da e-con-full ndh__nav e-flex e-con e-child" data-id="39989da" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-dd8300d ndh-menu elementor-nav-menu__align-center elementor-nav-menu--stretch elementor-nav-menu--dropdown-tablet elementor-nav-menu__text-align-aside elementor-nav-menu--toggle elementor-nav-menu--burger elementor-widget elementor-widget-nav-menu" data-id="dd8300d" data-element_type="widget" data-e-type="widget" data-settings="{&quot;full_width&quot;:&quot;stretch&quot;,&quot;submenu_icon&quot;:{&quot;value&quot;:&quot;&lt;i class=\&quot;fas fa-chevron-down\&quot; aria-hidden=\&quot;true\&quot;&gt;&lt;\/i&gt;&quot;,&quot;library&quot;:&quot;fa-solid&quot;},&quot;layout&quot;:&quot;horizontal&quot;,&quot;toggle&quot;:&quot;burger&quot;}" data-widget_type="nav-menu.default">
+				<div class="elementor-widget-container">
+								<nav aria-label="Menu" class="elementor-nav-menu--main elementor-nav-menu__container elementor-nav-menu--layout-horizontal e--pointer-none">
+				<ul id="menu-1-dd8300d" class="elementor-nav-menu"><li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-138"><a href="https://neodigital.ca/about/" class="elementor-item">About Us</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-146"><a href="https://neodigital.ca/our-services/" class="elementor-item">Our Services<span class="sub-arrow"><i class="fas fa-chevron-down" aria-hidden="true"></i></span></a>
+<ul class="sub-menu elementor-nav-menu--dropdown">
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8853"><a href="https://neodigital.ca/window-coverings-marketing/" class="elementor-sub-item">Window Coverings Marketing</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8854"><a href="https://neodigital.ca/elementor-help/" class="elementor-sub-item">Elementor Experts</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8855"><a href="https://neodigital.ca/website-design/" class="elementor-sub-item">Website Design</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-10279"><a href="https://neodigital.ca/aiseo/" class="elementor-sub-item">AISEO<span class="sub-arrow"><i class="fas fa-chevron-down" aria-hidden="true"></i></span></a>
+	<ul class="sub-menu elementor-nav-menu--dropdown">
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10280"><a href="https://neodigital.ca/aiseo/ai-content-optimization/" class="elementor-sub-item">AI Content Optimization</a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10281"><a href="https://neodigital.ca/aiseo/generative-engine-optimization/" class="elementor-sub-item">Generative Engine Optimization</a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10282"><a href="https://neodigital.ca/aiseo/ai-seo-audit/" class="elementor-sub-item">AI SEO Audit</a></li>
+	</ul>
+</li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10284"><a href="https://neodigital.ca/edmonton-seo/" class="elementor-sub-item">Edmonton SEO</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10285"><a href="https://neodigital.ca/webflow-development/" class="elementor-sub-item">Webflow Development</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10286"><a href="https://neodigital.ca/google-ads/" class="elementor-sub-item">Google Ads</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10287"><a href="https://neodigital.ca/graphic-design/" class="elementor-sub-item">Graphic Design</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10288"><a href="https://neodigital.ca/local-seo/" class="elementor-sub-item">Local SEO</a></li>
+</ul>
+</li>
+<li class="nd-nav-pulse menu-item menu-item-type-post_type menu-item-object-page menu-item-10283"><a href="https://neodigital.ca/neo-pulse-platform/" class="elementor-item">NEO Pulse</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-5926"><a href="https://neodigital.ca/our-work/" class="elementor-item">Our Work</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-7747"><a href="https://neodigital.ca/blog/" class="elementor-item">Blog</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4268"><a href="https://neodigital.ca/contact/" class="elementor-item">Contact</a></li>
+</ul>			</nav>
+					<div class="elementor-menu-toggle" role="button" tabindex="0" aria-label="Menu Toggle" aria-expanded="false">
+			<i aria-hidden="true" role="presentation" class="elementor-menu-toggle__icon--open eicon-menu-bar"></i><i aria-hidden="true" role="presentation" class="elementor-menu-toggle__icon--close eicon-close"></i>		</div>
+					<nav class="elementor-nav-menu--dropdown elementor-nav-menu__container" aria-hidden="true">
+				<ul id="menu-2-dd8300d" class="elementor-nav-menu"><li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-138"><a href="https://neodigital.ca/about/" class="elementor-item" tabindex="-1">About Us</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-146"><a href="https://neodigital.ca/our-services/" class="elementor-item" tabindex="-1">Our Services<span class="sub-arrow"><i class="fas fa-chevron-down" aria-hidden="true"></i></span></a>
+<ul class="sub-menu elementor-nav-menu--dropdown">
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8853"><a href="https://neodigital.ca/window-coverings-marketing/" class="elementor-sub-item" tabindex="-1">Window Coverings Marketing</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8854"><a href="https://neodigital.ca/elementor-help/" class="elementor-sub-item" tabindex="-1">Elementor Experts</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8855"><a href="https://neodigital.ca/website-design/" class="elementor-sub-item" tabindex="-1">Website Design</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-10279"><a href="https://neodigital.ca/aiseo/" class="elementor-sub-item" tabindex="-1">AISEO<span class="sub-arrow"><i class="fas fa-chevron-down" aria-hidden="true"></i></span></a>
+	<ul class="sub-menu elementor-nav-menu--dropdown">
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10280"><a href="https://neodigital.ca/aiseo/ai-content-optimization/" class="elementor-sub-item" tabindex="-1">AI Content Optimization</a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10281"><a href="https://neodigital.ca/aiseo/generative-engine-optimization/" class="elementor-sub-item" tabindex="-1">Generative Engine Optimization</a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10282"><a href="https://neodigital.ca/aiseo/ai-seo-audit/" class="elementor-sub-item" tabindex="-1">AI SEO Audit</a></li>
+	</ul>
+</li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10284"><a href="https://neodigital.ca/edmonton-seo/" class="elementor-sub-item" tabindex="-1">Edmonton SEO</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10285"><a href="https://neodigital.ca/webflow-development/" class="elementor-sub-item" tabindex="-1">Webflow Development</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10286"><a href="https://neodigital.ca/google-ads/" class="elementor-sub-item" tabindex="-1">Google Ads</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10287"><a href="https://neodigital.ca/graphic-design/" class="elementor-sub-item" tabindex="-1">Graphic Design</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10288"><a href="https://neodigital.ca/local-seo/" class="elementor-sub-item" tabindex="-1">Local SEO</a></li>
+</ul>
+</li>
+<li class="nd-nav-pulse menu-item menu-item-type-post_type menu-item-object-page menu-item-10283"><a href="https://neodigital.ca/neo-pulse-platform/" class="elementor-item" tabindex="-1">NEO Pulse</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-5926"><a href="https://neodigital.ca/our-work/" class="elementor-item" tabindex="-1">Our Work</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-7747"><a href="https://neodigital.ca/blog/" class="elementor-item" tabindex="-1">Blog</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4268"><a href="https://neodigital.ca/contact/" class="elementor-item" tabindex="-1">Contact</a></li>
+</ul>			</nav>
+						</div>
+				</div>
+				</div>
+		<div class="elementor-element elementor-element-72c4bd4 e-con-full ndh__actions e-flex e-con e-child" data-id="72c4bd4" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-7fae1cd9 ndh-search-w elementor-widget elementor-widget-neo-pulse_search" data-id="7fae1cd9" data-element_type="widget" data-e-type="widget" data-widget_type="neo-pulse_search.default">
+				<div class="elementor-widget-container">
+					<div class="neo-pulse-search-wrap nps nps-root nps--icon neo-pulse-search-wrap--icon-only neo-pulse-search-wrap--icon-only-mode fbs-modal-root nps--modal neo-pulse-search-wrap--sidebar-mode fbs--no-powered" data-rest-url="https://neodigital.ca/wp-json/neo-pulse/v1/search" data-log-url="https://neodigital.ca/wp-json/neo-pulse/v1/search/log" data-accept-url="https://neodigital.ca/wp-json/neo-pulse/v1/search/accept" data-insights-url="https://neodigital.ca/wp-json/neo-pulse/v1/search/insights" data-word-ready-url="https://neodigital.ca/wp-json/neo-pulse/v1/search/word-ready" data-nonce="" data-insights-days="30" data-popular-terms-limit="5" data-search-pages-limit="5" data-placeholder="Search Neo Digital" data-button-label="" data-max-results="8" data-transition="fade" data-logging-enabled="1" data-show-popular-terms="1" data-sidebar-mode="1" data-icon-mode="1" data-icon-open-as="modal_center" data-hide-powered="1" data-show-thumbs="1"><button type="button" class="fbs__icon-launcher nps-launcher" aria-label="Search" aria-expanded="false"><span class="nps-launcher__icon" aria-hidden="true"><i aria-hidden="true" class="fas fa-search"></i></span></button><div class="fai-sidebar-backdrop nps-backdrop nps-root fbs-modal-backdrop" aria-hidden="true" hidden></div><div class="fai-sidebar-panel nps-panel nps-root nps-panel--modal nps-panel--t-fade fbs-modal-panel" role="dialog" aria-modal="true" aria-label="Site search" hidden><div class="fai-sidebar-panel__body nps-panel__body"><div class="nps-head"><div class="nps-head__text"><h2 class="nps-title fbs__heading">Search</h2></div><button type="button" class="fai-sidebar-close nps-close" aria-label="Close search"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="neo-pulse-search-wrap neo-pulse-search-wrap--panel-inner neo-pulse-search-wrap--sidebar-mode nps nps-inner fbs--no-powered"><div class="fbs fbs--sidebar-inner nps-panel__content"><form class="fbs__form nps-field" role="search" action="#" method="get" autocomplete="off"><span class="nps-field__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg></span><input type="text" class="fbs__input nps-field__input" name="neo-pulse_search_query" value="" placeholder="Search Neo Digital" aria-label="Search Neo Digital" autocomplete="off" inputmode="search" enterkeyhint="search" maxlength="100" /><button type="submit" class="fbs__btn fbs__btn--icon nps-field__go" aria-label="Search"><span class="fbs__btn-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button></form><div class="fbs__results-slot nps-results"><div class="fbs__results-slot-empty" hidden></div><div class="fbs__panel fbs__panel--sidebar"><div class="fbs__status nps-status" aria-live="polite" hidden></div><div class="fbs__dropdown nps-list" hidden></div></div></div><div class="nps-sections"><section class="fbs__insights-block nps-section nps-section--popular_terms" data-insight="popular_terms" hidden><h3 class="fbs__insights-label nps-label">Popular searches</h3><div class="fbs__insights-list fbs__insights-list--terms nps-chips" role="list"></div></section></div></div></div></div></div></div>				</div>
+				</div>
+				<div class="elementor-element elementor-element-150e0b4 ndh-cta elementor-widget elementor-widget-button" data-id="150e0b4" data-element_type="widget" data-e-type="widget" data-widget_type="button.default">
+				<div class="elementor-widget-container">
+									<div class="elementor-button-wrapper">
+					<a class="elementor-button elementor-button-link elementor-size-sm" href="/contact/">
+						<span class="elementor-button-content-wrapper">
+						<span class="elementor-button-icon">
+				<i aria-hidden="true" class="fas fa-arrow-right"></i>			</span>
+									<span class="elementor-button-text">Start a Project</span>
+					</span>
+					</a>
+				</div>
+								</div>
+				</div>
+				<div class="elementor-element elementor-element-0353bf7 ndh-phone-w elementor-widget elementor-widget-html" data-id="0353bf7" data-element_type="widget" data-e-type="widget" data-widget_type="html.default">
+				<div class="elementor-widget-container">
+					<a class="ndh-phone" href="tel:+15874164130" aria-label="Call Neo Digital at 587-416-4130"><svg viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></a>
+				</div>
+				</div>
+				</div>
+				</div>
+				</div>
+				</header>
+				<div data-elementor-type="single-post" data-elementor-id="7745" class="elementor elementor-7745 elementor-location-single post-8500 post type-post status-publish format-standard has-post-thumbnail hentry category-uncategorized" data-elementor-post-type="elementor_library">
+			<div class="elementor-element elementor-element-0c3a5b1 e-con-full nd-sec nd-hero nd-ps-hero e-flex e-con e-parent" data-id="0c3a5b1" data-element_type="container" data-e-type="container">
+		<div class="elementor-element elementor-element-c45d83e e-con-full nd-wrap nd-hero__panel nd-ps-panel e-flex e-con e-child" data-id="c45d83e" data-element_type="container" data-e-type="container" data-nd-ghost="Article">
+				<div class="elementor-element elementor-element-534c747 elementor-widget elementor-widget-html" data-id="534c747" data-element_type="widget" data-e-type="widget" data-widget_type="html.default">
+				<div class="elementor-widget-container">
+					<div class="nd-ps-progress" aria-hidden="true"></div>				</div>
+				</div>
+		<div class="elementor-element elementor-element-c7816ca e-con-full nd-ps-head e-flex e-con e-child" data-id="c7816ca" data-element_type="container" data-e-type="container">
+		<div class="elementor-element elementor-element-25bfb0c e-con-full nd-ps-kicker e-flex e-con e-child" data-id="25bfb0c" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-2586d0a nd-sub elementor-widget elementor-widget-heading" data-id="2586d0a" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<div class="elementor-heading-title elementor-size-default"><a href="/blog/">Blog</a></div>				</div>
+				</div>
+				<div class="elementor-element elementor-element-a2c8e0c nd-ps-date elementor-widget elementor-widget-heading" data-id="a2c8e0c" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<span class="elementor-heading-title elementor-size-default">November 14, 2026</span>				</div>
+				</div>
+				</div>
+				<div class="elementor-element elementor-element-58b93ba nd-h1 nd-ps-title elementor-widget elementor-widget-theme-post-title elementor-page-title elementor-widget-heading" data-id="58b93ba" data-element_type="widget" data-e-type="widget" data-widget_type="theme-post-title.default">
+				<div class="elementor-widget-container">
+					<h1 class="elementor-heading-title elementor-size-default">Elementor Vs Divi: Which Page Builder Reigns Supreme?</h1>				</div>
+				</div>
+				<div class="elementor-element elementor-element-4f789c2 nd-ps-lead elementor-widget elementor-widget-heading" data-id="4f789c2" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<p class="elementor-heading-title elementor-size-default">Confused by Elementor vs Divi? Get a clear comparison of WordPress page builders to choose the best for your site. Find out now.</p>				</div>
+				</div>
+				</div>
+				<div class="elementor-element elementor-element-b79c9b9 nd-ps-feat elementor-widget elementor-widget-theme-post-featured-image elementor-widget-image" data-id="b79c9b9" data-element_type="widget" data-e-type="widget" data-widget_type="theme-post-featured-image.default">
+				<div class="elementor-widget-container">
+															<img width="1408" height="768" src="https://neodigital.ca/wp-content/uploads/2026/06/elementor-divi-page-builder-comparison-featured.webp" class="attachment-full size-full wp-image-8499" alt="" srcset="https://neodigital.ca/wp-content/uploads/2026/06/elementor-divi-page-builder-comparison-featured.webp 1408w, https://neodigital.ca/wp-content/uploads/2026/06/elementor-divi-page-builder-comparison-featured-300x164.webp 300w, https://neodigital.ca/wp-content/uploads/2026/06/elementor-divi-page-builder-comparison-featured-768x419.webp 768w, https://neodigital.ca/wp-content/uploads/2026/06/elementor-divi-page-builder-comparison-featured-1024x559.webp 1024w" sizes="(max-width: 1408px) 100vw, 1408px" />															</div>
+				</div>
+				</div>
+				</div>
+		<div class="elementor-element elementor-element-fcd3426 e-con-full nd-sec nd-ps-body e-flex e-con e-parent" data-id="fcd3426" data-element_type="container" data-e-type="container">
+		<div class="elementor-element elementor-element-970c2e6 e-con-full nd-wrap nd-ps-grid e-flex e-con e-child" data-id="970c2e6" data-element_type="container" data-e-type="container">
+		<div class="elementor-element elementor-element-f6b734c e-con-full nd-ps-aside e-flex e-con e-child" data-id="f6b734c" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-d5cf443 nd-ps-toc elementor-toc--minimized-on-tablet elementor-widget elementor-widget-table-of-contents" data-id="d5cf443" data-element_type="widget" data-e-type="widget" data-settings="{&quot;container&quot;:&quot;#post-content-neo&quot;,&quot;headings_by_tags&quot;:[&quot;h2&quot;,&quot;h3&quot;],&quot;hierarchical_view&quot;:&quot;yes&quot;,&quot;marker_view&quot;:&quot;numbers&quot;,&quot;minimize_box&quot;:&quot;yes&quot;,&quot;minimized_on&quot;:&quot;tablet&quot;,&quot;no_headings_message&quot;:&quot;No sections in this article.&quot;,&quot;exclude_headings_by_selector&quot;:[],&quot;min_height&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:&quot;&quot;,&quot;sizes&quot;:[]},&quot;min_height_laptop&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:&quot;&quot;,&quot;sizes&quot;:[]},&quot;min_height_tablet_extra&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:&quot;&quot;,&quot;sizes&quot;:[]},&quot;min_height_tablet&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:&quot;&quot;,&quot;sizes&quot;:[]},&quot;min_height_mobile&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:&quot;&quot;,&quot;sizes&quot;:[]}}" data-widget_type="table-of-contents.default">
+				<div class="elementor-widget-container">
+									<div class="elementor-toc__header">
+						<h4 class="elementor-toc__header-title">
+				On this page			</h4>
+										<div class="elementor-toc__toggle-button elementor-toc__toggle-button--expand" role="button" tabindex="0" aria-controls="elementor-toc__d5cf443" aria-expanded="true" aria-label="Open table of contents"><i aria-hidden="true" class="fas fa-chevron-down"></i></div>
+				<div class="elementor-toc__toggle-button elementor-toc__toggle-button--collapse" role="button" tabindex="0" aria-controls="elementor-toc__d5cf443" aria-expanded="true" aria-label="Close table of contents"><i aria-hidden="true" class="fas fa-chevron-up"></i></div>
+					</div>
+				<div id="elementor-toc__d5cf443" class="elementor-toc__body">
+			<div class="elementor-toc__spinner-container">
+				<i class="elementor-toc__spinner eicon-animation-spin eicon-loading" aria-hidden="true"></i>			</div>
+		</div>
+						</div>
+				</div>
+		<div class="elementor-element elementor-element-50073fd e-con-full nd-ps-card e-flex e-con e-child" data-id="50073fd" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-72c6a7e nd-sub elementor-widget elementor-widget-heading" data-id="72c6a7e" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<div class="elementor-heading-title elementor-size-default">Need a hand?</div>				</div>
+				</div>
+				<div class="elementor-element elementor-element-65850f3 nd-ps-card__title elementor-widget elementor-widget-heading" data-id="65850f3" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<p class="elementor-heading-title elementor-size-default">Get a free website &amp; SEO review</p>				</div>
+				</div>
+				<div class="elementor-element elementor-element-fcfeb21 nd-ps-card__text elementor-widget elementor-widget-text-editor" data-id="fcfeb21" data-element_type="widget" data-e-type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+									<p>We will look at your site, your rankings and your AI search visibility, then tell you what to fix first.</p>								</div>
+				</div>
+				<div class="elementor-element elementor-element-fd4cf3e nd-btn elementor-widget elementor-widget-button" data-id="fd4cf3e" data-element_type="widget" data-e-type="widget" data-widget_type="button.default">
+				<div class="elementor-widget-container">
+									<div class="elementor-button-wrapper">
+					<a class="elementor-button elementor-button-link elementor-size-sm" href="/contact/">
+						<span class="elementor-button-content-wrapper">
+						<span class="elementor-button-icon">
+				<i aria-hidden="true" class="fas fa-arrow-right"></i>			</span>
+									<span class="elementor-button-text">Let's Chat</span>
+					</span>
+					</a>
+				</div>
+								</div>
+				</div>
+				</div>
+				</div>
+		<div class="elementor-element elementor-element-15e4114 e-con-full nd-ps-main e-flex e-con e-child" data-id="15e4114" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-30330a0 nd-ps-content elementor-widget elementor-widget-theme-post-content" data-id="30330a0" data-element_type="widget" data-e-type="widget" id="post-content-neo" data-widget_type="theme-post-content.default">
+				<div class="elementor-widget-container">
+					<h2 class="wp-block-heading" id="overview">Overview</h2>
+<p>Deciding between Elementor vs Divi involves evaluating two top WordPress page builders for website creation. Both tools offer visual drag-and-drop interfaces, helping users design custom layouts without coding. They aim to simplify web development, making advanced design capabilities available to a wider audience.</p>
+<p>This comparison helps highlight their differences in features, performance, and pricing, guiding you to choose the builder that best fits your specific project needs. Each platform brings unique strengths to the table for different types of users and websites.</p>
+<ul>
+<li><strong>Elementor Vs Divi:</strong>: This guide walks through <a href="#elementor-vs-divi-choosing-your-page-builder">elementor vs divi: choosing</a> in detail.</li>
+<li><strong>User Interface and</strong>: Families can review <a href="#user-interface-and-ease-of-use">user interface and ease</a> throughout this article.</li>
+<li><strong>Features and Functionality:</strong>: Our team explains <a href="#features-and-functionality-a-detailed-comparison">features and functionality: a</a> in practical terms.</li>
+<li><strong>Performance and Speed</strong>: Learn how <a href="#performance-and-speed-considerations">performance and speed considerations</a> applies to your situation.</li>
+<li><strong>Pricing and Licensing:</strong>: This guide walks through <a href="#pricing-and-licensing-making-the-right-choice">pricing and licensing: making</a> in detail.</li>
+<li><strong>Conclusion: Which Page</strong>: Families can review <a href="#conclusion-which-page-builder-wins">conclusion: which page builder</a> throughout this article.</li>
+</ul>
+<h2 class="wp-block-heading" id="elementor-vs-divi-choosing-your-page-builder">Elementor Vs Divi: Choosing Your Page Builder</h2>
+<p>When considering Elementor vs Divi, website creators need to compare their distinct approaches to design and development. <a href="https://howtowp.com/divi-vs-elementor/" rel="nofollow noopener noreferrer" target="_blank">Elementor</a> is a plugin compatible with any WordPress theme, whereas Divi serves as both a theme and a page builder. This fundamental difference shapes how users interact with each tool and integrate it into their web projects.</p>
+<p>Selecting between these two builders depends on individual project requirements and personal preferences. Elementor provides a <a href="https://kinsta.com/blog/divi-vs-elementor/" rel="nofollow noopener noreferrer" target="_blank">visual drag-and-drop</a> experience with immediate front-end editing capabilities. Divi offers an <a href="https://kinsta.com/blog/divi-vs-elementor/" rel="nofollow noopener noreferrer" target="_blank">integrated solution</a> with both front-end and back-end editing and extensive design options.. Evaluate specific needs for design flexibility, ease of use, and overall ecosystem before making a selection.</p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Elementor</th>
+<th>Divi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Type</td>
+<td>Page Builder Plugin</td>
+<td>Theme and Page Builder</td>
+</tr>
+<tr>
+<td>Editing</td>
+<td>Frontend Visual Builder</td>
+<td>Frontend and Backend Visual Builder</td>
+</tr>
+<tr>
+<td>Flexibility</td>
+<td>Works with any theme</td>
+<td>Integrated into Divi Theme</td>
+</tr>
+<tr>
+<td>Ecosystem</td>
+<td><a href="https://neodigital.ca/blog/elementor-help-vs-builders/">Vast third-party add-ons</a></td>
+<td>First-party modules</td>
+</tr>
+</tbody>
+</table>
+<h2 class="wp-block-heading" id="user-interface-and-ease-of-use">User Interface and Ease of Use</h2>
+<p>The user experience for Elementor vs Divi presents distinct approaches to website building. Elementor features a clear left-hand sidebar for all elements and settings, providing immediate visual feedback on design changes. Its interface is often described as intuitive for new users, offering a direct drag-and-drop workflow.</p>
+<p>Divi, in contrast, uses a floating toolbar that appears upon clicking elements on the page. This method allows for a more immersive full-screen design experience but can require some adjustment for those accustomed to a fixed sidebar. Both builders offer front-end visual editing, letting users see changes as they build. <a href="https://neodigital.ca/blog/website-design-secrets/">Effective website design</a> often depends on the builder&#39;s interface matching the designer&#39;s workflow.</p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Elementor UI</th>
+<th>Divi UI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Drag-and-Drop</td>
+<td>Sidebar-based, direct element placement</td>
+<td>Floating toolbar, in-line editing</td>
+</tr>
+<tr>
+<td>Learning Curve</td>
+<td>Generally lower for beginners</td>
+<td>Slightly higher due to floating controls</td>
+</tr>
+<tr>
+<td>Editing Views</td>
+<td>Single front-end editor</td>
+<td>Front-end visual builder, back-end wireframe</td>
+</tr>
+<tr>
+<td>Module Access</td>
+<td>Left sidebar panel</td>
+<td>Floating plus icon, section-based</td>
+</tr>
+</tbody>
+</table>
+<p>When choosing between Elementor vs Divi, consider how each interface aligns with your preferred working style. Elementor&#39;s direct sidebar may suit those who like all controls visible, while Divi&#39;s floating controls offer a less cluttered canvas for design. <a href="https://neodigital.ca/blog/local-seo-services-2/">Professional WordPress development</a> can still achieve exceptional results with either platform, depending on the developer&#39;s familiarity.</p>
+<h2 class="wp-block-heading" id="features-and-functionality-a-detailed-comparison">Features and Functionality: A Detailed Comparison</h2>
+<p>When comparing Elementor vs Divi, their core features and how they implement them show key differences. Both builders offer extensive design capabilities, but they approach website creation with distinct philosophies. This section breaks down their strengths and weaknesses concerning widgets, customization, and template options.</p>
+<p>Elementor and Divi each provide a drag-and-drop interface with various elements to build pages. Elementor relies on widgets for every component, from headings to complex carousels. Divi uses modules, which are similar in function but often integrated within a broader theme framework. Both platforms allow for deep customization of these elements, offering control over styling, typography, and responsiveness.</p>
+<h3>Widget Sets and Module Availability</h3>
+<p>Elementor&#39;s strength lies in its extensive widget library and the wide array of third-party add-ons. Users can find widgets for almost any design need, from basic text blocks to advanced marketing elements. Divi, as a complete theme and builder, integrates its modules directly into its system, offering a cohesive set of tools for building layouts. <a href="https://neodigital.ca/blog/dental-website-design-service/">Effective website design</a> often depends on having the right components readily available.</p>
+<h3>Customization Options and Design Flexibility</h3>
+<p>Elementor allows <a href="https://howtowp.com/divi-vs-elementor/" rel="nofollow noopener noreferrer" target="_blank">granular control</a> over elements, including spacing, positioning, and animation, directly in the editor. This allows for precise design adjustments without coding. Divi also offers robust customization, including its &quot;Theme Builder&quot; that allows users to design every part of their website, including headers, footers, and post templates, globally or on specific pages. <a href="https://neodigital.ca/blog/best-seo-company-2/">Modern web development practices</a> emphasize design flexibility.</p>
+<h3>Template Libraries and Pre-designed Elements</h3>
+<p>Both Elementor and Divi offer extensive template libraries to speed up the design process. Elementor provides a collection of pre-designed pages and blocks, which users can import and modify. Divi offers <a href="https://cleverops.com.au/web-design/elementor-vs-divi" rel="nofollow noopener noreferrer" target="_blank">hundreds of layouts</a> in packs in packs for various industries, facilitating quick site launches. Choosing between Elementor vs Divi often comes down to personal preference for these pre-built assets.</p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Elementor</th>
+<th>Divi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Core Building Blocks</td>
+<td>Widgets (many third-party options)</td>
+<td>Modules (integrated with theme)</td>
+</tr>
+<tr>
+<td>Theme Building</td>
+<td>Dedicated Theme Builder (Pro version)</td>
+<td>Integrated Theme Builder (part of Divi theme)</td>
+</tr>
+<tr>
+<td>Global Styles</td>
+<td>Site Settings for global fonts/colours</td>
+<td>Global Elements and Presets</td>
+</tr>
+<tr>
+<td>Design Flexibility</td>
+<td>Highly granular control per element</td>
+<td>Comprehensive design settings with visual editor</td>
+</tr>
+</tbody>
+</table>
+<h2 class="wp-block-heading" id="performance-and-speed-considerations">Performance and Speed Considerations</h2>
+<p>Website loading times directly affect user experience and search engine rankings. When comparing Elementor vs Divi, their impact on performance is a key factor. Both builders generate code to create visual designs, and this code can affect speed depending on how efficiently it&#39;s produced and optimized. <a href="https://neodigital.ca/website-speed-optimization/">Website optimization services</a> often address these builder-specific performance nuances.</p>
+<p>Generally, Elementor often produces cleaner, more streamlined code. This can result in slightly faster initial load times. Divi, being a more expansive theme and builder system, sometimes includes additional styling and scripts that can add to page weight if not carefully managed. Proper <a href="https://neodigital.ca/blog/website-audit-fix-errors/">WordPress performance optimization</a> with either builder involves using optimized images, caching, and minimizing unnecessary plugins.</p>
+<p>Here are factors that affect page builder speed:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Factor</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>Code Efficiency</strong></td>
+<td align="left">How lean and organized the builder&#39;s output code is.</td>
+</tr>
+<tr>
+<td align="left"><strong>Asset Loading</strong></td>
+<td align="left">How CSS and JavaScript files are loaded and executed.</td>
+</tr>
+<tr>
+<td align="left"><strong>Image Optimization</strong></td>
+<td align="left">File size and format of images used in the design.</td>
+</tr>
+<tr>
+<td align="left"><strong>Caching</strong></td>
+<td align="left">Server-side and browser caching for faster content delivery.</td>
+</tr>
+<tr>
+<td align="left"><strong>Hosting Quality</strong></td>
+<td align="left">The server&#39;s response time and resource allocation.</td>
+</tr>
+<tr>
+<td align="left"><strong>Plugin Usage</strong></td>
+<td align="left">Number and quality of additional plugins installed.</td>
+</tr>
+</tbody>
+</table>
+<h2 class="wp-block-heading" id="pricing-and-licensing-making-the-right-choice">Pricing and Licensing: Making the Right Choice</h2>
+<p>When comparing Elementor vs Divi, their pricing and licensing structures present a key difference. Elementor provides a <a href="https://howtowp.com/divi-vs-elementor/" rel="nofollow noopener noreferrer" target="_blank">free version</a> with limited features and several annual subscription plans for its Pro version. These subscriptions provide access to premium widgets, templates, and support, and require yearly renewal to maintain updates and assistance <a href="https://neodigital.ca/blog/wordpress-websites/">WordPress development services</a>.</p>
+<p>Divi, from Elegant Themes, offers no free version but provides <a href="https://howtowp.com/divi-vs-elementor/" rel="nofollow noopener noreferrer" target="_blank">annual membership</a> or lifetime access options. The lifetime plan involves a higher one-time payment, granting permanent access to Divi and other Elegant Themes products without recurring fees. This can be a significant factor for long-term budget planning <a href="https://neodigital.ca/blog/wordpress-elementor-specialists/">website design planning</a>.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Feature/Model</th>
+<th align="left">Elementor Pro (Annual)</th>
+<th align="left">Divi (Annual/Lifetime)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Free Version</td>
+<td align="left">Yes (limited features)</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Pricing Structure</td>
+<td align="left">Annual subscription</td>
+<td align="left">Annual or one-time lifetime payment</td>
+</tr>
+<tr>
+<td align="left">Single Site License</td>
+<td align="left">Available with specific plans</td>
+<td align="left">Included with all plans</td>
+</tr>
+<tr>
+<td align="left">Multi-Site License</td>
+<td align="left">Available with higher-tier plans</td>
+<td align="left">Included with all plans</td>
+</tr>
+<tr>
+<td align="left">Updates &amp; Support</td>
+<td align="left">Requires active subscription</td>
+<td align="left">Requires active subscription (annual) or one-time (lifetime)</td>
+</tr>
+<tr>
+<td align="left">Number of Websites</td>
+<td align="left">Scales with plan (e.g., 1, 3, 25, 1000)</td>
+<td align="left">Unlimited websites</td>
+</tr>
+<tr>
+<td align="left">Access to All Products</td>
+<td align="left">Only Elementor Pro</td>
+<td align="left">All Elegant Themes products (Divi, Extra, Bloom, Monarch)</td>
+</tr>
+</tbody>
+</table>
+<h2 class="wp-block-heading" id="conclusion-which-page-builder-wins">Conclusion: Which Page Builder Wins?</h2>
+<p>Choosing between Elementor vs Divi ultimately depends on your project requirements and comfort with each builder&#39;s workflow. Elementor excels with its intuitive drag-and-drop interface and extensive widget library, making it a strong choice for beginners and those who need quick site development. <a href="https://neodigital.ca/blog/elementor-help/">Discover more about Elementor</a>.</p>
+<p>Divi, with its integrated theme and visual builder, provides a complete design system that appeals to users seeking an all-in-one solution and greater design control. Consider your long-term needs for features, performance, and support when making your final selection. Both offer powerful ways to build impressive websites. Explore Divi theme options.</p>
+<h2 id="research-and-fact-checking">Technical Review &amp; Local Standards</h2>
+<p>This article on Elementor vs. Divi, two leading WordPress page builders, provides detailed comparisons and implementation notes verified against official documentation. The guidance reflects practical application on live client sites across Edmonton and the Alberta businesses Neo Digital serves.</p>
+<p>Our SEO, WordPress, and digital marketing recommendations in this guide reflect current documentation and real client websites. Written and reviewed by the SEO and WordPress specialists at The Neo Digital Team. Last reviewed: November 2026.</p>
+<ul>
+<li><a href="https://howtowp.com/divi-vs-elementor/" rel="nofollow noopener" target="_blank">howtowp.com</a></li>
+<li><a href="https://kinsta.com/blog/divi-vs-elementor/" rel="nofollow noopener" target="_blank">kinsta.com</a></li>
+<li><a href="https://cleverops.com.au/web-design/elementor-vs-divi" rel="nofollow noopener" target="_blank">cleverops.com.au</a></li>
+</ul>
+				</div>
+				</div>
+				<div class="elementor-element elementor-element-96398ef nd-btn nd-btn--ghost nd-ps-back elementor-widget elementor-widget-button" data-id="96398ef" data-element_type="widget" data-e-type="widget" data-widget_type="button.default">
+				<div class="elementor-widget-container">
+									<div class="elementor-button-wrapper">
+					<a class="elementor-button elementor-button-link elementor-size-sm" href="/blog/">
+						<span class="elementor-button-content-wrapper">
+						<span class="elementor-button-icon">
+				<i aria-hidden="true" class="fas fa-arrow-left"></i>			</span>
+									<span class="elementor-button-text">Back to all articles</span>
+					</span>
+					</a>
+				</div>
+								</div>
+				</div>
+				</div>
+				</div>
+				</div>
+		<div class="elementor-element elementor-element-31f6ca5 e-con-full nd-sec nd-sec--alt nd-ps-more e-flex e-con e-parent" data-id="31f6ca5" data-element_type="container" data-e-type="container">
+		<div class="elementor-element elementor-element-0054819 e-con-full nd-wrap e-flex e-con e-child" data-id="0054819" data-element_type="container" data-e-type="container">
+		<div class="elementor-element elementor-element-74f8237 e-con-full nd-head e-flex e-con e-child" data-id="74f8237" data-element_type="container" data-e-type="container">
+		<div class="elementor-element elementor-element-c5cd0e0 e-con-full e-flex e-con e-child" data-id="c5cd0e0" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-f277f7e nd-sub elementor-widget elementor-widget-heading" data-id="f277f7e" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<div class="elementor-heading-title elementor-size-default">Keep Reading</div>				</div>
+				</div>
+				<div class="elementor-element elementor-element-6480412 nd-h2 elementor-widget elementor-widget-heading" data-id="6480412" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<h2 class="elementor-heading-title elementor-size-default">More from the <span class="nd-hl">blog</span></h2>				</div>
+				</div>
+				</div>
+				</div>
+				<div class="elementor-element elementor-element-2a4dc6e nd-ps-related elementor-grid-3 elementor-grid-mobile-1 elementor-grid-tablet-2 elementor-widget elementor-widget-loop-grid" data-id="2a4dc6e" data-element_type="widget" data-e-type="widget" data-settings="{&quot;columns&quot;:&quot;3&quot;,&quot;columns_mobile&quot;:&quot;1&quot;,&quot;columns_tablet&quot;:&quot;2&quot;,&quot;template_id&quot;:&quot;7742&quot;,&quot;_skin&quot;:&quot;post&quot;,&quot;edit_handle_selector&quot;:&quot;[data-elementor-type=\&quot;loop-item\&quot;]&quot;,&quot;row_gap&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:&quot;&quot;,&quot;sizes&quot;:[]},&quot;row_gap_laptop&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:&quot;&quot;,&quot;sizes&quot;:[]},&quot;row_gap_tablet_extra&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:&quot;&quot;,&quot;sizes&quot;:[]},&quot;row_gap_tablet&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:&quot;&quot;,&quot;sizes&quot;:[]},&quot;row_gap_mobile&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:&quot;&quot;,&quot;sizes&quot;:[]}}" data-widget_type="loop-grid.post">
+				<div class="elementor-widget-container">
+							<div class="elementor-loop-container elementor-grid" role="list">
+		<style id="loop-7742">/* BLOG CARD (Loop Item 7742). Used on the Blog page and in Blog Single related posts. No child combinators or quotes here: Elementor escapes them in loop item CSS. */
+.nd-bc{position:relative;height:100%;gap:0!important;padding:.75rem!important;border-radius:26px;background:var(--nd-card)!important;box-shadow:inset 0 0 0 1px var(--nd-line);transition:transform .6s var(--nd-ease),box-shadow .4s}
+.nd-bc:hover{transform:translateY(-6px);box-shadow:inset 0 0 0 1px var(--nd-accent),0 30px 60px -36px color-mix(in srgb,var(--nd-accent) 60%,transparent)}
+.nd-bc .nd-bc__media{position:relative;display:block!important;width:100%!important;aspect-ratio:16/10;border-radius:18px;overflow:hidden;background:#07090b}
+.nd-bc__img,.nd-bc__img .elementor-widget-container{width:100%!important;height:100%!important;margin:0!important}
+.nd-bc__img img{display:block;width:100%!important;height:100%!important;object-fit:cover;transition:transform 1.1s var(--nd-ease)}
+.nd-bc:hover .nd-bc__img img{transform:scale(1.06)}
+.nd-bc .nd-bc__body{flex:1 1 auto;gap:.75rem!important;padding:1.15rem .7rem .55rem!important}
+.nd-sec .nd-bc__date .elementor-heading-title{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--nd-body);font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--nd-muted)}
+.nd-sec .nd-bc__title .elementor-heading-title,.nd-sec .nd-bc__title .elementor-heading-title a{margin:0;font-family:var(--nd-display)!important;font-weight:600!important;font-size:clamp(1.2rem,1.5vw,1.4rem)!important;line-height:1.2!important;letter-spacing:-.015em!important;color:var(--nd-text)!important;text-decoration:none;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.nd-sec .nd-bc__title a:hover{color:var(--nd-accent)!important}
+.nd-sec .nd-bc__excerpt .elementor-widget-container{font-family:var(--nd-body);font-size:.9375rem;line-height:1.6;color:var(--nd-muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.nd-bc__excerpt p{margin:0}
+.nd-bc__more{margin-top:auto!important;padding-top:.35rem}
+.nd-sec .nd-bc__more .elementor-button{display:inline-flex;align-items:center;padding:0!important;border:0;background:transparent!important;color:var(--nd-accent)!important;font-family:var(--nd-body);font-size:.875rem;font-weight:600;letter-spacing:.02em;line-height:1}
+.nd-sec .nd-bc__more .elementor-button-content-wrapper{display:flex;flex-direction:row-reverse!important;align-items:center;gap:.6rem;transition:gap .4s var(--nd-ease)}
+.nd-sec .nd-bc__more .elementor-button-icon{width:2.1rem;height:2.1rem;margin:0!important;border-radius:50%;display:grid;place-items:center;background:var(--nd-accent);color:var(--nd-ink);font-size:.8rem;transition:transform .5s var(--nd-ease)}
+.nd-sec .nd-bc__more .elementor-button-icon svg{width:1em;height:1em;fill:currentColor}
+.nd-sec .nd-bc__more .elementor-button:hover .elementor-button-content-wrapper{gap:.9rem}
+.nd-sec .nd-bc__more .elementor-button:hover .elementor-button-icon{transform:rotate(-45deg)}.elementor-7742 .elementor-element.elementor-element-8edb27b{--display:flex;--flex-direction:column;--container-widget-width:100%;--container-widget-height:initial;--container-widget-flex-grow:0;--container-widget-align-self:initial;--flex-wrap-mobile:wrap;}.elementor-7742 .elementor-element.elementor-element-50c1b2c{--display:flex;}.elementor-7742 .elementor-element.elementor-element-9e40d35{--display:flex;--flex-direction:column;--container-widget-width:100%;--container-widget-height:initial;--container-widget-flex-grow:0;--container-widget-align-self:initial;--flex-wrap-mobile:wrap;}.elementor-7742 .elementor-element.elementor-element-d4a6b39 .elementor-button-content-wrapper{flex-direction:row-reverse;}</style>		<div data-elementor-type="loop-item" data-elementor-id="7742" class="elementor elementor-7742 e-loop-item e-loop-item-9160 post-9160 post type-post status-publish format-standard has-post-thumbnail hentry category-seo" data-elementor-post-type="elementor_library" data-custom-edit-handle="1">
+			<div class="elementor-element elementor-element-8edb27b e-con-full nd-bc e-flex e-con e-parent" data-id="8edb27b" data-element_type="container" data-e-type="container">
+		<a class="elementor-element elementor-element-50c1b2c e-con-full nd-bc__media e-flex e-con e-child" data-id="50c1b2c" data-element_type="container" data-e-type="container" href="https://neodigital.ca/blog/programmatic-seo-wordpress/">
+				<div class="elementor-element elementor-element-ff239d4 nd-bc__img elementor-widget elementor-widget-image" data-id="ff239d4" data-element_type="widget" data-e-type="widget" data-widget_type="image.default">
+				<div class="elementor-widget-container">
+															<img width="768" height="429" src="https://neodigital.ca/wp-content/uploads/2026/08/programmatic-seo-wordpress-templates-featured-768x429.jpg" class="attachment-medium_large size-medium_large wp-image-9159" alt="" srcset="https://neodigital.ca/wp-content/uploads/2026/08/programmatic-seo-wordpress-templates-featured-768x429.jpg 768w, https://neodigital.ca/wp-content/uploads/2026/08/programmatic-seo-wordpress-templates-featured-300x167.jpg 300w, https://neodigital.ca/wp-content/uploads/2026/08/programmatic-seo-wordpress-templates-featured-1024x572.jpg 1024w, https://neodigital.ca/wp-content/uploads/2026/08/programmatic-seo-wordpress-templates-featured.jpg 1376w" sizes="(max-width: 768px) 100vw, 768px" />															</div>
+				</div>
+				</a>
+		<div class="elementor-element elementor-element-9e40d35 e-con-full nd-bc__body e-flex e-con e-child" data-id="9e40d35" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-0045b3b nd-bc__date elementor-widget elementor-widget-heading" data-id="0045b3b" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<span class="elementor-heading-title elementor-size-default">November 1, 2026</span>				</div>
+				</div>
+				<div class="elementor-element elementor-element-e225a66 nd-bc__title elementor-widget elementor-widget-theme-post-title elementor-page-title elementor-widget-heading" data-id="e225a66" data-element_type="widget" data-e-type="widget" data-widget_type="theme-post-title.default">
+				<div class="elementor-widget-container">
+					<h3 class="elementor-heading-title elementor-size-default"><a href="https://neodigital.ca/blog/programmatic-seo-wordpress/">Programmatic Seo WordPress: Programmatic SEO on WordPress: A Guide for Edmonton SEO Teams</a></h3>				</div>
+				</div>
+				<div class="elementor-element elementor-element-7d50d1f nd-bc__excerpt elementor-widget elementor-widget-theme-post-excerpt" data-id="7d50d1f" data-element_type="widget" data-e-type="widget" data-widget_type="theme-post-excerpt.default">
+				<div class="elementor-widget-container">
+					Programmatic Seo Wordpress. Programmatic SEO on WordPress for Edmonton teams: templates, bulk publishing, schema, and avoiding cannibalization on service-area s				</div>
+				</div>
+				<div class="elementor-element elementor-element-d4a6b39 nd-bc__more elementor-widget elementor-widget-button" data-id="d4a6b39" data-element_type="widget" data-e-type="widget" data-widget_type="button.default">
+				<div class="elementor-widget-container">
+									<div class="elementor-button-wrapper">
+					<a class="elementor-button elementor-button-link elementor-size-sm" href="https://neodigital.ca/blog/programmatic-seo-wordpress/">
+						<span class="elementor-button-content-wrapper">
+						<span class="elementor-button-icon">
+				<i aria-hidden="true" class="fas fa-arrow-right"></i>			</span>
+									<span class="elementor-button-text">Read Article</span>
+					</span>
+					</a>
+				</div>
+								</div>
+				</div>
+				</div>
+				</div>
+				</div>
+				<div data-elementor-type="loop-item" data-elementor-id="7742" class="elementor elementor-7742 e-loop-item e-loop-item-8495 post-8495 post type-post status-publish format-standard has-post-thumbnail hentry category-digital-marketing" data-elementor-post-type="elementor_library" data-custom-edit-handle="1">
+			<div class="elementor-element elementor-element-8edb27b e-con-full nd-bc e-flex e-con e-parent" data-id="8edb27b" data-element_type="container" data-e-type="container">
+		<a class="elementor-element elementor-element-50c1b2c e-con-full nd-bc__media e-flex e-con e-child" data-id="50c1b2c" data-element_type="container" data-e-type="container" href="https://neodigital.ca/blog/digitalmarketingcost/">
+				<div class="elementor-element elementor-element-ff239d4 nd-bc__img elementor-widget elementor-widget-image" data-id="ff239d4" data-element_type="widget" data-e-type="widget" data-widget_type="image.default">
+				<div class="elementor-widget-container">
+															<img loading="lazy" width="768" height="419" src="https://neodigital.ca/wp-content/uploads/2026/06/digital-marketing-cost-investment-guide-featured-768x419.webp" class="attachment-medium_large size-medium_large wp-image-8494" alt="" srcset="https://neodigital.ca/wp-content/uploads/2026/06/digital-marketing-cost-investment-guide-featured-768x419.webp 768w, https://neodigital.ca/wp-content/uploads/2026/06/digital-marketing-cost-investment-guide-featured-300x164.webp 300w, https://neodigital.ca/wp-content/uploads/2026/06/digital-marketing-cost-investment-guide-featured-1024x559.webp 1024w, https://neodigital.ca/wp-content/uploads/2026/06/digital-marketing-cost-investment-guide-featured.webp 1408w" sizes="(max-width: 768px) 100vw, 768px" />															</div>
+				</div>
+				</a>
+		<div class="elementor-element elementor-element-9e40d35 e-con-full nd-bc__body e-flex e-con e-child" data-id="9e40d35" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-0045b3b nd-bc__date elementor-widget elementor-widget-heading" data-id="0045b3b" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<span class="elementor-heading-title elementor-size-default">October 22, 2026</span>				</div>
+				</div>
+				<div class="elementor-element elementor-element-e225a66 nd-bc__title elementor-widget elementor-widget-theme-post-title elementor-page-title elementor-widget-heading" data-id="e225a66" data-element_type="widget" data-e-type="widget" data-widget_type="theme-post-title.default">
+				<div class="elementor-widget-container">
+					<h3 class="elementor-heading-title elementor-size-default"><a href="https://neodigital.ca/blog/digitalmarketingcost/">Digital Marketing Cost: Your Investment Guide</a></h3>				</div>
+				</div>
+				<div class="elementor-element elementor-element-7d50d1f nd-bc__excerpt elementor-widget elementor-widget-theme-post-excerpt" data-id="7d50d1f" data-element_type="widget" data-e-type="widget" data-widget_type="theme-post-excerpt.default">
+				<div class="elementor-widget-container">
+					Unsure about digital marketing costs? Get a clear breakdown of investment options for your business growth. Learn more today.				</div>
+				</div>
+				<div class="elementor-element elementor-element-d4a6b39 nd-bc__more elementor-widget elementor-widget-button" data-id="d4a6b39" data-element_type="widget" data-e-type="widget" data-widget_type="button.default">
+				<div class="elementor-widget-container">
+									<div class="elementor-button-wrapper">
+					<a class="elementor-button elementor-button-link elementor-size-sm" href="https://neodigital.ca/blog/digitalmarketingcost/">
+						<span class="elementor-button-content-wrapper">
+						<span class="elementor-button-icon">
+				<i aria-hidden="true" class="fas fa-arrow-right"></i>			</span>
+									<span class="elementor-button-text">Read Article</span>
+					</span>
+					</a>
+				</div>
+								</div>
+				</div>
+				</div>
+				</div>
+				</div>
+				<div data-elementor-type="loop-item" data-elementor-id="7742" class="elementor elementor-7742 e-loop-item e-loop-item-8490 post-8490 post type-post status-publish format-standard has-post-thumbnail hentry category-social-media" data-elementor-post-type="elementor_library" data-custom-edit-handle="1">
+			<div class="elementor-element elementor-element-8edb27b e-con-full nd-bc e-flex e-con e-parent" data-id="8edb27b" data-element_type="container" data-e-type="container">
+		<a class="elementor-element elementor-element-50c1b2c e-con-full nd-bc__media e-flex e-con e-child" data-id="50c1b2c" data-element_type="container" data-e-type="container" href="https://neodigital.ca/blog/social-media-ads/">
+				<div class="elementor-element elementor-element-ff239d4 nd-bc__img elementor-widget elementor-widget-image" data-id="ff239d4" data-element_type="widget" data-e-type="widget" data-widget_type="image.default">
+				<div class="elementor-widget-container">
+															<img loading="lazy" width="768" height="419" src="https://neodigital.ca/wp-content/uploads/2026/06/social-media-ads-vs-organic-featured-768x419.webp" class="attachment-medium_large size-medium_large wp-image-8489" alt="" srcset="https://neodigital.ca/wp-content/uploads/2026/06/social-media-ads-vs-organic-featured-768x419.webp 768w, https://neodigital.ca/wp-content/uploads/2026/06/social-media-ads-vs-organic-featured-1024x559.webp 1024w, https://neodigital.ca/wp-content/uploads/2026/06/social-media-ads-vs-organic-featured-300x164.webp 300w, https://neodigital.ca/wp-content/uploads/2026/06/social-media-ads-vs-organic-featured.webp 1408w" sizes="(max-width: 768px) 100vw, 768px" />															</div>
+				</div>
+				</a>
+		<div class="elementor-element elementor-element-9e40d35 e-con-full nd-bc__body e-flex e-con e-child" data-id="9e40d35" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-0045b3b nd-bc__date elementor-widget elementor-widget-heading" data-id="0045b3b" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<span class="elementor-heading-title elementor-size-default">October 19, 2026</span>				</div>
+				</div>
+				<div class="elementor-element elementor-element-e225a66 nd-bc__title elementor-widget elementor-widget-theme-post-title elementor-page-title elementor-widget-heading" data-id="e225a66" data-element_type="widget" data-e-type="widget" data-widget_type="theme-post-title.default">
+				<div class="elementor-widget-container">
+					<h3 class="elementor-heading-title elementor-size-default"><a href="https://neodigital.ca/blog/social-media-ads/">Social Media Ads Vs Organic: Which Is Better?</a></h3>				</div>
+				</div>
+				<div class="elementor-element elementor-element-7d50d1f nd-bc__excerpt elementor-widget elementor-widget-theme-post-excerpt" data-id="7d50d1f" data-element_type="widget" data-e-type="widget" data-widget_type="theme-post-excerpt.default">
+				<div class="elementor-widget-container">
+					Need to boost your reach? Discover the power of social media ads vs. organic reach. Learn which strategy is best for your goals. Find out now!				</div>
+				</div>
+				<div class="elementor-element elementor-element-d4a6b39 nd-bc__more elementor-widget elementor-widget-button" data-id="d4a6b39" data-element_type="widget" data-e-type="widget" data-widget_type="button.default">
+				<div class="elementor-widget-container">
+									<div class="elementor-button-wrapper">
+					<a class="elementor-button elementor-button-link elementor-size-sm" href="https://neodigital.ca/blog/social-media-ads/">
+						<span class="elementor-button-content-wrapper">
+						<span class="elementor-button-icon">
+				<i aria-hidden="true" class="fas fa-arrow-right"></i>			</span>
+									<span class="elementor-button-text">Read Article</span>
+					</span>
+					</a>
+				</div>
+								</div>
+				</div>
+				</div>
+				</div>
+				</div>
+				</div>
+		
+						</div>
+				</div>
+				</div>
+				</div>
+		<div class="elementor-element elementor-element-70d75fe e-con-full nd-sec e-flex e-con e-parent" data-id="70d75fe" data-element_type="container" data-e-type="container">
+		<div class="elementor-element elementor-element-34ef44f e-con-full nd-wrap nd-cta2 e-flex e-con e-child" data-id="34ef44f" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-5d35421 nd-sub elementor-widget elementor-widget-heading" data-id="5d35421" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<div class="elementor-heading-title elementor-size-default">Let’s Work Together</div>				</div>
+				</div>
+				<div class="elementor-element elementor-element-d7bf59c nd-cta2__title elementor-widget elementor-widget-heading" data-id="d7bf59c" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<h2 class="elementor-heading-title elementor-size-default">Have Any Projects In Mind? Feel Free to Contact Us</h2>				</div>
+				</div>
+				<div class="elementor-element elementor-element-bba5e13 nd-btn elementor-widget elementor-widget-button" data-id="bba5e13" data-element_type="widget" data-e-type="widget" data-widget_type="button.default">
+				<div class="elementor-widget-container">
+									<div class="elementor-button-wrapper">
+					<a class="elementor-button elementor-button-link elementor-size-sm" href="/contact/">
+						<span class="elementor-button-content-wrapper">
+						<span class="elementor-button-icon">
+				<i aria-hidden="true" class="fas fa-arrow-right"></i>			</span>
+									<span class="elementor-button-text">Let's Chat</span>
+					</span>
+					</a>
+				</div>
+								</div>
+				</div>
+				</div>
+				</div>
+				</div>
+		<script nitro-exclude>
+                        var heartbeatData = new FormData(); heartbeatData.append('nitroHeartbeat', '1');
+                        fetch(location.href, {method: 'POST', body: heartbeatData, credentials: 'omit'});
+                    </script><script nitro-exclude>
+                document.cookie = 'nitroCachedPage=' + (!window.NITROPACK_STATE ? '0' : '1') + '; path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
+            </script>
+<script nitro-exclude>
+    if (!window.NITROPACK_STATE || window.NITROPACK_STATE != 'FRESH') {
+        var proxyPurgeOnly = 0;
+        if (typeof navigator.sendBeacon !== 'undefined') {
+            var nitroData = new FormData(); nitroData.append('nitroBeaconUrl', 'aHR0cHM6Ly9uZW9kaWdpdGFsLmNhL2Jsb2cvZWxlbWVudG9yLXZzLWRpdmkvP25vY2FjaGU9MTc5NDk1MTIwNjI2OA=='); nitroData.append('nitroBeaconCookies', 'W10='); nitroData.append('nitroBeaconHash', '2af1b519044be37d798b073e5106300da51385959eb98ee8851ec5350c0100a059a5cdf026b3b8fd90b6c9dbeeb6c26a76b559b32cce3d1e7d8c496a53db0702'); nitroData.append('proxyPurgeOnly', ''); nitroData.append('layout', 'post'); navigator.sendBeacon(location.href, nitroData);
+        } else {
+            var xhr = new XMLHttpRequest(); xhr.open('POST', location.href, true); xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); xhr.send('nitroBeaconUrl=aHR0cHM6Ly9uZW9kaWdpdGFsLmNhL2Jsb2cvZWxlbWVudG9yLXZzLWRpdmkvP25vY2FjaGU9MTc5NDk1MTIwNjI2OA==&nitroBeaconCookies=W10=&nitroBeaconHash=2af1b519044be37d798b073e5106300da51385959eb98ee8851ec5350c0100a059a5cdf026b3b8fd90b6c9dbeeb6c26a76b559b32cce3d1e7d8c496a53db0702&proxyPurgeOnly=&layout=post');
+        }
+    }
+</script>		<footer data-elementor-type="footer" data-elementor-id="9945" class="elementor elementor-9945 elementor-location-footer" data-elementor-post-type="elementor_library">
+			<div class="elementor-element elementor-element-7242681 e-con-full ndf e-flex e-con e-parent" data-id="7242681" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-d76ecb5 ndf-boot elementor-widget elementor-widget-html" data-id="d76ecb5" data-element_type="widget" data-e-type="widget" data-widget_type="html.default">
+				<div class="elementor-widget-container">
+					<style>
+.ndf{position:relative;isolation:isolate;overflow:hidden;background:#02050a!important;color:#f7f4f2;padding:clamp(4rem,8vw,6.5rem) clamp(1.25rem,4vw,2.5rem) 0!important;border-top:1px solid rgba(247,244,242,.1);font-family:"Poppins",system-ui,sans-serif}
+.ndf::after{content:"";position:absolute;z-index:-1;right:-14rem;bottom:-18rem;width:44rem;aspect-ratio:1;border-radius:50%;background:repeating-radial-gradient(circle,transparent 0 46px,rgba(132,189,0,.07) 46px 48px);pointer-events:none}
+.ndf__grid{position:relative}
+.ndf__grid::before{content:"";position:absolute;left:-3rem;top:2rem;width:120px;height:120px;background:radial-gradient(rgba(247,244,242,.22) 1.4px,transparent 1.6px) 0 0/16px 16px;opacity:.5;pointer-events:none}
+.ndf__grid::after{content:"";position:absolute;right:2%;top:-1.5rem;width:30px;height:30px;border:2px solid #84bd00;transform:rotate(45deg);animation:ndf-float 9s ease-in-out infinite alternate;pointer-events:none}
+@keyframes ndf-float{from{transform:translateY(-10px) rotate(45deg)}to{transform:translateY(10px) rotate(70deg)}}
+.ndf::before{content:"";position:absolute;z-index:-1;left:50%;top:-30%;width:70rem;height:40rem;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(132,189,0,.14),transparent);pointer-events:none}
+.ndf>.e-con{width:100%!important;max-width:1290px;margin-inline:auto!important;--width:100%}
+.ndf .e-con>.elementor-widget{width:100%}
+/* CTA card */
+.ndf__cta{position:relative;isolation:isolate;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:2rem!important;padding:clamp(2rem,5vw,3.75rem)!important;border-radius:32px;background:#84bd00!important;overflow:hidden}
+.ndf__cta::after{content:"";position:absolute;z-index:-1;right:-3%;top:-35%;width:30%;aspect-ratio:3/4;background:rgba(8,16,0,.09);-webkit-mask:var(--ndf-mark) center/contain no-repeat;mask:var(--ndf-mark) center/contain no-repeat}
+.ndf__cta::before{content:"";position:absolute;z-index:-1;left:42%;top:-60%;width:320px;aspect-ratio:1;border-radius:50%;border:1.5px dashed rgba(8,16,0,.22);animation:ndf-spin 40s linear infinite}
+@keyframes ndf-spin{to{transform:rotate(360deg)}}
+.ndf__cta>.e-con{width:auto!important;--width:auto;gap:.9rem!important}
+.ndf__cta>.elementor-widget-html{width:auto!important}
+.ndf .ndf-kicker .elementor-heading-title{font-family:"Poppins",system-ui,sans-serif;font-size:.875rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#081000;margin:0}
+.ndf .ndf-title .elementor-heading-title{font-family:"Chillax","Poppins",system-ui,sans-serif;font-weight:600;font-size:clamp(2.5rem,7vw,6rem);line-height:.95;letter-spacing:-.04em;color:#081000;margin:0}
+.ndf .ndf-title .elementor-heading-title a{color:inherit!important;text-decoration:none}
+a.ndf-arrow{width:clamp(5.5rem,9vw,8rem);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:#081000;color:#84bd00!important;text-decoration:none;transition:transform .6s cubic-bezier(.16,1,.3,1),background .3s,color .3s}
+a.ndf-arrow svg{width:38%;height:38%;fill:none;stroke:currentColor;stroke-width:2;transition:transform .6s cubic-bezier(.16,1,.3,1)}
+a.ndf-arrow:hover{background:#f7f4f2;color:#081000!important}
+a.ndf-arrow:hover svg{transform:rotate(45deg)}
+:root{--ndf-mark:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%2045%20112%20148%22%3E%3Cpath%20d%3D%22M51.22%2C54.48c3.47-3.67%2C8.84-5.43%2C13.52-6.5%2C34.61-7.89%2C52.78%2C18.31%2C42.72%2C53.63-5.99%2C21.05-16.07%2C42.48-21.63%2C63.43-1.27%2C4.78-2.36%2C12.64-.17%2C17.12%2C2.13%2C4.35%2C6.35%2C5.38-1.83%2C7.79-14.43%2C4.25-33.18-3.34-34.69-21.25-1.4-16.74%2C15.17-55.25%2C20.43-73.17%2C2.14-7.28%2C3.65-13.16%2C2.97-21.01-1.02-11.89-10.36-20.7-21.33-20.04Z%22/%3E%3Cpath%20d%3D%22M8.02%2C57.31c11.92-4.28%2C32.09-8.44%2C39.66%2C5.81%2C10.33%2C19.45-9.45%2C47.17-12.86%2C66.94-.81%2C4.69-1.67%2C8.82.74%2C13.2-9.03%2C7.58-24.96%2C5.04-31.62-5.12-11.02-16.8%2C4.07-43.37%2C8.61-60.41%2C1.46-5.48%2C3.06-13.54-1.39-17.92-1.02-1.01-2.53-1.17-3.15-2.51Z%22/%3E%3C/svg%3E")}
+/* columns */
+.ndf__grid{display:grid!important;grid-template-columns:minmax(0,1.6fr) repeat(3,minmax(0,1fr));gap:clamp(2rem,4vw,3.5rem)!important;padding:clamp(3.5rem,6vw,5rem) 0!important}
+.ndf__grid>.e-con{width:auto!important;--width:auto;gap:1.1rem!important;align-items:flex-start!important}
+.ndf__grid>.e-con>.elementor-widget{width:100%}
+.ndf .elementor-widget-image,.ndf .ndf-logo,.ndf .ndf-badge{text-align:left!important}
+.ndf .elementor-widget-image a{display:inline-block}
+.ndf .ndf-logo img{height:40px!important;width:auto!important;max-width:100%}
+.ndf .elementor-widget-text-editor{color:rgba(247,244,242,.68);font-size:.9844rem;line-height:1.75}
+.ndf .elementor-widget-text-editor p{margin:0}
+.ndf .elementor-widget-text-editor a{color:#f7f4f2;text-decoration:none;background:linear-gradient(#84bd00,#84bd00) 0 100%/0 1px no-repeat;transition:color .3s,background-size .4s cubic-bezier(.16,1,.3,1)}
+.ndf .elementor-widget-text-editor a:hover{color:#84bd00;background-size:100% 1px}
+.ndf .ndf-about a{background-size:100% 1px}
+.ndf .ndf-h .elementor-heading-title{font-family:"Poppins",system-ui,sans-serif;font-size:.8125rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#84bd00;margin:0}
+.ndf ul{list-style:none;margin:0;padding:0;display:grid;gap:.65rem}
+.ndf ul li{margin:0}
+.ndf .ndf-phone a{font-family:"Chillax","Poppins",system-ui,sans-serif;font-weight:600;font-size:1.375rem;letter-spacing:-.01em;background:none}
+.ndf .ndf-badge img{max-width:180px!important;height:auto!important;border-radius:10px;opacity:.9}
+/* bottom bar: the page ends here */
+.ndf__bottom{flex-direction:row!important;justify-content:space-between!important;align-items:center!important;flex-wrap:wrap!important;gap:1rem!important;padding:1.6rem 0 1.8rem!important;border-top:1px solid rgba(247,244,242,.1)}
+.ndf__bottom>.elementor-element{width:auto!important;--width:auto}
+.ndf .ndf-legal{font-size:.875rem}
+/* SITE-WIDE RULE: giant faded outline words (the hero "ghost" word and outlined section numbers) always use Poppins Bold */
+.nd-ghost,.nd-sec .nd-cs-num .elementor-heading-title{font-family:"Poppins",system-ui,sans-serif!important;font-weight:700!important;letter-spacing:-.03em!important}
+@media (max-width:1024px){.ndf__grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:767px){.ndf__cta{flex-direction:column!important;align-items:flex-start!important}.ndf__grid{grid-template-columns:1fr}.ndf__bottom{flex-direction:column!important;align-items:flex-start!important}}
+@media (prefers-reduced-motion:reduce){.ndf__grid::after,.ndf__cta::before{animation:none}}
+</style>
+				</div>
+				</div>
+		<div class="elementor-element elementor-element-6c0e281 e-con-full ndf__cta e-flex e-con e-child" data-id="6c0e281" data-element_type="container" data-e-type="container">
+		<div class="elementor-element elementor-element-eefb213 e-con-full e-flex e-con e-child" data-id="eefb213" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-75795a2 ndf-kicker elementor-widget elementor-widget-heading" data-id="75795a2" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<p class="elementor-heading-title elementor-size-default">Work With Us &rarr;</p>				</div>
+				</div>
+				<div class="elementor-element elementor-element-fd5409c ndf-title elementor-widget elementor-widget-heading" data-id="fd5409c" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<h2 class="elementor-heading-title elementor-size-default"><a href="/contact/">Let&rsquo;s Work Together</a></h2>				</div>
+				</div>
+				</div>
+				<div class="elementor-element elementor-element-7245bf5 elementor-widget elementor-widget-html" data-id="7245bf5" data-element_type="widget" data-e-type="widget" data-widget_type="html.default">
+				<div class="elementor-widget-container">
+					<a class="ndf-arrow" href="/contact/" aria-label="Contact Neo Digital"><svg viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M7 17 17 7M8 7h9v9"/></svg></a>				</div>
+				</div>
+				</div>
+		<div class="elementor-element elementor-element-929760a e-con-full ndf__grid e-flex e-con e-child" data-id="929760a" data-element_type="container" data-e-type="container">
+		<div class="elementor-element elementor-element-5525661 e-con-full e-flex e-con e-child" data-id="5525661" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-11e5f4f ndf-logo elementor-widget elementor-widget-image" data-id="11e5f4f" data-element_type="widget" data-e-type="widget" data-widget_type="image.default">
+				<div class="elementor-widget-container">
+																<a href="/">
+							<img loading="lazy" width="876" height="191" src="https://neodigital.ca/wp-content/uploads/2025/02/Light.svg" class="attachment-full size-full wp-image-6585" alt="Neo Digital Logo" />								</a>
+															</div>
+				</div>
+				<div class="elementor-element elementor-element-c952d24 ndf-about elementor-widget elementor-widget-text-editor" data-id="c952d24" data-element_type="widget" data-e-type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+									<p>Neo Digital is a digital marketing agency serving businesses across North America with high-performance <a href="/website-design/">Website Design</a>, <a href="/elementor-help/">Elementor Experts</a> support, data-driven <a href="/local-seo/">Local SEO</a>, next-gen <a href="/aiseo/">AISEO</a>, and <a href="/google-ads/">Google Ads</a>.</p>								</div>
+				</div>
+				</div>
+		<div class="elementor-element elementor-element-3738e8d e-con-full e-flex e-con e-child" data-id="3738e8d" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-cc18c6b ndf-h elementor-widget elementor-widget-heading" data-id="cc18c6b" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<h4 class="elementor-heading-title elementor-size-default">Services</h4>				</div>
+				</div>
+				<div class="elementor-element elementor-element-0445411 elementor-widget elementor-widget-text-editor" data-id="0445411" data-element_type="widget" data-e-type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+									<ul><li><a href="/website-design/">Website Design</a></li><li><a href="/elementor-help/">Elementor Experts</a></li><li><a href="/local-seo/">Local SEO</a></li><li><a href="/aiseo/">AISEO</a></li><li><a href="/google-ads/">Google Ads</a></li><li><a href="/neo-pulse-platform/">NEO Pulse</a></li></ul>								</div>
+				</div>
+				</div>
+		<div class="elementor-element elementor-element-e39a32f e-con-full e-flex e-con e-child" data-id="e39a32f" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-5b29b45 ndf-h elementor-widget elementor-widget-heading" data-id="5b29b45" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<h4 class="elementor-heading-title elementor-size-default">Quick Links</h4>				</div>
+				</div>
+				<div class="elementor-element elementor-element-d69bfdb elementor-widget elementor-widget-text-editor" data-id="d69bfdb" data-element_type="widget" data-e-type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+									<ul><li><a href="/">Home</a></li><li><a href="/about/">About Us</a></li><li><a href="/our-work/">Our Work</a></li><li><a href="/blog/">Blog</a></li><li><a href="/contact/">Contact</a></li><li><a href="/service-area/">Service Areas</a></li></ul>								</div>
+				</div>
+				</div>
+		<div class="elementor-element elementor-element-11d8763 e-con-full e-flex e-con e-child" data-id="11d8763" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-04b0ead ndf-h elementor-widget elementor-widget-heading" data-id="04b0ead" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<h4 class="elementor-heading-title elementor-size-default">Connect</h4>				</div>
+				</div>
+				<div class="elementor-element elementor-element-0f48deb ndf-phone elementor-widget elementor-widget-text-editor" data-id="0f48deb" data-element_type="widget" data-e-type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+									<p><a href="tel:+15874164130">+1 (587) 416-4130</a></p>								</div>
+				</div>
+				<div class="elementor-element elementor-element-601eb42 elementor-widget elementor-widget-text-editor" data-id="601eb42" data-element_type="widget" data-e-type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+									<ul><li><a href="https://www.facebook.com/neodigitalca" target="_blank" rel="noopener">Facebook &rarr;</a></li><li><a href="https://www.instagram.com/neodigitalca" target="_blank" rel="noopener">Instagram &rarr;</a></li></ul>								</div>
+				</div>
+				<div class="elementor-element elementor-element-b21d32f ndf-badge elementor-widget elementor-widget-image" data-id="b21d32f" data-element_type="widget" data-e-type="widget" data-widget_type="image.default">
+				<div class="elementor-widget-container">
+															<img loading="lazy" width="457" height="245" src="https://neodigital.ca/wp-content/uploads/2025/08/Health-Canada-Warning.png" class="attachment-full size-full wp-image-7515" alt="Magnifying glass icon highlighting keywords for SEO and website design services at Neo Digital, specializing in website design, SEO, and digital marketing solutions for health and wellness businesses." srcset="https://neodigital.ca/wp-content/uploads/2025/08/Health-Canada-Warning.png 457w, https://neodigital.ca/wp-content/uploads/2025/08/Health-Canada-Warning-300x161.png 300w" sizes="(max-width: 457px) 100vw, 457px" />															</div>
+				</div>
+				</div>
+				</div>
+		<div class="elementor-element elementor-element-7e05f58 e-con-full ndf__bottom e-flex e-con e-child" data-id="7e05f58" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-4820a53 ndf-legal elementor-widget elementor-widget-text-editor" data-id="4820a53" data-element_type="widget" data-e-type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+									<p>&copy; Neo Digital Inc. &middot; <a href="/privacy-policy/">Privacy Policy</a></p>								</div>
+				</div>
+				<div class="elementor-element elementor-element-957074b ndf-legal elementor-widget elementor-widget-text-editor" data-id="957074b" data-element_type="widget" data-e-type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+									<p><a href="mailto:info@neodigital.ca">info@neodigital.ca</a></p>								</div>
+				</div>
+				</div>
+				<div class="elementor-element elementor-element-609a10e nd-boot elementor-widget elementor-widget-html" data-id="609a10e" data-element_type="widget" data-e-type="widget" data-widget_type="html.default">
+				<div class="elementor-widget-container">
+					<script nitro-exclude>/* NEO DIGITAL SHARED INTERACTIONS (runs on every page built with the nd-* design system; does nothing elsewhere).
+   1) background shapes + collision guard  2) scrolling-text repeat  3) tabs auto-rotate  4) orb badge text fit
+   5) GSAP reveals (hero, word-by-word headings, cards)  6) custom cursor + magnetic buttons.
+   Per-page options: window.ndDecor = [[sectionIndex,type,position,size,depth,duration,delay],...] in the page (else shapes are placed automatically);
+   hero panel attribute data-nd-ghost="Word" adds the giant outlined word behind the hero. Add class nd-reveal to any element to fade it up on scroll. */
+(function(){
+  var d=document,html=d.documentElement;
+  if(!d.querySelector('.nd-sec'))return;
+  html.classList.add('nd-js');
+  setTimeout(function(){html.classList.add('nd-ready');},2500);
+  var RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var FINE=window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  function q(s,c){return [].slice.call((c||d).querySelectorAll(s));}
+  function ready(){html.classList.add('nd-ready');}
+  function load(src){return new Promise(function(res,rej){var s=d.createElement('script');s.src=src;s.async=false;s.onload=res;s.onerror=rej;d.head.appendChild(s);});}
+  function onReady(fn){if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',fn);else fn();}
+
+  onReady(function(){
+    var EDIT=d.body.classList.contains('elementor-editor-active')||!!(window.elementorFrontend&&elementorFrontend.isEditMode&&elementorFrontend.isEditMode());
+
+    /* 1) background shapes */
+    var page=d.querySelector('[data-elementor-type="wp-page"]')||d;
+    var secs=q(':scope > .nd-sec',page.querySelector(':scope > .elementor')||page);
+    if(!secs.length)secs=q('.nd-sec');
+    var hero=d.querySelector('.nd-hero__panel');
+    var L=window.ndDecor;
+    if(!L){ /* automatic layout: a few small shapes per section + one large background piece on alternating sections */
+      L=[];var small=[['burst','left:3%;top:9%','60px',20],['diamond','right:4%;bottom:12%','32px',26,9,1],['dot','right:6%;top:15%','12px',30,7],['plus','left:47%;bottom:8%','24px',24,9,1],['zig','left:4%;bottom:10%','90px',16,9],['hollow','right:45%;top:7%','26px',30,10,1]],big=[['halo','right:-24%;top:-22%','1000px',5],['grid','left:1%;top:5%','150px',8],['ring','left:-4%;top:10%','200px',10],['blob','right:-10%;bottom:-10%','480px',8,16]];
+      if(hero){L.push([0,'halo','right:-18%;top:-30%','1100px',6],[0,'burst','left:3%;top:20%','70px',22],[0,'dot','right:7%;top:24%','14px',40,7,.5],[0,'plus','left:44%;top:16%','24px',26,10,2],[0,'hollow','right:12%;bottom:26%','26px',34,11,3],[0,'zig','left:4%;bottom:12%','96px',18,9,1]);}
+      secs.forEach(function(s,i){if(i===0&&hero&&s.contains(hero))return;if(s.classList.contains('nd-mq-sec'))return;for(var k=0;k<3;k++){L.push([i].concat(small[(i*2+k)%small.length]));}if(i%2)L.push([i].concat(big[(i>>1)%big.length]));});
+    }
+    var hosts={};
+    function host(i){if(hosts[i])return hosts[i];var el=i===0&&hero?hero:secs[i];if(!el)return null;var x=d.createElement('div');x.className='nd-decor';x.setAttribute('aria-hidden','true');el.insertBefore(x,el.firstChild);hosts[i]=x;return x;}
+    L.forEach(function(s){var h=host(s[0]);if(!h)return;var e=d.createElement('span');e.className='nd-shp nd-shp--'+s[1];e.style.cssText=s[2]+';--s:'+s[3]+';--d:'+(s[4]||0)/100+(s[5]?';--t:'+s[5]+'s':'')+(s[6]?';--dl:-'+s[6]+'s':'');h.appendChild(e);});
+    if(hero&&hero.getAttribute('data-nd-ghost')){var g=d.createElement('div');g.className='nd-ghost';g.setAttribute('aria-hidden','true');g.textContent=hero.getAttribute('data-nd-ghost');hero.appendChild(g);}
+    /* collision guard: nudge small shapes off text, cards and the header zone; hide only if no clear spot nearby */
+    var OBS='.nd-stat3,.nd-feat,.nd-svc__card,.nd-count__item,.nd-proj__card,.nd-btn,.e-n-tab-title,.nd-card,.nd-reveal',TXT='h1,h2,h3,h4,h5,h6,p,li,.nd-sub,.nd-type,.nd-pill',PAD=14,hs=d.querySelector('.nd-hero');
+    var OFF=[[0,0],[0,-50],[0,50],[-50,0],[50,0],[-50,-50],[50,-50],[-50,50],[50,50],[0,-100],[0,100],[-100,0],[100,0],[-100,-100],[100,-100],[-100,100],[100,100],[0,-160],[0,160],[-160,0],[160,0]];
+    function guard(){q('.nd-decor').forEach(function(dc){var sec=dc.parentElement,B=[],D=dc.getBoundingClientRect();
+      if(hs&&hs.contains(sec)){var t=hs.getBoundingClientRect().top;B.push({left:-1e4,right:1e4,top:t,bottom:t+130});}
+      q(OBS,sec).forEach(function(e){B.push(e.getBoundingClientRect());});
+      q(TXT,sec).forEach(function(e){if(e.closest('.nd-decor'))return;var r=d.createRange();r.selectNodeContents(e);[].forEach.call(r.getClientRects(),function(b){if(b.width&&b.height)B.push(b);});});
+      function hit(a){return a.left<D.left||a.right>D.right||a.top<D.top||a.bottom>D.bottom||B.some(function(b){return a.left-PAD<b.right&&a.right+PAD>b.left&&a.top-PAD<b.bottom&&a.bottom+PAD>b.top;});}
+      q('.nd-shp',dc).forEach(function(s){if(/--(halo|blob|grid|ring)/.test(s.className))return;s.classList.remove('is-off');for(var i=0;i<OFF.length;i++){s.style.marginLeft=OFF[i][0]+'px';s.style.marginTop=OFF[i][1]+'px';if(!hit(s.getBoundingClientRect()))return;}s.style.marginLeft=s.style.marginTop='';s.classList.add('is-off');});
+    });}
+    guard();window.addEventListener('load',guard);setTimeout(guard,2700);if(d.fonts&&d.fonts.ready)d.fonts.ready.then(guard);
+    var rt,lw=window.innerWidth;window.addEventListener('resize',function(){if(window.innerWidth===lw)return;lw=window.innerWidth;clearTimeout(rt);rt=setTimeout(guard,250);});
+    if(FINE&&!RM){var px=0,py=0,raf=0;window.addEventListener('pointermove',function(e){px=(e.clientX/window.innerWidth-.5)*60;py=(e.clientY/window.innerHeight-.5)*60;if(!raf)raf=requestAnimationFrame(function(){html.style.setProperty('--px',px.toFixed(1));html.style.setProperty('--py',py.toFixed(1));raf=0;});},{passive:true});}
+
+    /* 2) scrolling text: repeat the heading so the loop is seamless (edit the one heading in Elementor) */
+    q('.nd-mq__track').forEach(function(t){var it=t.querySelector('.nd-mq__item');if(!it||t.children.length>1)return;for(var i=0;i<5;i++){var c=it.cloneNode(true);c.setAttribute('aria-hidden','true');t.appendChild(c);}});
+
+    /* 3) tabs with class nd-devt: auto-rotate every 4.2s, pause on hover. Synthetic clicks are stopped at the widget so they never reach the document (otherwise they close open header dropdowns). */
+    if(!RM&&!EDIT)q('.nd-devt').forEach(function(box){var timer;function next(){var t=q('.e-n-tab-title',box);if(!t.length)return;var i=t.findIndex(function(x){return x.getAttribute('aria-selected')==='true';});t[(i+1)%t.length].click();}function auto(){clearInterval(timer);timer=setInterval(next,4200);}box.addEventListener('mouseenter',function(){clearInterval(timer);});box.addEventListener('mouseleave',auto);box.addEventListener('click',function(e){if(e.isTrusted)auto();else e.stopPropagation();});auto();});
+
+    /* 4) orb badge: stretch Text Path text evenly around the circle */
+    function fit(){q('.nd-orb__text').forEach(function(w){var p=w.querySelector('svg path'),t=w.querySelector('textPath');if(p&&t&&p.getTotalLength&&!t.getAttribute('textLength')){var Lp=p.getTotalLength();if(Lp>0){t.setAttribute('textLength',(Lp*0.985).toFixed(1));t.setAttribute('lengthAdjust','spacing');}}});}
+    fit();q('.nd-orb__text').forEach(function(w){new MutationObserver(fit).observe(w,{childList:true,subtree:true});});window.addEventListener('load',fit);
+
+    /* 5+6) GSAP reveals, cursor, magnetic buttons */
+    function splitWords(el){(function walk(node){[].slice.call(node.childNodes).forEach(function(n){if(n.nodeType===3){var frag=d.createDocumentFragment();n.textContent.split(/(\s+)/).forEach(function(p){if(!p)return;if(/^\s+$/.test(p)){frag.appendChild(d.createTextNode(p));return;}var o=d.createElement('span');o.className='nd-w nd-w--mask';var i=d.createElement('span');i.className='nd-wi';i.textContent=p;o.appendChild(i);frag.appendChild(o);});n.parentNode.replaceChild(frag,n);}else if(n.nodeType===1&&n.tagName!=='BR'){walk(n);}});})(el);return q('.nd-wi',el);}
+    if(RM||EDIT){ready();return;}
+    var G='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/';
+    load(G+'gsap.min.js').then(function(){return load(G+'ScrollTrigger.min.js');}).then(init).catch(ready);
+    function init(){
+      var gsap=window.gsap,ST=window.ScrollTrigger;gsap.registerPlugin(ST);ST.config({ignoreMobileResize:true});
+      var h1=d.querySelector('.nd-h1 .elementor-heading-title'),hw=h1?splitWords(h1):[];
+      ready();
+      if(hw.length)gsap.from(hw,{yPercent:115,duration:1.2,ease:'expo.out',stagger:0.07,delay:0.15});
+      gsap.from(q('.nd-hero .nd-sub, .nd-hero .nd-type, .nd-hero .elementor-widget-text-editor, .nd-hero .nd-btn, .nd-hero .nd-hero-in'),{y:28,opacity:0,duration:1,ease:'expo.out',stagger:0.08,delay:0.45});
+      if(d.querySelector('.nd-orb'))gsap.from('.nd-orb',{scale:0.85,opacity:0,rotation:-12,duration:1.6,ease:'expo.out',delay:0.3});
+      if(d.querySelector('.nd-stat3'))gsap.from('.nd-stat3',{y:30,opacity:0,duration:1,ease:'expo.out',stagger:0.1,delay:0.8});
+      var panel=hero,orbImg=d.querySelector('.nd-orb__img');
+      if(panel&&FINE){var ox=orbImg?gsap.quickTo(orbImg,'x',{duration:1,ease:'power3'}):null,oy=orbImg?gsap.quickTo(orbImg,'y',{duration:1,ease:'power3'}):null;
+        panel.addEventListener('pointermove',function(e){var r=panel.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;panel.style.setProperty('--mx',(x*100).toFixed(1)+'%');panel.style.setProperty('--my',(y*100).toFixed(1)+'%');if(ox){ox((x-0.5)*-24);oy((y-0.5)*-24);}});}
+      q('.nd-h2 .elementor-heading-title, .nd-statement .elementor-heading-title').forEach(function(el){var ws=splitWords(el);gsap.from(ws,{yPercent:115,duration:1.05,ease:'expo.out',stagger:0.045,scrollTrigger:{trigger:el,start:'top 88%',once:true}});});
+      var rv=q('.nd-reveal, .nd-svc__card, .nd-proj__card, .nd-feat, .nd-count__item, .nd-devt, .nd-frame, .nd-collage, .nd-shop, .nd-card');
+      gsap.set(rv,{y:50,opacity:0});
+      ST.batch(rv,{start:'top 92%',once:true,onEnter:function(b){gsap.to(b,{y:0,opacity:1,duration:1.1,ease:'expo.out',stagger:0.08,overwrite:true,clearProps:'transform'});}});
+      if(FINE){
+        var c=d.createElement('div');c.className='nd-cursor';c.setAttribute('aria-hidden','true');d.body.appendChild(c);
+        gsap.set(c,{xPercent:-50,yPercent:-50});
+        var cx=gsap.quickTo(c,'x',{duration:0.3,ease:'power3'}),cy=gsap.quickTo(c,'y',{duration:0.3,ease:'power3'});
+        window.addEventListener('pointermove',function(e){cx(e.clientX);cy(e.clientY);html.classList.add('nd-cursor-on');},{passive:true});
+        d.addEventListener('pointerover',function(e){c.classList.toggle('is-link',!!e.target.closest('a, button'));});
+        html.addEventListener('pointerleave',function(){html.classList.remove('nd-cursor-on');});
+        /* magnetic buttons removed 2026-11-12 (liquid buttons instead) */
+      }
+      window.addEventListener('load',function(){ST.refresh();});setTimeout(function(){ST.refresh();},1500);
+    }
+  });
+})();
+</script>				</div>
+				</div>
+				</div>
+				</footer>
+		
+<script id="neo-pulse-skip-target">(function(){var l=document.querySelector('.neo-pulse-skip-link');if(!l||document.getElementById('content')){return;}var m=document.querySelector('main,[role="main"]');if(!m){return;}if(m.id){l.setAttribute('href','#'+m.id);}else{m.id='content';}})();</script>
+<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/wp-*.php","/wp-admin/*","/wp-content/uploads/*","/wp-content/*","/wp-content/plugins/*","/wp-content/themes/hello-theme-child-master/*","/wp-content/themes/hello-elementor/*","/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+			<script>
+				( () => {
+					const lazyloadRunObserver = () => {
+						const lazyloadBackgrounds = document.querySelectorAll( `.e-con.e-parent:not(.e-lazyloaded)` );
+						const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
+							entries.forEach( ( entry ) => {
+								if ( entry.isIntersecting ) {
+									let lazyloadBackground = entry.target;
+									if( lazyloadBackground ) {
+										lazyloadBackground.classList.add( 'e-lazyloaded' );
+									}
+									lazyloadBackgroundObserver.unobserve( entry.target );
+								}
+							});
+						}, { rootMargin: '200px 0px 200px 0px' } );
+						lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
+							lazyloadBackgroundObserver.observe( lazyloadBackground );
+						} );
+					};
+					const events = [
+						'DOMContentLoaded',
+						'elementor/lazyload/observe',
+					];
+					events.forEach( ( event ) => {
+						document.addEventListener( event, lazyloadRunObserver );
+					} );
+				} )();
+			</script>
+			<script id="ndet-lead-source-js-before">
+window.ndetLeadSrc = {"days":90,"session":false};
+//# sourceURL=ndet-lead-source-js-before
+</script>
+<script id="ndet-lead-source-js" src="https://neodigital.ca/wp-content/plugins/neo-digital-elementor-tools/assets/lead-source.js?ver=1.18.5.1794906081"></script>
+<script data-cfasync="false" data-no-defer="1" data-no-optimize="1" id="ndet-turnstile-js-before" nitro-exclude>
+window.ndetTurnstile = {"key":"0x4AAAAAAAxLu8xKpUUm4Pv-","api":"https:\/\/challenges.cloudflare.com\/turnstile\/v0\/api.js?render=explicit&onload=ndetTurnstileReady","theme":"dark","size":"normal","appearance":"always","position":"before","editor":"Cloudflare Turnstile shows here on the live page."};
+//# sourceURL=ndet-turnstile-js-before
+</script>
+<script data-cfasync="false" data-no-defer="1" data-no-optimize="1" id="ndet-turnstile-js" nitro-exclude src="https://neodigital.ca/wp-content/plugins/neo-digital-elementor-tools/assets/turnstile.js?ver=1.18.5.1794906081"></script>
+<script id="hello-theme-frontend-js" src="https://neodigital.ca/wp-content/themes/hello-elementor/assets/js/hello-frontend.js?ver=3.5.2"></script>
+<script id="elementor-webpack-runtime-js" src="https://neodigital.ca/wp-content/plugins/elementor/assets/js/webpack.runtime.min.js?ver=4.4.0"></script>
+<script id="elementor-frontend-modules-js" src="https://neodigital.ca/wp-content/plugins/elementor/assets/js/frontend-modules.min.js?ver=4.4.0"></script>
+<script id="jquery-ui-core-js-before">
+jQuery.uiBackCompat = true;
+//# sourceURL=jquery-ui-core-js-before
+</script>
+<script id="jquery-ui-core-js" src="https://neodigital.ca/wp-includes/js/jquery/ui/core.min.js?ver=1.14.2"></script>
+<script id="elementor-frontend-js-before">
+var elementorFrontendConfig = {"environmentMode":{"edit":false,"wpPreview":false,"isScriptDebug":false},"i18n":{"shareOnFacebook":"Share on Facebook","shareOnX":"Share on X","pinIt":"Pin it","download":"Download","downloadImage":"Download image","fullscreen":"Fullscreen","zoom":"Zoom","share":"Share","playVideo":"Play Video","previous":"Previous","next":"Next","close":"Close","a11yCarouselPrevSlideMessage":"Previous slide","a11yCarouselNextSlideMessage":"Next slide","a11yCarouselFirstSlideMessage":"This is the first slide","a11yCarouselLastSlideMessage":"This is the last slide","a11yCarouselPaginationBulletMessage":"Go to slide"},"is_rtl":false,"breakpoints":{"xs":0,"sm":480,"md":768,"lg":1025,"xl":1440,"xxl":1600},"responsive":{"breakpoints":{"mobile":{"label":"Mobile Portrait","value":767,"default_value":767,"direction":"max","is_enabled":true},"mobile_extra":{"label":"Mobile Landscape","value":880,"default_value":880,"direction":"max","is_enabled":false},"tablet":{"label":"Tablet Portrait","value":1024,"default_value":1024,"direction":"max","is_enabled":true},"tablet_extra":{"label":"Tablet Landscape","value":1200,"default_value":1200,"direction":"max","is_enabled":true},"laptop":{"label":"Laptop","value":1366,"default_value":1366,"direction":"max","is_enabled":true},"widescreen":{"label":"Widescreen","value":2400,"default_value":2400,"direction":"min","is_enabled":false}},"hasCustomBreakpoints":true},"version":"4.4.0","is_static":false,"experimentalFeatures":{"additional_custom_breakpoints":true,"container":true,"theme_builder_v2":true,"hello-theme-header-footer":true,"e_mcp_revision_snapshots":true,"nested-elements":true,"import-export-customization":true,"e_pro_atomic_form":true,"e_pro_collection_loop":true},"urls":{"assets":"https:\/\/neodigital.ca\/wp-content\/plugins\/elementor\/assets\/","ajaxurl":"https:\/\/neodigital.ca\/wp-admin\/admin-ajax.php","uploadUrl":"https:\/\/neodigital.ca\/wp-content\/uploads"},"nonces":{"floatingButtonsClickTracking":"0832891b84","atomicFormsSendForm":"a8c78a1996"},"swiperClass":"swiper","settings":{"page":[],"editorPreferences":[]},"kit":{"active_breakpoints":["viewport_mobile","viewport_tablet","viewport_tablet_extra","viewport_laptop"],"body_background_background":"classic","global_image_lightbox":"yes","lightbox_enable_counter":"yes","lightbox_enable_fullscreen":"yes","lightbox_enable_zoom":"yes","lightbox_enable_share":"yes","lightbox_title_src":"title","lightbox_description_src":"description","hello_header_logo_type":"logo","hello_header_menu_layout":"horizontal","hello_footer_logo_type":"logo"},"post":{"id":8500,"title":"Elementor%20Vs%20Divi%3A%20Which%20Page%20Builder%20Reigns%20Supreme%3F%20%7C%20Neo%20Digital","excerpt":"Confused by Elementor vs Divi? Get a clear comparison of WordPress page builders to choose the best for your site. Find out now.","featuredImage":"https:\/\/neodigital.ca\/wp-content\/uploads\/2026\/06\/elementor-divi-page-builder-comparison-featured-1024x559.webp"}};
+//# sourceURL=elementor-frontend-js-before
+</script>
+<script id="elementor-frontend-js" src="https://neodigital.ca/wp-content/plugins/elementor/assets/js/frontend.min.js?ver=4.4.0"></script>
+<script id="smartmenus-js" src="https://neodigital.ca/wp-content/plugins/elementor-pro/assets/lib/smartmenus/jquery.smartmenus.min.js?ver=1.2.1"></script>
+<script id="neo-pulse-ai-sidebar-shell-js" src="https://neodigital.ca/wp-content/plugins/neo-pulse-wp/assets/shared/neo-pulse-ai-sidebar-shell.js?ver=0.15.2.1794855690.1794855690&#038;neo-pulse_cv=1794855711"></script>
+<script id="neo-pulse-ai-sidebar-unify-js" src="https://neodigital.ca/wp-content/plugins/neo-pulse-wp/assets/shared/neo-pulse-ai-sidebar-unify.js?ver=0.15.2.1794855690.1794855690&#038;neo-pulse_cv=1794855711"></script>
+<script id="neo-pulse-search-js" src="https://neodigital.ca/wp-content/plugins/neo-pulse-wp/assets/search/neo-pulse-search.js?ver=0.15.2.1794855690.1794855690&#038;neo-pulse_cv=1794855711"></script>
+<script id="neo-pulse-search-elementor-preview-js" src="https://neodigital.ca/wp-content/plugins/neo-pulse-wp/assets/search/neo-pulse-search-elementor-preview.js?ver=0.15.2.1794855690.1794855690.1794855690&#038;neo-pulse_cv=1794855711"></script>
+<script id="imagesloaded-js" src="https://neodigital.ca/wp-includes/js/imagesloaded.min.js?ver=5.0.0"></script>
+<script id="neo-pulse-elementor-waypoint-js" src="https://neodigital.ca/wp-content/plugins/neo-pulse-wp/assets/frontend/neo-pulse-elementor-waypoint.js?ver=0.15.2&#038;neo-pulse_cv=1794855711"></script>
+<script id="wp-hooks-js" src="https://neodigital.ca/wp-includes/js/dist/hooks.min.js?ver=f0f188028580e8dc1255"></script>
+<script id="wp-i18n-js" src="https://neodigital.ca/wp-includes/js/dist/i18n.min.js?ver=1dfe7db3940c23ea9216"></script>
+<script id="wp-i18n-js-after">
+wp.i18n.setLocaleData( { 'text direction\u0004ltr': [ 'ltr' ] } );
+//# sourceURL=wp-i18n-js-after
+</script>
+<script id="elementor-pro-frontend-js-before">
+var ElementorProFrontendConfig = {"ajaxurl":"https:\/\/neodigital.ca\/wp-admin\/admin-ajax.php","nonce":"038232a657","urls":{"assets":"https:\/\/neodigital.ca\/wp-content\/plugins\/elementor-pro\/assets\/","rest":"https:\/\/neodigital.ca\/wp-json\/"},"settings":{"lazy_load_background_images":true},"popup":{"hasPopUps":true},"shareButtonsNetworks":{"facebook":{"title":"Facebook","has_counter":true},"twitter":{"title":"Twitter"},"linkedin":{"title":"LinkedIn","has_counter":true},"pinterest":{"title":"Pinterest","has_counter":true},"reddit":{"title":"Reddit","has_counter":true},"vk":{"title":"VK","has_counter":true},"odnoklassniki":{"title":"OK","has_counter":true},"tumblr":{"title":"Tumblr"},"digg":{"title":"Digg"},"skype":{"title":"Skype"},"stumbleupon":{"title":"StumbleUpon","has_counter":true},"mix":{"title":"Mix"},"telegram":{"title":"Telegram"},"pocket":{"title":"Pocket","has_counter":true},"xing":{"title":"XING","has_counter":true},"whatsapp":{"title":"WhatsApp"},"email":{"title":"Email"},"print":{"title":"Print"},"x-twitter":{"title":"X"},"threads":{"title":"Threads"}},"facebook_sdk":{"lang":"en_US","app_id":""},"lottie":{"defaultAnimationUrl":"https:\/\/neodigital.ca\/wp-content\/plugins\/elementor-pro\/modules\/lottie\/assets\/animations\/default.json"}};
+//# sourceURL=elementor-pro-frontend-js-before
+</script>
+<script id="elementor-pro-frontend-js" src="https://neodigital.ca/wp-content/plugins/elementor-pro/assets/js/frontend.min.js?ver=4.4.0"></script>
+<script id="pro-elements-handlers-js" src="https://neodigital.ca/wp-content/plugins/elementor-pro/assets/js/elements-handlers.min.js?ver=4.4.0"></script>
+<script id="wp-emoji-settings" type="application/json">
+{"baseUrl":"https://s.w.org/images/core/emoji/17.0.2/72x72/","ext":".png","svgUrl":"https://s.w.org/images/core/emoji/17.0.2/svg/","svgExt":".svg","source":{"concatemoji":"https://neodigital.ca/wp-includes/js/wp-emoji-release.min.js?ver=7.1.4"}}
+</script>
+<script type="module">
+/*! This file is auto-generated */
+var e="script#wp-emoji-settings",t=document.querySelector(e);if(!(t instanceof HTMLScriptElement))throw new Error("Element missing: "+e);const r=JSON.parse(t.text),s=(window._wpemojiSettings=r,"wpEmojiSettingsSupports"),o=["flag","emoji"];function i(e){try{var t={supportTests:e,timestamp:(new Date).valueOf()};sessionStorage.setItem(s,JSON.stringify(t))}catch(e){}}function c(e,t,n){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);t=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(n,0,0);const r=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);return t.every((e,t)=>e===r[t])}function p(e,t){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);var n=e.getImageData(16,16,1,1);for(let e=0;e<n.data.length;e++)if(0!==n.data[e])return!1;return!0}function u(e,t,n,r){switch(t){case"flag":return n(e,"\ud83c\udff3\ufe0f\u200d\u26a7\ufe0f","\ud83c\udff3\ufe0f\u200b\u26a7\ufe0f")?!1:!n(e,"\ud83c\udde8\ud83c\uddf6","\ud83c\udde8\u200b\ud83c\uddf6")&&!n(e,"\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f","\ud83c\udff4\u200b\udb40\udc67\u200b\udb40\udc62\u200b\udb40\udc65\u200b\udb40\udc6e\u200b\udb40\udc67\u200b\udb40\udc7f");case"emoji":return!r(e,"\ud83e\u1fac8")}return!1}function f(e,t,n,r){let a;const s=(a="undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?new OffscreenCanvas(300,150):document.createElement("canvas")).getContext("2d",{willReadFrequently:!0}),o=(s.textBaseline="top",s.font="600 32px Arial",{});return e.forEach(e=>{o[e]=t(s,e,n,r)}),o}function a(e){var t=document.createElement("script");t.src=e,t.defer=!0,document.head.appendChild(t)}r.supports={everything:!0,everythingExceptFlag:!0},new Promise(t=>{let n=function(){try{var e=JSON.parse(sessionStorage.getItem(s));if("object"==typeof e&&"number"==typeof e.timestamp&&(new Date).valueOf()<e.timestamp+604800&&"object"==typeof e.supportTests)return e.supportTests}catch(e){}return null}();if(!n){if("undefined"!=typeof Worker&&"undefined"!=typeof OffscreenCanvas&&"undefined"!=typeof URL&&URL.createObjectURL&&"undefined"!=typeof Blob)try{var e="postMessage("+f.toString()+"("+[JSON.stringify(o),u.toString(),c.toString(),p.toString()].join(",")+"));",r=new Blob([e],{type:"text/javascript"});const a=new Worker(URL.createObjectURL(r),{name:"wpTestEmojiSupports"});return void(a.onmessage=e=>{i(n=e.data),a.terminate(),t(n)})}catch(e){}i(n=f(o,u,c,p))}t(n)}).then(e=>{for(const n in e)r.supports[n]=e[n],r.supports.everything=r.supports.everything&&r.supports[n],"flag"!==n&&(r.supports.everythingExceptFlag=r.supports.everythingExceptFlag&&r.supports[n]);var t;r.supports.everythingExceptFlag=r.supports.everythingExceptFlag&&!r.supports.flag,r.supports.everything||((t=r.source||{}).concatemoji?a(t.concatemoji):t.wpemoji&&t.twemoji&&(a(t.twemoji),a(t.wpemoji)))});
+//# sourceURL=https://neodigital.ca/wp-includes/js/wp-emoji-loader.min.js
+</script>
+
+<!-- NEO Pulse Page View Tag (Overseer) — first-party pageview beacon. Do not remove. -->
+<script type="application/json" id="neo-pulse-overseer-config">{"endpoint":"https:\/\/neodigital.ca\/wp-json\/neo-pulse\/v1\/overseer\/collect","nonce":"","post_id":8500,"track_interactions":true,"track_outbound_only":false}</script>
+<script src="https://neodigital.ca/wp-content/plugins/neo-pulse-wp/assets/frontend/neo-pulse-overseer.js"></script>
+
+<script id="neo-pulse-leads">(function(){try{var n="npwp_src",d=document,l=location,q=new URLSearchParams(l.search),c=null,m=d.cookie.match(new RegExp('(?:^|; )'+n+'=([^;]*)'));if(m){try{c=JSON.parse(decodeURIComponent(m[1]));}catch(e){c=null;}}var r='';try{r=d.referrer?new URL(d.referrer).hostname:'';}catch(e){}if(r===l.hostname){r='';}var u={},k='',t=['utm_source','utm_medium','utm_campaign','utm_term','utm_content'];t.forEach(function(x){var v=q.get(x);if(v){u[x.slice(4)]=v.slice(0,100);}});['gclid','gbraid','wbraid','msclkid','fbclid','ttclid','li_fat_id'].some(function(x){if(q.get(x)){k=x;return true;}return false;});if(!c||Object.keys(u).length||k||r){c={l:l.pathname.slice(0,200),r:r.slice(0,100),u:u,k:k,p:0};}c.p=Math.min((c.p||0)+1,999);d.cookie=n+'='+encodeURIComponent(JSON.stringify(c))+'; path=/; SameSite=Lax'+(l.protocol==='https:'?'; Secure':'');}catch(e){}})();</script>
+		
+<script id="neo-pulse-tracking" nitro-exclude data-nitro-exclude data-no-optimize="1" data-no-defer="1" data-cfasync="false">(function(w,d){var c={"e":{"lead":1,"phone":1,"email":1,"dir":1},"loc":{},"pg":"","dbg":0,"m":0,"rec":1,"u":"\/wp-json\/neo-pulse\/v1\/click"};var q=w.dataLayer=w.dataLayer||[],dbg=c.dbg;try{if(/[?&]neo_debug=1/.test(location.search)){sessionStorage.setItem("npwpDbg","1");}dbg=dbg||sessionStorage.getItem("npwpDbg")==="1";}catch(e){}function P(o){var r={};for(var k in o){if(o[k]){r[k]=String(o[k]).slice(0,100);}}return r;}function send(n,p){try{var g={};for(var j in p){g[j]=p[j];}if(dbg){g.debug_mode=true;}if(typeof w.gtag==="function"){w.gtag("event",n,g);}else{(function(){q.push(arguments);})("event",n,g);}var o={event:n};for(var k in p){o[k]=p[k];}q.push(o);if(dbg&&w.console){console.log("[Neo Pulse]",n,p);}}catch(e){}}function fb(n,p){if(c.m&&typeof w.fbq==="function"){try{w.fbq("track",n,p);if(dbg&&w.console){console.log("[Neo Pulse] Meta",n,p);}}catch(e){}}}function lead(){var m=d.cookie.match(/(?:^|; )neo_pulse_lead=([^;]*)/);if(!m){return 0;}fire(m[1]);return 1;}function fire(x){d.cookie="neo_pulse_lead=; Max-Age=0; path=/";if(!c.e.lead){return;}var v,s=[];try{v=JSON.parse(decodeURIComponent(x));}catch(e){return;}try{s=JSON.parse(sessionStorage.getItem("npwpLeads")||"[]");}catch(e){}if(!v||!v.n||s.indexOf(v.n)>-1){return;}s.push(v.n);try{sessionStorage.setItem("npwpLeads",JSON.stringify(s.slice(-20)));}catch(e){}send("generate_lead",P({form_name:v.f,form_id:v.i,form_plugin:v.p,location:v.l}));fb("Lead",P({content_name:v.f,content_category:v.l}));}var T=0;function watch(){var n=0;clearInterval(T);T=setInterval(function(){if(lead()||++n>=60){clearInterval(T);}},1000);}lead();d.addEventListener("submit",watch,true);function rec(k,l,h){if(!c.rec){return;}var s=[],id=k+"|"+h;try{s=JSON.parse(sessionStorage.getItem("npwpClicks")||"[]");}catch(e){}if(s.indexOf(id)>-1){return;}s.push(id);try{sessionStorage.setItem("npwpClicks",JSON.stringify(s.slice(-50)));}catch(e){}try{var b=new URLSearchParams({t:k,l:l||"",p:location.pathname});if(navigator.sendBeacon){navigator.sendBeacon(c.u,b);}else if(w.fetch){fetch(c.u,{method:"POST",body:b,keepalive:true,credentials:"same-origin"});}}catch(e){}}d.addEventListener("click",function(ev){var a=ev.target&&ev.target.closest?ev.target.closest("a[href]"):null;if(!a){return;}var h=a.getAttribute("href")||"",t=(a.textContent||"").replace(/\s+/g," ").trim(),l=a.getAttribute("data-neo-location")||"",k="";if(/^tel:/i.test(h)){k="call";if(!l){var g=h.replace(/\D/g,"");if(g.length===11&&g.charAt(0)==="1"){g=g.slice(1);}l=c.loc[g]||c.pg;}if(c.e.phone){send("phone_call_click",P({link_url:h,link_text:t,location:l}));fb("Contact",P({content_name:"Phone",content_category:l}));}}else if(/^mailto:/i.test(h)){k="email";h=h.split("?")[0];if(c.e.email){send("email_click",P({link_url:h,link_text:t}));}}else if(/(google\.[a-z.]+\/maps|maps\.google\.|maps\.app\.goo\.gl|goo\.gl\/maps|maps\.apple\.com)/i.test(h)){k="directions";l=l||c.pg;if(c.e.dir){send("directions_click",P({link_url:h,location:l}));}}if(k){rec(k,l,h);}},true);})(window,document);</script>
+
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5c1da93dd73bdd4',t:'MTc5NDk1MTIwNw=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5c1da93dd73bdd4',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

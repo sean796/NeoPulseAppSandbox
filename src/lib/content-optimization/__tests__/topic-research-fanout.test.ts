@@ -139,37 +139,39 @@ describe("illustrative research query helpers", () => {
     const ex = normalizeIllustrativeExample(
       {
         leadIn: "Hypothetical scenario:",
-        personaName: "Elena",
+        situationOpener: "Consider a common situation",
         householdProfile: "Old Naples homeowner concerned about humidity",
       },
       "September 2026",
     );
     expect(ex?.leadIn).toBe("Hypothetical scenario:");
-    expect(ex?.quoteBody).toContain("Elena");
+    expect(ex?.quoteBody).toContain("Consider a common situation");
     expect(ex?.quoteBody).toContain("humidity");
+    expect(ex?.personaName).toBe("");
   });
 
   it("normalizeIllustrativeExample returns structured brief field", () => {
     const ex = normalizeIllustrativeExample(
       {
         leadIn: "Hypothetical scenario:",
-        personaName: "Morgan",
+        situationOpener: "In this scenario",
         householdProfile: "single parent with school-age kids",
         situationHook: "nursery blackout for early bedtimes",
         scenarioQuestion: "How does a single parent in St. Albert blackout a street-facing nursery?",
         scenarioNarrative:
-          "Morgan lives in Lacombe Park with school-age kids and a nursery that faces the street. They need early bedtimes without sacrificing daytime light in the rest of the home.",
+          "A homeowner lives in Lacombe Park with school-age kids and a nursery that faces the street. They need early bedtimes without sacrificing daytime light in the rest of the home.",
         recommendationTitle: "Blackout cellular shades with top-down bottom-up",
         recommendationParagraph:
-          "Advance Blinds would quote cordless blackout cellulars with a top-down bottom-up rail so Morgan can darken the nursery at night while keeping privacy and filtered light during the day.",
+          "Advance Blinds would quote cordless blackout cellulars with a top-down bottom-up rail so a homeowner can darken the nursery at night while keeping privacy and filtered light during the day.",
       },
       "August 2026",
       "Choosing High-Efficiency Panels",
     );
     expect(ex?.leadIn).toBe("Hypothetical scenario:");
-    expect(ex?.quoteBody).toContain("Morgan");
-    expect(ex?.personaName).toBe("Morgan");
-    expect(ex?.scenarioNarrative).toContain("Morgan");
+    expect(ex?.quoteBody).toContain("In this scenario");
+    expect(ex?.personaName).toBe("");
+    expect(ex?.situationOpener).toBe("In this scenario");
+    expect(ex?.scenarioNarrative).toContain("A homeowner lives");
     expect(ex?.recommendationParagraph).toContain("Advance Blinds");
     expect(ex?.asOf).toBe("August 2026");
     expect(ex?.illustrativeH2Title).toBe("Choosing High-Efficiency Panels");

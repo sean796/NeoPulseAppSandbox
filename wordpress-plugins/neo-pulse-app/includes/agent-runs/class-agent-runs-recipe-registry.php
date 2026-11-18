@@ -87,6 +87,10 @@ class Neo_Pulse_App_Agent_Runs_Recipe_Registry {
 			'title'       => 'Fact Checker',
 			'managerTabs' => array( 'dashboard' ),
 		),
+		'cannibalization_audit'     => array(
+			'title'       => 'Cannibalization Audit',
+			'managerTabs' => array( 'dashboard' ),
+		),
 	);
 
 	public static function is_valid( string $recipe_key ): bool {

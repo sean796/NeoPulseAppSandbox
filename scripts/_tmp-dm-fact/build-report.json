@@ -1,0 +1,2552 @@
+{
+  "reports": [
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/5-ways-to-give-your-living-room-a-fun-refresh/",
+      "id": 991,
+      "replaced": 2,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 2,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/add-biophilic-design-with-hunter-douglas-natural-shades/",
+      "id": 985,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas offers a room-darkening liner that can pair with any of their woven shades.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Provenance® Woven Wood Shades are handcrafted from wood, reeds, grasses, and bamboo.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "These shades are fully customizable and can fit any size window.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/battery-wand-repair/",
+      "id": 2089,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/best-skylight-shades-solutions/",
+      "id": 693,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/best-wallpaper-outlets/",
+      "id": 2793,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/blinds-vs-shutters-which-is-the-best-investment-for-your-windows/",
+      "id": 1183,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/cellular-shades-vs-roman-shades/",
+      "id": 1106,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/commercial-window-treatments/",
+      "id": 1505,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/composite-shutters-interior/",
+      "id": 1407,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Composite shutters interior installations provide homeowners with an engineered, moisture-resistant window treatment tha",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Composite shutters are resistant to cracking and fading.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/composite-shutters-vs-wood/",
+      "id": 1527,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/custom-interior-designers/",
+      "id": 1403,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/custom-window-treatments/",
+      "id": 1302,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/energy-efficient-blinds-and-shades/",
+      "id": 1003,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/fabric-blinds-cleaning/",
+      "id": 2069,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/faux-vs-real-wood-shutters/",
+      "id": 981,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/furniture-styles-guide/",
+      "id": 1725,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/heritance-hardwood-vs-palm-beach-polysatin/",
+      "id": 1181,
+      "replaced": 5,
+      "missed": [],
+      "linked": 5,
+      "homepageSkipped": 0,
+      "sourceCount": 5
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/home-office-interior-design/",
+      "id": 1443,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Cool Blues steadies heart rate and sharpens cognitive clarity.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 1,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/honeycomb-vs-pleated-shades/",
+      "id": 1449,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/how-to-control-light-with-hunter-douglas-duolite/",
+      "id": 987,
+      "replaced": 5,
+      "missed": [],
+      "linked": 5,
+      "homepageSkipped": 0,
+      "sourceCount": 5
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/hunter-douglas-guide/",
+      "id": 2137,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/interior-color-palettes-guide/",
+      "id": 1717,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/interior-design-services/",
+      "id": 1375,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/interior-design-trends-tips/",
+      "id": 1523,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/interior-designer-marietta-ga/",
+      "id": 1401,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/lightlock-system-explained/",
+      "id": 2109,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/luminette-vs-designer-banded-shades/",
+      "id": 1182,
+      "replaced": 3,
+      "missed": [
+        {
+          "claim": "Designer Banded Shades rely on layered horizontal loops that shift to alternate between diffused illumination and closed",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/modern-innovations-in-shades-and-blinds/",
+      "id": 1001,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/powerview-automated-window-treatments/",
+      "id": 1,
+      "replaced": 5,
+      "missed": [],
+      "linked": 5,
+      "homepageSkipped": 0,
+      "sourceCount": 5
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/powerview-guide/",
+      "id": 2099,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Smart shades save you the hassle of manually adjusting them, because you can create schedules for automatically moving s",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "PowerView Automation is compatible with many higher-end smart home systems, including those from Control4®, Crestron®, E",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "PowerView Automation, for example, is available on a wide variety of shade styles, including sheer, roller, cellular, Ro",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Motorized shades lack lift cords, which makes raising and lowering them simpler for everyone, including children or peop",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/residential-space-planning-space-planning/",
+      "id": 2646,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/shades-shutters-blinds-oh-my/",
+      "id": 997,
+      "replaced": 5,
+      "missed": [],
+      "linked": 5,
+      "homepageSkipped": 0,
+      "sourceCount": 5
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/shutters-blinds-security/",
+      "id": 2629,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/space-planning-maximize-home/",
+      "id": 1723,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/vertical-blinds-design-ideas/",
+      "id": 979,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/vertical-blinds-rooms/",
+      "id": 2645,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/wallpaper-stores-atlanta/",
+      "id": 1378,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/why-should-i-choose-custom-window-coverings/",
+      "id": 989,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/window-blind-repair/",
+      "id": 2080,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/wood-vs-faux-wood-blinds/",
+      "id": 1113,
+      "replaced": 6,
+      "missed": [],
+      "linked": 6,
+      "homepageSkipped": 0,
+      "sourceCount": 6
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/blog/woven-wood-shades-guide/",
+      "id": 1445,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Provenance Woven Wood Shades offer flexible light control and improved energy efficiency from an independent liner.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Provenance Woven Wood Shades are handcrafted from wood, reeds, grasses, and bamboo.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/cellular-vs-roman-shades-mounds-state-park-anderson-in/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/climate-window-treatments-downtown-st-paul-mn/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/commercial-window-treatments-college-park-atlant/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/commercial-window-treatments-godington-woodstock-ga/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/commercial-window-treatments-turkish-diaspora-ca/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/composite-shutters-interior-american-legation-tangier-ma/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/composite-vs-wood-shutters-american-legation-tangier-ma/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/custom-blinds-bellevue-canton-ga/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/custom-blinds-city-of-neighbourhoods-atlanta-ga/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/energy-efficient-blinds-anderson-in/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/energy-efficient-shades-downtown-anderson-in/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/furniture-styles-indian-mound-cemetery-romney-wv/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/home-office-design-naples-archeological-district-il/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/honeycomb-vs-pleated-shades-anderson-in/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/interior-composite-shutters-casbah-tangier-ma/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/interior-design-trends-naples-archeological-il/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/motorized-vs-manual-shades-anderson-in/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/planning-space-downtown-manchester-tn/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/powerview-automated-treatments-indian-mounds-st-paul-mn/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/real-vs-faux-shutters-casbah-tangier-ma/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/blinds-near-me-dixon-memorial-state-forest/",
+      "id": 1290,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Metal Blinds are known for their durability and sleek, modern appearance. Metal blinds are easy to clean and provide pre",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        },
+        {
+          "claim": "Cellular Shades are excellent for insulation, helping to maintain indoor temperatures and reduce energy costs.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 4,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/blinds-near-me-east-marietta/",
+      "id": 1540,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Faux wood blinds are highly resistant to moisture and warping, making them an excellent choice for kitchens and bathroom",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 1,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/blinds-near-me-marshall-forest/",
+      "id": 1367,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/blinds-near-me-mountain-view/",
+      "id": 1545,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Faux wood blinds will not expand from prolonged exposure to high-humidity environments.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        },
+        {
+          "claim": "Motorized blinds offer enhanced privacy and effortless light control.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        },
+        {
+          "claim": "The vanes on Hunter Douglas blinds rotate up to 180 degrees.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        },
+        {
+          "claim": "Metal blinds won’t bend, flake, or warp.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 4,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/blinds-near-me-sandy-plains/",
+      "id": 1543,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Faux wood blinds will not expand from prolonged exposure to high-humidity environments.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "The vanes on Hunter Douglas blinds rotate up to 180 degrees.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Metal blinds won’t bend, flake, or warp.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/blinds-shades-window-treatments-near-ben-hill-atlanta-georgia/",
+      "id": 1156,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Faux wood blinds are available in the same stains as wood blinds and feature realistic wood grain patterns. Unlike 100% ",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        },
+        {
+          "claim": "Cellular shades are highly valued for their energy efficiency. Their unique cellular construction traps air, providing i",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 3,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/blinds-shades-window-treatments-near-thomas-w-talbot-monument-atlanta-georgia/",
+      "id": 1222,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas honeycomb shades feature a unique cellular construction that traps air inside pockets—the trapped air act",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Vertical blinds are a viable solution for both contemporary homes and office settings where flexible design is key.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Metal window blinds are perfect for high-traffic areas or rooms where you want a fun pop of color.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Wood and Faux Wood Blinds provide a timeless look and excellent adjustability.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/blinds-shades-window-treatments-near-world-athletes-monument-atlanta-georgia/",
+      "id": 1223,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments offer an array of benefits that make them an excellent choice for both homes and office",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Another key benefit is their superior light control and privacy options. Innovative designs like the Duolite® system all",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/blinds-vs-shutters-smyrna-ga/",
+      "id": 2544,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/cellular-roman-shades-canton-rd-marietta-ga/",
+      "id": 1697,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Cellular Roman shades offer superior insulation and light control for your home.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/cellular-shades-east-cobb-marietta-ga/",
+      "id": 2543,
+      "replaced": 3,
+      "missed": [
+        {
+          "claim": "Double Cell Shades offer enhanced insulation, significantly reducing heat transfer during warmer months.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/cellular-shades-heritage-milton-ga/",
+      "id": 2703,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/cellular-shades-morgan-falls-sandysprings-ga/",
+      "id": 2695,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/climate-control-window-coverings-south-marietta-ga/",
+      "id": 1677,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Hunter Douglas honeycomb shades feature a unique cellular construction that traps air inside pockets—the trapped air act",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Duette Architella® design, which features a honeycomb within a honeycomb cellular structure that increases the insulatio",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/commercial-interior-design-south-marietta-ga/",
+      "id": 1629,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/commercial-window-treatments-big-creek-greenway-roswell-ga/",
+      "id": 2817,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/composite-wood-shutters-canton-rd-marietta-ga/",
+      "id": 1699,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Composite wood shutters are engineered from a blend of wood fibers and synthetic materials, making them resistant to war",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Composite wood shutters are highly resistant to moisture, humidity, and UV damage, making them less prone to warping, cr",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/composite-wood-shutters-east-marietta-ga/",
+      "id": 1661,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Composite shutters are engineered to withstand various environmental factors, making them a popular choice for homeowner",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Composite wood shutters are particularly well-suited for the fluctuating climate in our region, offering superior perfor",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Composite shutters are highly resistant to warping, cracking, and peeling, unlike traditional wood.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/custom-home-design-south-marietta-ga/",
+      "id": 1653,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/custom-interior-design-advice-marietta-ga/",
+      "id": 1601,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/custom-interior-design-services-marietta-ga/",
+      "id": 1581,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/custom-interior-design-solutions-marietta-ga/",
+      "id": 1599,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/custom-interior-designers-canton-rd-marietta-ga/",
+      "id": 1673,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/custom-interior-services-historic-marietta-ga/",
+      "id": 2013,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/custom-window-treatments-the-manor-milton-ga/",
+      "id": 2711,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/custom-window-treatments-vinings-ga/",
+      "id": 2541,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/design-texture-historic-old-town-marietta-ga/",
+      "id": 2031,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/design-trends-east-marietta-ga/",
+      "id": 1703,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/energy-efficient-shades-east-marietta-ga/",
+      "id": 1657,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Hunter Douglas honeycomb shades feature a unique cellular construction that traps air inside pockets—the trapped air act",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Duette Architella® design, which features a honeycomb within a honeycomb cellular structure that increases the insulatio",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/fabric-stores-smyrna-ga/",
+      "id": 2539,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Performance fabrics are engineered to resist stains and wear.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/faux-wood-blinds-deerfield-milton-ga/",
+      "id": 2709,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/faux-wood-shutters-east-marietta-ga/",
+      "id": 1715,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Faux wood shutters are highly resistant to moisture, warping, and fading, which makes them ideal for humid climates or r",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Composite wood shutters offer the aesthetic appeal of real wood without its vulnerabilities.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/holiday-window-decor-east-marietta-ga/",
+      "id": 1645,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/home-interior-design-ideas-marietta-ga/",
+      "id": 1617,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/home-office-design-east-marietta-ga/",
+      "id": 1687,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments regulate solar heat and incoming daylight.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/home-office-interior-design-canton-rd-marietta-ga/",
+      "id": 1689,
+      "replaced": 2,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 2,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/home-refresh-south-marietta-ga/",
+      "id": 1685,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/honeycomb-pleated-shades-canton-rd-marietta-ga/",
+      "id": 1679,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/honeycomb-shades-east-marietta-ga/",
+      "id": 1649,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/hunter-douglas-dealer-eastlake/",
+      "id": 1464,
+      "replaced": 5,
+      "missed": [],
+      "linked": 5,
+      "homepageSkipped": 0,
+      "sourceCount": 5
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/hunter-douglas-dealer-eastside-atlanta/",
+      "id": 1466,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/hunter-douglas-dealer-edgewood-atlanta/",
+      "id": 1468,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments offer an array of benefits that make them an excellent choice for both homes and office",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Hunter Douglas window treatments often incorporate unique technologies, such as PowerView® Automation, which allows you ",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Hunter Douglas products are designed to let in natural light while reducing glare, making spaces more comfortable and co",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/hunter-douglas-dealer-fairlie-poplar/",
+      "id": 1470,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Hunter Douglas products are designed to let in natural light while reducing glare, making spaces more comfortable and co",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "PowerView® Automation allows operation via app or voice command for seamless smart home integration.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/hunter-douglas-dealer-five-points-atlanta/",
+      "id": 1472,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/hunter-douglas-kennesaw-ga/",
+      "id": 2545,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments offer thermal insulation that can help reduce cooling costs.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Hunter Douglas cellular shades provide insulation, reducing heat transfer through windows.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Hunter Douglas shades offer superior light control and energy efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/hunter-douglas-powers-ferry-corridor-sandysprings-ga/",
+      "id": 2697,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Roller Solar Shades... Ideal for rooms needing daytime visibility and UV protection without full blackout.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-decorating-east-cobb-marietta-ga/",
+      "id": 2538,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-decorating-near-me-marietta-ga/",
+      "id": 1621,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-decorators-near-me-marietta-ga/",
+      "id": 1609,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-adair-park/",
+      "id": 1370,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-adamsville-atlanta/",
+      "id": 1372,
+      "replaced": 2,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 2,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-andalusia/",
+      "id": 1411,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-andersonville/",
+      "id": 1413,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-ansley-park/",
+      "id": 1337,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-appling-county-ga/",
+      "id": 1417,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-ardmore-atlanta/",
+      "id": 1376,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-ashview-heights/",
+      "id": 1380,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-atkins-park/",
+      "id": 1382,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-atlanta/",
+      "id": 1385,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-augusta-arsenal/",
+      "id": 1421,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-augusta-canal/",
+      "id": 1423,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-bankhead-atlanta-ga/",
+      "id": 1387,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-benteen-park/",
+      "id": 1389,
+      "replaced": 1,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-berkeley-park/",
+      "id": 1391,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-bolton-atlanta/",
+      "id": 1394,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-boulevard-heights/",
+      "id": 1398,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Our durable shutters, including real wood and faux wood options, provide timeless elegance, superior light blocking capa",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-brookwood-atlanta/",
+      "id": 1341,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-brookwood-hills/",
+      "id": 1339,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-buckhead-forest/",
+      "id": 1344,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-cabbagetown/",
+      "id": 1347,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-candler-park/",
+      "id": 1349,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-capitol-view-manor/",
+      "id": 1352,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-capitol-view/",
+      "id": 1354,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-carey-park-atlanta/",
+      "id": 1356,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-cascade-heights/",
+      "id": 1358,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments offer an array of benefits that make them an excellent choice for both homes and office",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-castleberry-hill/",
+      "id": 1360,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-centennial-hill/",
+      "id": 1362,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-centennial-park/",
+      "id": 1364,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-center-hill-atlanta/",
+      "id": 1450,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-chosewood-park/",
+      "id": 1452,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-collier-heights/",
+      "id": 1454,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-collier-hills/",
+      "id": 1456,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-colony-square/",
+      "id": 1458,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-consultation-marietta-ga/",
+      "id": 1605,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-cost-marietta-ga/",
+      "id": 1607,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-dixie-hills/",
+      "id": 1460,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-east-atlanta/",
+      "id": 1462,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas Lifetime Limited Warranty...covers the internal mechanisms and components of your window coverings.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "PowerView® Automation allows you to control your shades via app, remote, or voice command.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-east-cobb-marietta-ga/",
+      "id": 2533,
+      "replaced": 1,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-north-springs-sandysprings-ga/",
+      "id": 2687,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-services-east-marietta-ga/",
+      "id": 1659,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-tips-old-town-marietta-ga/",
+      "id": 2001,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 3,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-trends-canton-rd-marietta-ga/",
+      "id": 1647,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-designer-marietta-ga-east/",
+      "id": 1641,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        },
+        {
+          "claim": "Composite Wood Shutters...combine the classic look of wood with enhanced durability and moisture resistance.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 2,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-services-canton-rd-marietta-ga/",
+      "id": 1707,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-shutters-windward-milton-ga/",
+      "id": 2707,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Vinyl shutters are designed to withstand direct sunlight and moisture without warping or fading.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/local-interior-decorating-services-marietta-ga/",
+      "id": 1619,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/office-interior-design-historic-old-town-marietta-ga/",
+      "id": 1993,
+      "replaced": 2,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 1,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/office-window-treatments-south-marietta-ga/",
+      "id": 1691,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/plantation-shutters-providence-milton-ga/",
+      "id": 2705,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Composite Shutters or Vinyl Shutters offer resistance to warping or mildew in high humidity.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/pleated-shades-south-marietta-ga/",
+      "id": 1683,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/productivity-home-office-south-marietta-ga/",
+      "id": 1675,
+      "replaced": 3,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 1,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/real-wood-shutters-south-marietta-ga/",
+      "id": 1665,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Real wood shutters are crafted from natural timber, providing durability and a classic look that complements various int",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Real wood shutters provide superior light control and privacy.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/residential-interior-design-services-marietta-ga/",
+      "id": 1611,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "We feature Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/roman-shades-acworth-ga/",
+      "id": 2542,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/roman-shades-crabapple-milton-ga/",
+      "id": 2701,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Thermal Roman Shades Insulating fabric layers Improved energy efficiency in any room",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Motorized Roman Shades Automated light and privacy control",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/roman-shades-north-river-sandysprings-ga/",
+      "id": 2693,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/roman-shades-south-marietta-ga/",
+      "id": 1643,
+      "replaced": 3,
+      "missed": [
+        {
+          "claim": "Roman shades provide significant advantages that enhance both the aesthetics and comfort of your living spaces.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/room-refresh-ideas-east-marietta-ga/",
+      "id": 1669,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/seasonal-decor-ideas-south-marietta-ga/",
+      "id": 1711,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": "homepage-source"
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/seasonal-window-decor-trends-canton-rd-marietta-ga/",
+      "id": 1631,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Composite shutters provide superior insulation and UV protection, making them ideal for the intense heat experienced in ",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Cellular Roman shades are excellent for extreme heat due to their unique honeycomb structure, which traps air and create",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/shades-for-wellness-south-marietta-ga/",
+      "id": 1655,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Cellular honeycomb shades are engineered to improve your home’s energy efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Woven wood shades are made from natural materials.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/space-planning-sandy-springs-historic-district-ga/",
+      "id": 2691,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas window treatments, which are known for their quality, innovation, durability, and efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/upholstery-services-west-village-sandysprings-ga/",
+      "id": 2699,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Performance fabrics resist stains, fading, and wear, ideal for durability in active households.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/window-treatments-baker-county/",
+      "id": 1427,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Custom window treatments offer superior light control, enhanced privacy, and improved energy efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Cellular shades provide insulation similar to dual-pane glass.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/window-treatments-banks-county/",
+      "id": 1431,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Custom window treatments can improve energy efficiency, enhance privacy, and provide better light control.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Motorized window treatments enhance comfort and energy efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/window-treatments-barrow-county/",
+      "id": 1433,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/window-treatments-business-east-marietta-ga/",
+      "id": 1671,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/window-treatments-extreme-climates-canton-rd-marietta-ga/",
+      "id": 1637,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/window-treatments-kennesaw-ga/",
+      "id": 2540,
+      "replaced": 3,
+      "missed": [
+        {
+          "claim": "PowerView automation allows scheduling and remote control of window coverings, improving daily comfort and energy manage",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/wood-shutters-south-marietta-ga/",
+      "id": 1693,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Hunter Douglas wooden shutters are superbly crafted using Truemill® dovetail construction—this method of fabrication use",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Wood shutters not only elevate the aesthetics of any room but also offer excellent energy efficiency.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "The wood shutters are finished with an Integra™ finish that will prevent fading or chipping.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "These shutters provide excellent sound dampening, adding a tranquil atmosphere to any space.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/woven-wood-shades-canton-rd-marietta-ga/",
+      "id": 1633,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/shutter-benefits-casbah-tangier/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/skylight-shades-affordable-energy-efficient/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/vertical-blinds/",
+      "id": 797,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Vertical blinds offer versatile light control and privacy, making them suitable for various rooms, especially those with",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Their smooth operation and light control make them ideal for functional areas where concentration or patient comfort is ",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Vertical blinds offer a practical solution for a range of window types and room functions.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Vertical blinds provide excellent coverage and privacy for sliding glass doors.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/wallpaper-stores-carlisle-fort-oh/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/wallpaper-stores-near-me/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/window-treatments-extreme-climates-indian-mounds-regional-park-st-paul-mn/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://dminteriorsanddesign.com/wood-vs-composite-shutters-casbah-tangier-ma/",
+      "error": "not-found"
+    }
+  ]
+}

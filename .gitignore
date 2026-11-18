@@ -61,6 +61,7 @@ tmp-api-out.txt
 .chatgpt-audit-session.json
 .cursor/chrome-console-audit.json
 scripts/.cursor-tmp*
+scripts/_tmp-bm-fact/
 test-output/
 vite.config.ts.timestamp-*.mjs
 marketing/**/*.zip

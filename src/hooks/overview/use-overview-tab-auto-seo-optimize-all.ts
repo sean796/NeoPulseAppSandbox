@@ -41,11 +41,17 @@ import {
   AUTO_SEO_RESEARCH_READY_BUFFER,
   runAutoSeoResearchContentPipeline,
 } from "@/lib/overview/overview-auto-seo-research-content-pipeline";
+import {
+  FACT_CHECKER_STEP_LABEL,
+  runProductFactChecker,
+} from "@/lib/content-generation/product-fact-checker";
+import { insertResearchAndFactCheckingDisclosure } from "@/lib/overview/overview-research-disclosure";
 
-const AUTO_SEO_STEPS_PER_POST = 4;
+const AUTO_SEO_STEPS_PER_POST = 5;
 const AUTO_SEO_STEP_RESEARCH = "SERP Research Brief";
 const AUTO_SEO_STEP_READING = "Reading Data";
 const AUTO_SEO_STEP_OPTIMIZING = "Optimizing content";
+const AUTO_SEO_STEP_FACT_CHECKER = FACT_CHECKER_STEP_LABEL;
 const AUTO_SEO_STEP_UPLOAD = "Uploading to WordPress";
 
 type Args = Pick<
@@ -666,8 +672,62 @@ export function useOverviewTabAutoSeoOptimizeAll({
 
             if (!isOptimizeAllRunCurrent(runId)) return;
 
+            if (!isPages) {
+              const preFactHtml =
+                latestRow.postContentOptimized?.trim() ||
+                latestRow.postContent?.trim() ||
+                "";
+              if (preFactHtml) {
+                setStepTelemetry(
+                  url,
+                  pos,
+                  4,
+                  AUTO_SEO_STEPS_PER_POST,
+                  AUTO_SEO_STEP_FACT_CHECKER,
+                );
+                logger.start(`[Auto SEO] Fact checker on every run: ${url}`);
+                let factCheckedHtml = await runProductFactChecker({
+                  html: preFactHtml,
+                  site,
+                  keyword: latestRow.focusKeyword?.trim() || "",
+                  title: latestRow.aiTitle?.trim() || latestRow.title || "",
+                  onProgress: () => {
+                    if (!isOptimizeAllRunCurrent(runId)) return;
+                    setStepTelemetry(
+                      url,
+                      pos,
+                      4,
+                      AUTO_SEO_STEPS_PER_POST,
+                      AUTO_SEO_STEP_FACT_CHECKER,
+                    );
+                  },
+                  signal,
+                });
+                if (!isOptimizeAllRunCurrent(runId)) return;
+                const topic =
+                  latestRow.focusKeyword?.trim() ||
+                  latestRow.aiTitle?.trim() ||
+                  latestRow.title ||
+                  "this topic";
+                factCheckedHtml = insertResearchAndFactCheckingDisclosure({
+                  html: factCheckedHtml,
+                  topic,
+                  author: site.name?.trim() || "the author",
+                  clientSiteUrl: site.siteUrl,
+                });
+                updateRow(idx, {
+                  postContentOptimized: factCheckedHtml,
+                  postContent: factCheckedHtml,
+                });
+                latestRow = rowsRef.current[idx] ?? latestRow;
+                logger.success(`[Auto SEO] Fact checker complete: ${url}`);
+              }
+            }
+
+            if (!isOptimizeAllRunCurrent(runId)) return;
+
             if (uploadAfterRowWrite) {
-              setStepTelemetry(url, pos, 4, AUTO_SEO_STEPS_PER_POST, AUTO_SEO_STEP_UPLOAD);
+              setStepTelemetry(url, pos, 5, AUTO_SEO_STEPS_PER_POST, AUTO_SEO_STEP_UPLOAD);
               updateRow(idx, { status: "uploading" });
               latestRow = rowsRef.current[idx] ?? latestRow;
               const finalHtml =

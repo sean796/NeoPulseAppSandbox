@@ -188,6 +188,18 @@ class Neo_Pulse_App_Data_Paths {
 		return $dir . '/run-' . max( 0, $run_id ) . '.json';
 	}
 
+	public static function cannibalization_audit_schedule_path(): string {
+		return self::root() . '/cannibalization-audit.json';
+	}
+
+	public static function cannibalization_audit_work_path( int $run_id ): string {
+		$dir = self::root() . '/cannibalization-audit';
+		if ( ! is_dir( $dir ) ) {
+			wp_mkdir_p( $dir );
+		}
+		return $dir . '/run-' . max( 0, $run_id ) . '.json';
+	}
+
 	public static function careers_applications_path(): string {
 		return self::root() . '/careers-applications.json';
 	}

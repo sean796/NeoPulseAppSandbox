@@ -1,4 +1,5 @@
 import type { AgentConfig } from "@/types/agent-config";
+import type { WordPressSite } from "@/components/integrations/types";
 import { markdownToHtml } from "@/lib/markdown-to-html";
 import { buildBulkHarnessOutlineFromAgents } from "@/lib/bulk/bulk-harness-outline";
 import {
@@ -39,6 +40,7 @@ import {
   applyLinkTargetsPlanToHtml,
   applyLinkTargetsPlanToHtmlDeterministic,
 } from "@/lib/content-generation/ensure-links-per-section";
+import { runProductFactChecker } from "@/lib/content-generation/product-fact-checker";
 
 export type HarnessUploadPrepWordPressPost = {
   id: number;
@@ -68,6 +70,11 @@ export type PrepareHarnessContentForUploadArgs = {
   linkTargetsPlan?: import("@/lib/bulk/bulk-generation-wp-inventory").LinkTargetsPlan;
   /** Blog optimize: one [[LINK]] resolve pass, no overview body re-stitch. */
   onePassOptimize?: boolean;
+  /** Integrations site for macro location + client host during fact check. */
+  site?: WordPressSite | null;
+  /** Skip when optimize runs the checker after FAQ. */
+  skipProductFactCheck?: boolean;
+  onProgress?: (message: string) => void;
 };
 
 /**
@@ -91,6 +98,9 @@ export async function prepareHarnessContentForUpload(
     signal,
     linkTargetsPlan,
     onePassOptimize = false,
+    site,
+    skipProductFactCheck = false,
+    onProgress,
   } = args;
   const linkCatalog = wordPressPosts ?? postsForInternalLinks;
 
@@ -199,5 +209,23 @@ export async function prepareHarnessContentForUpload(
       signal,
     });
   }
-  return repairHarnessHtmlForUpload(htmlContent, linkLeakOpts);
+  htmlContent = repairHarnessHtmlForUpload(htmlContent, linkLeakOpts);
+
+  if (!skipProductFactCheck) {
+    const siteForCheck =
+      site
+      ?? (siteUrl
+        ? ({ siteUrl, id: siteId ?? "", name: "" } as WordPressSite)
+        : null);
+    htmlContent = await runProductFactChecker({
+      html: htmlContent,
+      site: siteForCheck,
+      keyword: args.keyword,
+      title: args.articleTitle,
+      onProgress,
+      signal,
+    });
+  }
+
+  return htmlContent;
 }

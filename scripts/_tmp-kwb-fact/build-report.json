@@ -1,0 +1,1037 @@
+{
+  "reports": [
+    {
+      "pageUrl": "https://kwbllp.com/bare-trust-reporting-chappelle-edmonton/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/2026-alberta-physician-privatization-changes/",
+      "id": 20351,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/2026-canada-alberta-tax-brackets/",
+      "id": 6579,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Alberta introduced an 8% personal income tax bracket on the first $60,000 of income, effective January 1, 2025.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "For 2026, the Alberta tax rates and income thresholds are indexed by 2.0%.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/2026-cra-mail-in-policy/",
+      "id": 23769,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/2026-tariffs-impact-canadian-businesses/",
+      "id": 20878,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Federal Duty Remission and Relief waives or refunds surtaxes on specific imported inputs when domestic or non-U.S. alter",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/alberta-productivity-grant/",
+      "id": 18611,
+      "replaced": 3,
+      "missed": [
+        {
+          "claim": "Employers must contribute 25% of the total eligible training costs for existing employees or individuals they intend to ",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/alberta-tax-brackets-kwb/",
+      "id": 20653,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/bare-trust-rules/",
+      "id": 8805,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "For tax years ending after December 30, 2023, affected bare trusts must file an annual T3 return within 90 days of their",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/bc-pst-expansion-2026-business-rules/",
+      "id": 20355,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "The 2026 BC PST expansion rules apply the 7% provincial sales tax to five distinct service and product groups.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/business-credit-availability/",
+      "id": 11680,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/business-valuation-and-price-drivers/",
+      "id": 20875,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/canadian-albertan-tax-brackets/",
+      "id": 7460,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/canadian-interest-rates-q3-2026/",
+      "id": 18527,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/canadian-interest-rates/",
+      "id": 9914,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "The CRA pays 6% on non-corporate taxpayer overpayments and 4% on corporate overpayments in Q2 2025.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/canadian-tax-pmts/",
+      "id": 20759,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/capital-dividend-account/",
+      "id": 25235,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/change-in-property-use/",
+      "id": 3008,
+      "replaced": 5,
+      "missed": [],
+      "linked": 5,
+      "homepageSkipped": 0,
+      "sourceCount": 5
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/corporate-critical-illness-insurance/",
+      "id": 25182,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/corporate-insured-retirement-plans/",
+      "id": 10473,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/corporation-dissolution-steps/",
+      "id": 25179,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/cpp-and-oas/",
+      "id": 9650,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Delaying Old Age Security (OAS) until age 70 increases monthly payouts by up to 36%, while deferring the Canada Pension ",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/cpp-child-rearing-provision/",
+      "id": 2818,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/cra-direct-deposit/",
+      "id": 3026,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/cra-instalment-payments/",
+      "id": 8879,
+      "replaced": 3,
+      "missed": [
+        {
+          "claim": "If your net tax owing is more than $3,000, or $1,800 for Quebec.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/cra-instalment-reminder/",
+      "id": 20745,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/cra-mileage-rate-canada/",
+      "id": 25508,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/cra-my-account/",
+      "id": 3058,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/cra-my-business-account/",
+      "id": 9746,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/cra-prescribed-interest-rates/",
+      "id": 10711,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/cra-review-letter/",
+      "id": 10714,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/cra-tax-instalments/",
+      "id": 12839,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/cra-tax-payments-at-the-bank-what-businesses-need-to-know-about-upcoming-changes/",
+      "id": 20751,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Mandatory electronic payments for single remittances over $10,000 are in effect (January 1, 2024 onward).",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/dividend-vs-salary/",
+      "id": 25230,
+      "replaced": 3,
+      "missed": [
+        {
+          "claim": "Dividends do not generate CPP contributions and do not create RRSP room.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/ei-premium-reduction-program/",
+      "id": 9084,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/employment-expenses-checklist-canada/",
+      "id": 18621,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Business Travel and Meals covers airfare, transit, lodging, and 50% of eligible meal costs incurred while travelling awa",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Motor Vehicle Expenses are deductible when an employee drives a personal vehicle for business duties outside the regular",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Work-Space-in-the-Home applies when an employee works from home more than 50% of the time for at least four consecutive ",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/estate-planning-accounting-canada/",
+      "id": 25507,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/filing-business-taxes/",
+      "id": 7320,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/gig-workers-cra-rules/",
+      "id": 9796,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/government-incentives/",
+      "id": 9587,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "SR&ED Tax Credit provides refundable and non-refundable tax incentives for applied research, experimental development, a",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/gst-quick-method/",
+      "id": 2648,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/maximize-tax-deductions/",
+      "id": 9861,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/opt-out-of-cpp/",
+      "id": 8876,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/personal-services-businesses/",
+      "id": 7357,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/prairiescan-tariff-relief-rtri/",
+      "id": 25506,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/receipt-bank-now-dext/",
+      "id": 11687,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Businesses can upload source documents through multiple channels depending on how vendors issue their bills: iOS® and An",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Dext Prepare extracts financial data from your business invoices, receipts, and credit notes, then publishes those recor",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/rrsp-rrif-beneficiary/",
+      "id": 10318,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Naming a registered charity as the direct beneficiary of an RRSP or RRIF eliminates or significantly reduces the termina",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/sales-pipeline-strategy/",
+      "id": 25176,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/small-business-taxes-canada/",
+      "id": 9601,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/solar-inv-tax-credit-elig-canada/",
+      "id": 18521,
+      "replaced": 5,
+      "missed": [],
+      "linked": 5,
+      "homepageSkipped": 0,
+      "sourceCount": 5
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/t2125-canada/",
+      "id": 20731,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/t2125-explained/",
+      "id": 9966,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/tax-brackets-canada/",
+      "id": 10491,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/tax-deadlines-canada/",
+      "id": 9869,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/blog/tax-season-2026/",
+      "id": 10624,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/cross-border-tax-calder-edmonton/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://kwbllp.com/estate-freeze-planning/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://kwbllp.com/psychotherapist-tax-deductions/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://kwbllp.com/quickbooks-online-auto-repair/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/alberta-tax-brackets-sherwood-park-ab/",
+      "id": 20607,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/bare-trust-reporting-edmonton-ab/",
+      "id": 20625,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/bare-trust-reporting-old-strathcona-ab-edmonton-ab/",
+      "id": 25133,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/bare-trust-reporting-sherwood-park-ab/",
+      "id": 20621,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/bare-trust-reporting-strathcona-county-sherwoodpark-ab/",
+      "id": 20598,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/bookkeeping-services-aldergrove-edmonton-ab/",
+      "id": 13615,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/business-accountants-tax-advisors-royal-alberta-museum-edmonton/",
+      "id": 25281,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/business-accounting-albany-ab/",
+      "id": 13599,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/business-financial-accounting-alberta-ave-edmonton-ab/",
+      "id": 13613,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/charitable-giving-tax-ambleside-edmonton-ab/",
+      "id": 13651,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/cloud-accounting-allard-edmonton-ab/",
+      "id": 13624,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/cloud-bookkeeping-services-strathcona-ab-edmonton-ab/",
+      "id": 25119,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/corporate-accounting-edmonton-ab/",
+      "id": 20626,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/corporate-accounting-glenora-alberta-edmonton-ab/",
+      "id": 25174,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/corporate-tax-albany-ab/",
+      "id": 13601,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/cost-accounting-allendale-edmonton-ab/",
+      "id": 13640,
+      "replaced": 6,
+      "missed": [],
+      "linked": 6,
+      "homepageSkipped": 0,
+      "sourceCount": 6
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/cra-review-letter-allard-edmonton-ab/",
+      "id": 13632,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/cra-review-letter-edmonton-ab/",
+      "id": 20612,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/cra-review-letter-sherwood-park-ab/",
+      "id": 20623,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/cra-review-letter-strathcona-county-sherwoodpark-ab/",
+      "id": 20599,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/cross-border-tax-planning-central-edmonton-ab/",
+      "id": 25139,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/estate-tax-planning-university-ab-edmonton-ab/",
+      "id": 25125,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "There is no estate tax in Alberta.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/holding-company-tax-planning-south-central-ab-edmonton-ab/",
+      "id": 25137,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/integrated-financial-planning-alberta-ave-edmonton-ab/",
+      "id": 13611,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/international-accounting-ambleside-edmonton-ab/",
+      "id": 13646,
+      "replaced": 4,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 1,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/kwb-accountants-strathcona-county-sherwoodpark-ab/",
+      "id": 20600,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/kwb-accounting-strathcona-county-sherwoodpark-ab/",
+      "id": 20616,
+      "replaced": 1,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 1,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/kwb-alberta-avenue-edmonton/",
+      "id": 25283,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/management-accounting-allendale-edmonton-ab/",
+      "id": 13634,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/payroll-processing-mckernan-ab-edmonton-ab/",
+      "id": 25121,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/personal-tax-preparation-allendale-ab-edmonton-ab/",
+      "id": 25117,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/profit-improvement-strategies-allendale-edmonton-ab/",
+      "id": 13636,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/quickbooks-online-optimization-allard-edmonton-ab/",
+      "id": 13628,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "Automated bank feeds reduce manual data entry time and errors.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/quickbooks-online-setup-capilano-ab-edmonton-ab/",
+      "id": 25129,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/simplify-bookkeeping-aldergrove-edmonton-ab/",
+      "id": 13616,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/small-business-accounting-boyle-st-edmonton-ab/",
+      "id": 11723,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/small-business-taxes-sherwood-park-ab/",
+      "id": 20604,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Alberta’s general corporate income tax rate is currently 8%, the lowest among Canadian provinces.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Alberta's small business tax rate is 2%.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/t2125-form-sherwood-park-ab/",
+      "id": 20622,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/t2125-form-strathcona-county-sherwoodpark-ab/",
+      "id": 20601,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/tax-accountant-abbotsfield-edmonton-ab/",
+      "id": 13590,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/tax-deductions-canada-alberta-ave-edmonton-ab/",
+      "id": 13608,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/tax-efficient-charitable-ambleside-edmonton-ab/",
+      "id": 13653,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://kwbllp.com/service-area/tax-preparation-downtown-edmonton-alberta-ab/",
+      "id": 25170,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    }
+  ]
+}

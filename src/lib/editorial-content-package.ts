@@ -49,6 +49,7 @@ export const EDITORIAL_STANDARD_PROPERTY_NAMES = [
   "Shutter Spot",
   "Blind Spot",
   "Custom Shades of London",
+  "Night & Day Decor",
 ] as const;
 
 /** Canonical display names for Lite tier. */

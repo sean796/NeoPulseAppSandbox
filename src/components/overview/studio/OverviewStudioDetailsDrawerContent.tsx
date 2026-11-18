@@ -7,8 +7,12 @@ import { BulkGeneratorDetailsDrawer } from "@/components/keyword-research/bulk/B
 import { BulkSitemapInventoryRunDetail } from "@/components/keyword-research/bulk/BulkSitemapInventoryRunDetail";
 import { WordBlacklistRunDetail } from "@/components/keyword-research/bulk/WordBlacklistRunDetail";
 import { HumanizerRunDetail } from "@/components/keyword-research/bulk/HumanizerRunDetail";
+import { GoogleSeoRulesRunDetail } from "@/components/keyword-research/bulk/GoogleSeoRulesRunDetail";
+import { WindowTreatmentsRunDetail } from "@/components/keyword-research/bulk/WindowTreatmentsRunDetail";
+import { siteUsesWindowTreatmentsSkill } from "@/lib/window-treatments-vertical/site-uses-window-treatments-skill";
 import type { useOverviewSiteWarmDetails } from "@/hooks/overview/use-overview-site-warm-details";
 import type { StudioDrawerStepRow } from "@/components/overview/studio/use-overview-studio-drawer-steps";
+import type { WordPressSite } from "@/components/integrations/types";
 import { notify } from "@/lib/app-notifications";
 import { NOTIFY_CSV_DOWNLOADED } from "@/lib/notify-messages";
 import { cn } from "@/lib/utils";
@@ -30,6 +34,7 @@ type Props = {
   customDrawerContent?: ReactNode;
   bulkGeneratorDetailsPanel?: BulkGeneratorDetailsPanelProps;
   hasSite: boolean;
+  site?: WordPressSite | null;
   siteWarm: ReturnType<typeof useOverviewSiteWarmDetails>;
   drawerStepRows: StudioDrawerStepRow[];
 };
@@ -38,6 +43,7 @@ export function OverviewStudioDetailsDrawerContent({
   customDrawerContent,
   bulkGeneratorDetailsPanel,
   hasSite,
+  site,
   siteWarm,
   drawerStepRows,
 }: Props) {
@@ -65,6 +71,14 @@ export function OverviewStudioDetailsDrawerContent({
             <HumanizerRunDetail />
           </div>
           <div className={contentOptimizerRowStripeClass(2)}>
+            <GoogleSeoRulesRunDetail />
+          </div>
+          {siteUsesWindowTreatmentsSkill(site) ? (
+            <div className={contentOptimizerRowStripeClass(3)}>
+              <WindowTreatmentsRunDetail />
+            </div>
+          ) : null}
+          <div className={contentOptimizerRowStripeClass(siteUsesWindowTreatmentsSkill(site) ? 4 : 3)}>
             <BulkSitemapInventoryRunDetail
               links={siteWarm.sitemapInventoryLinks}
               gscHostedLink={siteWarm.gscHostedLink}

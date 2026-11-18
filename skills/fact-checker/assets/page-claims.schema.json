@@ -10,6 +10,18 @@
       "type": "integer",
       "minimum": 1
     },
+    "aiseo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score"],
+      "properties": {
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        }
+      }
+    },
     "claims": {
       "type": "array",
       "maxItems": 8,
@@ -34,6 +46,11 @@
               "pricing",
               "compatibility",
               "durability",
+              "installation",
+              "lifespan",
+              "cleaning_maintenance",
+              "climate",
+              "business_services",
               "none"
             ]
           },
@@ -43,9 +60,9 @@
               "supported",
               "partially_supported",
               "unsupported",
-              "outdated",
               "contradicted",
-              "no_product_claims"
+              "business_confirmation_required",
+              "no_product_claim"
             ]
           },
           "sourceTitle": {
@@ -56,13 +73,23 @@
           },
           "sourceType": {
             "type": "string",
-            "enum": ["manufacturer", "manual", "government", "industry", ""]
+            "enum": ["manufacturer", "manual", "government", "independent", "industry", ""]
           },
           "qualification": {
             "type": "string"
           },
+          "product": {
+            "type": "string"
+          },
           "suggestedWording": {
             "type": "string"
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "major", "moderate", "minor", ""]
           }
         }
       }

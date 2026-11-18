@@ -280,7 +280,7 @@ trait Neo_Pulse_App_Google_Drive_Upload_Trait_File_Operations {
 	/**
 	 * @return array{statusCode:int,body:array<string,mixed>,files?:array<int,array{id:string,name:string,mimeType:string,webViewLink:string,createdTime:string}>}
 	 */
-	private static function named_files_in_folder( string $access_token, string $folder_id, string $file_name ): array {
+	public static function named_files_in_folder( string $access_token, string $folder_id, string $file_name ): array {
 		$escaped_name = str_replace( "'", "\\'", $file_name );
 		$query        = sprintf(
 			"'%s' in parents and name = '%s' and trashed = false",

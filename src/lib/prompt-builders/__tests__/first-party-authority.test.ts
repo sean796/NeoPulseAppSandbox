@@ -150,21 +150,22 @@ describe("first-party authority prompt blocks", () => {
           quoteBody: "legacy",
           asOf: "August 2026",
           illustrativeH2Title: "Choosing Panels",
-          personaName: "Quinn",
+          situationOpener: "In this scenario",
           householdProfile: "family with young children",
           situationHook: "street-facing bedroom privacy",
           scenarioQuestion: "How does a family in St. Albert add privacy to street-facing bedrooms?",
-          scenarioNarrative: "Quinn has young kids and street-facing bedrooms in Lacombe Park.",
+          scenarioNarrative: "A homeowner has young kids and street-facing bedrooms in Lacombe Park.",
           recommendationTitle: "Dual-layer cellular shades",
           recommendationParagraph: "Advance Blinds would quote dual-layer cellulars for filtered light and evening privacy.",
         },
       },
     } as SeoContentBriefV1);
     expect(block).toContain("ILLUSTRATIVE EXAMPLE (MANDATORY");
-    expect(block).toContain("personaName (only person in section): Quinn");
+    expect(block).toContain("situationOpener (blockquote opener — no first name): In this scenario");
+    expect(block).not.toContain("Quinn");
     expect(block).toContain("scenarioNarrative");
     expect(block).toContain("recommendationParagraph");
-    expect(block).toContain("Persona decision must match Keyword + Answer topic");
+    expect(block).toContain("Situation decision must match Keyword + Answer topic");
     expect(block).toContain("keyword+location slug");
     expect(block).toContain("Choosing Panels");
     expect(block).toContain("SITE-FIRST");
@@ -179,8 +180,8 @@ describe("first-party authority prompt blocks", () => {
         quoteBody: "legacy",
         asOf: "September 2026",
         illustrativeH2Title: "Gulf Light And Glare",
-        personaName: "Eleanor",
-        scenarioNarrative: "Eleanor is redecorating her Park Shore condo.",
+        situationOpener: "For example",
+        scenarioNarrative: "A homeowner is redecorating their Park Shore condo.",
         recommendationParagraph: "Lindsey Blinds would recommend solar roller shades.",
       },
       "September 2026",
@@ -189,6 +190,7 @@ describe("first-party authority prompt blocks", () => {
     expect(block).toContain("[[LINK:Park Shore Window Treatments|Park Shore]]");
     expect(block).toContain("required inside the blockquote sentence");
     expect(block).toContain("Forbidden: a location cite as the first child of the blockquote");
+    expect(block).not.toContain("Eleanor");
   });
 
   it("reads SWOT prose but not a version-1 brief as SWOT", () => {

@@ -36,6 +36,7 @@ import { postFieldsOriginAppliesForRow } from '@/lib/post-fields-origin-applies'
 import { acfCompetitorAppliesForRow } from '@/lib/post-fields-competitor-applies';
 import { addBulkSeoResearchArtifact } from '@/lib/bulk/bulk-wordpress-publish-artifacts';
 import type { BulkFileManager } from '@/lib/bulk-file-manager';
+import { runProductFactChecker } from '@/lib/content-generation/product-fact-checker';
 import { logger } from "@/lib/logger";
 
 
@@ -47,34 +48,46 @@ export async function appendEarlyBulkFaqTable(args: {
   keywordData: KeywordData;
   postTitle: string;
   rowIndex: number;
+  site?: WordPressSite | null;
 }): Promise<string> {
-  const { precomputedAcfSeoBundle, options, bulkPrimaryKw, keywordData, postTitle, rowIndex } = args;
+  const { precomputedAcfSeoBundle, options, bulkPrimaryKw, keywordData, postTitle, rowIndex, site } = args;
   let { contentForUpload } = args;
-          // Content Opt parity: stitch backend FAQ Q/A into flo-faq table before first publish.
-          {
-            const earlyEntries = resolveFaqEntriesForVisibleTable(
-              precomputedAcfSeoBundle?.faqEntries
-            );
-            const openRouterApiKeyEarly = (options.openRouterApiKey || loadApiKey() || '').trim();
-            if (
-              earlyEntries.length &&
-              openRouterApiKeyEarly &&
-              contentForUpload.trim() &&
-              !contentForUpload.toLowerCase().includes(`class="${FLO_FAQ_CLASS}"`)
-            ) {
-              options.onProgress?.(rowIndex, 0, 'Appending FAQ table to post body...');
-              const appendedEarly = await appendVisibleFaqTableWithIntro({
-                sourceHtml: contentForUpload,
-                entries: earlyEntries,
-                apiKey: openRouterApiKeyEarly,
-                focusKeyword: bulkPrimaryKw || keywordData.keyword,
-                pageTitle: postTitle,
-              });
-              if (appendedEarly?.html) {
-                contentForUpload = appendedEarly.html;
-              }
-            }
-          }
+  let faqAppended = false;
+  // Content Opt parity: stitch backend FAQ Q/A into flo-faq table before first publish.
+  {
+    const earlyEntries = resolveFaqEntriesForVisibleTable(
+      precomputedAcfSeoBundle?.faqEntries
+    );
+    const openRouterApiKeyEarly = (options.openRouterApiKey || loadApiKey() || '').trim();
+    if (
+      earlyEntries.length &&
+      openRouterApiKeyEarly &&
+      contentForUpload.trim() &&
+      !contentForUpload.toLowerCase().includes(`class="${FLO_FAQ_CLASS}"`)
+    ) {
+      options.onProgress?.(rowIndex, 0, 'Appending FAQ table to post body...');
+      const appendedEarly = await appendVisibleFaqTableWithIntro({
+        sourceHtml: contentForUpload,
+        entries: earlyEntries,
+        apiKey: openRouterApiKeyEarly,
+        focusKeyword: bulkPrimaryKw || keywordData.keyword,
+        pageTitle: postTitle,
+      });
+      if (appendedEarly?.html) {
+        contentForUpload = appendedEarly.html;
+        faqAppended = true;
+      }
+    }
+  }
+  if (faqAppended) {
+    contentForUpload = await runProductFactChecker({
+      html: contentForUpload,
+      site: site ?? null,
+      keyword: bulkPrimaryKw || keywordData.keyword,
+      title: postTitle,
+      onProgress: (message) => options.onProgress?.(rowIndex, 0, message),
+    });
+  }
   return contentForUpload;
 }
 

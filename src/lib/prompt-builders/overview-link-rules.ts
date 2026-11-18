@@ -425,7 +425,7 @@ export function buildOverviewLinkRulesBlock(opts?: {
     '(7) FORBIDDEN: "see below", "below", "click here", SEO-stub templates. (8) Stop after </ul>.';
 
   const illustrativeRule = opts?.hasIllustrativeAnchor
-    ? " (9) Real-World Example (mandatory when IN-PAGE ANCHORS tags ILLUSTRATIVE): second lead paragraph must state the article includes a labeled real-world hypothetical (one genderless named persona with a site-level business recommendation) without pasting the full scenario. Exactly one bullet MUST use label **Real-World Example** (exact words) with one # link to the ILLUSTRATIVE anchor id. Forbidden: Section N labels, Second Example, or a second homeowner or example bullet."
+    ? " (9) Real-World Example (mandatory when IN-PAGE ANCHORS tags ILLUSTRATIVE): second lead paragraph must state the article includes a labeled real-world hypothetical (a situation with a site-level business recommendation, no invented first name) without pasting the full scenario. Exactly one bullet MUST use label **Real-World Example** (exact words) with one # link to the ILLUSTRATIVE anchor id. Forbidden: inventing a first name; Section N labels, Second Example, or a second homeowner or example bullet."
     : "";
 
   if (hasEntityWiki) {

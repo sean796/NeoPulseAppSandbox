@@ -1,0 +1,180 @@
+{
+  "site": "blindmagic.com",
+  "dryRun": false,
+  "model": "google/gemini-2.5-flash",
+  "total": 16,
+  "accepted": [
+    {
+      "id": 20826,
+      "title": "Custom Blinds Near Strathcona Community Hospital In Sherwood Park",
+      "link": "https://blindmagic.com/?post_type=service-area&p=20826",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Eleanor",
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 18872,
+      "title": "Blind Repair Services In Erin Ridge Edmonton",
+      "link": "https://blindmagic.com/service-area/blind-repair-erin-ridge-stalbert-ab/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Chandra"
+      ],
+      "saved": true
+    },
+    {
+      "id": 18866,
+      "title": "Blind Repair Crestwood Edmonton: Blind Repair Services In Cr",
+      "link": "https://blindmagic.com/service-area/blind-repair-crestwood-edmonton-ab/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Eleanor",
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 19268,
+      "title": "Window Treatments in Laurier Heights, Edmonton, Alberta",
+      "link": "https://blindmagic.com/service-area/window-treatments-laurier-heights-ab-edmonton/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Eleanor",
+        "Eleanor"
+      ],
+      "saved": true
+    },
+    {
+      "id": 18858,
+      "title": "Blinds Bowness Edmonton: Blinds For Bowness Edmonton",
+      "link": "https://blindmagic.com/service-area/blinds-bowness-edmonton-ab/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Chloe",
+        "Chloe"
+      ],
+      "saved": true
+    },
+    {
+      "id": 19258,
+      "title": "Blinds Near Ambleside, Edmonton",
+      "link": "https://blindmagic.com/service-area/blinds-ambleside-edmonton/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Chloe",
+        "Chloe"
+      ],
+      "saved": true
+    },
+    {
+      "id": 17346,
+      "title": "Window Coverings Near Crestwood Edmonton",
+      "link": "https://blindmagic.com/service-area/crestwood-edmonton-ab/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Evelyn",
+        "Evelyn"
+      ],
+      "saved": true
+    },
+    {
+      "id": 17714,
+      "title": "Hunter Douglas Blinds Near Blatchford Gate Station",
+      "link": "https://blindmagic.com/service-area/hunter-douglas-blinds-blatchford-gate-station/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [
+        "Liam"
+      ],
+      "saved": true
+    },
+    {
+      "id": 17355,
+      "title": "Window Coverings Near Edmonton, Alberta",
+      "link": "https://blindmagic.com/service-area/window-coverings-near-beaumont-alberta/",
+      "status": "accepted",
+      "reason": "accepted",
+      "kind": "service-area",
+      "removedNames": [],
+      "saved": true
+    }
+  ],
+  "skipped": [
+    {
+      "id": 18095,
+      "title": "Comparing Hunter Douglas Vs Alta Window Shades And Prices Now",
+      "link": "https://blindmagic.com/blog/hunter-douglas-vs-alta/",
+      "status": "skipped",
+      "reason": "no-change",
+      "kind": "post"
+    },
+    {
+      "id": 19276,
+      "title": "Roller Shades in Old Scona Academic, Edmonton, AB",
+      "link": "https://blindmagic.com/service-area/roller-shades-oldsconaacademic-edmonton-ab/",
+      "status": "skipped",
+      "reason": "name-remains:Clara",
+      "kind": "service-area"
+    },
+    {
+      "id": 19262,
+      "title": "Blinds Near Aster, Edmonton",
+      "link": "https://blindmagic.com/service-area/blinds-aster-edmonton/",
+      "status": "skipped",
+      "reason": "find-missing",
+      "kind": "service-area"
+    },
+    {
+      "id": 18826,
+      "title": "Blinds Near Sherwood Park And Canora Edmonton",
+      "link": "https://blindmagic.com/service-area/blinds-sherwood-park-canora-edmonton-ab/",
+      "status": "skipped",
+      "reason": "find-missing",
+      "kind": "service-area"
+    },
+    {
+      "id": 18251,
+      "title": "Hunter Douglas Blinds Near Edmonton, Alberta",
+      "link": "https://blindmagic.com/service-area/hunter-douglas-blinds-edmonton-ab/",
+      "status": "skipped",
+      "reason": "name-remains:Chloe",
+      "kind": "service-area"
+    },
+    {
+      "id": 17730,
+      "title": "Hunter Douglas Blinds Near Government Centre Station",
+      "link": "https://blindmagic.com/service-area/hunter-douglas-blinds-government-centre-station/",
+      "status": "skipped",
+      "reason": "find-missing",
+      "kind": "service-area"
+    }
+  ],
+  "failed": [
+    {
+      "id": 17374,
+      "title": "Blinds Shades Shutters Near Strathcona Hotel Edmonton",
+      "link": "https://blindmagic.com/service-area/blinds-strathcona-hotel/",
+      "status": "failed",
+      "reason": "Unexpected end of JSON input",
+      "kind": "service-area"
+    }
+  ]
+}

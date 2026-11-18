@@ -1,0 +1,1003 @@
+{
+  "reports": [
+    {
+      "pageUrl": "https://neodigital.ca/blog/best-seo/",
+      "id": 8698,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/blinds-marketing-edmonton/",
+      "id": 8223,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/edmonton-wordpress-website-features/",
+      "id": 7749,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/eeat-ai-generated-content/",
+      "id": 9183,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/elementor-help-vs-builders/",
+      "id": 8205,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/elementor-help/",
+      "id": 7965,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Elementor Pro provides you with the complete set of capabilities for building any type of website.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Elementor works with all themes that respect the coding standards of WordPress set by its Codex.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/elementor-support/",
+      "id": 7805,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/elementor-vs-divi/",
+      "id": 8500,
+      "replaced": 7,
+      "missed": [],
+      "linked": 7,
+      "homepageSkipped": 0,
+      "sourceCount": 7
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/entity-based-seo/",
+      "id": 9157,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/ethical-seo-edmonton/",
+      "id": 9282,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/google-search-console-edmonton/",
+      "id": 9175,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/hire-elementor-experts/",
+      "id": 8186,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/local-digital-presence-that-converts/",
+      "id": 7753,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/local-seo-boost-visibility/",
+      "id": 8174,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Ranking in Google’s top three local map pack positions generates up to 44% of total clicks from local search queries.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/local-seo-company/",
+      "id": 8736,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/local-seo-for-blinds-companies/",
+      "id": 8221,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/local-seo-specialists/",
+      "id": 8750,
+      "replaced": 8,
+      "missed": [],
+      "linked": 8,
+      "homepageSkipped": 0,
+      "sourceCount": 8
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/local-vs-national-seo/",
+      "id": 7761,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/national-seo-strategy/",
+      "id": 9330,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/national-seo/",
+      "id": 9287,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/on-page-seo-checklist/",
+      "id": 7763,
+      "replaced": 5,
+      "missed": [],
+      "linked": 5,
+      "homepageSkipped": 0,
+      "sourceCount": 5
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/seo-agency/",
+      "id": 8674,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/seo-edmonton/",
+      "id": 8693,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/seo-for-window-treatments/",
+      "id": 8219,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/seo-spruce-grove/",
+      "id": 7809,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/seo-strategy-roadmap-success/",
+      "id": 8184,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/sitemap-optimization-wordpress/",
+      "id": 9179,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/social-media-ads/",
+      "id": 8490,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/website-analytics-explained/",
+      "id": 7765,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/website-audit-fix-errors/",
+      "id": 8199,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/website-design-matters/",
+      "id": 8213,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/wordpress-elementor-specialists/",
+      "id": 7833,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/wordpress-features-edmonton-local-success/",
+      "id": 7664,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/wordpress-features/",
+      "id": 8176,
+      "replaced": 2,
+      "missed": [
+        {
+          "claim": "WordPress supports website builders with a robust media library and user role assignments for collaborative workflows.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "WordPress has 59,000+ free plugins in the official directory.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/wordpress-maintenance-safe-site-2/",
+      "error": "fetch failed"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/wordpress-maintenance-safe-site/",
+      "id": 8192,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://neodigital.ca/blog/wordpress-websites/",
+      "id": 7813,
+      "replaced": 4,
+      "missed": [],
+      "linked": 4,
+      "homepageSkipped": 0,
+      "sourceCount": 4
+    },
+    {
+      "pageUrl": "https://neodigital.ca/customer-journey-mapping/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/ecommerce-seo/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/email-marketing-automation/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/google-analytics-setup/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/google-business-profile-optimization/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/landing-page-design/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/local-business-link-building/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/local-seo-schema-markup/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/seo-audit-checklist/",
+      "error": "fetch failed"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/seo-vs-sem/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/113114-street-edmonton-window-treatment-seo-113-114-street-edmonton/",
+      "id": 8124,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/6675-street-edmonton-window-treatment-seo-66-75-street-edmonton/",
+      "id": 8066,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Duette Architella honeycomb shades can reduce unwanted solar heat through windows by up to 80% during the summer months.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Duette Architella honeycomb shades can reduce loss of heat through windows by up to 40% during the winter months.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-100-avenue/",
+      "error": "fetch failed"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-100-street-edmonton/",
+      "id": 8094,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-101-avenue-edmonton/",
+      "id": 8096,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Cellular shades reduce heat loss and improve energy efficiency during extreme winter temperatures (below -30°C).",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Motorized shades offer automated light and privacy control for hard-to-reach windows and smart homes.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "UV-Protective shades protect furnishings from fading due to high annual sunshine (2,299 hours).",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-101-street-edmonton/",
+      "id": 8098,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-103-street-edmonton/",
+      "id": 8100,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-103a-avenue-edmonton/",
+      "id": 8102,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-104-avenue-edmonton-2/",
+      "error": "fetch failed"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-104-street-edmonton/",
+      "error": "fetch failed"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-105-street-edmonton/",
+      "id": 8110,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-106-avenue-edmonton/",
+      "id": 8112,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-107-avenue-edmonton/",
+      "id": 8114,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Cellular Shades...Excellent insulation during harsh Edmonton winters to reduce heating costs.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Motorized Shades...Ideal for large windows common in newer homes around 107 Avenue.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-109-street-edmonton/",
+      "error": "fetch failed"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-111-112-avenue/",
+      "id": 8118,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-111-street-edmonton/",
+      "error": "fetch failed"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-112-avenue-edmonton/",
+      "id": 8122,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Honeycomb shades are popular for heat retention during long, cold winters in Edmonton.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-149-street-edmonton/",
+      "id": 8138,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "The climate in Edmonton and Morinville, with cold winters and warm summers, leads homeowners to seek window treatments t",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-167-avenue-edmonton/",
+      "id": 8144,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Local Keyword Research drives relevant traffic by identifying high-intent keywords used by customers in the 167 Avenue, ",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Google My Business Optimization enhances visibility in local map packs and search results near 167 Avenue, Edmonton.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Citation Building strengthens local authority and trust, improving local SEO for blinds companies.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-17-street-edmonton/",
+      "id": 8042,
+      "replaced": 2,
+      "missed": [],
+      "linked": 0,
+      "homepageSkipped": 2,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-17-street-nw-edmonton/",
+      "id": 8040,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-170-street-sw-edmonton/",
+      "id": 8146,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "The climate in Edmonton and Morinville, with cold winters and warm summers, leads homeowners to seek window treatments t",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-23-avenue-nw-edmonton/",
+      "id": 8046,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Cellular shades offer insulation and light control to manage the temperature year-round.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-34-avenue-edmonton/",
+      "id": 8050,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Cellular Shades or Heavier Drapes can help absorb sound, creating a quieter indoor environment for homes near active are",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Solar Shades block UV rays and reduce glare without fully darkening a room, preserving views during bright summer days.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Honeycomb Shades offer excellent insulation against Edmonton's extreme cold, helping to retain heat indoors.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Blackout Window Treatments ensure complete darkness, aiding sleep quality.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-41-avenue-sw-edmonton/",
+      "id": 8056,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-50-street-edmonton/",
+      "id": 8058,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-51-avenue-edmonton/",
+      "id": 8060,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-66-street-edmonton/",
+      "id": 8064,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-82-street-edmonton/",
+      "error": "fetch failed"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-83-street-edmonton/",
+      "id": 8070,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-87-avenue-edmonton/",
+      "error": "fetch failed"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-91-street-edmonton/",
+      "id": 8080,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-97-street/",
+      "id": 8084,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-98-avenue-edmonton/",
+      "error": "fetch failed"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-alberta-highway-14a/",
+      "id": 8158,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-alberta-highway-14x/",
+      "error": "fetch failed"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-amisk-wacw-asokan/",
+      "id": 7996,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Cellular shades provide superior energy efficiency—they are the most energy-efficient shade style available.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-centennial-garage-edmonton/",
+      "id": 8030,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-clover-bar-railway-bridge-edmonton/",
+      "id": 8003,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-dawson-bridge/",
+      "id": 8005,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-edmonton-lechelt-field/",
+      "id": 7986,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-edmonton-morinville/",
+      "id": 7988,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-groat-bridge-edmonton/",
+      "id": 8011,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "EverWood Alternative Wood Blinds are perfect for high-humidity areas like bathrooms and kitchens, offering the classic l",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-james-macdonald-bridge/",
+      "id": 8018,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Cellular shades provide superior energy efficiency—they are the most energy-efficient shade style available.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-list-of-avenues-edmonton/",
+      "id": 8034,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "Insulating window treatments are favored during winter months to retain heat and reduce energy expenditure.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        },
+        {
+          "claim": "Cellular shades provide extra insulation against Edmonton’s seasonal temperature extremes.",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-list-of-edmonton-lrt/",
+      "id": 8032,
+      "replaced": 1,
+      "missed": [],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-ques/",
+      "id": 8022,
+      "replaced": 2,
+      "missed": [],
+      "linked": 2,
+      "homepageSkipped": 0,
+      "sourceCount": 2
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-terwillegar-park-footbridge/",
+      "id": 8026,
+      "replaced": 0,
+      "missed": [
+        {
+          "claim": "Homes in the Terwillegar Park area often feature large windows, which increases the demand for customized window treatme",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 0,
+      "homepageSkipped": 0,
+      "sourceCount": 0
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/edmonton-window-treatment-seo-walterdale-bridge-edmonton/",
+      "id": 8028,
+      "replaced": 3,
+      "missed": [],
+      "linked": 3,
+      "homepageSkipped": 0,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/elementor-website-help-westwood-edmonton/",
+      "id": 8488,
+      "replaced": 1,
+      "missed": [
+        {
+          "claim": "We offer ongoing support and maintenance to keep your Elementor site up to date, secure and running smoothly, including ",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 1,
+      "homepageSkipped": 0,
+      "sourceCount": 1
+    },
+    {
+      "pageUrl": "https://neodigital.ca/service-area/wordpress-features-brewery-district-edmonton-ab/",
+      "id": 8484,
+      "replaced": 4,
+      "missed": [
+        {
+          "claim": "WordPress powers over 43% of all websites globally",
+          "reason": "not-found",
+          "mode": "use-column-i",
+          "sourceNote": ""
+        }
+      ],
+      "linked": 3,
+      "homepageSkipped": 1,
+      "sourceCount": 3
+    },
+    {
+      "pageUrl": "https://neodigital.ca/webdesign-trends/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/webflow-vs-wordpress/",
+      "error": "not-found"
+    },
+    {
+      "pageUrl": "https://neodigital.ca/website-speed-optimization/",
+      "error": "not-found"
+    }
+  ]
+}

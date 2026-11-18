@@ -1,0 +1,79 @@
+[
+  {
+    "kind": "live",
+    "url": "https://eliteshadings.com/blog/banded-shades-window-treatment/",
+    "status": 200,
+    "badHits": [
+      "South Land Park",
+      "East Sacramento",
+      "Curtis Park"
+    ],
+    "missingGood": [
+      "Laguna West",
+      "Spreckels Park",
+      "Springtown"
+    ],
+    "ok": false
+  },
+  {
+    "kind": "live",
+    "url": "https://eliteshadings.com/service-area/banded-blinds-manteca-ca/",
+    "status": 200,
+    "badHits": [],
+    "missingGood": [],
+    "ok": true
+  },
+  {
+    "kind": "live",
+    "url": "https://eliteshadings.com/service-area/custom-blinds-la-loma-modesto-ca/",
+    "status": 200,
+    "badHits": [],
+    "missingGood": [],
+    "ok": true
+  },
+  {
+    "kind": "live",
+    "url": "https://eliteshadings.com/service-area/blinds-installation-college-area-modesto/",
+    "status": 200,
+    "badHits": [],
+    "missingGood": [],
+    "ok": true
+  },
+  {
+    "kind": "live",
+    "url": "https://eliteshadings.com/service-area/hunter-douglas-blinds-san-ramon/",
+    "status": 200,
+    "badHits": [],
+    "missingGood": [],
+    "ok": true
+  },
+  {
+    "kind": "live",
+    "url": "https://eliteshadings.com/service-area/custom-window-treatments-san-ramon/",
+    "status": 200,
+    "badHits": [],
+    "missingGood": [],
+    "ok": true
+  },
+  {
+    "kind": "rest",
+    "id": 21999,
+    "status": "future",
+    "badHits": [],
+    "ok": true
+  },
+  {
+    "kind": "rest",
+    "id": 21994,
+    "status": "future",
+    "badHits": [],
+    "ok": true
+  },
+  {
+    "kind": "rest",
+    "id": 22063,
+    "status": "future",
+    "badHits": [],
+    "ok": true
+  }
+]

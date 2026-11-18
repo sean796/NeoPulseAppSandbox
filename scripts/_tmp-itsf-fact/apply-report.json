@@ -1,0 +1,34 @@
+{
+  "ok": 4,
+  "fail": 0,
+  "results": [
+    {
+      "id": 3612,
+      "pageUrl": "https://intheshadeflorida.com/blog/custom-drapery-vs-ready-made-panels/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 4100,
+      "pageUrl": "https://intheshadeflorida.com/blog/custom-window-treatments/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 4186,
+      "pageUrl": "https://intheshadeflorida.com/blog/hunter-douglas-dealer/",
+      "ok": true,
+      "status": 200,
+      "type": "post"
+    },
+    {
+      "id": 4995,
+      "pageUrl": "https://intheshadeflorida.com/service-area/hunter-douglas-dealer-abacoa-florida-2/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    }
+  ]
+}

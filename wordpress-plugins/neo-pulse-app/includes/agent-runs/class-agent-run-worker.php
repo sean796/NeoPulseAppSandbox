@@ -47,6 +47,15 @@ class Neo_Pulse_App_Agent_Run_Worker {
 		set_transient( $lock_key, '1', self::LOCK_TTL );
 
 		try {
+			$fresh = Neo_Pulse_App_Agent_Runs_Store::get_run( $team_id, $run_id, true );
+			if (
+				! is_array( $fresh )
+				|| in_array( (string) ( $fresh['status'] ?? '' ), array( 'done', 'failed', 'cancelled' ), true )
+			) {
+				return;
+			}
+			$run = $fresh;
+
 			if ( (string) ( $run['status'] ?? '' ) === 'queued' ) {
 				Neo_Pulse_App_Agent_Runs_Store::patch_run(
 					$team_id,
@@ -77,6 +86,9 @@ class Neo_Pulse_App_Agent_Run_Worker {
 			}
 			if ( $recipe === 'fact_checker' && class_exists( 'Neo_Pulse_App_Fact_Checker_Runner' ) ) {
 				Neo_Pulse_App_Fact_Checker_Runner::resume( $run );
+			}
+			if ( $recipe === 'cannibalization_audit' && class_exists( 'Neo_Pulse_App_Cannibalization_Audit_Runner' ) ) {
+				Neo_Pulse_App_Cannibalization_Audit_Runner::resume( $run );
 			}
 		} catch ( Exception $e ) {
 			Neo_Pulse_App_Agent_Runs_Store::patch_run(

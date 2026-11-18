@@ -236,6 +236,12 @@ export function removeNonWikipediaExternalLinks(
       const isConnectedSite = connectedSiteDomain && linkDomain === connectedSiteDomain;
       if (isConnectedSite) return match;
 
+      // Product fact-checker evidence links (validated http(s), not the client host).
+      if (/\bdata-fact-source\s*=/i.test(match)) {
+        keptExternalCount++;
+        return match;
+      }
+
       if (allowedExternalNorms.size > 0 && hrefMatchesAllowedExternal(url, allowedExternalNorms)) {
         keptExternalCount++;
         return match;
@@ -261,4 +267,71 @@ export function removeNonWikipediaExternalLinks(
     logger.warn(`[Link Sanitizer] Removed ${removedCount} external link(s) (only connected site, entity Wikipedia, and pre-validated external links allowed)`);
   }
   return sanitized;
+}
+
+const EXTERNAL_NOFOLLOW_REL = "nofollow noopener noreferrer";
+
+function mergeNofollowRel(existing: string): string {
+  const parts = new Set(
+    existing
+      .split(/\s+/)
+      .map((p) => p.trim().toLowerCase())
+      .filter(Boolean),
+  );
+  parts.add("nofollow");
+  parts.add("noopener");
+  parts.add("noreferrer");
+  return [...parts].join(" ");
+}
+
+/**
+ * Stamp every external http(s) anchor with target=_blank and rel=nofollow noopener noreferrer.
+ * Same-site and in-page (# / relative) links are left alone.
+ */
+export function stampExternalLinksNofollow(
+  html: string,
+  connectedSiteUrl?: string,
+): string {
+  if (!html?.trim()) return html;
+
+  let connectedHost = "";
+  if (connectedSiteUrl?.trim()) {
+    try {
+      const base = connectedSiteUrl.startsWith("http")
+        ? connectedSiteUrl
+        : `https://${connectedSiteUrl}`;
+      connectedHost = new URL(base).hostname.replace(/^www\./i, "").toLowerCase();
+    } catch {
+      connectedHost = "";
+    }
+  }
+
+  return html.replace(/<a\b([^>]*)>/gi, (full, rawAttrs: string) => {
+    const hrefMatch = String(rawAttrs).match(/\bhref\s*=\s*["']([^"']+)["']/i);
+    if (!hrefMatch?.[1]) return full;
+    const href = hrefMatch[1].trim().replace(/&amp;/gi, "&");
+    if (!/^https?:\/\//i.test(href)) return full;
+
+    try {
+      const host = new URL(href).hostname.replace(/^www\./i, "").toLowerCase();
+      if (connectedHost && host === connectedHost) return full;
+    } catch {
+      return full;
+    }
+
+    let attrs = String(rawAttrs);
+    if (/\btarget\s*=/i.test(attrs)) {
+      attrs = attrs.replace(/\btarget\s*=\s*["'][^"']*["']/i, 'target="_blank"');
+    } else {
+      attrs = `${attrs} target="_blank"`;
+    }
+    if (/\brel\s*=/i.test(attrs)) {
+      attrs = attrs.replace(/\brel\s*=\s*["']([^"']*)["']/i, (_m, rel: string) => {
+        return `rel="${mergeNofollowRel(rel)}"`;
+      });
+    } else {
+      attrs = `${attrs} rel="${EXTERNAL_NOFOLLOW_REL}"`;
+    }
+    return `<a${attrs}>`;
+  });
 }

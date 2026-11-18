@@ -7,6 +7,9 @@ import { resolveSerpBriefDownloadable, type BulkDetailsDownloadable } from "@/co
 import { generatedFilesForUrl } from "@/lib/content-optimization/content-optimizer-bulk-generator-bindings";
 import { buildWordBlacklistDownloadText } from "@/lib/content-word-blocklist";
 import { buildHumanizerDownloadText } from "@/lib/content-humanizer";
+import { buildGoogleSeoRulesDownloadText } from "@/lib/google-seo-updates/google-seo-live-prompt";
+import { buildWindowTreatmentsRulesDownloadText } from "@/lib/window-treatments-vertical/window-treatments-live-prompt";
+import { siteUsesWindowTreatmentsSkill } from "@/lib/window-treatments-vertical/site-uses-window-treatments-skill";
 import { resolveStudioDrawerElementorHeaders } from "@/lib/overview/overview-studio-drawer-section-headers";
 import { stripTrailingFaqSection } from "@/lib/overview/overview-blog-faq-append";
 import { extractAnswerSectionHtml, extractOverviewSectionHtml, stripLeadingAnswerSection, stripLeadingOverviewSection } from "@/lib/overview/overview-blog-overview-prepend";
@@ -142,6 +145,18 @@ export function useOverviewStudioDrawerSteps({
       mimeType: "text/plain;charset=utf-8",
     };
 
+    const googleSeoDownload: BulkDetailsDownloadable = {
+      name: "google-seo-rules.txt",
+      content: buildGoogleSeoRulesDownloadText(""),
+      mimeType: "text/plain;charset=utf-8",
+    };
+
+    const windowTreatmentsDownload: BulkDetailsDownloadable = {
+      name: "window-treatments-rules.txt",
+      content: buildWindowTreatmentsRulesDownloadText(""),
+      mimeType: "text/plain;charset=utf-8",
+    };
+
     // 1. Word Blacklist (read before SERP brief and all generation)
     items.push({
       id: "step-word-blacklist",
@@ -160,7 +175,26 @@ export function useOverviewStudioDrawerSteps({
       downloadFile: humanizerDownload,
     });
 
-    // 3. SERP Research Brief
+    // 3. Google SEO Rules (standing live prompt from the Google SEO Updates skill)
+    items.push({
+      id: "step-google-seo-rules",
+      title: "Google SEO Rules",
+      isActive: false,
+      isDone: true,
+      downloadFile: googleSeoDownload,
+    });
+
+    if (siteUsesWindowTreatmentsSkill(c.site)) {
+      items.push({
+        id: "step-window-treatments-rules",
+        title: "Window Treatments Rules",
+        isActive: false,
+        isDone: true,
+        downloadFile: windowTreatmentsDownload,
+      });
+    }
+
+    // SERP Research Brief
     items.push({
       id: "step-research",
       title: "SERP Research Brief",

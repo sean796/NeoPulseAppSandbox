@@ -10,6 +10,7 @@ describe("editorialContentPackageTierForPropertyName", () => {
     expect(editorialContentPackageTierForPropertyName("You Junk It... I Dump It")).toBe("lite");
     expect(editorialContentPackageTierForPropertyName("DM Interiors & Design")).toBe("standard");
     expect(editorialContentPackageTierForPropertyName("Custom Shades of London")).toBe("standard");
+    expect(editorialContentPackageTierForPropertyName("Night & Day Decor")).toBe("standard");
   });
 });
 

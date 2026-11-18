@@ -29,6 +29,9 @@ import { hasActiveBulkActionProgress } from "@/lib/overview/overview-bulk-inline
 import { BulkSitemapInventoryRunDetail } from "@/components/keyword-research/bulk/BulkSitemapInventoryRunDetail";
 import { WordBlacklistRunDetail } from "@/components/keyword-research/bulk/WordBlacklistRunDetail";
 import { HumanizerRunDetail } from "@/components/keyword-research/bulk/HumanizerRunDetail";
+import { GoogleSeoRulesRunDetail } from "@/components/keyword-research/bulk/GoogleSeoRulesRunDetail";
+import { WindowTreatmentsRunDetail } from "@/components/keyword-research/bulk/WindowTreatmentsRunDetail";
+import { siteUsesWindowTreatmentsSkill } from "@/lib/window-treatments-vertical/site-uses-window-treatments-skill";
 import { contentOptimizerRowStripeClass } from "@/components/overview/overview-tab/overview-tab-content-constants";
 
 type Opt = ReturnType<typeof useWordPressOptimization>;
@@ -137,6 +140,7 @@ export function OverviewContentDetailsPanel({
             sitemapSource: c.sitemapSource,
             bulkActionProgress: c.bulkActionProgress,
             bulkScopeUrlKeys: c.bulkScopeUrlKeys,
+            detailsSite: site,
           },
           workspaceBusy,
         )
@@ -159,6 +163,7 @@ export function OverviewContentDetailsPanel({
               sitemapSource: c.sitemapSource,
               bulkActionProgress: c.bulkActionProgress,
               bulkScopeUrlKeys: c.bulkScopeUrlKeys,
+              detailsSite: site,
             },
             true,
           )
@@ -173,6 +178,7 @@ export function OverviewContentDetailsPanel({
           siteKwHostedLink: gscHostedLink,
           sitemapInventoryLoading,
           sitemapSource: c.sitemapSource,
+          detailsSite: site,
         })
       : null;
 
@@ -195,6 +201,14 @@ export function OverviewContentDetailsPanel({
             <HumanizerRunDetail />
           </div>
           <div className={contentOptimizerRowStripeClass(2)}>
+            <GoogleSeoRulesRunDetail />
+          </div>
+          {siteUsesWindowTreatmentsSkill(site) ? (
+            <div className={contentOptimizerRowStripeClass(3)}>
+              <WindowTreatmentsRunDetail />
+            </div>
+          ) : null}
+          <div className={contentOptimizerRowStripeClass(siteUsesWindowTreatmentsSkill(site) ? 4 : 3)}>
             <BulkSitemapInventoryRunDetail
               links={sitemapInventoryLinks}
               gscHostedLink={gscHostedLink}

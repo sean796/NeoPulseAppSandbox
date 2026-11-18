@@ -313,6 +313,9 @@ class Neo_Pulse_App_Agent_Runs_Store {
 		}
 
 		$previous_status = (string) ( $row['status'] ?? '' );
+		if ( $previous_status === 'cancelled' ) {
+			unset( $patch['status'] );
+		}
 
 		$updates = array(
 			'updated_at' => current_time( 'mysql', true ),
@@ -406,6 +409,11 @@ class Neo_Pulse_App_Agent_Runs_Store {
 	/**
 	 * @return array<string,mixed>|null
 	 */
+	public static function is_cancelled( int $team_id, int $run_id ): bool {
+		$run = self::get_run( $team_id, $run_id, false );
+		return ! is_array( $run ) || (string) ( $run['status'] ?? '' ) === 'cancelled';
+	}
+
 	public static function cancel_run( int $team_id, int $run_id ): ?array {
 		$run = self::get_run( $team_id, $run_id, false );
 		if ( ! $run ) {

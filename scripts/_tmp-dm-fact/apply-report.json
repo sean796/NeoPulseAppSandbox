@@ -1,0 +1,34 @@
+{
+  "ok": 4,
+  "fail": 0,
+  "results": [
+    {
+      "id": 1413,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-andersonville/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 1337,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-ansley-park/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 1354,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-capitol-view/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    },
+    {
+      "id": 1454,
+      "pageUrl": "https://dminteriorsanddesign.com/service-area/interior-design-collier-heights/",
+      "ok": true,
+      "status": 200,
+      "type": "service-area"
+    }
+  ]
+}

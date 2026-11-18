@@ -105,6 +105,52 @@ function FactCheckVisual() {
   );
 }
 
+/** Claim lines + outbound evidence link for the dedicated Fact checker step. */
+function FactCheckerVisual() {
+  return (
+    <svg
+      viewBox="0 0 288 128"
+      className="h-full w-full"
+      role="presentation"
+      aria-hidden="true"
+    >
+      <rect x="12" y="16" width="180" height="96" rx="6" fill="#27272a" />
+      <rect x="24" y="30" width="100" height="7" rx="2" className="animate-pulse" fill="#52525b" />
+      <rect x="24" y="46" width="148" height="6" rx="2" className="animate-pulse" fill="#3f3f46" />
+      <rect x="24" y="60" width="120" height="6" rx="2" className="animate-pulse" fill="#52525b" />
+      <rect x="24" y="80" width="56" height="8" rx="2" fill="#84bd00" className="animate-pulse" />
+      <path
+        d="M86 84h18"
+        fill="none"
+        stroke="#84bd00"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        className="animate-pulse"
+      />
+      <path
+        d="M100 78l8 6-8 6"
+        fill="none"
+        stroke="#84bd00"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <rect x="210" y="28" width="62" height="72" rx="6" fill="#3f3f46" className="animate-pulse" />
+      <circle cx="241" cy="52" r="12" fill="rgba(132, 189, 0, 0.3)" />
+      <path
+        d="M235 52.5l3.5 3.5 7.5-7.5"
+        fill="none"
+        stroke="#84bd00"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <rect x="224" y="72" width="34" height="5" rx="2" fill="#52525b" />
+      <rect x="224" y="84" width="24" height="5" rx="2" fill="#52525b" />
+    </svg>
+  );
+}
+
 function MetaVisual() {
   return (
     <div className="flex w-full flex-col gap-2.5">
@@ -211,6 +257,7 @@ const VISUALS: Record<BulkSplashVisualKind, ReactNode> = {
   research: <ResearchVisual />,
   audit: <AuditVisual />,
   factcheck: <FactCheckVisual />,
+  factchecker: <FactCheckerVisual />,
   meta: <MetaVisual />,
   writing: <WritingVisual />,
   image: <ImageVisual />,

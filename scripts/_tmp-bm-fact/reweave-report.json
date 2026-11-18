@@ -1,0 +1,956 @@
+{
+  "reports": [
+    {
+      "pageUrl": "https://blindmagic.com/blog/5-reasons-to-upgrade/",
+      "id": 17475,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 2,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/alt-shades-reviews/",
+      "id": 20045,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/are-blackout-shades-worth-it/",
+      "id": 17445,
+      "removedHost": 0,
+      "rewoven": 1,
+      "droppedOnly": 3,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/aura-illuminated-shades/",
+      "id": 19760,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/bathroom-blinds/",
+      "id": 18785,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 2,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/battery-wand-repair/",
+      "id": 18226,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/battery-wands-power-motorized-shades/",
+      "id": 18235,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/best-roller-blind-brands/",
+      "id": 18087,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/blind-measuring-guide/",
+      "id": 17471,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/blind-parts/",
+      "id": 20525,
+      "removedHost": 0,
+      "rewoven": 4,
+      "droppedOnly": 0,
+      "brandsStripped": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/blinds-installation-cost-considerations-and-choosing-the-right-window-treatment/",
+      "id": 20834,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 3,
+      "brandsStripped": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/cadence-vs-skyline-vs-somner/",
+      "id": 17427,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/child-safe-window-treatments/",
+      "id": 18075,
+      "removedHost": 0,
+      "rewoven": 1,
+      "droppedOnly": 3,
+      "brandsStripped": 8
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/clean-fabric-blinds-cleaning/",
+      "id": 20543,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/clean-fabric-blinds/",
+      "id": 20531,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/commercial-blinds-enhance-business-space/",
+      "id": 17698,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 2,
+      "brandsStripped": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/commercial-blinds/",
+      "id": 18093,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/devon/",
+      "id": 17451,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 2,
+      "brandsStripped": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/edmonton-art-gallery/",
+      "id": 5277,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/energy-efficient-window-coverings/",
+      "id": 18073,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/honeycomb-shades-vs-solera-soft/",
+      "id": 18097,
+      "removedHost": 0,
+      "rewoven": 1,
+      "droppedOnly": 0,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/how-clean-blinds/",
+      "id": 18772,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/how-to-clean-blinds/",
+      "id": 18099,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/hunter-douglas-blinds-quality-style/",
+      "id": 17701,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/hunter-douglas-guide/",
+      "id": 18222,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/hunter-douglas-prices/",
+      "id": 17677,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/hunter-douglas-top-down-bottom-up-shades-canada/",
+      "id": 21030,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/hunter-douglas-vs-alta/",
+      "id": 18095,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/light-filtering-vs-room-darkening/",
+      "id": 17641,
+      "removedHost": 0,
+      "rewoven": 3,
+      "droppedOnly": 0,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/modern-window-treatments/",
+      "id": 17565,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/motorised-roller-blinds/",
+      "id": 20536,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/motorized-blinds-edmonton/",
+      "id": 22320,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/motorized-blinds-vs-manual/",
+      "id": 18069,
+      "removedHost": 0,
+      "rewoven": 1,
+      "droppedOnly": 0,
+      "brandsStripped": 5
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/moving-away-from-grey/",
+      "id": 17457,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/powerview-vs-tahoma/",
+      "id": 18231,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/privacy-light-top-down-bottom-up-blinds/",
+      "id": 17240,
+      "removedHost": 0,
+      "rewoven": 1,
+      "droppedOnly": 0,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/rechargeable-battery-wands/",
+      "id": 19754,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/roman-shade/",
+      "id": 18782,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/roman-shades-classic-modern/",
+      "id": 17705,
+      "removedHost": 0,
+      "rewoven": 2,
+      "droppedOnly": 0,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/roman-shades/",
+      "id": 18089,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/science-behind-energy-efficient-windows/",
+      "id": 17469,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/silhouette-blinds-vs-sheer-shades/",
+      "id": 17691,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/smart-blinds-automation/",
+      "id": 20053,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/smart-blinds-comparison/",
+      "id": 18085,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 2,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/softtouch-motorization-benefits/",
+      "id": 19750,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/solar-charger-now-available/",
+      "id": 17437,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/solarium-blinds/",
+      "id": 22629,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 3,
+      "brandsStripped": 5
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/specialty-blinds/",
+      "id": 18103,
+      "removedHost": 0,
+      "rewoven": 1,
+      "droppedOnly": 1,
+      "brandsStripped": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/spruce-grove/",
+      "id": 17453,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/stony-plain/",
+      "id": 17485,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/what-are-bottom-up-blinds/",
+      "id": 17663,
+      "removedHost": 0,
+      "rewoven": 1,
+      "droppedOnly": 1,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/window-covering-operating-systems/",
+      "id": 19763,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/window-covering-trends-2026/",
+      "id": 18083,
+      "removedHost": 0,
+      "rewoven": 1,
+      "droppedOnly": 0,
+      "brandsStripped": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/blog/window-fashion-guide/",
+      "id": 17413,
+      "removedHost": 0,
+      "rewoven": 1,
+      "droppedOnly": 1,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blind-repair-oakmont-stalbert-ab/",
+      "id": 18908,
+      "removedHost": 0,
+      "rewoven": 1,
+      "droppedOnly": 0,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-abbottsfield-edmonton/",
+      "id": 19248,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 2,
+      "brandsStripped": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-albany-edmonton/",
+      "id": 19250,
+      "removedHost": 0,
+      "rewoven": 1,
+      "droppedOnly": 2,
+      "brandsStripped": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-allard-edmonton/",
+      "id": 19256,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 6,
+      "brandsStripped": 5
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-ambleside-edmonton/",
+      "id": 19258,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 3,
+      "brandsStripped": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-argyll-edmonton/",
+      "id": 19260,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-aster-edmonton/",
+      "id": 19262,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 4,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-connaught-armoury/",
+      "id": 17384,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-crestwood-edmonton-ab/",
+      "id": 18864,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-downtown-stalbert-ab/",
+      "id": 18882,
+      "removedHost": 0,
+      "rewoven": 1,
+      "droppedOnly": 1,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-edmonton-empirepark-alberta/",
+      "id": 19272,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-erin-ridge-stalbert-ab/",
+      "id": 18870,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-heights-sherwood-sherwoodpark-ab/",
+      "id": 20825,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 2,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-high-level-bridge/",
+      "id": 17275,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-hunter-douglas-blinds-mill/",
+      "id": 18257,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-lacombe-park-stalbert-ab/",
+      "id": 18894,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-mission-stalbert-ab/",
+      "id": 18876,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-north-glenora-edmonton-ab/",
+      "id": 18830,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-oakmont-stalbert-ab/",
+      "id": 18906,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-riel-stalbert-ab/",
+      "id": 18900,
+      "removedHost": 0,
+      "rewoven": 1,
+      "droppedOnly": 0,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-shades-airdrie/",
+      "id": 17567,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-shades-cold-lake/",
+      "id": 17575,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-shades-shutters-mccauley-edmonton-ab/",
+      "id": 19274,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 2,
+      "brandsStripped": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-ab/",
+      "id": 20035,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 2,
+      "brandsStripped": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-callingwood-edmonton-ab/",
+      "id": 18856,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-canora-edmonton-ab/",
+      "id": 18826,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 2,
+      "brandsStripped": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-crestwood-edmonton-ab/",
+      "id": 18868,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-downtown-stalbert-ab/",
+      "id": 18886,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-mission-stalbert-ab/",
+      "id": 18880,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-namao-edmonton-ab/",
+      "id": 18850,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-north-glenora-edmonton-ab/",
+      "id": 18834,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-oakmont-stalbert-ab/",
+      "id": 18910,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-riel-stalbert-ab/",
+      "id": 18904,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 2,
+      "brandsStripped": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-sherwood-park-westwood-stalbert-ab/",
+      "id": 18892,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-west-meadowlark-park-edmonton-ab/",
+      "id": 18838,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 4
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/blinds-westwood-stalbert-ab/",
+      "id": 18888,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 3,
+      "brandsStripped": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/competitor-highend-blinds-inc/",
+      "id": 21234,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/custom-blinds-shades-sherwood-park-ab/",
+      "id": 22635,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 2,
+      "brandsStripped": 7
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/downtown-edmonton-ab/",
+      "id": 17364,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-bonnie-doon-shopping-centre/",
+      "id": 17787,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-commerce-place-edmonton/",
+      "id": 17791,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-dudley-b-menzies-bridge/",
+      "id": 17778,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-edmonton-city-centre/",
+      "id": 17793,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-grant-moellmann-bridge/",
+      "id": 17767,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-hub-mall/",
+      "id": 17795,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 3,
+      "brandsStripped": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-kingsway-mall/",
+      "id": 17797,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-londonderry-mall/",
+      "id": 17799,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-low-level-bridge/",
+      "id": 17774,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-meadowlark-mall/",
+      "id": 17801,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-mill-woods-town-centre/",
+      "id": 17803,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-millbourne-market-mall/",
+      "id": 17805,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 1
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-sherwood-park-ab/",
+      "id": 20033,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-tawatin-bridge/",
+      "id": 17781,
+      "removedHost": 0,
+      "rewoven": 1,
+      "droppedOnly": 2,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-blinds-walterdale-bridge/",
+      "id": 17785,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-canora-edmonton-ab/",
+      "id": 18828,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-lacombe-park-stalbert-ab/",
+      "id": 18898,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-north-glenora-edmonton-ab/",
+      "id": 18836,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 1,
+      "brandsStripped": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/hunter-douglas-west-meadowlark-park-edmonton-ab/",
+      "id": 18842,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 2,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/jasper-place-edmonton-ab/",
+      "id": 17338,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/quesnell-heights-edmonton-ab/",
+      "id": 16757,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/roller-shades-rapidfiretheatrearea-edmonton-ab/",
+      "id": 19278,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 2,
+      "brandsStripped": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-blinds-edmonton-ab/",
+      "id": 20039,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 3
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-blinds-west-meadowlark-park-edmonton-ab/",
+      "id": 18844,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 2,
+      "brandsStripped": 2
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-treatments-edmonton-84street/",
+      "id": 19270,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 5
+    },
+    {
+      "pageUrl": "https://blindmagic.com/service-area/window-treatments-near-23-avenue-edmonton/",
+      "id": 17350,
+      "removedHost": 0,
+      "rewoven": 0,
+      "droppedOnly": 0,
+      "brandsStripped": 0
+    }
+  ]
+}

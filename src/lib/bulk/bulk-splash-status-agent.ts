@@ -9,6 +9,7 @@ export const BULK_SPLASH_VISUAL_KINDS = [
   "research",
   "audit",
   "factcheck",
+  "factchecker",
   "meta",
   "writing",
   "image",
@@ -42,6 +43,7 @@ Rules:
   - "research": Google, SERP, keyword research, or Wikipedia lookup
   - "audit": LLM audit, research brief, or entity classification
   - "factcheck": ONLY the dedicated Fact checking step (NAP + place). Never rename that step.
+  - "factchecker": ONLY the dedicated Fact checker step (product evidence links). Never rename that step.
   - "meta": post title, meta title or description, SEO snippet, or ranking
   - "writing": content checklist, blueprint, drafting or editing sections, CSV/SAP page body work
   - "image": featured image, section image, Google Maps image, or image upload
@@ -49,7 +51,8 @@ Rules:
   - "links": internal links, external citations, or authority links
   - "publish": WordPress upload, quality control checks, or finishing the run
   - "generic": anything else
-- When the pipeline step is exactly "Fact checking", status must be exactly "Fact checking" and visual must be "factcheck".`;
+- When the pipeline step is exactly "Fact checking", status must be exactly "Fact checking" and visual must be "factcheck".
+- When the pipeline step is exactly "Fact checker", status must be exactly "Fact checker" and visual must be "factchecker".`;
 
 export type BulkSplashStatusInput = {
   step: string;

@@ -523,4 +523,246 @@ trait Neo_Pulse_App_Google_Drive_Upload_Trait_Upload {
 			'body'       => array( 'success' => true ),
 		);
 	}
+
+	/**
+	 * Write named tabs into one spreadsheet (create/rename tabs, then fill values).
+	 *
+	 * @param array<int,array{title:string,values:array<int,array<int,string>>}> $tabs
+	 * @return array{statusCode:int,body:array<string,mixed>}
+	 */
+	public static function write_spreadsheet_tabs( string $spreadsheet_id, array $tabs ): array {
+		$spreadsheet_id = preg_replace( '/[^a-zA-Z0-9_-]/', '', $spreadsheet_id );
+		if ( $spreadsheet_id === '' || $tabs === array() ) {
+			return array(
+				'statusCode' => 400,
+				'body'       => array( 'success' => false, 'error' => 'spreadsheet id and tabs are required.' ),
+			);
+		}
+		if ( ! Neo_Pulse_App_Google_Mcp_Oauth::is_configured() ) {
+			return array(
+				'statusCode' => 503,
+				'body'       => array( 'success' => false, 'error' => 'Google OAuth not configured.' ),
+			);
+		}
+		$access_token = Neo_Pulse_App_Google_Mcp_Tokens::get_valid_access_token();
+		if ( is_wp_error( $access_token ) ) {
+			return array(
+				'statusCode' => 401,
+				'body'       => array( 'success' => false, 'error' => $access_token->get_error_message() ),
+			);
+		}
+
+		$meta_url = self::SHEETS_API_URL . '/' . rawurlencode( $spreadsheet_id ) . '?fields=sheets.properties(sheetId,title,index)';
+		$meta_res = wp_remote_get(
+			$meta_url,
+			array(
+				'timeout' => 30,
+				'headers' => array( 'Authorization' => 'Bearer ' . $access_token ),
+			)
+		);
+		if ( is_wp_error( $meta_res ) ) {
+			return array(
+				'statusCode' => 502,
+				'body'       => array( 'success' => false, 'error' => $meta_res->get_error_message() ),
+			);
+		}
+		$meta_code = (int) wp_remote_retrieve_response_code( $meta_res );
+		$meta_data = json_decode( wp_remote_retrieve_body( $meta_res ), true );
+		if ( $meta_code < 200 || $meta_code >= 300 || ! is_array( $meta_data ) ) {
+			$msg = is_array( $meta_data ) && ! empty( $meta_data['error']['message'] )
+				? (string) $meta_data['error']['message']
+				: 'Could not read spreadsheet tabs.';
+			return array(
+				'statusCode' => $meta_code > 0 ? $meta_code : 502,
+				'body'       => array( 'success' => false, 'error' => $msg ),
+			);
+		}
+
+		$existing = array();
+		foreach ( (array) ( $meta_data['sheets'] ?? array() ) as $sheet ) {
+			if ( ! is_array( $sheet ) || ! isset( $sheet['properties'] ) || ! is_array( $sheet['properties'] ) ) {
+				continue;
+			}
+			$props = $sheet['properties'];
+			$title = (string) ( $props['title'] ?? '' );
+			if ( $title === '' ) {
+				continue;
+			}
+			$existing[ $title ] = array(
+				'sheetId' => (int) ( $props['sheetId'] ?? 0 ),
+				'title'   => $title,
+				'index'   => (int) ( $props['index'] ?? 0 ),
+			);
+		}
+		$by_index = array_values( $existing );
+		usort(
+			$by_index,
+			static function ( $a, $b ) {
+				return ( (int) ( $a['index'] ?? 0 ) ) <=> ( (int) ( $b['index'] ?? 0 ) );
+			}
+		);
+
+		$requests = array();
+		$titles   = array();
+		foreach ( $tabs as $i => $tab ) {
+			if ( ! is_array( $tab ) ) {
+				continue;
+			}
+			$title = trim( (string) ( $tab['title'] ?? '' ) );
+			if ( $title === '' ) {
+				continue;
+			}
+			$titles[] = $title;
+			if ( isset( $existing[ $title ] ) ) {
+				continue;
+			}
+			if ( $i === 0 && isset( $by_index[0] ) ) {
+				$old = (string) $by_index[0]['title'];
+				if ( $old !== $title ) {
+					$requests[] = array(
+						'updateSheetProperties' => array(
+							'properties' => array(
+								'sheetId' => (int) $by_index[0]['sheetId'],
+								'title'   => $title,
+							),
+							'fields'     => 'title',
+						),
+					);
+					unset( $existing[ $old ] );
+					$existing[ $title ] = array(
+						'sheetId' => (int) $by_index[0]['sheetId'],
+						'title'   => $title,
+						'index'   => (int) $by_index[0]['index'],
+					);
+					$by_index[0]['title'] = $title;
+				}
+				continue;
+			}
+			$requests[] = array(
+				'addSheet' => array(
+					'properties' => array(
+						'title' => $title,
+						'index' => (int) $i,
+					),
+				),
+			);
+		}
+
+		if ( $requests !== array() ) {
+			$batch_url = self::SHEETS_API_URL . '/' . rawurlencode( $spreadsheet_id ) . ':batchUpdate';
+			$batch_res = wp_remote_post(
+				$batch_url,
+				array(
+					'timeout' => 60,
+					'headers' => array(
+						'Authorization' => 'Bearer ' . $access_token,
+						'Content-Type'  => 'application/json; charset=UTF-8',
+					),
+					'body'    => wp_json_encode( array( 'requests' => $requests ) ),
+				)
+			);
+			if ( is_wp_error( $batch_res ) ) {
+				return array(
+					'statusCode' => 502,
+					'body'       => array( 'success' => false, 'error' => $batch_res->get_error_message() ),
+				);
+			}
+			$batch_code = (int) wp_remote_retrieve_response_code( $batch_res );
+			$batch_data = json_decode( wp_remote_retrieve_body( $batch_res ), true );
+			if ( $batch_code < 200 || $batch_code >= 300 || ! is_array( $batch_data ) ) {
+				$msg = is_array( $batch_data ) && ! empty( $batch_data['error']['message'] )
+					? (string) $batch_data['error']['message']
+					: 'Could not create spreadsheet tabs.';
+				return array(
+					'statusCode' => $batch_code > 0 ? $batch_code : 502,
+					'body'       => array( 'success' => false, 'error' => $msg ),
+				);
+			}
+		}
+
+		foreach ( $tabs as $tab ) {
+			if ( ! is_array( $tab ) ) {
+				continue;
+			}
+			$title  = trim( (string) ( $tab['title'] ?? '' ) );
+			$values = isset( $tab['values'] ) && is_array( $tab['values'] ) ? $tab['values'] : array();
+			if ( $title === '' || $values === array() ) {
+				continue;
+			}
+			$quoted   = str_replace( "'", "''", $title );
+			$a1       = "'" . $quoted . "'!A1";
+			$clear_url = self::SHEETS_API_URL . '/' . rawurlencode( $spreadsheet_id ) . '/values/' . rawurlencode( "'" . $quoted . "'!A:ZZ" ) . ':clear';
+			$clear_res = wp_remote_post(
+				$clear_url,
+				array(
+					'timeout' => 30,
+					'headers' => array(
+						'Authorization' => 'Bearer ' . $access_token,
+						'Content-Type'  => 'application/json; charset=UTF-8',
+					),
+					'body'    => '{}',
+				)
+			);
+			if ( is_wp_error( $clear_res ) ) {
+				return array(
+					'statusCode' => 502,
+					'body'       => array( 'success' => false, 'error' => $clear_res->get_error_message() ),
+				);
+			}
+			$clear_code = (int) wp_remote_retrieve_response_code( $clear_res );
+			if ( $clear_code < 200 || $clear_code >= 300 ) {
+				$clear_data = json_decode( wp_remote_retrieve_body( $clear_res ), true );
+				$msg        = is_array( $clear_data ) && ! empty( $clear_data['error']['message'] )
+					? (string) $clear_data['error']['message']
+					: 'Could not clear spreadsheet cells.';
+				return array(
+					'statusCode' => $clear_code > 0 ? $clear_code : 502,
+					'body'       => array( 'success' => false, 'error' => $msg ),
+				);
+			}
+			$update_url = self::SHEETS_API_URL . '/' . rawurlencode( $spreadsheet_id ) . '/values/' . rawurlencode( $a1 ) . '?valueInputOption=RAW';
+			$update_res = wp_remote_request(
+				$update_url,
+				array(
+					'method'  => 'PUT',
+					'timeout' => 60,
+					'headers' => array(
+						'Authorization' => 'Bearer ' . $access_token,
+						'Content-Type'  => 'application/json; charset=UTF-8',
+					),
+					'body'    => wp_json_encode(
+						array(
+							'range'  => $a1,
+							'values' => $values,
+						)
+					),
+				)
+			);
+			if ( is_wp_error( $update_res ) ) {
+				return array(
+					'statusCode' => 502,
+					'body'       => array( 'success' => false, 'error' => $update_res->get_error_message() ),
+				);
+			}
+			$update_code = (int) wp_remote_retrieve_response_code( $update_res );
+			$update_data = json_decode( wp_remote_retrieve_body( $update_res ), true );
+			if ( $update_code < 200 || $update_code >= 300 || ! is_array( $update_data ) ) {
+				$msg = is_array( $update_data ) && ! empty( $update_data['error']['message'] )
+					? (string) $update_data['error']['message']
+					: 'Could not update spreadsheet cells.';
+				return array(
+					'statusCode' => $update_code > 0 ? $update_code : 502,
+					'body'       => array( 'success' => false, 'error' => $msg ),
+				);
+			}
+		}
+
+		return array(
+			'statusCode' => 200,
+			'body'       => array(
+				'success' => true,
+				'tabs'    => $titles,
+			),
+		);
+	}
 }

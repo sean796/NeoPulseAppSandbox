@@ -10,6 +10,10 @@ import { applyOptimizeFaqToHarnessHtml, type PrecomputedAcfSeoBundle } from "./b
 import { deduplicateInternalLinksInHtml, removeInvalidInternalLinks } from "./content-sanitizer";
 import { ensureWhatWeOfferTablePageLinks } from "./what-we-offer-table-page-links";
 import { ensureSemrushExternalLinksInHtml } from "./ensure-semrush-external-links";
+import {
+  FACT_CHECKER_STEP_LABEL,
+  runProductFactChecker,
+} from "./product-fact-checker";
 import type { ResolvedTargetLike, WpExistingPostLike } from "@/hooks/content-optimization/use-optimization-state";
 import type { ExtraTextInventoryLinkRow } from "./extra-text-inventory-links";
 
@@ -163,6 +167,9 @@ export async function polishContentForWordPressUpload(args: ContentUploadPolishA
     articleTitle: blueprintResult?.title || existingTitle || primaryKeyword,
     linkTargetsPlan: context.linkTargetsPlan,
     onePassOptimize: context.resolved?.subtype !== "page",
+    site,
+    skipProductFactCheck: true,
+    onProgress: (message) => setProgress("polish", 0.15, message),
   });
 
   const isBlogOptimize = context.resolved?.subtype !== "page";
@@ -224,6 +231,15 @@ export async function polishContentForWordPressUpload(args: ContentUploadPolishA
     htmlContent = faqApplied.html;
     optimizeFaqBundle = faqApplied.faqBundle;
   }
+
+  setProgress("polish", 0.92, FACT_CHECKER_STEP_LABEL);
+  htmlContent = await runProductFactChecker({
+    html: htmlContent,
+    site,
+    keyword: primaryKeyword,
+    title: blueprintResult?.title || cleanedExistingTitle || primaryKeyword,
+    onProgress: (message) => setProgress("polish", 0.93, message),
+  });
 
   const strippedHtml = removeInvalidInternalLinks(htmlContent, context.wordPressPosts, site.siteUrl);
   let extraTextContent: string | undefined;

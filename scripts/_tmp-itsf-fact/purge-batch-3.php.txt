@@ -1,0 +1,14 @@
+$urls = json_decode("[\"https://intheshadeflorida.com/service-area/hunter-douglas-dealer-north-palm-beach-heights/\",\"https://intheshadeflorida.com/service-area/hunter-douglas-shades-palm-city-fl/\",\"https://intheshadeflorida.com/service-area/interior-curtain-design-hutchinson-island-south-fl/\",\"https://intheshadeflorida.com/service-area/interior-design-styles-stuart-fl/\",\"https://intheshadeflorida.com/service-area/motorized-shades-palm-city-fl/\",\"https://intheshadeflorida.com/service-area/palm-city-energy-efficient-shades-fl/\",\"https://intheshadeflorida.com/service-area/palm-city-window-treatment-design-fl/\",\"https://intheshadeflorida.com/service-area/plantation-shutter-fitting-jensen-beach-stuart-fl/\",\"https://intheshadeflorida.com/service-area/plantation-shutter-installers-jensen-beach-stuart-fl/\",\"https://intheshadeflorida.com/service-area/plantation-shutters-installation-jensen-beach-stuart-fl/\",\"https://intheshadeflorida.com/service-area/plantation-shutters-palm-city-fl/\",\"https://intheshadeflorida.com/service-area/plantation-shutters-port-st-lucie-fl/\",\"https://intheshadeflorida.com/service-area/plantation-shutters-stuart-fl/\",\"https://intheshadeflorida.com/service-area/residential-blinds-installation-jensen-beach-fl/\",\"https://intheshadeflorida.com/service-area/residential-window-coverings-treasure-coast-fl/\",\"https://intheshadeflorida.com/service-area/shutters-for-sale-hobe-sound-fl/\",\"https://intheshadeflorida.com/service-area/shutters-for-sale-stuart-fl/\",\"https://intheshadeflorida.com/service-area/smart-automated-blinds-rio-fl/\",\"https://intheshadeflorida.com/service-area/smart-blinds-automation-rio-fl/\",\"https://intheshadeflorida.com/service-area/smart-blinds-rio-fl/\",\"https://intheshadeflorida.com/service-area/smart-home-automation-palm-city-fl/\",\"https://intheshadeflorida.com/service-area/window-curtains-consultation-hutchinson-island-south-fl/\",\"https://intheshadeflorida.com/service-area/window-shade-repair-cost-treasure-coast-fl/\",\"https://intheshadeflorida.com/service-area/window-shades-st-lucie-west-florida/\",\"https://intheshadeflorida.com/service-area/window-treatment-consultation-palm-city-fl/\",\"https://intheshadeflorida.com/service-area/window-treatment-design-stuart-fl/\"]", true);
+$ok = 0;
+$errors = array();
+foreach ($urls as $url) {
+  try {
+    if (function_exists('nitropack_sdk_purge')) nitropack_sdk_purge($url);
+    elseif (function_exists('nitropack_purge')) nitropack_purge($url);
+    $ok++;
+  } catch (Throwable $e) {
+    $errors[] = $url . ': ' . $e->getMessage();
+  }
+}
+if (function_exists('nitropack_sdk_purge_local')) nitropack_sdk_purge_local();
+return array('purged' => $ok, 'errors' => array_slice($errors, 0, 10), 'count' => count($urls));

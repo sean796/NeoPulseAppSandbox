@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "skills/cannibalization-audit/assets/redirect-map.schema.json",
+  "type": "object",
+  "required": ["siteId", "windowDays", "redirects", "leave"],
+  "additionalProperties": false,
+  "properties": {
+    "siteId": { "type": "string", "minLength": 1 },
+    "siteUrl": { "type": "string" },
+    "windowDays": { "type": "integer", "minimum": 1 },
+    "redirects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "reason", "ageDays", "clicks90d", "foldIn"],
+        "additionalProperties": false,
+        "properties": {
+          "from": { "type": "string", "minLength": 1 },
+          "to": { "type": "string", "minLength": 1 },
+          "reason": { "type": "string", "enum": ["overlap", "aged-low-demand"] },
+          "ageDays": { "type": "integer", "minimum": 0 },
+          "clicks90d": { "type": "integer", "minimum": 0 },
+          "foldIn": { "type": "string" }
+        }
+      }
+    },
+    "leave": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["url", "why"],
+        "additionalProperties": false,
+        "properties": {
+          "url": { "type": "string", "minLength": 1 },
+          "why": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

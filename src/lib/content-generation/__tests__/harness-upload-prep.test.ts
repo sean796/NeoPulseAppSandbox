@@ -6,6 +6,11 @@ vi.mock("@/lib/competitor-research/competitor-report-openrouter", () => ({
   callOpenRouterChatCompletion: vi.fn(),
 }));
 
+vi.mock("@/lib/content-generation/product-fact-checker", () => ({
+  FACT_CHECKER_STEP_LABEL: "Fact checker",
+  runProductFactChecker: vi.fn(async ({ html }: { html: string }) => html),
+}));
+
 import { callOpenRouterChatCompletion } from "@/lib/competitor-research/competitor-report-openrouter";
 
 beforeEach(() => {

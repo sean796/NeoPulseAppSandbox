@@ -46,7 +46,7 @@ const FactCheckModelSchema = z.object({
     .nullish(),
   illustrativeExample: z
     .object({
-      personaName: z.string().nullish(),
+      situationOpener: z.string().nullish(),
       householdProfile: z.string().nullish(),
       situationHook: z.string().nullish(),
       scenarioNarrative: z.string().nullish(),
@@ -97,7 +97,7 @@ const FACT_CHECK_SCHEMA = {
       type: ["object", "null"],
       additionalProperties: false,
       properties: {
-        personaName: { type: "string" },
+        situationOpener: { type: "string" },
         householdProfile: { type: "string" },
         situationHook: { type: "string" },
         scenarioNarrative: { type: "string" },
@@ -113,7 +113,7 @@ const FACT_CHECK_SYSTEM = `You fact-check research text for a connected local bu
 Return JSON only: {
   "checks": [ { "kind", "original", "verdict", "rewritten", "reason", "placeType?", "placeCity?" } ],
   "firstPartyClaims": [ { "text", "source" } ] | null,
-  "illustrativeExample": { personaName?, householdProfile?, situationHook?, scenarioNarrative?, recommendationParagraph? } | null,
+  "illustrativeExample": { situationOpener?, householdProfile?, situationHook?, scenarioNarrative?, recommendationParagraph? } | null,
   "chatGptTexts": string[] | null
 }.
 
@@ -328,8 +328,8 @@ function applyIllustrativeOverrides(
   if (!existing || !overrides) return existing;
   return {
     ...existing,
-    ...(overrides.personaName != null
-      ? { personaName: String(overrides.personaName).trim() }
+    ...(overrides.situationOpener != null
+      ? { situationOpener: String(overrides.situationOpener).trim() }
       : {}),
     ...(overrides.householdProfile != null
       ? { householdProfile: String(overrides.householdProfile).trim() }
@@ -455,7 +455,7 @@ export async function runResearchFactCheck(input: {
     "--- ILLUSTRATIVE EXAMPLE ---",
     illustrative
       ? [
-          `personaName: ${illustrative.personaName ?? ""}`,
+          `situationOpener: ${illustrative.situationOpener ?? ""}`,
           `householdProfile: ${illustrative.householdProfile ?? ""}`,
           `situationHook: ${illustrative.situationHook ?? ""}`,
           `scenarioNarrative: ${illustrative.scenarioNarrative ?? ""}`,

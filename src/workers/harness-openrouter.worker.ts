@@ -17,6 +17,7 @@ ctx.onmessage = (e: MessageEvent<HarnessOpenRouterWorkerPayload>) => {
         maxTokens: clampOpenRouterMaxTokens(data.maxTokens),
         topP: data.topP,
         reasoning: { effort: 'low' },
+        siteId: data.siteId,
       });
       ctx.postMessage({
         type: 'done' as const,
